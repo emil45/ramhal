@@ -1,0 +1,15 @@
+{
+  "name": "ramhal-scrape",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "One-time migration tooling: extract content from the legacy ramhal.com / frramhal.com / enramhal.com sites.",
+  "scripts": {
+    "crawl:sample": "node crawl.mjs --mode=sample",
+    "crawl:full": "node crawl.mjs --mode=full",
+    "parse": "node parse.mjs"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  }
+}
