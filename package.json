@@ -15,7 +15,8 @@
     "generate:importmap": "payload generate:importmap",
     "migrate": "node scripts/dev-migrate.mjs run",
     "migrate:create": "node scripts/dev-migrate.mjs create",
-    "seed": "payload run scripts/seed.ts"
+    "seed": "payload run scripts/seed.ts",
+    "import:books": "node scripts/import-books.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
