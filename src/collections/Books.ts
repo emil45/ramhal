@@ -12,6 +12,15 @@ const BOOK_LANGUAGES = [
   { label: 'ארמית/צרפתית', value: 'aramaic-fr' },
 ]
 
+// Why each book might need a human look before it's trusted — see
+// scripts/scrape/reconcile.mjs, which computes these before import.
+const REVIEW_REASONS = [
+  { label: 'חסר תיאור', value: 'missing-description' },
+  { label: 'פער מחירים', value: 'price-mismatch' },
+  { label: 'לא קיים בעברית', value: 'absent-from-hebrew' },
+  { label: 'התאמה לא ודאית', value: 'ambiguous-match' },
+]
+
 // Each book is a work, not a SKU — see docs/DECISIONS.md §1.
 export const Books: CollectionConfig = {
   slug: 'books',
@@ -21,7 +30,7 @@ export const Books: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'title',
-    defaultColumns: ['title', 'bookLanguage', 'category', 'inStock'],
+    defaultColumns: ['title', 'bookLanguage', 'category', 'inStock', 'needsReview'],
   },
   fields: [
     {
@@ -184,6 +193,40 @@ export const Books: CollectionConfig = {
           required: true,
         },
       ],
+    },
+    {
+      // Migration-era fields: the reconciliation of the three legacy
+      // catalogues (scripts/scrape/reconcile.mjs) found that most imported
+      // books need a human decision, not a few exceptions — this is the
+      // admin's ordinary worklist for that, not a one-time flag.
+      name: 'needsReview',
+      type: 'checkbox',
+      label: 'דורש בדיקה',
+      defaultValue: false,
+    },
+    {
+      name: 'reviewReasons',
+      type: 'select',
+      label: 'סיבות לבדיקה',
+      hasMany: true,
+      options: REVIEW_REASONS,
+    },
+    {
+      name: 'reviewNote',
+      type: 'textarea',
+      label: 'הערת בדיקה',
+      admin: {
+        description: 'For example, an ambiguous-match counterpart\'s title.',
+      },
+    },
+    {
+      name: 'importKey',
+      type: 'text',
+      label: 'מפתח ייבוא',
+      unique: true,
+      admin: {
+        hidden: true,
+      },
     },
   ],
 }
