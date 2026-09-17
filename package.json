@@ -13,8 +13,8 @@
     "test": "vitest run",
     "generate:types": "payload generate:types",
     "generate:importmap": "payload generate:importmap",
-    "migrate": "payload migrate",
-    "migrate:create": "payload migrate:create",
+    "migrate": "node scripts/dev-migrate.mjs run",
+    "migrate:create": "node scripts/dev-migrate.mjs create",
     "seed": "payload run scripts/seed.ts"
   },
   "dependencies": {

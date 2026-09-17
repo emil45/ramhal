@@ -347,3 +347,61 @@ payment provider, end to end.** If the Hebrew admin is unpleasant for the son, o
 us, that must surface in week one — not month three.
 
 Then proceed in the order given in §13: content model → migration → frontend → store → media sync.
+
+---
+
+## 15. A real cost of the Payload choice: its CLI is fragile against Next 16
+
+Recorded during Task 01. **Payload's CLI tooling (`migrate:create`, `migrate`, `generate:types`) does
+not currently work in this project**, on either Node 22.23.2 (the pinned LTS) or Node 24.12.0, with
+every version pin the upstream issue tracker suggests applied. This is not a wait for someone else to
+fix something unrelated — it is a live gap in the stack this project is built on, and it cost real
+time to isolate. Recording it plainly rather than papering over it:
+
+**Two independent, verified root causes**, both confirmed with direct reproduction (not inferred from
+searching for the error text):
+
+1. `@payloadcms/richtext-lexical` depends on `lexical`, whose `*.node.mjs` entry files each do a
+   top-level `await import(...)` to pick a dev or prod build. Node refuses to `require()` any ESM
+   graph containing top-level await, and Payload's CLI loads the TypeScript config via a code path
+   that ends in `require()` — confirmed precisely with
+   `node --experimental-print-required-tla`, which names the exact files.
+2. `@payloadcms/db-postgres` imports `loadEnv` from `payload/node`, which does
+   `import nextEnvImport from '@next/env'` — a plain CommonJS package. That resolves correctly under
+   Next's own bundler and resolves to `undefined` under tsx's CJS/ESM interop, crashing on
+   `const { loadEnvConfig } = nextEnvImport`.
+
+Neither is the tsx-version bug named in payloadcms/payload#16949 (fixed by pinning tsx to 4.21.0 —
+done, and worth keeping regardless) nor purely the import-resolution bug in #16684 (fixed by using
+relative, `.ts`-extensioned imports in the config graph — also done, also worth keeping). Both fixes
+are real and are applied. Neither touches the two causes above.
+
+**The workaround**: `src/app/(payload)/api/dev-migrate/route.ts` calls the exact same
+`payload.db.createMigration()` / `payload.db.migrate()` methods the CLI calls, from inside a Next.js
+route handler — a process Next's own bundler builds correctly, sidestepping both bugs entirely.
+`scripts/dev-migrate.mjs` drives it: starts `next dev` with `PAYLOAD_MIGRATING=true` (Payload's own
+flag to skip the dev-mode schema push, which otherwise marks the database as dev-pushed and makes
+`migrate()` block on an interactive confirmation no route handler can ever answer), waits for the
+route to respond, calls it, shuts the server down. `npm run migrate:create` / `npm run migrate` use
+it. It also fixes a third, smaller issue the workaround itself exposed: Payload's generated migration
+template imports `MigrateUpArgs`/`MigrateDownArgs` as values when they are type-only exports —
+harmless under every bundler, which silently elide unused type imports, but a hard failure under the
+loader `payload.db.migrate()` uses here. The fix-up is a one-line, idempotent string replace on the
+freshly written file, not a forked template.
+
+**Verified, not assumed**: generated a real migration and read it (615 lines, the full schema — not
+an empty stub); applied it to a genuinely empty Neon database and confirmed the resulting schema —
+every table, every column and type — matches what `next dev`'s auto-push builds; confirmed the seed
+(`src/seed.ts`) runs clean against that freshly migrated database.
+
+**Delete `src/app/(payload)/api/dev-migrate/route.ts` and `scripts/dev-migrate.mjs`, and revert
+`migrate`/`migrate:create` in `package.json` to call `payload migrate` / `payload migrate:create`
+directly, once either root cause is fixed upstream** — check by running `payload migrate:create`
+directly; if it no longer throws `ERR_REQUIRE_ASYNC_MODULE`, the first cause is fixed, and the route's
+own doc comment names the second to check next.
+
+This is a genuine cost of choosing Payload, not a one-off surprise: a project with **no maintenance
+retainer** (see §7) will hit this exact class of problem again on some future Payload/Next/Node
+version bump, with nobody watching for it. The mitigation — routing schema tooling through Next's own
+bundler instead of Payload's CLI — is small and documented, but it is a workaround, and it should stay
+visible as one rather than being smoothed over into "migrations just work here."
