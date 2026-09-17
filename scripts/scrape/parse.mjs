@@ -171,11 +171,7 @@ function parsePriceText(text) {
 // the migration report for the exact source pages). "List price" is deliberately
 // excluded from the field map below — it is always ₪0.00/0.00€ (a template
 // default the shop never fills in) and importing it would be junk, not data.
-// English has no product DETAIL page in the current cache to verify against —
-// only category/listing pages, which use a different markup entirely
-// (`sop-product-list-price` / `sop-product-our-price` spans, no labeled
-// table). Left unmapped rather than guessed; extractProduct returns null for
-// English pages until a real detail page confirms the labels.
+// All three languages verified against real cached product detail pages.
 const PRODUCT_LABELS = {
   he: {
     'שם המוצר/פריט': 'title',
@@ -194,6 +190,15 @@ const PRODUCT_LABELS = {
     "Frais d'expédition": 'shipping',
     'Délai de livraison': 'deliveryTime',
     'Nom du fabricant': 'publisher',
+  },
+  en: {
+    'Product/Item Name': 'title',
+    'List Price': null, // list price — junk, always $0.00
+    'Our Price': 'price',
+    Tax: 'vat',
+    'Shipping Cost': 'shipping',
+    'Delivery time': 'deliveryTime',
+    'Manufacturer Name': 'publisher',
   },
 };
 
