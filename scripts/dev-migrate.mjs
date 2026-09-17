@@ -7,10 +7,18 @@
 //        node scripts/dev-migrate.mjs run
 import { spawn } from 'node:child_process'
 
+process.loadEnvFile('.env')
+
 const [, , action, migrationName] = process.argv
 
 if (action !== 'create' && action !== 'run') {
   console.error('Usage: dev-migrate.mjs <create [name]|run>')
+  process.exit(1)
+}
+
+const secret = process.env.DEV_MIGRATE_SECRET
+if (!secret) {
+  console.error('DEV_MIGRATE_SECRET is not set in .env — see .env.example.')
   process.exit(1)
 }
 
@@ -38,7 +46,7 @@ const shutdown = () => {
 async function waitForResponse(deadline) {
   while (Date.now() < deadline) {
     try {
-      return await fetch(url)
+      return await fetch(url, { headers: { 'x-dev-migrate-secret': secret } })
     } catch {
       await new Promise((resolve) => setTimeout(resolve, 1000))
     }

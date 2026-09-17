@@ -1,4 +1,5 @@
 import config from '@payload-config'
+import { timingSafeEqual } from 'node:crypto'
 import { readdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { NextResponse } from 'next/server'
@@ -25,7 +26,34 @@ import { getPayload } from 'payload'
  * Delete this route and scripts/dev-migrate.mjs once payloadcms/payload
  * fixes either cause and `payload migrate:create` / `payload migrate` work
  * directly — see docs/DECISIONS.md for the full record.
+ *
+ * SECURITY: this runs real schema migrations against whatever database
+ * DATABASE_URI points at, and route handlers ship in the production build —
+ * Next has no mechanism to exclude a file from the build based on an env
+ * check, so "dev-only" in the path is not a control, only a label. Two
+ * independent layers actually enforce it:
+ *   1. `src/proxy.ts` returns 404 for this path before this file ever runs,
+ *      whenever NODE_ENV is "production".
+ *   2. `isAuthorized` below refuses unless NODE_ENV is exactly "development"
+ *      AND a DEV_MIGRATE_SECRET matching the request's is set — a variable
+ *      that must never exist in a production environment's secrets. Either
+ *      layer alone should be enough; both exist so one being misconfigured
+ *      doesn't expose this.
+ * Every rejection returns a bare 404, identical to a route that doesn't
+ * exist — never 401/403, which would confirm the route is there.
  */
+
+function isAuthorized(request: Request): boolean {
+  if (process.env.NODE_ENV !== 'development') return false
+
+  const expected = process.env.DEV_MIGRATE_SECRET
+  if (!expected) return false
+
+  const provided = request.headers.get('x-dev-migrate-secret') ?? ''
+  const expectedBytes = Buffer.from(expected)
+  const providedBytes = Buffer.from(provided)
+  return expectedBytes.length === providedBytes.length && timingSafeEqual(expectedBytes, providedBytes)
+}
 
 // Payload's own migration template writes
 // `import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'`
@@ -42,20 +70,37 @@ const FIXED_IMPORT = [
   "import { sql } from '@payloadcms/db-postgres'",
 ].join('\n')
 
-async function fixMigrationImports(migrationDir: string): Promise<void> {
-  const files = await readdir(migrationDir)
-  for (const file of files.filter((name) => name.endsWith('.ts'))) {
-    const filePath = path.join(migrationDir, file)
-    const contents = await readFile(filePath, 'utf8')
-    if (contents.includes(BAD_IMPORT)) {
-      await writeFile(filePath, contents.replace(BAD_IMPORT, FIXED_IMPORT))
-    }
+async function listMigrationFiles(dir: string): Promise<Set<string>> {
+  try {
+    return new Set((await readdir(dir)).filter((name) => name.endsWith('.ts')))
+  } catch {
+    return new Set()
   }
 }
 
+/**
+ * Patches exactly the migration file `createMigration` just wrote. Throws
+ * rather than silently skipping when the expected text isn't there — this
+ * string match will stop matching the moment Payload changes its template,
+ * and a migration silently missing this fix fails far from this file, as a
+ * confusing runtime error inside `payload.db.migrate()` instead of here.
+ */
+async function fixMigrationImport(filePath: string): Promise<void> {
+  const contents = await readFile(filePath, 'utf8')
+  if (!contents.includes(BAD_IMPORT)) {
+    throw new Error(
+      `Expected to find the import line:\n  ${BAD_IMPORT}\nin ${filePath}, but it is not there. ` +
+        `Payload's migration template has likely changed — update BAD_IMPORT/FIXED_IMPORT in ` +
+        `src/app/(payload)/api/dev-migrate/route.ts to match the new template, or remove this ` +
+        `patch entirely if the template now imports its types correctly.`,
+    )
+  }
+  await writeFile(filePath, contents.replace(BAD_IMPORT, FIXED_IMPORT))
+}
+
 export async function GET(request: Request): Promise<Response> {
-  if (process.env.NODE_ENV === 'production') {
-    return NextResponse.json({ error: 'dev only' }, { status: 404 })
+  if (!isAuthorized(request)) {
+    return NextResponse.json(null, { status: 404 })
   }
 
   const { searchParams } = new URL(request.url)
@@ -63,6 +108,7 @@ export async function GET(request: Request): Promise<Response> {
   const payload = await getPayload({ config })
 
   if (action === 'create') {
+    const before = await listMigrationFiles(payload.db.migrationDir)
     await payload.db.createMigration({
       payload,
       migrationName: searchParams.get('name') ?? undefined,
@@ -70,7 +116,12 @@ export async function GET(request: Request): Promise<Response> {
       // a run is ever triggered with no schema changes to record.
       forceAcceptWarning: true,
     })
-    await fixMigrationImports(payload.db.migrationDir)
+    const after = await listMigrationFiles(payload.db.migrationDir)
+    const newFile = [...after].find((name) => !before.has(name))
+    if (!newFile) {
+      throw new Error(`createMigration did not produce a new file in ${payload.db.migrationDir}`)
+    }
+    await fixMigrationImport(path.join(payload.db.migrationDir, newFile))
     return NextResponse.json({ ok: true, action: 'create' })
   }
 
