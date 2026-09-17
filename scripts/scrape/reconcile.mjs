@@ -96,12 +96,15 @@ function dedupeSameSite(pages, siteKey) {
       byTitle.set(norm, {
         site: siteKey,
         normTitle: norm,
-        titles: new Set(),
+        // Array, not Set: this object (or its `titles` field) sometimes goes
+        // straight into JSON.stringify (the AMBIGUOUS bucket does, below) —
+        // a Set silently serialises to `{}`, losing every title in it.
+        titles: [],
         pages: [],
       });
     }
     const entry = byTitle.get(norm);
-    entry.titles.add(page.product.title);
+    if (!entry.titles.includes(page.product.title)) entry.titles.push(page.product.title);
     entry.pages.push(page);
   }
   return byTitle;
