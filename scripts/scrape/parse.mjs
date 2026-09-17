@@ -13,7 +13,7 @@
 //
 // Usage: node parse.mjs [--site=he|fr|en] [--boilerplate=0.5]
 
-import { readdir, readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 import * as cheerio from 'cheerio';
 import { SITES } from './seeds.mjs';
@@ -28,6 +28,9 @@ const args = Object.fromEntries(
 const ONLY_SITE = args.site ?? null;
 // A block seen on more than this share of pages is treated as chrome.
 const BOILERPLATE_THRESHOLD = args.boilerplate ? Number(args.boilerplate) : 0.5;
+// Pages below this many words of real content (after stripping chrome,
+// breadcrumb, and title) are stubs, not articles — see classify().
+const EMPTY_WORD_THRESHOLD = 40;
 
 const CACHE_ROOT = join(process.cwd(), '.cache');
 const OUT_ROOT = join(process.cwd(), 'out');
@@ -36,22 +39,84 @@ const decodeSafe = (u) => { try { return decodeURIComponent(u); } catch { return
 // Currency before amount, or amount before currency — both occur on these pages.
 const PRICE_RE = /[₪€$]\s?[\d,]+(?:\.\d{1,2})?|[\d,]+(?:\.\d{1,2})?\s?[₪€$]/;
 const norm = (s) => s.replace(/\s+/g, ' ').trim();
+const wordCount = (s) => (s ? s.split(/\s+/).filter(Boolean).length : 0);
 
-/** Every text block on the page, in order, with its DOM path for debugging. */
+/**
+ * Every leaf text block on the page, in order, paired with its element.
+ *
+ * "Leaf" means: this node has none of the same block-ish tags anywhere in its
+ * *descendants* — including `span`. Two compounding bugs in the original:
+ *
+ * 1. It selected `span` but excluded on children matching only
+ *    `p, div, td, li, h1-h4` — so a `<div><span>text</span></div>` emitted
+ *    the div's aggregated text AND the span's text as two blocks.
+ * 2. It checked `.children()` (direct children only), not `.find()` (all
+ *    descendants). A `<td>` whose real content is nested two levels down,
+ *    e.g. `<td>...<table><tr><td>the actual paragraph</td></tr></table></td>`,
+ *    has no *direct* block-level child, so it was never excluded either —
+ *    its `.text()` re-aggregates everything already counted by the nested
+ *    real leaf, on top of it.
+ *
+ * Together these inflated word counts by roughly 4x on pages with deeply
+ * nested table layouts (verified against vayera.html: 19,242 words with only
+ * bug 1 fixed, 4,806 — matching the article body's own word count exactly —
+ * with both fixed).
+ */
+const BLOCK_SELECTOR = 'p, div, td, li, h1, h2, h3, h4, span';
+
 function blocksOf($) {
   const out = [];
   $('body')
-    .find('p, div, td, li, h1, h2, h3, h4, span')
+    .find(BLOCK_SELECTOR)
     .each((_, el) => {
       const $el = $(el);
-      // Only leaf-ish nodes, so we don't count a wrapper and its children twice.
-      if ($el.children('p, div, td, li, h1, h2, h3, h4').length > 0) return;
+      if ($el.find(BLOCK_SELECTOR).length > 0) return;
       const text = norm($el.text());
       // Keep short blocks too when they carry a price — "₪80.00" is twelve
       // characters and is the single most important string on a product page.
-      if (text.length >= 20 || PRICE_RE.test(text)) out.push(text);
+      if (text.length >= 20 || PRICE_RE.test(text)) out.push({ text, el });
     });
   return out;
+}
+
+/** A block is title-shaped if its own markup is bold — real body paragraphs on
+ * these pages are not. Used to tell an actual title from the first sentence
+ * of body prose, so we never invent a title where the page has none. */
+function isBoldBlock($, el) {
+  const $el = $(el);
+  return $el.is('strong, b') || $el.find('strong, b').length > 0;
+}
+
+/**
+ * Every page opens with a ">>"-separated breadcrumb, e.g.
+ * "Accueil >> La page du rav >> L'essence de la Torah >> ספר בראשית >> vayera",
+ * in a `<td>` alongside the nav chrome (verified: `#centerWebsiteDiv td` whose
+ * text contains "»»"/">>" — the surrounding `&nbsp;` collapses under norm()).
+ * Returns null if a page genuinely has none (none observed so far, but the
+ * legacy pages have surprised us before).
+ */
+function extractBreadcrumb($) {
+  const $td = $('#centerWebsiteDiv td')
+    .filter((_, el) => $(el).text().includes('>>'))
+    .first();
+  if ($td.length === 0) return null;
+  const raw = norm($td.text());
+  const items = raw.split(/\s*>>\s*/).map(norm).filter(Boolean);
+  return { raw, items, el: $td.get(0) };
+}
+
+/**
+ * The first content block after the breadcrumb, if it is title-shaped (bold —
+ * see isBoldBlock). Several essays genuinely have no title line at all; for
+ * those this returns null rather than promoting the opening sentence of body
+ * text to a fabricated title.
+ */
+function extractTitle($, contentBlocks) {
+  const first = contentBlocks[0];
+  if (!first) return null;
+  if (!isBoldBlock($, first.el)) return null;
+  if (wordCount(first.text) > 30) return null; // too long to be a title, not body prose
+  return first.text;
 }
 
 function extractMedia($, html) {
@@ -97,12 +162,71 @@ function extractPrices(text) {
   return found;
 }
 
-function classify({ title, content, prices, media, url }) {
-  const words = content.split(/\s+/).filter(Boolean).length;
-  // Check for a price FIRST. Product pages are legitimately short — treating
-  // shortness as emptiness before looking for a price hides the whole catalogue.
-  if (prices.some((p) => p.value > 0) && words < 400) return 'product';
-  if (words < 25 && media.youtube.length === 0) return 'empty-or-stub';
+function parsePriceText(text) {
+  const [first] = extractPrices(text);
+  return first ?? null;
+}
+
+// Verified against cached pages, one per site (see scripts/scrape/README or
+// the migration report for the exact source pages). "List price" is deliberately
+// excluded from the field map below — it is always ₪0.00/0.00€ (a template
+// default the shop never fills in) and importing it would be junk, not data.
+// English has no product DETAIL page in the current cache to verify against —
+// only category/listing pages, which use a different markup entirely
+// (`sop-product-list-price` / `sop-product-our-price` spans, no labeled
+// table). Left unmapped rather than guessed; extractProduct returns null for
+// English pages until a real detail page confirms the labels.
+const PRODUCT_LABELS = {
+  he: {
+    'שם המוצר/פריט': 'title',
+    'מחיר מחירון': null, // list price — junk, always ₪0.00
+    'המחיר שלנו': 'price',
+    'מע"מ': 'vat',
+    'דמי משלוח': 'shipping',
+    'זמן אספקה': 'deliveryTime',
+    'שם היצרן': 'publisher',
+  },
+  fr: {
+    'Nom du produit': 'title',
+    'Prix conseillé': null, // list price — junk, always 0.00€
+    'Notre prix': 'price',
+    'T V A': 'vat',
+    "Frais d'expédition": 'shipping',
+    'Délai de livraison': 'deliveryTime',
+    'Nom du fabricant': 'publisher',
+  },
+};
+
+/** Returns null for pages that are not product detail pages. */
+function extractProduct($, siteKey) {
+  const $table = $('table.sop_productInfo').first();
+  if ($table.length === 0) return null;
+
+  const labels = PRODUCT_LABELS[siteKey];
+  const product = { title: null, price: null, vat: null, shipping: null, deliveryTime: null, publisher: null };
+
+  $table.find('tr').each((_, tr) => {
+    const $tds = $(tr).find('> td');
+    if ($tds.length < 2) return;
+    const label = norm($tds.eq(0).text()).replace(/:$/, '');
+    const field = labels?.[label];
+    if (!field) return; // unmapped label (e.g. list price, warranty period) — skip
+    const valueText = norm($tds.eq(1).text());
+    product[field] = field === 'price' || field === 'shipping' ? parsePriceText(valueText) : valueText;
+  });
+
+  // Present on every product page regardless of language — the div id is
+  // fixed by the platform template, unlike its section heading text.
+  const description = norm($('#longMessageMEM').text());
+  product.description = description.length > 0 ? description : null;
+
+  return product;
+}
+
+function classify({ content, product, media, url }) {
+  if (product) return 'product';
+  const words = wordCount(content);
+  if (words < EMPTY_WORD_THRESHOLD && media.youtube.length === 0) return 'empty-or-stub';
   if (media.youtube.length >= 3 && words < 300) return 'media-index';
   if (words > 800) return 'long-article';
   if (/Category|Store|Livres|boutique|חנות/i.test(decodeSafe(url))) return 'store-category';
@@ -136,7 +260,7 @@ async function parseSite(key, site) {
     const $ = cheerio.load(html);
     $('script, style, noscript').remove();
     const blocks = blocksOf($);
-    for (const b of new Set(blocks)) blockCounts.set(b, (blockCounts.get(b) ?? 0) + 1);
+    for (const b of new Set(blocks.map((b) => b.text))) blockCounts.set(b, (blockCounts.get(b) ?? 0) + 1);
     docs.push({ entry, html, $, blocks });
   }
 
@@ -144,14 +268,19 @@ async function parseSite(key, site) {
   const chrome = new Set([...blockCounts].filter(([, n]) => n >= chromeCutoff).map(([b]) => b));
   console.log(`  ${chrome.size} boilerplate blocks detected (on >= ${chromeCutoff} of ${docs.length} pages)`);
 
-  // Pass 2: strip the chrome and extract.
+  // Pass 2: strip the chrome and the breadcrumb, pull the title, extract.
   const pages = [];
   for (const { entry, html, $, blocks } of docs) {
-    const body = blocks.filter((b) => !chrome.has(b));
-    const content = body.join('\n\n');
+    const breadcrumb = extractBreadcrumb($);
+    const withoutChrome = blocks.filter((b) => !chrome.has(b.text) && b.text !== breadcrumb?.raw);
+
+    const title = extractTitle($, withoutChrome);
+    const contentBlocks = title !== null ? withoutChrome.slice(1) : withoutChrome;
+    const content = contentBlocks.map((b) => b.text).join('\n\n');
+
     const media = extractMedia($, html);
+    const product = extractProduct($, key);
     const prices = extractPrices(content);
-    const title = norm($('title').text()).replace(/^רמחל\s*-\s*/, '');
     const headings = $('h1, h2, h3').map((_, el) => norm($(el).text())).get().filter(Boolean);
 
     pages.push({
@@ -159,10 +288,12 @@ async function parseSite(key, site) {
       url: entry.url,
       urlDecoded: decodeSafe(entry.url),
       slug: decodeSafe(new URL(entry.url).pathname),
+      breadcrumb: breadcrumb?.items ?? null,
       title,
       headings,
-      type: classify({ title, content, prices, media, url: entry.url }),
-      wordCount: content.split(/\s+/).filter(Boolean).length,
+      type: classify({ content, product, media, url: entry.url }),
+      wordCount: wordCount(content),
+      product,
       prices,
       media,
       content,
@@ -181,7 +312,7 @@ async function parseSite(key, site) {
     totalWords: pages.reduce((n, p) => n + p.wordCount, 0),
     youtubeRefs: pages.reduce((n, p) => n + p.media.youtube.length, 0),
     mp3Refs: pages.reduce((n, p) => n + p.media.audio.length, 0),
-    pricesFound: pages.reduce((n, p) => n + p.prices.length, 0),
+    productsFound: pages.filter((p) => p.product).length,
     emptyPages: pages.filter((p) => p.type === 'empty-or-stub').map((p) => p.urlDecoded),
   };
 }
@@ -195,7 +326,7 @@ async function run() {
     if (r) {
       report[key] = r;
       console.log(`  types:`, r.byType);
-      console.log(`  ${r.totalWords.toLocaleString()} words · ${r.youtubeRefs} YouTube refs · ${r.pricesFound} prices`);
+      console.log(`  ${r.totalWords.toLocaleString()} words · ${r.youtubeRefs} YouTube refs · ${r.productsFound} products`);
     }
   }
   await mkdir(OUT_ROOT, { recursive: true });
