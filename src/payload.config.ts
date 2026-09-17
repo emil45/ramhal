@@ -8,24 +8,37 @@ import sharp from 'sharp'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
 
-import { Announcements } from '@/collections/Announcements'
-import { Articles } from '@/collections/Articles'
-import { Books } from '@/collections/Books'
-import { Categories } from '@/collections/Categories'
-import { Events } from '@/collections/Events'
-import { Lessons } from '@/collections/Lessons'
-import { Media } from '@/collections/Media'
-import { Pages } from '@/collections/Pages'
-import { Series } from '@/collections/Series'
-import { Users } from '@/collections/Users'
-import { Schedule } from '@/globals/Schedule'
-import { ShippingSettings } from '@/globals/ShippingSettings'
-import { SiteSettings } from '@/globals/SiteSettings'
-import { requireEnv } from '@/lib/env'
+// Relative, extensioned imports below — not the `@/` alias used elsewhere in
+// the app. Payload's CLI (migrate, generate:types) loads this file through a
+// nested tsx worker that resolves modules with Node's own ESM algorithm, not
+// Turbopack's, and does not follow tsconfig `paths`. See
+// https://github.com/payloadcms/payload/issues/16684.
+import { Announcements } from './collections/Announcements.ts'
+import { Articles } from './collections/Articles.ts'
+import { Books } from './collections/Books.ts'
+import { Categories } from './collections/Categories.ts'
+import { Events } from './collections/Events.ts'
+import { Lessons } from './collections/Lessons.ts'
+import { Media } from './collections/Media.ts'
+import { Pages } from './collections/Pages.ts'
+import { Series } from './collections/Series.ts'
+import { Users } from './collections/Users.ts'
+import { Schedule } from './globals/Schedule.ts'
+import { ShippingSettings } from './globals/ShippingSettings.ts'
+import { SiteSettings } from './globals/SiteSettings.ts'
+import { requireEnv } from './lib/env.ts'
+import { seed } from './seed.ts'
 
 export default buildConfig({
   admin: {
     user: Users.slug,
+  },
+  // Idempotent — see src/seed.ts. Runs on every boot instead of a one-off
+  // CLI script because `payload run` currently can't load this config file
+  // outside Next's bundler in this dependency combination — see
+  // scripts/seed.ts for the two upstream bugs.
+  onInit: async (payload) => {
+    await seed(payload)
   },
   editor: lexicalEditor(),
   collections: [Users, Media, Books, Categories, Series, Lessons, Articles, Pages, Announcements, Events],

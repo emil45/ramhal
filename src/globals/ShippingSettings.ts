@@ -1,7 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
-import { CURRENCIES } from '@/lib/currency'
-import { validateIntegerAmount } from '@/lib/validateIntegerAmount'
+import { CURRENCIES } from '../lib/currency.ts'
+import { validateIntegerAmount } from '../lib/validateIntegerAmount.ts'
 
 // The shipping rules engine, editable by the son. Payload's ecommerce plugin
 // ships no shipping logic at all (verified — see docs/DECISIONS.md §5), so

@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { PARSHIYOT } from '@/collections/parshiyot'
+import { PARSHIYOT } from './parshiyot.ts'
 
 const HOLIDAYS = [
   'ימים נוראים',
@@ -79,6 +79,7 @@ export const Articles: CollectionConfig = {
       name: 'legacyUrls',
       type: 'array',
       label: 'כתובות ישנות',
+      labels: { singular: 'כתובת ישנה', plural: 'כתובות ישנות' },
       admin: {
         hidden: true,
       },

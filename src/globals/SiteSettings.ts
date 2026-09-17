@@ -1,6 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
-import { CURRENCIES } from '@/lib/currency'
+import { CURRENCIES } from '../lib/currency.ts'
 
 // Contact details, social links, the currency shown per locale.
 export const SiteSettings: GlobalConfig = {

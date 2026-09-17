@@ -1,8 +1,8 @@
 import type { CollectionConfig } from 'payload'
 
-import { generateSlugFromTitle } from '@/collections/hooks/generateSlugFromTitle'
-import { CURRENCIES } from '@/lib/currency'
-import { validateIntegerAmount } from '@/lib/validateIntegerAmount'
+import { generateSlugFromTitle } from './hooks/generateSlugFromTitle.ts'
+import { CURRENCIES } from '../lib/currency.ts'
+import { validateIntegerAmount } from '../lib/validateIntegerAmount.ts'
 
 const BOOK_LANGUAGES = [
   { label: 'עברית', value: 'he' },
@@ -159,7 +159,7 @@ export const Books: CollectionConfig = {
     {
       name: 'isbn',
       type: 'text',
-      label: 'ISBN',
+      label: 'מספר ISBN',
     },
     {
       name: 'relatedSeries',
@@ -172,6 +172,7 @@ export const Books: CollectionConfig = {
       name: 'legacyUrls',
       type: 'array',
       label: 'כתובות ישנות',
+      labels: { singular: 'כתובת ישנה', plural: 'כתובות ישנות' },
       admin: {
         hidden: true,
       },

@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { generateSlugFromTitle } from '@/collections/hooks/generateSlugFromTitle'
+import { generateSlugFromTitle } from './hooks/generateSlugFromTitle.ts'
 
 export const Categories: CollectionConfig = {
   slug: 'categories',

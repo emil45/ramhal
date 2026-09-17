@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { generateSlugFromTitle } from '@/collections/hooks/generateSlugFromTitle'
+import { generateSlugFromTitle } from './hooks/generateSlugFromTitle.ts'
 
 // Institutional pages: about the institute, Beit Ramhal, contact, donations.
 export const Pages: CollectionConfig = {
@@ -40,6 +40,7 @@ export const Pages: CollectionConfig = {
       name: 'legacyUrls',
       type: 'array',
       label: 'כתובות ישנות',
+      labels: { singular: 'כתובת ישנה', plural: 'כתובות ישנות' },
       admin: {
         hidden: true,
       },
