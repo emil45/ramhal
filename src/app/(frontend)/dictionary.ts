@@ -5,7 +5,7 @@ import type { Locale } from '@/lib/locale'
 // generic, build the specific. No i18n library earns its keep here.
 const DICTIONARIES = {
   he: {
-    nav: { home: 'מכון רמח״ל', ramhal: 'הרמח״ל', chriqui: 'הרב שריקי', cart: 'עגלה' },
+    nav: { home: 'מכון רמח״ל', catalogue: 'ספרים', ramhal: 'הרמח״ל', chriqui: 'הרב שריקי', cart: 'עגלה' },
     catalogue: {
       title: 'קטלוג הספרים',
       searchPlaceholder: 'חיפוש לפי כותרת…',
@@ -54,9 +54,20 @@ const DICTIONARIES = {
       unknown: 'לא ידוע',
     },
     footer: { rights: 'מכון רמח״ל · כל הזכויות שמורות' },
+    home: {
+      tagline: 'מכון רמח״ל מפרסם ומלמד את כתבי רבנו רמח״ל, בהנהגת הרב מרדכי שריקי.',
+      browseCatalogue: 'לקטלוג הספרים',
+      announcementsTitle: 'הודעות',
+      newBooksTitle: 'ספרים חדשים',
+      viewAllBooks: 'לכל הספרים',
+      scheduleTitle: 'לוח זמנים',
+      shiurimTitle: 'שיעורים',
+      prayersTitle: 'תפילות',
+      eventsTitle: 'אירועים קרובים',
+    },
   },
   en: {
-    nav: { home: 'Machon Ramhal', ramhal: 'The Ramhal', chriqui: 'Rabbi Chriqui', cart: 'Cart' },
+    nav: { home: 'Machon Ramhal', catalogue: 'Books', ramhal: 'The Ramhal', chriqui: 'Rabbi Chriqui', cart: 'Cart' },
     catalogue: {
       title: 'Book Catalogue',
       searchPlaceholder: 'Search by title…',
@@ -106,9 +117,20 @@ const DICTIONARIES = {
       unknown: 'Unknown',
     },
     footer: { rights: 'Machon Ramhal · All rights reserved' },
+    home: {
+      tagline: 'Machon Ramhal publishes and teaches the writings of the Ramhal, under the guidance of Rabbi Mordechai Chriqui.',
+      browseCatalogue: 'Browse the catalogue',
+      announcementsTitle: 'Announcements',
+      newBooksTitle: 'New books',
+      viewAllBooks: 'View all books',
+      scheduleTitle: 'Schedule',
+      shiurimTitle: 'Shiurim',
+      prayersTitle: 'Prayer times',
+      eventsTitle: 'Upcoming events',
+    },
   },
   fr: {
-    nav: { home: 'Institut Ramhal', ramhal: 'Le Ramhal', chriqui: 'Rav Chriqui', cart: 'Panier' },
+    nav: { home: 'Institut Ramhal', catalogue: 'Livres', ramhal: 'Le Ramhal', chriqui: 'Rav Chriqui', cart: 'Panier' },
     catalogue: {
       title: 'Catalogue des livres',
       searchPlaceholder: 'Rechercher un titre…',
@@ -158,6 +180,17 @@ const DICTIONARIES = {
       unknown: 'Inconnue',
     },
     footer: { rights: "Institut Ramhal · Tous droits réservés" },
+    home: {
+      tagline: "L'Institut Ramhal publie et enseigne les écrits du Ramhal, sous la direction du Rav Mordekhaï Chriqui.",
+      browseCatalogue: 'Voir le catalogue',
+      announcementsTitle: 'Annonces',
+      newBooksTitle: 'Nouveautés',
+      viewAllBooks: 'Voir tous les livres',
+      scheduleTitle: 'Horaires',
+      shiurimTitle: 'Cours',
+      prayersTitle: 'Offices',
+      eventsTitle: 'Événements à venir',
+    },
   },
 } as const
 

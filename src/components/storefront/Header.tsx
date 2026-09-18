@@ -2,7 +2,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { LocaleSwitcher } from '@/components/storefront/LocaleSwitcher'
-import { localePath } from '@/lib/routes'
+import { cataloguePath, localePath } from '@/lib/routes'
 
 import type { Dictionary } from '@/app/(frontend)/dictionary'
 import type { Locale } from '@/lib/locale'
@@ -17,6 +17,9 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
         </Link>
 
         <nav className="flex items-center gap-4 text-sm">
+          <Link href={cataloguePath(locale)} className="text-muted-foreground hover:text-foreground">
+            {dict.nav.catalogue}
+          </Link>
           <Link href={localePath(locale, '/ramhal')} className="text-muted-foreground hover:text-foreground">
             {dict.nav.ramhal}
           </Link>
