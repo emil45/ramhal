@@ -61,17 +61,41 @@ const wordCount = (s) => (s ? s.split(/\s+/).filter(Boolean).length : 0);
  * nested table layouts (verified against vayera.html: 19,242 words with only
  * bug 1 fixed, 4,806 — matching the article body's own word count exactly —
  * with both fixed).
+ *
+ * The fix for bug 1 (excluding any element with a nested block descendant,
+ * `span` included) over-corrected: for `<p>text <span>x</span> text</p>`,
+ * the `<p>` has a `span` descendant, so the whole paragraph was excluded and
+ * only the span's text survived — the surrounding prose was silently
+ * dropped, not merely double-counted (see
+ * docs/reviews/REVIEW-01-findings.md #8). `ownText()` below fixes this by
+ * taking, per element, only the text that is not already owned by a nested
+ * block — so a wrapper with no text of its own (bug 2's nested table) still
+ * contributes nothing, but a paragraph with inline markup keeps its own
+ * prose while the nested span is still counted once, separately.
  */
 const BLOCK_SELECTOR = 'p, div, td, li, h1, h2, h3, h4, span';
+
+/** Text belonging to `el` itself: its own text nodes plus any inline
+ * (non-block) descendant's text, but never text already owned by a nested
+ * block-selector match — that text is that block's own entry instead. */
+function ownText($, el) {
+  return $(el)
+    .contents()
+    .map((_, node) => {
+      if (node.type === 'text') return node.data;
+      const $node = $(node);
+      return $node.is(BLOCK_SELECTOR) ? '' : $node.text();
+    })
+    .get()
+    .join('');
+}
 
 function blocksOf($) {
   const out = [];
   $('body')
     .find(BLOCK_SELECTOR)
     .each((_, el) => {
-      const $el = $(el);
-      if ($el.find(BLOCK_SELECTOR).length > 0) return;
-      const text = norm($el.text());
+      const text = norm(ownText($, el));
       // Keep short blocks too when they carry a price — "₪80.00" is twelve
       // characters and is the single most important string on a product page.
       if (text.length >= 20 || PRICE_RE.test(text)) out.push({ text, el });
@@ -119,6 +143,22 @@ function extractTitle($, contentBlocks) {
   return first.text;
 }
 
+/** Every non-tracker `<img>` on the page, in document order. Pulled out of
+ * extractMedia() so parseSite()'s pass 1 can count image occurrences across
+ * a site the same way it already counts text blocks (see blocksOf's own
+ * comment) — an image repeated on nearly every page is chrome (nav icons,
+ * "other products" sidebar thumbnails), not that page's own content. */
+function pageImages($) {
+  const images = [];
+  $('img').each((_, el) => {
+    const src = $(el).attr('src');
+    if (src && !/spacer|pixel|blank|\.gif$/i.test(src)) {
+      images.push({ src, alt: $(el).attr('alt') ?? null });
+    }
+  });
+  return images;
+}
+
 function extractMedia($, html) {
   const youtube = new Set();
   // Embedded players, playlists, and bare links all appear on these pages.
@@ -130,13 +170,7 @@ function extractMedia($, html) {
   }
   for (const m of html.matchAll(/youtu\.be\/([\w-]{6,})/gi)) youtube.add({ type: 'video', id: m[1] });
 
-  const images = [];
-  $('img').each((_, el) => {
-    const src = $(el).attr('src');
-    if (src && !/spacer|pixel|blank|\.gif$/i.test(src)) {
-      images.push({ src, alt: $(el).attr('alt') ?? null });
-    }
-  });
+  const images = pageImages($);
 
   const audio = [];
   for (const m of html.matchAll(/https?:\/\/[^\s"'<>]+\.mp3/gi)) audio.push(m[0]);
@@ -256,9 +290,11 @@ async function parseSite(key, site) {
   const byKey = new Map(entries.map((e) => [e.key, e]));
   console.log(`  ${byKey.size} cached pages`);
 
-  // Pass 1: read everything, count how often each text block occurs.
+  // Pass 1: read everything, count how often each text block and each image
+  // occurs.
   const docs = [];
   const blockCounts = new Map();
+  const imageCounts = new Map();
   for (const entry of byKey.values()) {
     let html;
     try { html = await readFile(join(cacheDir, `${entry.key}.html`), 'utf8'); } catch { continue; }
@@ -266,12 +302,21 @@ async function parseSite(key, site) {
     $('script, style, noscript').remove();
     const blocks = blocksOf($);
     for (const b of new Set(blocks.map((b) => b.text))) blockCounts.set(b, (blockCounts.get(b) ?? 0) + 1);
+    for (const src of new Set(pageImages($).map((img) => img.src))) imageCounts.set(src, (imageCounts.get(src) ?? 0) + 1);
     docs.push({ entry, html, $, blocks });
   }
 
   const chromeCutoff = Math.max(2, Math.floor(docs.length * BOILERPLATE_THRESHOLD));
   const chrome = new Set([...blockCounts].filter(([, n]) => n >= chromeCutoff).map(([b]) => b));
   console.log(`  ${chrome.size} boilerplate blocks detected (on >= ${chromeCutoff} of ${docs.length} pages)`);
+  // Same idea as boilerplate text blocks: an image repeated across most of a
+  // site's pages is a nav icon or "other products" sidebar thumbnail, not
+  // that page's own content — verified against the real crawl, where a
+  // product page's sidebar repeats the identical ~18 thumbnails site-wide
+  // and the genuine product image (when the page has one) is one of only a
+  // handful appearing on exactly one page.
+  const chromeImages = new Set([...imageCounts].filter(([, n]) => n >= chromeCutoff).map(([src]) => src));
+  console.log(`  ${chromeImages.size} boilerplate images detected (on >= ${chromeCutoff} of ${docs.length} pages)`);
 
   // Pass 2: strip the chrome and the breadcrumb, pull the title, extract.
   const pages = [];
@@ -284,6 +329,7 @@ async function parseSite(key, site) {
     const content = contentBlocks.map((b) => b.text).join('\n\n');
 
     const media = extractMedia($, html);
+    media.images = media.images.filter((img) => !chromeImages.has(img.src));
     const product = extractProduct($, key);
     const prices = extractPrices(content);
     const headings = $('h1, h2, h3').map((_, el) => norm($(el).text())).get().filter(Boolean);
@@ -339,4 +385,10 @@ async function run() {
   console.log(`\nWrote out/*.json and out/report.json`);
 }
 
-run().catch((e) => { console.error(e); process.exit(1); });
+// Guarded so this module can be imported for its fixture tests
+// (parse.test.mjs) without triggering a real crawl-output run.
+if (process.argv[1] && import.meta.url === `file://${process.argv[1]}`) {
+  run().catch((e) => { console.error(e); process.exit(1); });
+}
+
+export { blocksOf };
