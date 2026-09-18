@@ -2,7 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { generateSlugFromTitle } from './hooks/generateSlugFromTitle.ts'
 import { CURRENCIES } from '../lib/currency.ts'
-import { validateIntegerAmount } from '../lib/validateIntegerAmount.ts'
+import { validateMoneyAmount } from '../lib/validateIntegerAmount.ts'
 
 const BOOK_LANGUAGES = [
   { label: 'עברית', value: 'he' },
@@ -10,6 +10,11 @@ const BOOK_LANGUAGES = [
   { label: 'English', value: 'en' },
   { label: 'עברית/צרפתית', value: 'he-fr' },
   { label: 'ארמית/צרפתית', value: 'aramaic-fr' },
+  // A Latin-script title with no shelf category is genuinely ambiguous
+  // between French and English — script detection cannot tell them apart.
+  // See docs/reviews/REVIEW-01-findings.md #7: guessing "English" here
+  // corrupted the French catalogue. This value preserves that uncertainty.
+  { label: 'לא ידוע (דורש בדיקה)', value: 'unknown' },
 ]
 
 // Why each book might need a human look before it's trusted — see
@@ -19,6 +24,8 @@ const REVIEW_REASONS = [
   { label: 'פער מחירים', value: 'price-mismatch' },
   { label: 'לא קיים בעברית', value: 'absent-from-hebrew' },
   { label: 'התאמה לא ודאית', value: 'ambiguous-match' },
+  { label: 'שפה לא ודאית', value: 'language-uncertain' },
+  { label: 'מחיר אפס', value: 'zero-price' },
 ]
 
 // Each book is a work, not a SKU — see docs/DECISIONS.md §1.
@@ -75,11 +82,15 @@ export const Books: CollectionConfig = {
       options: BOOK_LANGUAGES,
     },
     {
+      // Not required: a book imported with an uncertain bookLanguage (see
+      // above) has no honest category to fall back to either — the legacy
+      // sites' own category names are exactly hebrew-books/french-books/
+      // english-books, so inventing one would repeat the same guess. Left
+      // blank and flagged (language-uncertain) instead.
       name: 'category',
       type: 'relationship',
       label: 'קטגוריה',
       relationTo: 'categories',
-      required: true,
     },
     {
       name: 'prices',
@@ -102,7 +113,7 @@ export const Books: CollectionConfig = {
           label: 'סכום',
           required: true,
           min: 0,
-          validate: validateIntegerAmount,
+          validate: validateMoneyAmount,
           admin: {
             description: 'Minor units (agorot/cents) as an integer — never a float.',
           },
@@ -151,11 +162,17 @@ export const Books: CollectionConfig = {
     },
     {
       // Drives "new books" on the homepage automatically — no manual
-      // "featured" flag for anyone to forget to clear.
+      // "featured" flag for anyone to forget to clear. Left blank means
+      // genuinely unknown (most of the legacy catalogue): a fabricated date
+      // would make historical stock read as newly published. See importedAt
+      // below for when the record was brought into this system, which is a
+      // different fact and must never be confused with this one.
       name: 'publishedAt',
       type: 'date',
       label: 'תאריך פרסום',
-      required: true,
+      admin: {
+        description: 'השאירו ריק אם תאריך הפרסום האמיתי אינו ידוע.',
+      },
     },
     {
       name: 'hebrewYear',
@@ -224,6 +241,18 @@ export const Books: CollectionConfig = {
       type: 'text',
       label: 'מפתח ייבוא',
       unique: true,
+      admin: {
+        hidden: true,
+      },
+    },
+    {
+      // The one fact publishedAt must never be filled in with: when the
+      // legacy-site import created this record. Audit trail, not editorial
+      // content — set once at creation, never shown or edited.
+      name: 'importedAt',
+      type: 'date',
+      label: 'תאריך יבוא',
+      defaultValue: () => new Date().toISOString(),
       admin: {
         hidden: true,
       },

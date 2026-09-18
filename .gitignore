@@ -17,6 +17,10 @@
 /.next/
 /out/
 
+# Payload's local disk upload storage (src/collections/Media.ts) — generated
+# by imports/admin uploads, not source.
+/media/
+
 # production
 /build
 

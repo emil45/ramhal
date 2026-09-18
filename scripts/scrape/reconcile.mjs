@@ -236,6 +236,7 @@ function buildImportView(bySite) {
   const descriptions = {};
   const prices = {};
   const categories = {};
+  const images = {};
   for (const site of SITES) {
     const entry = bySite[site];
     if (!entry) continue;
@@ -244,6 +245,10 @@ function buildImportView(bySite) {
     descriptions[site] = page.product.description;
     prices[site] = page.product.price;
     categories[site] = entry.pages.map(categoryOf).find((c) => c) ?? null;
+    // Chrome (nav icons, "other products" sidebar thumbnails) is already
+    // stripped out by parse.mjs's own site-wide repetition check — what's
+    // left, when anything is, is that page's own product image.
+    images[site] = (page.media?.images ?? []).map((img) => img.src);
   }
 
   const missingDescriptionIn = SITES.filter((s) => bySite[s] && !descriptions[s]);
@@ -264,6 +269,13 @@ function buildImportView(bySite) {
     priceImplausible = ratio > 1.6; // beyond normal rounding/shipping noise
   }
 
+  // A real €0.00/₪0.00/$0.00 in the actual price field (not the excluded
+  // list-price field, already dropped by parse.mjs) — seen on the French
+  // site for a real product. priceImplausible can't catch this: it compares
+  // prices ACROSS sites, and a single site with no other site to compare
+  // against never reaches that check.
+  const priceZero = Object.values(prices).some((p) => p && p.value === 0);
+
   return {
     titles,
     descriptions,
@@ -271,6 +283,8 @@ function buildImportView(bySite) {
     prices,
     missingPriceIn,
     priceImplausible,
+    priceZero,
+    images,
     categories,
     categoryDisagreement,
     missingFromSite,
@@ -280,6 +294,7 @@ function buildImportView(bySite) {
       missingDescriptionIn.length > 0 ||
       categoryDisagreement ||
       priceImplausible ||
+      priceZero ||
       (!bySite.he && (bySite.fr || bySite.en)),
   };
 }
@@ -441,13 +456,15 @@ async function run() {
       detail: a.pairScores.map((p) => `${p.a} ~ ${p.b} (${p.score})`).join('; '),
     })),
     ...needsHumanBooks.map((c) => ({
-      kind: c.import.priceImplausible
-        ? 'PRICE'
-        : c.import.categoryDisagreement
-          ? 'CATEGORY'
-          : c.import.heMissingButElsewhere
-            ? 'NOT-ON-HE'
-            : 'DESCRIPTION',
+      kind: c.import.priceZero
+        ? 'ZERO-PRICE'
+        : c.import.priceImplausible
+          ? 'PRICE'
+          : c.import.categoryDisagreement
+            ? 'CATEGORY'
+            : c.import.heMissingButElsewhere
+              ? 'NOT-ON-HE'
+              : 'DESCRIPTION',
       label: Object.values(c.import.titles)[0]?.[0] ?? c.normTitle,
       detail: JSON.stringify({
         sites: c.sites,

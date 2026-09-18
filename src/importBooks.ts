@@ -1,3 +1,8 @@
+import { randomUUID } from 'node:crypto'
+import { unlink, writeFile } from 'node:fs/promises'
+import os from 'node:os'
+import path from 'node:path'
+
 import type { Payload } from 'payload'
 
 // ---------------------------------------------------------------------------
@@ -7,10 +12,16 @@ import type { Payload } from 'payload'
 
 type SiteKey = 'en' | 'fr' | 'he'
 
+// bookLanguage is a superset of SiteKey: 'unknown' is an honest admission
+// that a Latin-script title with no shelf category could be French or
+// English — see deriveBookLanguage.
+type BookLanguage = SiteKey | 'unknown'
+
 type Price = { currency: string; raw: string; value: number }
 
 type Page = {
   breadcrumb: string[] | null
+  media: { images: { alt: string | null; src: string }[] }
   product: {
     description: string | null
     price: Price | null
@@ -29,9 +40,11 @@ type SiteEntry = {
 type ImportView = {
   categories: Partial<Record<SiteKey, string | null>>
   descriptions: Partial<Record<SiteKey, string | null>>
+  images: Partial<Record<SiteKey, string[]>>
   legacyUrls: { site: SiteKey; url: string }[]
   missingDescriptionIn: SiteKey[]
   priceImplausible: boolean
+  priceZero: boolean
   prices: Partial<Record<SiteKey, Price | null>>
   titles: Partial<Record<SiteKey, string[]>>
 }
@@ -129,18 +142,39 @@ function toLexicalRichText(text: string) {
  * siddurim-machzorim and cd-dvd don't imply a language). Falling back to
  * script detection on the title when no category says so — true for most of
  * the catalogue (83 of 167 site-entries have no breadcrumb at all, mainly on
- * the English site, which carries none). Hebrew script wins the fallback
- * because that's the overwhelming majority case here (see the reconciliation
- * report: the English and French sites mostly sell Hebrew-titled books).
+ * the English site, which carries none). Hebrew script is a confident
+ * signal (see the reconciliation report: the English and French sites
+ * mostly sell Hebrew-titled books) and returns 'he'. Latin script is NOT a
+ * confident signal — it cannot distinguish French from English (see
+ * docs/reviews/REVIEW-01-findings.md #7, which caught French titles such as
+ * "La voix des justes" being filed as English) — so it returns 'unknown'
+ * rather than guessing.
  */
-function deriveBookLanguage(categories: Partial<Record<SiteKey, string | null>>, titles: string[]): SiteKey {
+function deriveBookLanguage(categories: Partial<Record<SiteKey, string | null>>, titles: string[]): BookLanguage {
   for (const raw of Object.values(categories)) {
     const slug = raw ? CATEGORY_SLUG[raw] : undefined
     const language = slug ? CATEGORY_TO_LANGUAGE[slug] : undefined
     if (language) return language
   }
   if (titles.some((t) => HAS_HEBREW.test(t))) return 'he'
-  return 'en'
+  return 'unknown'
+}
+
+const SITE_PREFERENCE: SiteKey[] = ['he', 'fr', 'en']
+
+/**
+ * The first candidate cover image across sites, in a fixed site order for
+ * determinism. parse.mjs has already stripped site-wide chrome (nav icons,
+ * "other products" sidebar thumbnails) from these lists, so what's left —
+ * when anything is — is that page's own product image. Old-site quality,
+ * kept anyway; see docs/reviews/REVIEW-01-verdict.md's "THEN" section.
+ */
+function pickCoverImageUrl(images: Partial<Record<SiteKey, string[]>>): string | null {
+  for (const site of SITE_PREFERENCE) {
+    const url = images[site]?.[0]
+    if (url) return url
+  }
+  return null
 }
 
 function categorySlugOf(categories: Partial<Record<SiteKey, string | null>>): string | null {
@@ -170,8 +204,9 @@ async function categoryIdBySlug(payload: Payload): Promise<Map<string, number | 
 }
 
 type BookInput = {
-  bookLanguage: SiteKey
-  categorySlug: string
+  bookLanguage: BookLanguage
+  categorySlug: string | null
+  coverImageUrl: string | null
   descriptions: Partial<Record<SiteKey, string | null>>
   importKey: string
   legacyUrls: string[]
@@ -181,24 +216,31 @@ type BookInput = {
   titles: Partial<Record<SiteKey, string>>
 }
 
+function isSiteKey(language: BookLanguage): language is SiteKey {
+  return language !== 'unknown'
+}
+
 function buildBookInput(importKey: string, view: ImportView, titles: Partial<Record<SiteKey, string>>, reviewNote: string | null): BookInput | null {
   const prices = priceRows(view.prices)
   if (prices.length === 0) return null // nothing to import — see the report for how many, if any
+
+  const bookLanguage = deriveBookLanguage(view.categories, Object.values(titles))
 
   const reasons: string[] = []
   if (view.missingDescriptionIn.length > 0) reasons.push('missing-description')
   if (view.priceImplausible) reasons.push('price-mismatch')
   if (reviewNote) reasons.push('ambiguous-match')
   if (!('he' in titles) && (('fr' in titles) || ('en' in titles))) reasons.push('absent-from-hebrew')
+  if (bookLanguage === 'unknown') reasons.push('language-uncertain')
+  if (view.priceZero) reasons.push('zero-price')
 
-  const bookLanguage = deriveBookLanguage(view.categories, Object.values(titles))
-  // `category` is required, but most site-entries carry no breadcrumb to
-  // derive one from (83 of 167 — mainly the English site, which has none at
-  // all). Falling back to the language-named category — hebrew-books,
-  // french-books, english-books — that bookLanguage already resolved to,
-  // since those three categories mean exactly "books in this language" in
-  // the real taxonomy (see src/seed.ts's CATEGORIES).
-  const categorySlug = categorySlugOf(view.categories) ?? LANGUAGE_TO_CATEGORY[bookLanguage]
+  // Falls back to the language-named category — hebrew-books, french-books,
+  // english-books — only when bookLanguage is actually known. When it isn't
+  // (Latin script, no breadcrumb), there is no honest category to assign
+  // either: the legacy sites' own categories ARE those three language
+  // shelves, so guessing one would repeat the same mistake. `category` is
+  // not required for exactly this reason — left blank and flagged instead.
+  const categorySlug = categorySlugOf(view.categories) ?? (isSiteKey(bookLanguage) ? LANGUAGE_TO_CATEGORY[bookLanguage] : null)
 
   return {
     importKey,
@@ -206,10 +248,55 @@ function buildBookInput(importKey: string, view: ImportView, titles: Partial<Rec
     descriptions: view.descriptions,
     prices,
     categorySlug,
+    coverImageUrl: pickCoverImageUrl(view.images),
     bookLanguage,
     legacyUrls: [...new Set(view.legacyUrls.map((u) => u.url))],
     reviewReasons: [...new Set(reasons)],
     reviewNote,
+  }
+}
+
+/**
+ * Downloads a candidate cover image to a temp file for Payload's upload
+ * collection to read (Payload's Local API takes a `filePath`, not raw
+ * bytes). Returns null — never throws — on a non-2xx response or a network
+ * error: these are old, external URLs, and a 404 among them should skip
+ * that one book's cover, not fail the whole import run.
+ */
+async function downloadToTempFile(url: string): Promise<string | null> {
+  try {
+    const response = await fetch(url)
+    if (!response.ok) return null
+    const buffer = Buffer.from(await response.arrayBuffer())
+    const extension = path.extname(new URL(url).pathname) || '.jpg'
+    const tempPath = path.join(os.tmpdir(), `ramhal-cover-${randomUUID()}${extension}`)
+    await writeFile(tempPath, buffer)
+    return tempPath
+  } catch {
+    return null
+  }
+}
+
+type CoverResult = 'attached' | 'fetch-failed' | 'no-candidate'
+
+/** Only called on a newly created book — a cover, like every other field an
+ * import writes at creation, is not re-attempted or overwritten on a rerun
+ * (see upsertBook's own comment). */
+async function attachCover(payload: Payload, bookId: number | string, locale: SiteKey, alt: string, coverImageUrl: string | null): Promise<CoverResult> {
+  if (!coverImageUrl) return 'no-candidate'
+
+  const tempPath = await downloadToTempFile(coverImageUrl)
+  if (!tempPath) return 'fetch-failed'
+
+  try {
+    const media = await payload.create({ collection: 'media', locale, data: { alt }, filePath: tempPath })
+    // Same locale as the book's own creation — required, localized fields
+    // (title, slug) validate against whichever locale is in play, and a book
+    // absent from Hebrew (see reviewReasons) has no 'he' title to validate.
+    await payload.update({ collection: 'books', id: bookId, locale, data: { cover: media.id } })
+    return 'attached'
+  } finally {
+    await unlink(tempPath).catch(() => {})
   }
 }
 
@@ -224,7 +311,9 @@ function buildBookInput(importKey: string, view: ImportView, titles: Partial<Rec
  * is flagged; a re-run that overwrote them would silently erase that work
  * every time the reconciliation is regenerated.
  */
-async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<string, number | string>): Promise<'created' | 'unchanged' | 'urls-added'> {
+type UpsertResult = { cover?: CoverResult; status: 'created' | 'unchanged' | 'urls-added' }
+
+async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<string, number | string>): Promise<UpsertResult> {
   const existing = await payload.find({
     collection: 'books',
     where: { importKey: { equals: input.importKey } },
@@ -232,8 +321,11 @@ async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<s
   })
 
   if (existing.docs.length === 0) {
-    const categoryId = categoryIds.get(input.categorySlug)
-    const primaryLocale: SiteKey = (Object.keys(input.titles)[0] as SiteKey | undefined) ?? input.bookLanguage
+    const categoryId = input.categorySlug ? categoryIds.get(input.categorySlug) : undefined
+    // Hebrew is this project's default locale (see AGENTS.md) — used only as
+    // the last-resort fallback below, which candidate.sites in practice
+    // never leaves empty.
+    const primaryLocale: SiteKey = (Object.keys(input.titles)[0] as SiteKey | undefined) ?? 'he'
 
     const created = await payload.create({
       collection: 'books',
@@ -246,7 +338,10 @@ async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<s
         bookLanguage: input.bookLanguage,
         category: categoryId,
         prices: input.prices,
-        publishedAt: new Date().toISOString(),
+        // No publication date exists anywhere in the legacy sites' data — see
+        // docs/reviews/REVIEW-01-findings.md #12. Left unset rather than
+        // stamped with import time, which would make the entire back
+        // catalogue read as newly published.
         legacyUrls: input.legacyUrls.map((url) => ({ url })),
         needsReview: input.reviewReasons.length > 0,
         reviewReasons: input.reviewReasons,
@@ -268,13 +363,15 @@ async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<s
       })
     }
 
-    return 'created'
+    const cover = await attachCover(payload, created.id, primaryLocale, created.title ?? '', input.coverImageUrl)
+
+    return { status: 'created', cover }
   }
 
   const existingDoc = existing.docs[0]
   const existingUrls = new Set((existingDoc.legacyUrls ?? []).map((row: { url: string }) => row.url))
   const newUrls = input.legacyUrls.filter((url) => !existingUrls.has(url))
-  if (newUrls.length === 0) return 'unchanged'
+  if (newUrls.length === 0) return { status: 'unchanged' }
 
   await payload.update({
     collection: 'books',
@@ -283,12 +380,14 @@ async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<s
       legacyUrls: [...(existingDoc.legacyUrls ?? []), ...newUrls.map((url) => ({ url }))],
     },
   })
-  return 'urls-added'
+  return { status: 'urls-added' }
 }
 
 export type ImportSummary = {
   ambiguous: number
   confident: number
+  coversAttached: number
+  coversMissing: number
   created: number
   singleton: number
   skippedNoPrice: string[]
@@ -305,6 +404,8 @@ export async function importBooks(payload: Payload, reconciliation: Reconciliati
     created: 0,
     unchanged: 0,
     urlsAdded: 0,
+    coversAttached: 0,
+    coversMissing: 0,
     skippedNoPrice: [],
   }
 
@@ -315,8 +416,11 @@ export async function importBooks(payload: Payload, reconciliation: Reconciliati
     }
     summary[bucket]++
     const result = await upsertBook(payload, input, categoryIds)
-    if (result === 'created') summary.created++
-    else if (result === 'urls-added') summary.urlsAdded++
+    if (result.status === 'created') {
+      summary.created++
+      if (result.cover === 'attached') summary.coversAttached++
+      else summary.coversMissing++
+    } else if (result.status === 'urls-added') summary.urlsAdded++
     else summary.unchanged++
   }
 
@@ -342,9 +446,11 @@ export async function importBooks(payload: Payload, reconciliation: Reconciliati
       const view: ImportView = {
         categories: { [member.site]: page.breadcrumb && page.breadcrumb.length >= 2 ? page.breadcrumb[page.breadcrumb.length - 2] : null },
         descriptions: { [member.site]: page.product.description },
+        images: { [member.site]: page.media.images.map((img) => img.src) },
         legacyUrls: entry.pages.map((p) => ({ site: member.site, url: p.url })),
         missingDescriptionIn: page.product.description ? [] : [member.site],
         priceImplausible: false, // single site — nothing to compare against
+        priceZero: page.product.price?.value === 0,
         prices: { [member.site]: page.product.price },
         titles: { [member.site]: member.titles },
       }
