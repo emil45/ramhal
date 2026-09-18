@@ -77,6 +77,7 @@ export interface Config {
     pages: Page;
     announcements: Announcement;
     events: Event;
+    carts: Cart;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -94,6 +95,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     announcements: AnnouncementsSelect<false> | AnnouncementsSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
+    carts: CartsSelect<false> | CartsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -536,6 +538,23 @@ export interface Event {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carts".
+ */
+export interface Cart {
+  id: number;
+  sessionId: string;
+  items?:
+    | {
+        book: number | Book;
+        quantity: number;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -597,6 +616,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'events';
         value: number | Event;
+      } | null)
+    | ({
+        relationTo: 'carts';
+        value: number | Cart;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -859,6 +882,22 @@ export interface EventsSelect<T extends boolean = true> {
   startsAt?: T;
   endsAt?: T;
   location?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carts_select".
+ */
+export interface CartsSelect<T extends boolean = true> {
+  sessionId?: T;
+  items?:
+    | T
+    | {
+        book?: T;
+        quantity?: T;
+        id?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
 }
