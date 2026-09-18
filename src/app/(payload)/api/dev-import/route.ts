@@ -1,11 +1,11 @@
 import config from '@payload-config'
-import { timingSafeEqual } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import path from 'node:path'
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 
 import { importBooks, type Reconciliation } from '@/importBooks'
+import { isDevRouteAuthorized } from '@/lib/devRouteAuth'
 
 /**
  * Dev-only route that runs the book catalogue import through Payload's
@@ -18,20 +18,8 @@ import { importBooks, type Reconciliation } from '@/importBooks'
  * Delete this route and scripts/import-books.mjs once the catalogue import
  * is done and verified — it is not meant to be permanent infrastructure.
  */
-function isAuthorized(request: Request): boolean {
-  if (process.env.NODE_ENV !== 'development') return false
-
-  const expected = process.env.DEV_MIGRATE_SECRET
-  if (!expected) return false
-
-  const provided = request.headers.get('x-dev-migrate-secret') ?? ''
-  const expectedBytes = Buffer.from(expected)
-  const providedBytes = Buffer.from(provided)
-  return expectedBytes.length === providedBytes.length && timingSafeEqual(expectedBytes, providedBytes)
-}
-
 export async function GET(request: Request): Promise<Response> {
-  if (!isAuthorized(request)) {
+  if (!isDevRouteAuthorized(request)) {
     return NextResponse.json(null, { status: 404 })
   }
 

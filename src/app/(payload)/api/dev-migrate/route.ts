@@ -1,9 +1,10 @@
 import config from '@payload-config'
-import { timingSafeEqual } from 'node:crypto'
 import { readdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
+
+import { isDevRouteAuthorized } from '@/lib/devRouteAuth'
 
 /**
  * Dev-only route that calls the exact database-adapter methods Payload's own
@@ -34,7 +35,7 @@ import { getPayload } from 'payload'
  * independent layers actually enforce it:
  *   1. `src/proxy.ts` returns 404 for this path before this file ever runs,
  *      whenever NODE_ENV is "production".
- *   2. `isAuthorized` below refuses unless NODE_ENV is exactly "development"
+ *   2. `isDevRouteAuthorized` refuses unless NODE_ENV is exactly "development"
  *      AND a DEV_MIGRATE_SECRET matching the request's is set — a variable
  *      that must never exist in a production environment's secrets. Either
  *      layer alone should be enough; both exist so one being misconfigured
@@ -42,18 +43,6 @@ import { getPayload } from 'payload'
  * Every rejection returns a bare 404, identical to a route that doesn't
  * exist — never 401/403, which would confirm the route is there.
  */
-
-function isAuthorized(request: Request): boolean {
-  if (process.env.NODE_ENV !== 'development') return false
-
-  const expected = process.env.DEV_MIGRATE_SECRET
-  if (!expected) return false
-
-  const provided = request.headers.get('x-dev-migrate-secret') ?? ''
-  const expectedBytes = Buffer.from(expected)
-  const providedBytes = Buffer.from(provided)
-  return expectedBytes.length === providedBytes.length && timingSafeEqual(expectedBytes, providedBytes)
-}
 
 // Payload's own migration template writes
 // `import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'`
@@ -99,7 +88,7 @@ async function fixMigrationImport(filePath: string): Promise<void> {
 }
 
 export async function GET(request: Request): Promise<Response> {
-  if (!isAuthorized(request)) {
+  if (!isDevRouteAuthorized(request)) {
     return NextResponse.json(null, { status: 404 })
   }
 
