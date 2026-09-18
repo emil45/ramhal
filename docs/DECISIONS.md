@@ -405,3 +405,62 @@ retainer** (see §7) will hit this exact class of problem again on some future P
 version bump, with nobody watching for it. The mitigation — routing schema tooling through Next's own
 bundler instead of Payload's CLI — is small and documented, but it is a workaround, and it should stay
 visible as one rather than being smoothed over into "migrations just work here."
+
+---
+
+## 16. Third architectural opinion — arbitration (18 September 2026)
+
+A third model gave an independent architectural opinion, working only from a verbal brief and
+without seeing this codebase. Recorded because the convergence is evidence, and the one
+disagreement needed resolving.
+
+### Convergence — three independent models, same stack
+
+Next.js + TypeScript · Tailwind + shadcn/ui · Payload · PostgreSQL · Next and Payload in one
+application and repository · hosted checkout through the institute's own provider · guest checkout
+first.
+
+It reached §5's conclusion independently and by the same reasoning: "I disagree that 30 books is too
+few to justify a CMS — the editorial workflow matters more than the number of records." Its commerce
+warnings also match what §5 records from reading the package directly: no native shipping or tax, and
+Stripe as the only shipped payment adapter.
+
+### Rejected: Supabase in place of Neon
+
+Proposed because Supabase supplies database, auth and file storage from one provider, which becomes
+attractive if staff sign in with Google. Rejected on three grounds:
+
+1. **Verified technical friction.** Supavisor does not support prepared statements in transaction
+   mode (Supabase's own docs), and Payload's Drizzle adapter uses them. Survivable with a flag, but a
+   sharp edge chosen deliberately. See §6.
+2. **The integration cost is named in the opinion and not weighed.** "Supabase authentication and
+   Payload authentication do not connect automatically" — meaning a custom auth strategy bridging two
+   systems, written and maintained, **for one or two users.** Payload's own auth covers that. The
+   opinion's own caveat, that Supabase Auth suits a *fully custom* admin, does not apply here.
+3. **Neon already works**, with migrations verified end to end. No problem to solve.
+
+### Open: is Google sign-in actually a requirement?
+
+Raised with that model but never with this project. If staff genuinely require Google sign-in, it is
+the one place the Supabase argument has force and the auth design should be revisited. If it meant
+"an easy login," Payload's built-in auth already provides it. **Unresolved — ask the client.**
+
+### Absorbed: commerce requirements for the checkout task
+
+Adopted as requirements for TASK-07:
+
+- server-side calculation of prices and totals — never trust a client-supplied amount
+- verified payment notifications, and idempotent handling of repeated ones
+- **orders preserve the price actually paid, as a snapshot — never a reference to the book's current
+  price.** Changing a price next year must not change last year's orders. Not previously specified;
+  a defect waiting to happen, and it came from this review
+- payment status and fulfilment status kept separate — matching their real workflow, where "PayPal
+  received" and "posted" are different facts
+- explicit handling of failed and cancelled payments
+- guest checkout, unless customer accounts earn their place
+
+### Weighting
+
+The opinion worked from a thinner brief than reality — it describes "more than 30 books"; the
+catalogue is 128. Its conclusions still hold, but it had not seen the audit, the reconciliation, or
+the verified package behaviour.
