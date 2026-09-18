@@ -11,7 +11,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "generate:types": "payload generate:types",
+    "generate:types": "node scripts/dev-generate-types.mjs",
     "generate:importmap": "payload generate:importmap",
     "migrate": "node scripts/dev-migrate.mjs run",
     "migrate:create": "node scripts/dev-migrate.mjs create",

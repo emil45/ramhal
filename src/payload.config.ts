@@ -16,6 +16,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url))
 import { Announcements } from './collections/Announcements.ts'
 import { Articles } from './collections/Articles.ts'
 import { Books } from './collections/Books.ts'
+import { Carts } from './collections/Carts.ts'
 import { Categories } from './collections/Categories.ts'
 import { Events } from './collections/Events.ts'
 import { Lessons } from './collections/Lessons.ts'
@@ -41,7 +42,7 @@ export default buildConfig({
     await seed(payload)
   },
   editor: lexicalEditor(),
-  collections: [Users, Media, Books, Categories, Series, Lessons, Articles, Pages, Announcements, Events],
+  collections: [Users, Media, Books, Categories, Series, Lessons, Articles, Pages, Announcements, Events, Carts],
   globals: [Schedule, ShippingSettings, SiteSettings],
   secret: requireEnv('PAYLOAD_SECRET'),
   typescript: {
