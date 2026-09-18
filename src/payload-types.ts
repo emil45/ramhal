@@ -222,6 +222,10 @@ export interface Book {
   id: number;
   title: string;
   slug: string;
+  /**
+   * כתובת ה-URL הציבורית והיחידה של הספר, זהה בכל שפה. נוצרת אוטומטית מהכותרת; שינוי ידני אפשרי אך חייב להישאר ייחודי בכל הקטלוג.
+   */
+  urlSlug: string;
   subtitle?: string | null;
   description?: {
     root: {
@@ -745,6 +749,7 @@ export interface MediaSelect<T extends boolean = true> {
 export interface BooksSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  urlSlug?: T;
   subtitle?: T;
   description?: T;
   bookLanguage?: T;

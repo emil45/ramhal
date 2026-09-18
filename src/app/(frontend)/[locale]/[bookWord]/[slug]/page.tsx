@@ -17,7 +17,7 @@ export async function generateStaticParams() {
   for (const locale of LOCALES) {
     const books = await getCatalogueBooks(locale)
     for (const book of books) {
-      if (book.displaySlug) params.push({ locale, bookWord: BOOK_SEGMENT[locale], slug: book.displaySlug })
+      params.push({ locale, bookWord: BOOK_SEGMENT[locale], slug: book.urlSlug })
     }
   }
   return params

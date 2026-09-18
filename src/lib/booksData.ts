@@ -10,7 +10,6 @@ import type { Locale } from '@/lib/locale'
 
 export type CatalogueBook = Omit<Book, 'category'> & {
   category: Category | null
-  displaySlug: string
   displayTitle: string
 }
 
@@ -19,12 +18,14 @@ async function payloadClient() {
 }
 
 /**
- * Best available value across locales — current locale first, then the
- * default locale, then whichever locale actually has one. Title and slug
- * are structural: every catalogue card needs a name and a working link, so
- * they fall back. Description is real editorial content and never does —
- * see docs/tasks/TASK-06-storefront.md §3a and src/collections/Books.ts's
- * own comment on why description has no fallback.
+ * Best available title across locales — current locale first, then the
+ * default locale, then whichever locale actually has one. Title is
+ * structural: every catalogue card needs a name, so it falls back.
+ * Description is real editorial content and never does — see
+ * docs/tasks/TASK-06-storefront.md §3a and src/collections/Books.ts's own
+ * comment on why description has no fallback. The public URL no longer goes
+ * through this fallback at all — see urlSlug's own comment in
+ * src/collections/Books.ts and docs/reports/TASK-07.md §A1.
  */
 function bestAcrossLocales(byLocale: Partial<Record<Locale, string | null | undefined>>, locale: Locale): string {
   for (const candidate of [locale, DEFAULT_LOCALE, ...LOCALES]) {
@@ -40,7 +41,7 @@ function bestAcrossLocales(byLocale: Partial<Record<Locale, string | null | unde
  * one the generated types don't model (they only describe the single-locale
  * shape). The cast documents that gap rather than hiding one.
  */
-type AllLocalesShape = { id: number; slug: unknown; title: unknown }
+type AllLocalesShape = { id: number; title: unknown }
 
 export async function getCatalogueBooks(locale: Locale): Promise<CatalogueBook[]> {
   const payload = await payloadClient()
@@ -52,7 +53,7 @@ export async function getCatalogueBooks(locale: Locale): Promise<CatalogueBook[]
       locale: 'all',
       depth: 0,
       limit: 500,
-      select: { slug: true, title: true },
+      select: { title: true },
     }) as Promise<{ docs: AllLocalesShape[] }>,
   ])
 
@@ -61,20 +62,36 @@ export async function getCatalogueBooks(locale: Locale): Promise<CatalogueBook[]
   return content.docs.map((book) => {
     const fields = structuralById.get(book.id)
     const titles = (fields?.title ?? {}) as Partial<Record<Locale, string>>
-    const slugs = (fields?.slug ?? {}) as Partial<Record<Locale, string>>
 
     return {
       ...book,
       category: typeof book.category === 'object' ? book.category : null,
       displayTitle: bestAcrossLocales(titles, locale),
-      displaySlug: bestAcrossLocales(slugs, locale),
     }
   })
 }
 
+/**
+ * urlSlug is enforced unique at the database level (src/collections/Books.ts),
+ * so two matches here can only mean that constraint was bypassed outside
+ * Payload — a real data bug, not a case to resolve by picking one silently
+ * (docs/tasks/TASK-07-storefront.md §A1). Throwing is the correct behaviour:
+ * AGENTS.md is explicit that a caught failure must be handled or allowed to
+ * throw, never swallowed.
+ */
 export async function getCatalogueBookBySlug(locale: Locale, slug: string): Promise<CatalogueBook | null> {
   const books = await getCatalogueBooks(locale)
-  return books.find((book) => book.displaySlug === slug) ?? null
+  const matches = books.filter((book) => book.urlSlug === slug)
+
+  if (matches.length > 1) {
+    throw new Error(
+      `Data integrity: ${matches.length} books share the canonical URL slug "${slug}" ` +
+        `(ids ${matches.map((book) => book.id).join(', ')}). urlSlug is supposed to be unique across the ` +
+        'whole catalogue — see src/collections/Books.ts.',
+    )
+  }
+
+  return matches[0] ?? null
 }
 
 export async function getCategories(locale: Locale): Promise<Category[]> {

@@ -338,8 +338,14 @@ async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<s
         title: input.titles[primaryLocale] ?? Object.values(input.titles)[0] ?? '',
         // Required in the field config, but generateSlugFromTitle (a
         // beforeValidate hook) always fills a blank one from the title
-        // above — see src/collections/hooks/generateSlugFromTitle.ts.
+        // above — see src/collections/hooks/generateSlugFromTitle.ts. urlSlug
+        // reuses the same hook (see src/collections/Books.ts's own comment)
+        // to become this book's one canonical public URL, and — unlike
+        // slug — is enforced unique across the whole catalogue: a title that
+        // collides with an existing book's urlSlug makes this create() throw,
+        // which is deliberate (docs/tasks/TASK-07-storefront.md §A1).
         slug: '',
+        urlSlug: '',
         description: input.descriptions[primaryLocale]
           ? toLexicalRichText(input.descriptions[primaryLocale] as string)
           : undefined,

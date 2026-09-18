@@ -11,7 +11,7 @@ import type { Locale } from '@/lib/locale'
 export function ProductCard({ book, dict, locale }: { book: CatalogueBook; dict: Dictionary; locale: Locale }) {
   return (
     <Link
-      href={bookPath(locale, book.displaySlug)}
+      href={bookPath(locale, book.urlSlug)}
       className="group flex flex-col gap-2 rounded-lg p-2 transition-colors hover:bg-secondary/60"
     >
       <CoverImage

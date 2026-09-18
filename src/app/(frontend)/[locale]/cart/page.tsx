@@ -62,7 +62,7 @@ export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) 
               </div>
               <div className="flex flex-1 flex-col gap-1.5">
                 <Link
-                  href={bookPath(locale, line.book.slug)}
+                  href={bookPath(locale, line.book.urlSlug)}
                   className="font-serif font-medium text-foreground hover:text-teal"
                 >
                   {line.book.title}

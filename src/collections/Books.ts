@@ -48,14 +48,43 @@ export const Books: CollectionConfig = {
       localized: true,
     },
     {
+      // Legacy, per-locale slug — kept for redirecting old locale-scoped URLs,
+      // never read for routing any more (see urlSlug below and
+      // docs/reports/TASK-07.md §A1). `unique: true` here is per-locale
+      // (Postgres enforces UNIQUE(slug, _locale)), which is exactly the bug
+      // that made two books collapse onto one cross-locale public URL —
+      // uniqueness for the public URL is urlSlug's job now, not this field's.
       name: 'slug',
       type: 'text',
-      label: 'כתובת (Slug)',
+      label: 'כתובת ישנה (Slug, לכל שפה)',
       required: true,
       unique: true,
       localized: true,
       hooks: {
         beforeValidate: [generateSlugFromTitle],
+      },
+    },
+    {
+      // The one canonical public URL for this book — one work, one address,
+      // the same in every locale (docs/DECISIONS.md §1: a book is a work,
+      // not a SKU). Not localized, so `unique: true` is a real
+      // UNIQUE(url_slug) constraint across the whole catalogue: two books
+      // can never resolve to the same page. Auto-filled from the title in
+      // whichever locale the book is first created (generateSlugFromTitle
+      // reads data.title the same way it does for `slug` above), then
+      // stable — an editor can override it, but never re-generates once set.
+      // See docs/reports/TASK-07.md §A1 for why this exists and how the
+      // small number of pre-existing title collisions were resolved.
+      name: 'urlSlug',
+      type: 'text',
+      label: 'כתובת קנונית (URL)',
+      required: true,
+      unique: true,
+      hooks: {
+        beforeValidate: [generateSlugFromTitle],
+      },
+      admin: {
+        description: 'כתובת ה-URL הציבורית והיחידה של הספר, זהה בכל שפה. נוצרת אוטומטית מהכותרת; שינוי ידני אפשרי אך חייב להישאר ייחודי בכל הקטלוג.',
       },
     },
     {
