@@ -105,7 +105,13 @@ export async function GET(request: Request): Promise<Response> {
 
   const { searchParams } = new URL(request.url)
   const action = searchParams.get('action')
-  const payload = await getPayload({ config })
+  // disableOnInit, exactly as Payload's own CLI does for migrate/migrate:create
+  // (node_modules/payload/dist/bin/migrate.js) — onInit runs the seed, which
+  // queries `categories`, and that table does not exist yet on a database
+  // this route is about to migrate. Without this, migrating a genuinely
+  // empty database crashes before db.migrate() ever runs (verified against
+  // a disposable empty Neon database — see docs/reports/TASK-05.md).
+  const payload = await getPayload({ config, disableOnInit: true })
 
   if (action === 'create') {
     const before = await listMigrationFiles(payload.db.migrationDir)
