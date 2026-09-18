@@ -42,7 +42,7 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
   const purchasable = isPurchasable(book, currency)
 
   return (
-    <div className="mx-auto grid max-w-4xl gap-8 px-4 py-8 sm:grid-cols-[240px_1fr]">
+    <div className="mx-auto grid max-w-4xl gap-8 px-4 py-8 sm:grid-cols-[240px_1fr] sm:items-center">
       <div className="mx-auto w-48 sm:mx-0 sm:w-full">
         <CoverImage
           categorySlug={book.category?.slug}
@@ -58,15 +58,20 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
           {book.subtitle ? <p className="mt-1 text-muted-foreground">{book.subtitle}</p> : null}
         </div>
 
-        <div className="text-lg">
-          <PriceTag book={book} dict={dict} locale={locale} />
-        </div>
-
         {purchasable ? (
-          <div>
-            <AddToCartButton bookId={book.id} locale={locale} />
-          </div>
+          <>
+            <div className="text-lg">
+              <PriceTag book={book} dict={dict} locale={locale} />
+            </div>
+            <div>
+              <AddToCartButton bookId={book.id} locale={locale} />
+            </div>
+          </>
         ) : (
+          // PriceTag already reads dict.book.unavailableTitle when a book
+          // isn't purchasable (src/components/storefront/PriceTag.tsx) —
+          // this box explains why, so the price row itself is skipped here
+          // rather than printing the same "not available" line twice.
           <div className="rounded-md border border-border bg-secondary/50 p-4 text-sm">
             <p className="font-medium text-foreground">{dict.book.unavailableTitle}</p>
             <p className="mt-1 text-muted-foreground">{dict.book.unavailableBody}</p>
