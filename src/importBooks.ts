@@ -3,6 +3,8 @@ import { unlink, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 
+import type { Currency } from '@/lib/currency'
+import type { Book } from '@/payload-types'
 import type { Payload } from 'payload'
 
 // ---------------------------------------------------------------------------
@@ -100,7 +102,7 @@ const LANGUAGE_TO_CATEGORY: Record<SiteKey, string> = {
   en: 'english-books',
 }
 
-const CURRENCY_CODE: Record<string, string> = { $: 'USD', '€': 'EUR', '₪': 'ILS', EUR: 'EUR', ILS: 'ILS', USD: 'USD' }
+const CURRENCY_CODE: Record<string, Currency> = { $: 'USD', '€': 'EUR', '₪': 'ILS', EUR: 'EUR', ILS: 'ILS', USD: 'USD' }
 
 const HAS_HEBREW = /[֐-׿]/
 
@@ -111,8 +113,8 @@ const HAS_HEBREW = /[֐-׿]/
  * rather than guessed; a root/paragraph/text node each need their own
  * direction/format/indent/version fields, not just `type` and `children`).
  */
-function toLexicalRichText(text: string) {
-  const direction = HAS_HEBREW.test(text) ? 'rtl' : 'ltr'
+function toLexicalRichText(text: string): NonNullable<Book['description']> {
+  const direction: 'ltr' | 'rtl' = HAS_HEBREW.test(text) ? 'rtl' : 'ltr'
   return {
     root: {
       type: 'root',
@@ -185,8 +187,8 @@ function categorySlugOf(categories: Partial<Record<SiteKey, string | null>>): st
   return null
 }
 
-function priceRows(prices: Partial<Record<SiteKey, Price | null>>): { amount: number; currency: string }[] {
-  const rows: { amount: number; currency: string }[] = []
+function priceRows(prices: Partial<Record<SiteKey, Price | null>>): { amount: number; currency: Currency }[] {
+  const rows: { amount: number; currency: Currency }[] = []
   for (const price of Object.values(prices)) {
     if (!price) continue
     const currency = CURRENCY_CODE[price.currency]
@@ -196,12 +198,14 @@ function priceRows(prices: Partial<Record<SiteKey, Price | null>>): { amount: nu
   return rows
 }
 
-async function categoryIdBySlug(payload: Payload): Promise<Map<string, number | string>> {
+async function categoryIdBySlug(payload: Payload): Promise<Map<string, number>> {
   const result = await payload.find({ collection: 'categories', limit: 100 })
-  const map = new Map<string, number | string>()
+  const map = new Map<string, number>()
   for (const doc of result.docs) map.set(doc.slug, doc.id)
   return map
 }
+
+type ReviewReason = NonNullable<Book['reviewReasons']>[number]
 
 type BookInput = {
   bookLanguage: BookLanguage
@@ -210,9 +214,9 @@ type BookInput = {
   descriptions: Partial<Record<SiteKey, string | null>>
   importKey: string
   legacyUrls: string[]
-  prices: { amount: number; currency: string }[]
+  prices: { amount: number; currency: Currency }[]
   reviewNote: string | null
-  reviewReasons: string[]
+  reviewReasons: ReviewReason[]
   titles: Partial<Record<SiteKey, string>>
 }
 
@@ -226,7 +230,7 @@ function buildBookInput(importKey: string, view: ImportView, titles: Partial<Rec
 
   const bookLanguage = deriveBookLanguage(view.categories, Object.values(titles))
 
-  const reasons: string[] = []
+  const reasons: ReviewReason[] = []
   if (view.missingDescriptionIn.length > 0) reasons.push('missing-description')
   if (view.priceImplausible) reasons.push('price-mismatch')
   if (reviewNote) reasons.push('ambiguous-match')
@@ -313,7 +317,7 @@ async function attachCover(payload: Payload, bookId: number | string, locale: Si
  */
 type UpsertResult = { cover?: CoverResult; status: 'created' | 'unchanged' | 'urls-added' }
 
-async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<string, number | string>): Promise<UpsertResult> {
+async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<string, number>): Promise<UpsertResult> {
   const existing = await payload.find({
     collection: 'books',
     where: { importKey: { equals: input.importKey } },
@@ -332,12 +336,20 @@ async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<s
       locale: primaryLocale,
       data: {
         title: input.titles[primaryLocale] ?? Object.values(input.titles)[0] ?? '',
+        // Required in the field config, but generateSlugFromTitle (a
+        // beforeValidate hook) always fills a blank one from the title
+        // above — see src/collections/hooks/generateSlugFromTitle.ts.
+        slug: '',
         description: input.descriptions[primaryLocale]
           ? toLexicalRichText(input.descriptions[primaryLocale] as string)
           : undefined,
         bookLanguage: input.bookLanguage,
         category: categoryId,
         prices: input.prices,
+        // Required in the field config; defaultValue: 1 applies at runtime,
+        // but the generated type doesn't know that — see docs/DECISIONS.md
+        // §1, shippingUnits' own comment in Books.ts.
+        shippingUnits: 1,
         // No publication date exists anywhere in the legacy sites' data — see
         // docs/reviews/REVIEW-01-findings.md #12. Left unset rather than
         // stamped with import time, which would make the entire back
