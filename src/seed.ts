@@ -20,10 +20,10 @@ const EUROPE_COUNTRIES = ['FR', 'BE', 'CH', 'DE', 'IT', 'ES', 'NL', 'AT', 'GB', 
 const REST_OF_WORLD_COUNTRIES = ['US', 'CA', 'AU', 'ZA', 'BR', 'MX']
 
 /**
- * Finds or creates the category by slug, then writes the title in all three
- * locales unconditionally — this is what makes it safe to run twice, and
- * what fixes a category that was previously created (by hand or by an
- * earlier run) with only some locales filled in.
+ * Creates the category by slug if it does not already exist. Does nothing
+ * otherwise — a category the son has since retitled must survive every
+ * later boot untouched (see docs/reviews/REVIEW-01-findings.md #1; every
+ * restart used to restore these titles, silently erasing his edits).
  */
 async function upsertCategory(payload: Payload, entry: (typeof CATEGORIES)[number]): Promise<void> {
   const existing = await payload.find({
@@ -31,23 +31,26 @@ async function upsertCategory(payload: Payload, entry: (typeof CATEGORIES)[numbe
     where: { slug: { equals: entry.slug } },
     limit: 1,
   })
+  if (existing.docs.length > 0) return
 
-  const id =
-    existing.docs[0]?.id ??
-    (
-      await payload.create({
-        collection: 'categories',
-        locale: 'he',
-        data: { title: entry.title.he, slug: entry.slug },
-      })
-    ).id
-
-  await payload.update({ collection: 'categories', id, locale: 'he', data: { title: entry.title.he } })
-  await payload.update({ collection: 'categories', id, locale: 'en', data: { title: entry.title.en } })
-  await payload.update({ collection: 'categories', id, locale: 'fr', data: { title: entry.title.fr } })
+  const created = await payload.create({
+    collection: 'categories',
+    locale: 'he',
+    data: { title: entry.title.he, slug: entry.slug },
+  })
+  await payload.update({ collection: 'categories', id: created.id, locale: 'en', data: { title: entry.title.en } })
+  await payload.update({ collection: 'categories', id: created.id, locale: 'fr', data: { title: entry.title.fr } })
 }
 
+/**
+ * Writes the default zones only when none exist yet. A zone the son has
+ * since edited (or deleted) must survive every later boot untouched — see
+ * docs/reviews/REVIEW-01-findings.md #1.
+ */
 async function seedShippingSettings(payload: Payload): Promise<void> {
+  const existing = await payload.findGlobal({ slug: 'shippingSettings' })
+  if (existing.zones && existing.zones.length > 0) return
+
   await payload.updateGlobal({
     slug: 'shippingSettings',
     data: {
@@ -84,7 +87,14 @@ async function seedShippingSettings(payload: Payload): Promise<void> {
   })
 }
 
+/**
+ * Writes the default schedule only when none exists yet — same reasoning as
+ * seedShippingSettings above.
+ */
 async function seedSchedule(payload: Payload): Promise<void> {
+  const existing = await payload.findGlobal({ slug: 'schedule', locale: 'he' })
+  if ((existing.shiurim && existing.shiurim.length > 0) || (existing.prayers && existing.prayers.length > 0)) return
+
   await payload.updateGlobal({
     slug: 'schedule',
     locale: 'he',
@@ -104,10 +114,15 @@ async function seedSchedule(payload: Payload): Promise<void> {
 }
 
 /**
- * Idempotent: every write here is either an unconditional global update
- * (globals are singletons — writing the same values twice is a no-op in
- * effect) or a find-then-upsert-by-slug, so running this on every server
- * boot (see `onInit` in payload.config.ts) or by hand is always safe.
+ * Runs on every server boot (see `onInit` in payload.config.ts), so it must
+ * be safe to call on a database the son has already been editing for
+ * months, not just on a fresh one. Every write above is initialise-if-
+ * missing, never overwrite-if-present — the previous unconditional-update
+ * version restored default category titles, shipping rates, and the
+ * timetable on every restart, silently erasing his edits (see
+ * docs/reviews/REVIEW-01-findings.md #1). Verified by editing a shipping
+ * rate in the admin, restarting, and confirming the edit survives — see
+ * docs/reports/TASK-05.md.
  */
 export async function seed(payload: Payload): Promise<void> {
   for (const category of CATEGORIES) {
