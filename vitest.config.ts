@@ -19,6 +19,8 @@ export default defineConfig({
     // (Neon) — comfortably inside a minute, but well past vitest's 5s
     // default.
     testTimeout: 30_000,
+    // Cleaning up a test run's orders one round trip at a time.
+    hookTimeout: 60_000,
     env: {
       // Payload's own flag to skip next dev's dynamic schema push during
       // these tests — see docs/DECISIONS.md §15 and
@@ -28,6 +30,9 @@ export default defineConfig({
       // reason (the schema is already correct — it came from a committed
       // migration).
       PAYLOAD_MIGRATING: 'true',
+      // Checkout tests run against the mock; NODE_ENV is 'test' here, so the
+      // production refusal (src/lib/payment/paymentConfiguration.ts) is not in play.
+      PAYMENT_PROVIDER: 'mock',
     },
   },
 })

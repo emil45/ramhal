@@ -77,6 +77,41 @@ export async function getCartLines(locale: Locale): Promise<CartLine[]> {
     .map((item) => ({ book: item.book, quantity: item.quantity }))
 }
 
+export type CartItem = {
+  bookId: number
+  quantity: number
+}
+
+/** The cart as plain book ids and quantities, for checkout: it re-reads
+ * every book from the database itself rather than trusting a book document
+ * loaded for display. */
+export async function getCartItems(): Promise<CartItem[]> {
+  const sessionId = await readSessionId()
+  if (!sessionId) return []
+
+  const cart = await findCartBySessionId(sessionId)
+  if (!cart) return []
+
+  return (cart.items ?? []).flatMap((item) => {
+    const bookId = typeof item.book === 'object' ? item.book?.id : item.book
+    return bookId === undefined || bookId === null ? [] : [{ bookId, quantity: item.quantity }]
+  })
+}
+
+/** Empties the session's cart. Only callable from a Server Action or Route
+ * Handler. Checkout calls this once the order is paid — never before, so a
+ * declined or abandoned payment leaves the customer's cart intact. */
+export async function clearCart(): Promise<void> {
+  const sessionId = await readSessionId()
+  if (!sessionId) return
+
+  const cart = await findCartBySessionId(sessionId)
+  if (!cart) return
+
+  const payload = await payloadClient()
+  await payload.update({ collection: 'carts', id: cart.id, data: { items: [] } })
+}
+
 /** Gets the session's cart, creating both the session and the cart document
  * if neither exists yet. Only callable from a Server Action or Route
  * Handler (getOrCreateSessionId writes a cookie). */
