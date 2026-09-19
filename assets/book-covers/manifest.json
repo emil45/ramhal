@@ -1,0 +1,979 @@
+{
+  "retrievedAt": "2026-09-19T19:26:08.950Z",
+  "catalogues": [
+    "https://www.ramhal.com/%D7%A1%D7%A4%D7%A8%D7%99%D7%9D.html",
+    "https://www.ramhal.com/site/detail/detail/detailDetail.asp?detail_id=5381290&iPageNum=2&seaWord=",
+    "https://www.ramhal.com/site/detail/detail/detailDetail.asp?detail_id=5381290&iPageNum=3&seaWord="
+  ],
+  "products": [
+    {
+      "title": "דברות הרמח\"ל ח\"א גאולה - תיקון עולם",
+      "url": "https://www.ramhal.com/%D7%93%D7%91%D7%A8%D7%95%D7%AA%2D%D7%94%D7%A8%D7%9E%D7%97%2D%D7%9C%2D%D7%90%2D%D7%92%D7%90%D7%95%D7%9C%D7%94%2D%D7%AA%D7%99%D7%A7%D7%95%D7%9F%2D%D7%A2%D7%95%D7%9C%D7%9D.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6719586-1991.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6719586-1991.jpg",
+          "file": "originals/6719586-1991.jpg",
+          "width": 504,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 44578,
+          "sha256": "dc3378da661603d55977b4f44dee0763bebf066a49f1ee6e755f507a2a9bfcdd"
+        }
+      ],
+      "errors": [],
+      "identifier": "6719586"
+    },
+    {
+      "title": "דברות הרמח\"ל ח\"ב - סוד התפילה",
+      "url": "https://www.ramhal.com/%D7%93%D7%91%D7%A8%D7%95%D7%AA%2D%D7%94%D7%A8%D7%9E%D7%97%2D%D7%9C%2D%D7%97%2D%D7%91%2D%D7%A1%D7%95%D7%93%2D%D7%94%D7%AA%D7%A4%D7%99%D7%9C%D7%94.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6742749-6522.jpeg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6742749-6522.jpeg",
+          "file": "originals/6742749-6522.jpeg",
+          "width": 504,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 46034,
+          "sha256": "8a1bf0d106475156e813e357f53c41c2af865b0e6ee8f3ac1dc387cedc5f051b"
+        }
+      ],
+      "errors": [],
+      "identifier": "6742749"
+    },
+    {
+      "title": "דברות רמח\"ל  ח\"ג- סוד האמונה",
+      "url": "https://www.ramhal.com/%D7%93%D7%91%D7%A8%D7%95%D7%AA%2D%D7%A8%D7%9E%D7%97%2D%D7%9C%2D%D7%97%2D%D7%92%2D%D7%A1%D7%95%D7%93%2D%D7%94%D7%90%D7%9E%D7%95%D7%A0%D7%94.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6757970-7463.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6757970-7463.jpg",
+          "file": "originals/6757970-7463.jpg",
+          "width": 479,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 43775,
+          "sha256": "1d21f0ba6554a774dd07f1061e2a8f3cd3907ceb1617bb26ea6fec8f3840e842"
+        }
+      ],
+      "errors": [],
+      "identifier": "6757970"
+    },
+    {
+      "title": "דברות הרמח\"ל ח\"ד סוד התשובה",
+      "url": "https://www.ramhal.com/%D7%93%D7%91%D7%A8%D7%95%D7%AA%2D%D7%94%D7%A8%D7%9E%D7%97.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6759121-4405.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6759121-4405.jpg",
+          "file": "originals/6759121-4405.jpg",
+          "width": 460,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 51240,
+          "sha256": "1af5a35b978b75aaf3f85ba6ecfc1690dd79289b72550ba1e33f1c4666477a95"
+        }
+      ],
+      "errors": [],
+      "identifier": "6759121"
+    },
+    {
+      "title": "דברות רמח\"ל ח\"ה - משיח",
+      "url": "https://www.ramhal.com/%D7%93%D7%91%D7%A8%D7%95%D7%AA%2D%D7%A8%D7%9E%D7%97%2D%D7%9C%2D%D7%97%2D%D7%94%2D%D7%9E%D7%A9%D7%99%D7%97.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6762596-1490.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6762596-1490.jpg",
+          "file": "originals/6762596-1490.jpg",
+          "width": 504,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 48036,
+          "sha256": "2ebe87b858d960c36f4d86882131fc0aeb3ea0c55b34ca31446d095d4de53c68"
+        }
+      ],
+      "errors": [],
+      "identifier": "6762596"
+    },
+    {
+      "title": "דברות רמח\"ל ח\"ו בית מקדש",
+      "url": "https://www.ramhal.com/%D7%93%D7%91%D7%A8%D7%95%D7%AA%2D%D7%A8%D7%9E%D7%97%2D%D7%9C%2D%D7%97%2D%D7%95%2D%D7%9E%D7%A9%D7%99%D7%97.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6764331-8057.jpeg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6764331-8057.jpeg",
+          "file": "originals/6764331-8057.jpeg",
+          "width": 457,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 42621,
+          "sha256": "e52b26fac7003cb3299a4558be3909386a692a8564cf18bd0177d30123ff42fa"
+        }
+      ],
+      "errors": [],
+      "identifier": "6764331"
+    },
+    {
+      "title": "דברות רמח\"ל ח\"ז עם ישראל",
+      "url": "https://www.ramhal.com/%D7%93%D7%91%D7%A8%D7%95%D7%AA%2D%D7%A8%D7%9E%D7%97%2D%D7%9C%2D%D7%97%2D%D7%96%2D%D7%A2%D7%9D%2D%D7%99%D7%A9%D7%A8%D7%90%D7%9C%2D1.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6764645-5287.png",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6764645-5287.png",
+          "file": "originals/6764645-5287.png",
+          "width": 504,
+          "height": 700,
+          "format": "png",
+          "bytes": 445762,
+          "sha256": "9e229059504b63e98b466ff849f4a255f8485ba9e332b50116f0e341bfae6cb6"
+        }
+      ],
+      "errors": [],
+      "identifier": "6764645"
+    },
+    {
+      "title": "דברות רמח\"ל ח\"ח סוד הקדושה",
+      "url": "https://www.ramhal.com/%D7%93%D7%91%D7%A8%D7%95%D7%AA%2D%D7%A8%D7%9E%D7%97%2D%D7%9C%2D%D7%97%2D%D7%97%2D%D7%A1%D7%95%D7%93%2D%D7%94%D7%A7%D7%93%D7%95%D7%A9%D7%94.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6769329-3675.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6769329-3675.jpg",
+          "file": "originals/6769329-3675.jpg",
+          "width": 504,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 47755,
+          "sha256": "2cf0bc33f6d4ede8124f3d7ffa0c6b57193bd54ef5483343e5a27bec326a5867"
+        }
+      ],
+      "errors": [],
+      "identifier": "6769329"
+    },
+    {
+      "title": "דברות רמח\"ל סט 7 חלקים",
+      "url": "https://www.ramhal.com/%D7%93%D7%91%D7%A8%D7%95%D7%AA%2D%D7%A8%D7%9E%D7%97%2D%D7%9C%2D%D7%A1%D7%98%2D7%2D%D7%97%D7%9C%D7%A7%D7%99%D7%9D.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6764646-6739.jpeg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6764646-6739.jpeg",
+          "file": "originals/6764646-6739.jpeg",
+          "width": 486,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 69712,
+          "sha256": "0a7914a6be4e6bd402616f1b49b3d00e9f42138e2654865b129af7a96e4b478e"
+        }
+      ],
+      "errors": [],
+      "identifier": "6764646"
+    },
+    {
+      "title": "אור הגנוז",
+      "url": "https://www.ramhal.com/%D7%90%D7%95%D7%A8%2D%D7%94%D7%92%D7%A0%D7%95%D7%96.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6769327-9015.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6769327-9015.jpg",
+          "file": "originals/6769327-9015.jpg",
+          "width": 524,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 61883,
+          "sha256": "dc00858922183cf7582aa52374a7ba7f199c0fef09c8b275dd5f0ef3a38d6947"
+        }
+      ],
+      "errors": [],
+      "identifier": "6769327"
+    },
+    {
+      "title": "אדיר במרום הוצאת מכון רמח\"ל",
+      "url": "https://www.ramhal.com/%D7%90%D7%93%D7%99%D7%A8%2D%D7%91%D7%9E%D7%A8%D7%95%D7%9D%2D%D7%94%D7%95%D7%A6%D7%90%D7%AA%2D%D7%9E%D7%9B%D7%95%D7%9F%2D%D7%A8%D7%9E%D7%97%2D%D7%9C.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6481268-7525.jpeg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6481268-7525.jpeg",
+          "file": "originals/6481268-7525.jpeg",
+          "width": 487,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 57132,
+          "sha256": "199939e93384ba60715a3c186f9417c3527f0181c2f1ac21540ff9f32701f5dc"
+        }
+      ],
+      "errors": [],
+      "identifier": "6481268"
+    },
+    {
+      "title": "אור עולם",
+      "url": "https://www.ramhal.com/%D7%90%D7%95%D7%A8%2D%D7%A2%D7%95%D7%9C%D7%9D.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339742-2912.JPG",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339742-2912.JPG",
+          "file": "originals/5339742-2912.JPG",
+          "width": 468,
+          "height": 640,
+          "format": "jpeg",
+          "bytes": 52611,
+          "sha256": "5d07ad0259ce91fe4dd645dc672d4c7d1977363de147e976d4fb027e651d866d"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339742"
+    },
+    {
+      "title": "איגרות הרמח\"ל",
+      "url": "https://www.ramhal.com/%D7%90%D7%99%D7%92%D7%A8%D7%95%D7%AA%2D%D7%94%D7%A8%D7%9E%D7%97%2D%D7%9C.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339743-4500.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339743-4500.jpg",
+          "file": "originals/5339743-4500.jpg",
+          "width": 484,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 81670,
+          "sha256": "17517d06be977e9bdc8061c5f504643c285f952855407a568f271bf55871811c"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339743"
+    },
+    {
+      "title": "ברית מנוחה",
+      "url": "https://www.ramhal.com/%D7%91%D7%A8%D7%99%D7%AA%2D%D7%9E%D7%A0%D7%95%D7%97%D7%94.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5388463-4120.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5388463-4120.jpg",
+          "file": "originals/5388463-4120.jpg",
+          "width": 393,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 49177,
+          "sha256": "8760d20f6619eed679ef2a9921e0fbbf5bf7dbcb9c81b61c5e0aa7808d57fc78"
+        }
+      ],
+      "errors": [],
+      "identifier": "5388463"
+    },
+    {
+      "title": "גילוי מלכותו על ר\"ה פורמט קטן",
+      "url": "https://www.ramhal.com/%D7%92%D7%99%D7%9C%D7%95%D7%99%2D%D7%9E%D7%9C%D7%9B%D7%95%D7%AA%D7%95%2D%D7%A2%D7%9C%2D%D7%A8%2D%D7%94.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339744-3807.JPG",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339744-3807.JPG",
+          "file": "originals/5339744-3807.JPG",
+          "width": 420,
+          "height": 640,
+          "format": "jpeg",
+          "bytes": 39558,
+          "sha256": "7fc1d27c7bb9650da7386a6e5d40ce584ea1fcfff7182333ff94e0f11660cc37"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339744"
+    },
+    {
+      "title": "גילוי מלכותו על חג  מתן תורה",
+      "url": "https://www.ramhal.com/%D7%92%D7%99%D7%9C%D7%95%D7%99%2D%D7%9E%D7%9C%D7%9B%D7%95%D7%AA%D7%95%2D%D7%A2%D7%9C%2D%D7%97%D7%92%2D%D7%9E%D7%AA%D7%9F%2D%D7%AA%D7%95%D7%A8%D7%94.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339745-2143.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339745-2143.jpg",
+          "file": "originals/5339745-2143.jpg",
+          "width": 69,
+          "height": 105,
+          "format": "jpeg",
+          "bytes": 5145,
+          "sha256": "11c34f91a326c290fe97b19bf0ce079e678a0875974f7901204b18baf17e4abc"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339745"
+    },
+    {
+      "title": "גילוי מלכותו על פסח",
+      "url": "https://www.ramhal.com/%D7%92%D7%99%D7%9C%D7%95%D7%99%2D%D7%9E%D7%9C%D7%9B%D7%95%D7%AA%D7%95%2D%D7%A2%D7%9C%2D%D7%A4%D7%A1%D7%97.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6279017-8956.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6279017-8956.jpg",
+          "file": "originals/6279017-8956.jpg",
+          "width": 460,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 41239,
+          "sha256": "76ed19f2a39c1e40eee83d7dde5b625d6bc84daa3a228bc3e0608a9b23be31e1"
+        }
+      ],
+      "errors": [],
+      "identifier": "6279017"
+    },
+    {
+      "title": "דעת תבונות",
+      "url": "https://www.ramhal.com/%D7%93%D7%A2%D7%AA%2D%D7%AA%D7%91%D7%95%D7%A0%D7%95%D7%AA.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339746-8470.JPG",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339746-8470.JPG",
+          "file": "originals/5339746-8470.JPG",
+          "width": 454,
+          "height": 640,
+          "format": "jpeg",
+          "bytes": 69099,
+          "sha256": "afb30e12705c76a219a634e6ffb490ee3f114d660444f0e88ff06c399cc6957a"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339746"
+    },
+    {
+      "title": "דרך ה' - עם פירוש דרך היחוד",
+      "url": "https://www.ramhal.com/%D7%93%D7%A8%D7%9A%2D%D7%94%2D%D7%A2%D7%9D%2D%D7%A4%D7%99%D7%A8%D7%95%D7%A9%2D%D7%93%D7%A8%D7%9A%2D%D7%94%D7%99%D7%97%D7%95%D7%93.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339747.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339747.jpg",
+          "file": "originals/5339747.jpg",
+          "width": 103,
+          "height": 150,
+          "format": "jpeg",
+          "bytes": 17739,
+          "sha256": "e918560faadae0c7686f722431a31922f727053fa9325c17a8562a7c32e17f2d"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339747"
+    },
+    {
+      "title": "דרך חכמה",
+      "url": "https://www.ramhal.com/%D7%93%D7%A8%D7%9A%2D%D7%97%D7%9B%D7%9E%D7%94.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339748.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339748.jpg",
+          "file": "originals/5339748.jpg",
+          "width": 102,
+          "height": 150,
+          "format": "jpeg",
+          "bytes": 25447,
+          "sha256": "709198a616024962342fc4d3eacce3a2f108cc54c79acb21dca296803ffa3fa1"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339748"
+    },
+    {
+      "title": "דרך תבונות השלם",
+      "url": "https://www.ramhal.com/%D7%93%D7%A8%D7%9A%2D%D7%AA%D7%91%D7%95%D7%A0%D7%95%D7%AA%2D%D7%94%D7%A9%D7%9C%D7%9D.html",
+      "cataloguePage": 1,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6279016-6643.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6279016-6643.jpg",
+          "file": "originals/6279016-6643.jpg",
+          "width": 475,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 93699,
+          "sha256": "fb4c8d241ddfcd40744fe2b55d3935b6451d163be7af0ef040ff0bb0382d15ca"
+        }
+      ],
+      "errors": [],
+      "identifier": "6279016"
+    },
+    {
+      "title": "דרך חכמת האמת",
+      "url": "https://www.ramhal.com/%D7%93%D7%A8%D7%9A%2D%D7%97%D7%9B%D7%9E%D7%AA%2D%D7%94%D7%90%D7%9E%D7%AA.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339750-7162.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339750-7162.jpg",
+          "file": "originals/5339750-7162.jpg",
+          "width": 506,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 59305,
+          "sha256": "f021059bea4787e1421dddd566867f84bd46cdd3baad685205139bac07ce2621"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339750"
+    },
+    {
+      "title": "הגדה של פסח לרמח\"ל",
+      "url": "https://www.ramhal.com/%D7%94%D7%92%D7%93%D7%94%D7%A9%D7%9C%2D%D7%A4%D7%A1%D7%97%2D%D7%9C%D7%A8%D7%9E%D7%97%2D%D7%9C.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6769573-2314.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6769573-2314.jpg",
+          "file": "originals/6769573-2314.jpg",
+          "width": 536,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 26513,
+          "sha256": "1e2aa9879bed4fe03cd9b21ea0ad740f0c9c20a88c6ace969c02a1423118f5ce"
+        }
+      ],
+      "errors": [],
+      "identifier": "6769573"
+    },
+    {
+      "title": "זוהר רשב\"י ח\"א - פרשת בראשית - הוצאת מכון רמח\"ל",
+      "url": "https://www.ramhal.com/%D7%96%D7%95%D7%94%D7%A8%2D%D7%91%D7%A8%D7%90%D7%A9%D7%99%D7%AA%2D%D7%94%D7%95%D7%A6%D7%90%D7%AA%2D%D7%9E%D7%9B%D7%95%D7%9F%2D%D7%A8%D7%9E%D7%97%2D%D7%9C.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6648909-7299.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6648909-7299.jpg",
+          "file": "originals/6648909-7299.jpg",
+          "width": 378,
+          "height": 504,
+          "format": "jpeg",
+          "bytes": 144766,
+          "sha256": "d0498316e72052cfd77050ca6284552552fcb7ee1c44fd2e6f5924bd2f1a3aaa"
+        }
+      ],
+      "errors": [],
+      "identifier": "6648909"
+    },
+    {
+      "title": "זוהר רשב\"י ח\"ב - פרשת נח, לך לך, וירא, - בהוצאת מכון רמח\"ל",
+      "url": "https://www.ramhal.com/%D7%96%D7%95%D7%94%D7%A8%2D%D7%93%D7%A4%D7%95%D7%A1%2D%D7%95%D7%95%D7%99%D7%9C%D7%A0%D7%90%2D%D7%9E%D7%9B%D7%95%D7%9F%2D%D7%A8%D7%9E%D7%97%2D%D7%9C%2D%D7%97%2D%D7%91.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6738650-5852.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6738650-5852.jpg",
+          "file": "originals/6738650-5852.jpg",
+          "width": 497,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 113213,
+          "sha256": "997c1b6c98a11cc1c7b8ffccdb684fd468859302720f1db9fa27cf808b160775"
+        }
+      ],
+      "errors": [],
+      "identifier": "6738650"
+    },
+    {
+      "title": "לישרים תהילה",
+      "url": "https://www.ramhal.com/%D7%9C%D7%99%D7%A9%D7%A8%D7%99%D7%9D%2D%D7%AA%D7%94%D7%99%D7%9C%D7%94.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339772.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339772.jpg",
+          "file": "originals/5339772.jpg",
+          "width": 97,
+          "height": 150,
+          "format": "jpeg",
+          "bytes": 19207,
+          "sha256": "7ffcd363003aad09ca03ea14bf6dfb9889b1cde4a122a7f180f961a12c9a5485"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339772"
+    },
+    {
+      "title": "משכני עליון",
+      "url": "https://www.ramhal.com/%D7%9E%D7%A9%D7%9B%D7%A0%D7%99%2D%D7%A2%D7%9C%D7%99%D7%95%D7%9F.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339752-7019.jpeg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339752-7019.jpeg",
+          "file": "originals/5339752-7019.jpeg",
+          "width": 488,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 86284,
+          "sha256": "7cb048080d010843b380c79249d605db429de35242e09c1b33f007633e3b834f"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339752"
+    },
+    {
+      "title": "מלך העולם",
+      "url": "https://www.ramhal.com/%D7%9E%D7%9C%D7%9A%2D%D7%94%D7%A2%D7%95%D7%9C%D7%9D.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339753.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339753.jpg",
+          "file": "originals/5339753.jpg",
+          "width": 98,
+          "height": 150,
+          "format": "jpeg",
+          "bytes": 18994,
+          "sha256": "918f2a629cbf4038bdecea186c855ff921a674474e0abdef37707e4a55c824f5"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339753"
+    },
+    {
+      "title": "מסילת ישרים",
+      "url": "https://www.ramhal.com/%D7%9E%D7%A1%D7%99%D7%9C%D7%AA%2D%D7%99%D7%A9%D7%A8%D7%99%D7%9D.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339755.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339755.jpg",
+          "file": "originals/5339755.jpg",
+          "width": 104,
+          "height": 150,
+          "format": "jpeg",
+          "bytes": 19809,
+          "sha256": "48be330340f78509a238dd6b3d229386db3b3904ddaf4508856e3d58593a2201"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339755"
+    },
+    {
+      "title": "מאמר הגאולה",
+      "url": "https://www.ramhal.com/%D7%9E%D7%90%D7%9E%D7%A8%2D%D7%94%D7%92%D7%90%D7%95%D7%9C%D7%94.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339754-3363.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339754-3363.jpg",
+          "file": "originals/5339754-3363.jpg",
+          "width": 500,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 70368,
+          "sha256": "2ff185df88d94fa58f08b94d3c7ab1ab55ded20d42d4b901ca1789a78cddf59c"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339754"
+    },
+    {
+      "title": "מחזור ר\"ה לרמח\"ל",
+      "url": "https://www.ramhal.com/%D7%9E%D7%97%D7%96%D7%95%D7%A8%2D%D7%A8%2D%D7%94%2D%D7%9C%D7%A8%D7%9E%D7%97%2D%D7%9C.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5381286-5785.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5381286-5785.jpg",
+          "file": "originals/5381286-5785.jpg",
+          "width": 507,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 60622,
+          "sha256": "0a3914e0229ab4e12512789604fd5edd872a751a453f739d96c29721276ede46"
+        }
+      ],
+      "errors": [],
+      "identifier": "5381286"
+    },
+    {
+      "title": "מחזור כיפור רמח\"ל חדש צבע חום",
+      "url": "https://www.ramhal.com/%D7%9E%D7%97%D7%96%D7%95%D7%A8%2D%D7%9B%D7%99%D7%A4%D7%95%D7%A8%2D%D7%A8%D7%9E%D7%97%2D%D7%9C%2D%D7%97%D7%93%D7%A9.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6767342-2288.JPG",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6767342-2288.JPG",
+          "file": "originals/6767342-2288.JPG",
+          "width": 525,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 40659,
+          "sha256": "ebedce37bd4631ed4069532297030eebd92f316839f4bfc9990d75de638ea91a"
+        }
+      ],
+      "errors": [],
+      "identifier": "6767342"
+    },
+    {
+      "title": "מחזור כיפור רמח\"ל חדש צבע לבן",
+      "url": "https://www.ramhal.com/%D7%9E%D7%97%D7%96%D7%95%D7%A8%2D%D7%9B%D7%99%D7%A4%D7%95%D7%A8%2D%D7%A8%D7%9E%D7%97%2D%D7%9C%2D%D7%97%D7%93%D7%A9%2D%D7%A6%D7%91%D7%A2%2D%D7%9C%D7%91%D7%9F.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6767343-6238.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6767343-6238.jpg",
+          "file": "originals/6767343-6238.jpg",
+          "width": 545,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 56851,
+          "sha256": "124f71fb47738330f2354414aba421465e522949943b1b7c2d9d87e9dcb0e139"
+        }
+      ],
+      "errors": [],
+      "identifier": "6767343"
+    },
+    {
+      "title": "סוד היחוד",
+      "url": "https://www.ramhal.com/%D7%A1%D7%95%D7%93%2D%D7%94%D7%99%D7%97%D7%95%D7%93.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339756-6923.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339756-6923.jpg",
+          "file": "originals/5339756-6923.jpg",
+          "width": 535,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 74562,
+          "sha256": "2ec40c78fb16468b07e48487e75f5e6c6951a1f453fac74921a0ea9c85100aa2"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339756"
+    },
+    {
+      "title": "סידור כוונות לימות החול (פורמט קטן)",
+      "url": "https://www.ramhal.com/%D7%A1%D7%99%D7%93%D7%95%D7%A8%2D%D7%9B%D7%95%D7%95%D7%A0%D7%95%D7%AA%2D%D7%9C%D7%99%D7%9E%D7%95%D7%AA%2D%D7%94%D7%97%D7%95%D7%9C.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339757.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339757.jpg",
+          "file": "originals/5339757.jpg",
+          "width": 106,
+          "height": 150,
+          "format": "jpeg",
+          "bytes": 20738,
+          "sha256": "c5ba72fcd3074079f0e986cc7fdd42c673187fb2a6ad11a5b8d69a0aa2266f09"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339757"
+    },
+    {
+      "title": "סידור כוונות לשבת כריכת עור  מהודרת פורמט גדול",
+      "url": "https://www.ramhal.com/%D7%A1%D7%99%D7%93%D7%95%D7%A8%2D%D7%9B%D7%95%D7%95%D7%A0%D7%95%D7%AA%2D%D7%9C%D7%A9%D7%91%D7%AA.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339758.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339758.jpg",
+          "file": "originals/5339758.jpg",
+          "width": 108,
+          "height": 150,
+          "format": "jpeg",
+          "bytes": 20325,
+          "sha256": "cd74ce5edb2f22db93c262c73f583bdc0dad1f9eb3a90f25ebc65aad97957b63"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339758"
+    },
+    {
+      "title": "סידור שבת פורמט קטן",
+      "url": "https://www.ramhal.com/%D7%A1%D7%99%D7%93%D7%95%D7%A8%2D%D7%A9%D7%91%D7%AA%2D%D7%A4%D7%95%D7%A8%D7%9E%D7%98%2D%D7%A7%D7%98%D7%9F.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6752689-3303.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6752689-3303.jpg",
+          "file": "originals/6752689-3303.jpg",
+          "width": 518,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 99458,
+          "sha256": "62af347a3a2ecd57dcf0924eebf2f395c9f5acad44785b0e01833b7585c0fcc4"
+        }
+      ],
+      "errors": [],
+      "identifier": "6752689"
+    },
+    {
+      "title": "עינייני ר\"ה ויוה\"כ",
+      "url": "https://www.ramhal.com/%D7%A2%D7%99%D7%A0%D7%99%D7%99%D7%A0%D7%99%2D%D7%A8%2D%D7%94%2D%D7%95%D7%99%D7%95%D7%94%2D%D7%9B.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339759.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339759.jpg",
+          "file": "originals/5339759.jpg",
+          "width": 106,
+          "height": 150,
+          "format": "jpeg",
+          "bytes": 23795,
+          "sha256": "12f39af4c01ca2f9174470ebb273827331a4daa996320eeea5529b9dc8422200"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339759"
+    },
+    {
+      "title": "פינות המרכבה",
+      "url": "https://www.ramhal.com/%D7%A4%D7%99%D7%A0%D7%95%D7%AA%2D%D7%94%D7%9E%D7%A8%D7%9B%D7%91%D7%94.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6770037-4430.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6770037-4430.jpg",
+          "file": "originals/6770037-4430.jpg",
+          "width": 434,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 57304,
+          "sha256": "0f755c81baacea416b2da72dc1f39fd59e5183e95ebf7ae57981ca75a8810b0b"
+        }
+      ],
+      "errors": [],
+      "identifier": "6770037"
+    },
+    {
+      "title": "קנאת ה' צבאות",
+      "url": "https://www.ramhal.com/%D7%A7%D7%A0%D7%90%D7%AA%2D%D7%94%2D%D7%A6%D7%91%D7%90%D7%95%D7%AA.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6675315-3817.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6675315-3817.jpg",
+          "file": "originals/6675315-3817.jpg",
+          "width": 494,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 111141,
+          "sha256": "80a96be1ae779800d5b37a7706af82e86a988323edf3afabd426287f07231b20"
+        }
+      ],
+      "errors": [],
+      "identifier": "6675315"
+    },
+    {
+      "title": "קל\"ח פתחי חכמה",
+      "url": "https://www.ramhal.com/%D7%A7%D7%9C%2D%D7%97%2D%D7%A4%D7%AA%D7%97%D7%99%2D%D7%97%D7%9B%D7%9E%D7%94.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339760.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339760.jpg",
+          "file": "originals/5339760.jpg",
+          "width": 107,
+          "height": 150,
+          "format": "jpeg",
+          "bytes": 20441,
+          "sha256": "e4f3012e42fef1e2291f67410e2f3cb048aa7e66429cc8eb9ff35f9942c3e90b"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339760"
+    },
+    {
+      "title": "רכב ישראל",
+      "url": "https://www.ramhal.com/%D7%A8%D7%9B%D7%91%2D%D7%99%D7%A9%D7%A8%D7%90%D7%9C.html",
+      "cataloguePage": 2,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339761-3367.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339761-3367.jpg",
+          "file": "originals/5339761-3367.jpg",
+          "width": 478,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 46636,
+          "sha256": "4b6f63d2c703426c93e4da08aaf99c552b91f2148173f5c1b90c466cb8847424"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339761"
+    },
+    {
+      "title": "רזין גניזין תשע\"ו (2016)",
+      "url": "https://www.ramhal.com/%D7%A8%D7%96%D7%99%D7%9F%2D%D7%92%D7%A0%D7%99%D7%96%D7%99%D7%9F%2D%D7%AA%D7%A9%D7%A2%2D%D7%95%2D2016.html",
+      "cataloguePage": 3,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5978027-8552.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5978027-8552.jpg",
+          "file": "originals/5978027-8552.jpg",
+          "width": 469,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 60543,
+          "sha256": "5cd8b0f4bf43232df9b436788e744a7234ae7214edf97be928d59cdd6f35a534"
+        }
+      ],
+      "errors": [],
+      "identifier": "5978027"
+    },
+    {
+      "title": "תיקונים חדשים",
+      "url": "https://www.ramhal.com/%D7%AA%D7%99%D7%A7%D7%95%D7%A0%D7%99%D7%9D%2D%D7%97%D7%93%D7%A9%D7%99%D7%9D.html",
+      "cataloguePage": 3,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339762.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339762.jpg",
+          "file": "originals/5339762.jpg",
+          "width": 108,
+          "height": 150,
+          "format": "jpeg",
+          "bytes": 22335,
+          "sha256": "bcc99702773ff1d293a6e02f1a16bfed687b8402d5c392fb4b22032dc9b13496"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339762"
+    },
+    {
+      "title": "תפילות לרמח\"ל גדול",
+      "url": "https://www.ramhal.com/%D7%AA%D7%A4%D7%99%D7%9C%D7%95%D7%AA%2D%D7%9C%D7%A8%D7%9E%D7%97%2D%D7%9C%2D%D7%92%D7%93%D7%95%D7%9C.html",
+      "cataloguePage": 3,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339763-8375.JPG",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5339763-8375.JPG",
+          "file": "originals/5339763-8375.JPG",
+          "width": 454,
+          "height": 640,
+          "format": "jpeg",
+          "bytes": 160867,
+          "sha256": "79a28383d207d7ff563359e72d2ab079944f818104c3dcd2f002c98aed68ceb0"
+        }
+      ],
+      "errors": [],
+      "identifier": "5339763"
+    },
+    {
+      "title": "זוהר השלם - חיבורה קדמאה מהדורה חדשה",
+      "url": "https://www.ramhal.com/%D7%96%D7%95%D7%94%D7%A8%2D%D7%94%D7%A9%D7%9C%D7%9D%2D%D7%97%D7%99%D7%91%D7%95%D7%A8%D7%94%2D%D7%A7%D7%93%D7%9E%D7%90%D7%94.html",
+      "cataloguePage": 3,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6265202-7995.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6265202-7995.jpg",
+          "file": "originals/6265202-7995.jpg",
+          "width": 561,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 55487,
+          "sha256": "62236ddea1cd62d8bca7b4852995c18f762b4bc5a22d1cb7f8df16be6f2ee70c"
+        }
+      ],
+      "errors": [],
+      "identifier": "6265202"
+    },
+    {
+      "title": "יודעי שמך - דרך הרמח\"ל בתכנית הבריאה",
+      "url": "https://www.ramhal.com/%D7%99%D7%95%D7%93%D7%A2%D7%99%2D%D7%A9%D7%9E%D7%9A.html",
+      "cataloguePage": 3,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6326459-2225.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6326459-2225.jpg",
+          "file": "originals/6326459-2225.jpg",
+          "width": 492,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 84428,
+          "sha256": "c65bebeea15559551ec7cb09e9502d8262b9cffb3670ae837e89d9b498424eb2"
+        }
+      ],
+      "errors": [],
+      "identifier": "6326459"
+    },
+    {
+      "title": "שוד מלכים",
+      "url": "https://www.ramhal.com/%D7%A9%D7%95%D7%93%2D%D7%9E%D7%9C%D7%9B%D7%99%D7%9D.html",
+      "cataloguePage": 3,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6459729-3695.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6459729-3695.jpg",
+          "file": "originals/6459729-3695.jpg",
+          "width": 425,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 90865,
+          "sha256": "629d80b4956a553f940ebe01fd850daa3c682aacb65fbe5fb3c3d1e533eae230"
+        }
+      ],
+      "errors": [],
+      "identifier": "6459729"
+    },
+    {
+      "title": "מחול לצדיקים (בדברי תכלית הבריאה)",
+      "url": "https://www.ramhal.com/%D7%9E%D7%97%D7%95%D7%9C%2D%D7%9C%D7%A6%D7%93%D7%99%D7%A7%D7%99%D7%9D.html",
+      "cataloguePage": 3,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/5731208-2637.png",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/5731208-2637.png",
+          "file": "originals/5731208-2637.png",
+          "width": 700,
+          "height": 700,
+          "format": "png",
+          "bytes": 389394,
+          "sha256": "f7ac1ab98cdf8543b65c78e1633c80a3880c1e3b78cf0286f68ba49a23ecbc87"
+        }
+      ],
+      "errors": [],
+      "identifier": "5731208"
+    },
+    {
+      "title": "סט ספרי הגאולה לרמח\"ל",
+      "url": "https://www.ramhal.com/%D7%A1%D7%98%2D%D7%A1%D7%A4%D7%A8%D7%99%2D%D7%94%D7%92%D7%90%D7%95%D7%9C%D7%94%2D%D7%9C%D7%A8%D7%9E%D7%97%2D%D7%9C.html",
+      "cataloguePage": 3,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6748507-7732.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6748507-7732.jpg",
+          "file": "originals/6748507-7732.jpg",
+          "width": 604,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 70787,
+          "sha256": "8b43f811858fb4443c4e26feea546d6631bf0b279ef870f9e6acce42342328c9"
+        }
+      ],
+      "errors": [],
+      "identifier": "6748507"
+    },
+    {
+      "title": "רבי יעקב מולכו - הגהות בספר משנה תורה לרמב\"ם",
+      "url": "https://www.ramhal.com/%D7%A8%D7%91%D7%99%2D%D7%99%D7%A2%D7%A7%D7%91%2D%D7%9E%D7%95%D7%9C%D7%9B%D7%95.html",
+      "cataloguePage": 3,
+      "catalogueImage": "https://sfilev2.f-static.com/image/users/367044/detail/big/6762597-8967.jpg",
+      "images": [
+        {
+          "url": "https://sfilev2.f-static.com/image/users/367044/detail/big/6762597-8967.jpg",
+          "file": "originals/6762597-8967.jpg",
+          "width": 533,
+          "height": 700,
+          "format": "jpeg",
+          "bytes": 61368,
+          "sha256": "6f66b04094e74ac326c897b7958d49a9b6aee60f70e6ef1f10bd6986bb8bacc4"
+        }
+      ],
+      "errors": [],
+      "identifier": "6762597"
+    }
+  ]
+}
