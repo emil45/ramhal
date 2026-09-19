@@ -32,6 +32,10 @@ teaching institute founded by Rabbi Mordechai Chriqui, dedicated to the writings
 - **One catalogue, one content model, three languages.** The legacy setup cloned the whole site per
   currency. That is the bug being fixed — do not reintroduce it.
 - **The Rav does not use the system.** His son does all administration. One admin persona.
+- **`NODE_ENV` says how the build is optimised, `APP_ENV` says which deployment this is**
+  (`development` | `demo` | `production`, required, see `.env.example`). The mock payment
+  provider is allowed in `development` and `demo` and refused in `production`; `demo` puts a
+  permanent banner on every page. Never gate on `NODE_ENV` for either.
 - Migrating legacy content: hyphens in the old URLs are encoded as `%2D`, not `-`. Decoding them
   produces URLs that 404. See the migration risks sheet before writing any scraper.
 
@@ -73,6 +77,16 @@ codebase unhandoverable:
 - Multiple utility modules that do overlapping things.
 - Re-implementing something the framework already provides.
 - Magic numbers and inline string literals for anything meaningful. Name them.
+
+**Storefront UI**
+
+- No raw `<input>`, `<select>` or `<button>` in `src/components/storefront/` or under
+  `src/app/(frontend)/`. Use the shadcn components in `src/components/ui/`. Check with
+  `grep -rn "<input\|<select\|<button" src/components/storefront "src/app/(frontend)"`,
+  which must print nothing.
+- Logical CSS properties only (`ms-`, `ps-`, `start-`), never `ml-` / `left-`.
+- Look and feel — type scale, spacing, teal versus gold, the cover system — is in
+  `docs/DESIGN.md`. Read it before touching a storefront component.
 
 **Testing**
 

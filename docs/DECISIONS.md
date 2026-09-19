@@ -495,3 +495,24 @@ discipline matters more without branches, not less, because `git revert` over a 
 only clean if the range is clean. Review still happens the same way it already did: after the
 work exists, against the running thing, with findings going to `docs/reviews/` and a verdict
 deciding what is acted on.
+
+## 18. APP_ENV, and what the storefront sells (20 September 2026)
+
+**`APP_ENV`, not `NODE_ENV`.** TASK-09 gated the mock payment provider on `NODE_ENV`, which
+means "optimised build", not "the live shop": a deployed demo is `NODE_ENV=production` and could
+not start. `APP_ENV` (`development` | `demo` | `production`) names the deployment. The mock is
+allowed in the first two and refused — `exit(1)`, same message — in `production`. It is required
+with no default, because a default of `development` would let a forgotten variable in a real
+deployment switch the mock on. It is deliberately an environment name and not an override flag:
+a flag is something set by accident; a name is something a person has to mean.
+
+`demo` also carries a permanent, undismissable banner on every page. `APP_ENV` is read while
+pages are prerendered, so it must be set for `next build` as well as `next start`. Building in one
+environment and running in another would bake the wrong banner state into the HTML, so the build
+records its `APP_ENV` (`next.config.ts`) and the server exits at startup if it differs.
+
+**CDs and DVDs are gone from the catalogue.** The institute no longer sells recordings online.
+The `cd-dvd` category and 28 books (10 filed under it, 18 more identifiable by "CD", "DVD", "MP3"
+in the title) were deleted from the database, the category is no longer seeded, and the importer
+skips both (`DISCONTINUED_CATEGORY_SLUGS`, `isRecordedMediaTitle`) so a re-import cannot bring
+them back. Orders keep their own snapshot of what was sold, so past orders are unaffected.
