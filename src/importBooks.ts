@@ -3,6 +3,8 @@ import { unlink, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 
+import { isRecordedMediaTitle } from '@/lib/recordedMedia'
+
 import type { Currency } from '@/lib/currency'
 import type { Book } from '@/payload-types'
 import type { Payload } from 'payload'
@@ -103,8 +105,8 @@ const LANGUAGE_TO_CATEGORY: Record<SiteKey, string> = {
 }
 
 // Shelves the institute no longer sells online. A book filed under one of
-// these is skipped on import, so a re-import never resurrects what was
-// deleted from the catalogue.
+// these — or titled like a recording, see isRecordedMediaTitle — is skipped on
+// import, so a re-import never resurrects what was deleted from the catalogue.
 const DISCONTINUED_CATEGORY_SLUGS: readonly string[] = ['cd-dvd']
 
 const CURRENCY_CODE: Record<string, Currency> = { $: 'USD', '€': 'EUR', '₪': 'ILS', EUR: 'EUR', ILS: 'ILS', USD: 'USD' }
@@ -235,6 +237,7 @@ function buildBookInput(importKey: string, view: ImportView, titles: Partial<Rec
 
   const shelf = categorySlugOf(view.categories)
   if (shelf && DISCONTINUED_CATEGORY_SLUGS.includes(shelf)) return null
+  if (Object.values(titles).some(isRecordedMediaTitle)) return null
 
   const bookLanguage = deriveBookLanguage(view.categories, Object.values(titles))
 
