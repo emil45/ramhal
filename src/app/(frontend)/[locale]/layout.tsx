@@ -1,8 +1,10 @@
 import { Frank_Ruhl_Libre, Heebo } from 'next/font/google'
 import { notFound } from 'next/navigation'
 
+import { DemoBanner } from '@/components/storefront/DemoBanner'
 import { Footer } from '@/components/storefront/Footer'
 import { Header } from '@/components/storefront/Header'
+import { DirectionProvider } from '@/components/ui/direction'
 import { getDictionary } from '@/app/(frontend)/dictionary'
 import { isLocale, LOCALE_CONFIG, LOCALES } from '@/lib/locale'
 
@@ -29,9 +31,14 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
   return (
     <html lang={locale} dir={direction} className={`${heebo.variable} ${frankRuhlLibre.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col bg-background text-foreground">
-        <Header dict={dict} locale={locale} />
-        <main className="flex-1">{children}</main>
-        <Footer dict={dict} />
+        {/* Base UI's popups (the mobile nav sheet) place themselves from this,
+            not from the document's dir attribute. */}
+        <DirectionProvider direction={direction}>
+          <DemoBanner dict={dict} />
+          <Header dict={dict} locale={locale} />
+          <main className="flex-1">{children}</main>
+          <Footer dict={dict} locale={locale} />
+        </DirectionProvider>
       </body>
     </html>
   )

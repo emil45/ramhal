@@ -14,7 +14,7 @@ import type { Locale } from '@/lib/locale'
  */
 export function LocaleSwitcher({ current }: { current: Locale }) {
   return (
-    <div className="flex items-center gap-2 text-sm">
+    <div className="flex items-center gap-1 text-sm">
       {LOCALES.map((locale) => (
         <Link
           key={locale}
@@ -22,8 +22,8 @@ export function LocaleSwitcher({ current }: { current: Locale }) {
           aria-current={locale === current ? 'true' : undefined}
           className={
             locale === current
-              ? 'font-semibold text-teal'
-              : 'text-muted-foreground hover:text-foreground'
+              ? 'rounded-sm px-2 py-1 font-semibold text-teal underline decoration-gold decoration-2 underline-offset-8'
+              : 'rounded-sm px-2 py-1 text-muted-foreground transition-colors hover:text-foreground'
           }
         >
           {LOCALE_CONFIG[locale].label}

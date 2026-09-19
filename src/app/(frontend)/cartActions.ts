@@ -5,7 +5,7 @@ import { getPayload } from 'payload'
 
 import { isPurchasable } from '@/lib/availability'
 import { isLocale, LOCALE_CONFIG } from '@/lib/locale'
-import { getOrCreateCart } from '@/lib/serverCart'
+import { getCartItemCount as readCartItemCount, getOrCreateCart } from '@/lib/serverCart'
 
 type ActionResult = { error?: 'invalid-locale' | 'invalid-quantity' | 'not-found' | 'not-purchasable'; ok: boolean }
 
@@ -66,4 +66,8 @@ export async function removeFromCart(bookId: number): Promise<ActionResult> {
 
   await payload.update({ collection: 'carts', id: cart.id, data: { items } })
   return { ok: true }
+}
+
+export async function getCartItemCount(): Promise<number> {
+  return readCartItemCount()
 }

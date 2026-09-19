@@ -1,36 +1,55 @@
 import Image from 'next/image'
 import Link from 'next/link'
 
+import { CartLink } from '@/components/storefront/CartLink'
 import { LocaleSwitcher } from '@/components/storefront/LocaleSwitcher'
+import { MobileNav } from '@/components/storefront/MobileNav'
+import { buttonVariants } from '@/components/ui/button'
 import { cataloguePath, localePath } from '@/lib/routes'
+import { cn } from '@/lib/utils'
 
 import type { Dictionary } from '@/app/(frontend)/dictionary'
 import type { Locale } from '@/lib/locale'
 
 export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
+  const secondaryLinks = [
+    { href: localePath(locale, '/ramhal'), label: dict.nav.ramhal },
+    { href: localePath(locale, '/rabbi-chriqui'), label: dict.nav.chriqui },
+  ]
+
   return (
     <header className="border-b border-border bg-card">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+      <div className="page-container flex h-16 items-center gap-3 md:h-20 md:gap-6">
         <Link href={localePath(locale, '/')} className="flex items-center gap-3">
-          <Image src="/logo.png" alt="" width={48} height={48} className="h-12 w-12 object-contain" priority />
-          <span className="font-serif text-lg font-semibold text-teal-deep">{dict.nav.home}</span>
+          <Image src="/logo.png" alt="" width={362} height={512} className="h-10 w-auto md:h-12" priority />
+          <span className="font-serif text-xl font-bold text-teal-deep md:text-2xl">{dict.nav.home}</span>
         </Link>
 
-        <nav className="flex items-center gap-4 text-sm">
-          <Link href={cataloguePath(locale)} className="text-muted-foreground hover:text-foreground">
+        <nav className="ms-auto hidden items-center gap-1 md:flex">
+          <Link href={cataloguePath(locale)} className={cn(buttonVariants({ size: 'default' }), 'me-2 px-5')}>
             {dict.nav.catalogue}
           </Link>
-          <Link href={localePath(locale, '/ramhal')} className="text-muted-foreground hover:text-foreground">
-            {dict.nav.ramhal}
-          </Link>
-          <Link href={localePath(locale, '/rabbi-chriqui')} className="text-muted-foreground hover:text-foreground">
-            {dict.nav.chriqui}
-          </Link>
-          <Link href={localePath(locale, '/cart')} className="font-medium text-teal hover:text-teal-deep">
-            {dict.nav.cart}
-          </Link>
-          <LocaleSwitcher current={locale} />
+          {secondaryLinks.map((link) => (
+            <Link key={link.href} href={link.href} className={buttonVariants({ variant: 'ghost' })}>
+              {link.label}
+            </Link>
+          ))}
         </nav>
+
+        <div className="ms-auto flex items-center gap-1 md:ms-0">
+          <div className="hidden md:block md:border-s md:border-border md:ps-3">
+            <LocaleSwitcher current={locale} />
+          </div>
+          <CartLink href={localePath(locale, '/cart')} locale={locale} />
+          <div className="md:hidden">
+            <MobileNav
+              closeLabel={dict.nav.closeMenu}
+              current={locale}
+              links={[{ href: cataloguePath(locale), label: dict.nav.catalogue }, ...secondaryLinks]}
+              menuLabel={dict.nav.menu}
+            />
+          </div>
+        </div>
       </div>
     </header>
   )

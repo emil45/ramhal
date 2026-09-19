@@ -112,6 +112,34 @@ async function seedSchedule(payload: Payload): Promise<void> {
   })
 }
 
+// Contact details as the legacy sites publish them (docs/PROJECT_CONTEXT.md §12).
+// The two legacy sites list different emails; this is the Hebrew site's, which
+// is the institute's primary one. The son corrects it in the admin.
+const CONTACT_ADDRESS: LocalizedText = {
+  he: 'הרב רפאל קצנלבוגן 73, ירושלים',
+  en: '73 Katzenelbogen St, Jerusalem 91431, Israel',
+  fr: '73 rue Katzenelbogen, Jérusalem 91431, Israël',
+}
+const CONTACT_PHONE = '+972-2-653-5101'
+const CONTACT_EMAIL = 'ramhalcom@gmail.com'
+
+/**
+ * Writes the contact details only when none exist yet — same reasoning as
+ * seedShippingSettings above.
+ */
+async function seedContactDetails(payload: Payload): Promise<void> {
+  const existing = await payload.findGlobal({ slug: 'siteSettings', locale: 'he' })
+  if (existing.contact?.address || existing.contact?.phone || existing.contact?.email) return
+
+  await payload.updateGlobal({
+    slug: 'siteSettings',
+    locale: 'he',
+    data: { contact: { address: CONTACT_ADDRESS.he, phone: CONTACT_PHONE, email: CONTACT_EMAIL } },
+  })
+  await payload.updateGlobal({ slug: 'siteSettings', locale: 'en', data: { contact: { address: CONTACT_ADDRESS.en } } })
+  await payload.updateGlobal({ slug: 'siteSettings', locale: 'fr', data: { contact: { address: CONTACT_ADDRESS.fr } } })
+}
+
 /**
  * Runs on every server boot (see `onInit` in payload.config.ts), so it must
  * be safe to call on a database the son has already been editing for
@@ -129,4 +157,5 @@ export async function seed(payload: Payload): Promise<void> {
   }
   await seedShippingSettings(payload)
   await seedSchedule(payload)
+  await seedContactDetails(payload)
 }

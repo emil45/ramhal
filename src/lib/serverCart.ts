@@ -98,6 +98,12 @@ export async function getCartItems(): Promise<CartItem[]> {
   })
 }
 
+/** Total copies in the cart — what the header's cart badge shows. */
+export async function getCartItemCount(): Promise<number> {
+  const items = await getCartItems()
+  return items.reduce((sum, item) => sum + item.quantity, 0)
+}
+
 /** Empties the session's cart. Only callable from a Server Action or Route
  * Handler. Checkout calls this once the order is paid — never before, so a
  * declined or abandoned payment leaves the customer's cart intact. */
