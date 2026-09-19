@@ -8,6 +8,13 @@ export const Media: CollectionConfig = {
     singular: 'קובץ מדיה',
     plural: 'קבצי מדיה',
   },
+  // Payload's default is "signed-in users only", which makes every cover a
+  // 403 for an anonymous visitor — and invisible to a developer who is logged
+  // into /admin in the same browser. Uploaded files are public by nature;
+  // writing stays restricted to signed-in users.
+  access: {
+    read: () => true,
+  },
   upload: {
     imageSizes: [
       { name: 'thumbnail', width: 400 },
