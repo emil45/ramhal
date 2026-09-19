@@ -13,7 +13,6 @@ const CATEGORIES: { slug: string; title: LocalizedText }[] = [
     slug: 'siddurim-machzorim',
     title: { he: 'סידורים ומחזורים', en: 'Siddurim and Machzorim', fr: "Sidourim et Ma'hzorim" },
   },
-  { slug: 'cd-dvd', title: { he: 'CD/DVD', en: 'CD/DVD', fr: 'CD/DVD' } },
 ]
 
 const EUROPE_COUNTRIES = ['FR', 'BE', 'CH', 'DE', 'IT', 'ES', 'NL', 'AT', 'GB', 'PT', 'LU']

@@ -102,6 +102,11 @@ const LANGUAGE_TO_CATEGORY: Record<SiteKey, string> = {
   en: 'english-books',
 }
 
+// Shelves the institute no longer sells online. A book filed under one of
+// these is skipped on import, so a re-import never resurrects what was
+// deleted from the catalogue.
+const DISCONTINUED_CATEGORY_SLUGS: readonly string[] = ['cd-dvd']
+
 const CURRENCY_CODE: Record<string, Currency> = { $: 'USD', '€': 'EUR', '₪': 'ILS', EUR: 'EUR', ILS: 'ILS', USD: 'USD' }
 
 const HAS_HEBREW = /[֐-׿]/
@@ -227,6 +232,9 @@ function isSiteKey(language: BookLanguage): language is SiteKey {
 function buildBookInput(importKey: string, view: ImportView, titles: Partial<Record<SiteKey, string>>, reviewNote: string | null): BookInput | null {
   const prices = priceRows(view.prices)
   if (prices.length === 0) return null // nothing to import — see the report for how many, if any
+
+  const shelf = categorySlugOf(view.categories)
+  if (shelf && DISCONTINUED_CATEGORY_SLUGS.includes(shelf)) return null
 
   const bookLanguage = deriveBookLanguage(view.categories, Object.values(titles))
 
@@ -408,7 +416,7 @@ export type ImportSummary = {
   coversMissing: number
   created: number
   singleton: number
-  skippedNoPrice: string[]
+  skipped: string[]
   unchanged: number
   urlsAdded: number
 }
@@ -424,12 +432,12 @@ export async function importBooks(payload: Payload, reconciliation: Reconciliati
     urlsAdded: 0,
     coversAttached: 0,
     coversMissing: 0,
-    skippedNoPrice: [],
+    skipped: [],
   }
 
   async function run(input: BookInput | null, label: string, bucket: 'confident' | 'singleton' | 'ambiguous') {
     if (!input) {
-      summary.skippedNoPrice.push(label)
+      summary.skipped.push(label)
       return
     }
     summary[bucket]++
