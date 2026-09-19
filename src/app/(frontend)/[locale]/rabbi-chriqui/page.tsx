@@ -1,6 +1,7 @@
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
+import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { isLocale } from '@/lib/locale'
 
 // Short by design — see ramhal/page.tsx's comment; same source and same
@@ -39,13 +40,13 @@ export default async function RabbiChriquiPage({ params }: PageProps<'/[locale]/
   const content = CONTENT[locale]
 
   return (
-    <article className="mx-auto max-w-2xl px-4 py-8">
-      <h1 className="mb-4 font-serif text-2xl font-semibold text-teal-deep">{content.title}</h1>
-      <div className="flex flex-col gap-6 sm:flex-row">
-        <div className="mx-auto w-40 shrink-0 overflow-hidden rounded-md sm:mx-0 sm:w-48">
+    <article className="page-container max-w-3xl py-10">
+      <SectionHeading as="h1">{content.title}</SectionHeading>
+      <div className="flex flex-col gap-8 sm:flex-row">
+        <div className="mx-auto w-44 shrink-0 self-start overflow-hidden rounded-[2px] shadow-[0_1px_2px_rgb(0_0_0/0.16),0_0_0_1px_rgb(0_0_0/0.05)] sm:mx-0 sm:w-56">
           <Image src="/rabbi-chriqui.jpg" alt="" width={480} height={640} className="h-auto w-full object-cover" />
         </div>
-        <div className="flex flex-col gap-4 leading-relaxed">
+        <div className="flex flex-col gap-5 text-lg leading-[1.8]">
           {content.paragraphs.map((paragraph, index) => (
             <p key={index}>{paragraph}</p>
           ))}

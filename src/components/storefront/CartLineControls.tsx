@@ -1,10 +1,15 @@
 'use client'
 
+import { Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useTransition } from 'react'
 
 import { removeFromCart, updateCartQuantity } from '@/app/(frontend)/cartActions'
 import { getDictionary } from '@/app/(frontend)/dictionary'
+import { Button } from '@/components/ui/button'
+import { Field, FieldLabel } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { announceCartChange } from '@/lib/cartEvents'
 
 import type { Locale } from '@/lib/locale'
 
@@ -17,37 +22,41 @@ export function CartLineControls({ bookId, locale, quantity }: { bookId: number;
   const [isPending, startTransition] = useTransition()
 
   return (
-    <div className="flex items-center gap-3">
-      <label className="flex items-center gap-1.5 text-sm">
-        {dict.cart.quantity}
-        <input
+    <div className="flex items-end gap-3">
+      <Field orientation="horizontal" className="w-auto items-center">
+        <FieldLabel htmlFor={`cart-quantity-${bookId}`}>{dict.cart.quantity}</FieldLabel>
+        <Input
+          id={`cart-quantity-${bookId}`}
           type="number"
           min={1}
           defaultValue={quantity}
           disabled={isPending}
+          className="w-20"
           onBlur={(event) => {
             const next = Math.max(1, Number(event.currentTarget.value) || 1)
             startTransition(async () => {
               await updateCartQuantity(bookId, next)
+              announceCartChange()
               router.refresh()
             })
           }}
-          className="h-8 w-16 rounded-md border border-input bg-background px-2 text-sm"
         />
-      </label>
-      <button
-        type="button"
+      </Field>
+      <Button
+        variant="ghost"
         disabled={isPending}
         onClick={() => {
           startTransition(async () => {
             await removeFromCart(bookId)
+            announceCartChange()
             router.refresh()
           })
         }}
-        className="text-sm text-muted-foreground underline-offset-4 hover:text-destructive hover:underline"
+        className="text-muted-foreground hover:text-destructive"
       >
+        <Trash2 aria-hidden />
         {dict.cart.remove}
-      </button>
+      </Button>
     </div>
   )
 }

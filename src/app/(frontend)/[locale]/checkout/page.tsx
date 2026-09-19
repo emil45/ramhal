@@ -4,6 +4,9 @@ import { notFound } from 'next/navigation'
 import { getDictionary } from '@/app/(frontend)/dictionary'
 import { CheckoutForm } from '@/components/storefront/CheckoutForm'
 import { MockPaymentNotice } from '@/components/storefront/MockPaymentNotice'
+import { SectionHeading } from '@/components/storefront/SectionHeading'
+import { buttonVariants } from '@/components/ui/button'
+import { Empty, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { cartSubtotal, cartUnits } from '@/lib/cart'
 import { countriesServedInCurrency } from '@/lib/orderPricing'
 import { isLocale, LOCALE_CONFIG } from '@/lib/locale'
@@ -27,12 +30,16 @@ export default async function CheckoutPage({ params }: PageProps<'/[locale]/chec
 
   if (lines.length === 0) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-12 text-center">
-        <h1 className="mb-3 font-serif text-2xl font-semibold text-teal-deep">{dict.checkout.title}</h1>
-        <p className="mb-4 text-muted-foreground">{dict.checkout.emptyCart}</p>
-        <Link href={localePath(locale, '/cart')} className="text-teal underline-offset-4 hover:underline">
-          {dict.checkout.backToCart}
-        </Link>
+      <div className="page-container py-12">
+        <SectionHeading as="h1">{dict.checkout.title}</SectionHeading>
+        <Empty className="border py-16">
+          <EmptyHeader>
+            <EmptyTitle className="type-subheading!">{dict.checkout.emptyCart}</EmptyTitle>
+          </EmptyHeader>
+          <Link href={localePath(locale, '/cart')} className={buttonVariants({ variant: 'outline', size: 'lg' })}>
+            {dict.checkout.backToCart}
+          </Link>
+        </Empty>
       </div>
     )
   }
@@ -46,8 +53,8 @@ export default async function CheckoutPage({ params }: PageProps<'/[locale]/chec
   return (
     <>
       {isMockPaymentProviderConfigured() && <MockPaymentNotice dict={dict} />}
-      <div className="mx-auto max-w-3xl px-4 py-8">
-        <h1 className="mb-6 font-serif text-2xl font-semibold text-teal-deep">{dict.checkout.title}</h1>
+      <div className="page-container py-10">
+        <SectionHeading as="h1">{dict.checkout.title}</SectionHeading>
         <CheckoutForm
           countries={countries}
           currency={currency}

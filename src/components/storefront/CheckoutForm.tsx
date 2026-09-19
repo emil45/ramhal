@@ -6,6 +6,13 @@ import { useActionState, useEffect, useState } from 'react'
 
 import { submitCheckout } from '@/app/(frontend)/checkoutActions'
 import { getDictionary } from '@/app/(frontend)/dictionary'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Field, FieldDescription, FieldError, FieldLabel, FieldLegend, FieldSet } from '@/components/ui/field'
+import { Input } from '@/components/ui/input'
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
+import { Separator } from '@/components/ui/separator'
 import { orderShippingCost } from '@/lib/orderPricing'
 import { formatPrice } from '@/lib/price'
 import { localePath } from '@/lib/routes'
@@ -14,6 +21,7 @@ import { calculateShipping } from '@/lib/shipping'
 import type { Currency } from '@/lib/currency'
 import type { CheckoutActionState } from '@/app/(frontend)/checkoutActions'
 import type { CheckoutFormField } from '@/lib/checkoutForm'
+import type { ComponentProps } from 'react'
 import type { Locale } from '@/lib/locale'
 import type { PlaceOrderProblem } from '@/lib/placeOrder'
 import type { ShippingZone } from '@/lib/shipping'
@@ -28,8 +36,6 @@ type CheckoutFormProps = {
   units: number
   zones: ShippingZone[]
 }
-
-const inputClass = 'h-10 w-full rounded-md border border-input bg-background px-3 text-sm aria-[invalid=true]:border-destructive'
 
 export function CheckoutForm({ countries, currency, defaultCountry, lines, locale, subtotal, units, zones }: CheckoutFormProps) {
   // See CatalogueClient's comment: dict holds functions, which can't cross
@@ -65,134 +71,126 @@ export function CheckoutForm({ countries, currency, defaultCountry, lines, local
   const money = (amount: number) => formatPrice(amount, currency, locale)
 
   return (
-    <form action={formAction} className="grid gap-8 md:grid-cols-[1fr_20rem]">
-      <div className="flex flex-col gap-8">
-        <fieldset className="flex flex-col gap-4">
-          <legend className="mb-1 font-serif text-lg font-semibold text-teal-deep">{dict.checkout.contactHeading}</legend>
-          <Field label={dict.checkout.name} error={fieldError('name')}>
-            <input name="name" defaultValue={submitted.name} type="text" autoComplete="name" required className={inputClass} aria-invalid={!!fieldError('name')} />
-          </Field>
-          <Field label={dict.checkout.email} error={fieldError('email')}>
-            <input name="email" defaultValue={submitted.email} type="email" dir="ltr" autoComplete="email" required className={inputClass} aria-invalid={!!fieldError('email')} />
-          </Field>
-          <Field label={dict.checkout.phone} error={fieldError('phone')}>
-            <input name="phone" defaultValue={submitted.phone} type="tel" dir="ltr" autoComplete="tel" required className={inputClass} aria-invalid={!!fieldError('phone')} />
-          </Field>
-        </fieldset>
+    <form action={formAction} className="grid gap-10 lg:grid-cols-[1fr_24rem] lg:items-start lg:gap-14">
+      <div className="flex flex-col gap-10">
+        <FieldSet className="gap-5">
+          <FieldLegend className="type-heading! mb-2">{dict.checkout.contactHeading}</FieldLegend>
+          <TextField label={dict.checkout.name} error={fieldError('name')} name="name" defaultValue={submitted.name} type="text" autoComplete="name" required />
+          <div className="grid gap-5 sm:grid-cols-2">
+            <TextField label={dict.checkout.email} error={fieldError('email')} name="email" defaultValue={submitted.email} type="email" dir="ltr" autoComplete="email" required />
+            <TextField label={dict.checkout.phone} error={fieldError('phone')} name="phone" defaultValue={submitted.phone} type="tel" dir="ltr" autoComplete="tel" required />
+          </div>
+        </FieldSet>
 
-        <fieldset className="flex flex-col gap-4">
-          <legend className="mb-1 font-serif text-lg font-semibold text-teal-deep">{dict.checkout.deliveryHeading}</legend>
-          <Field label={dict.checkout.country} error={fieldError('countryCode')}>
-            <select
+        <FieldSet className="gap-5">
+          <FieldLegend className="type-heading! mb-2">{dict.checkout.deliveryHeading}</FieldLegend>
+          <Field data-invalid={!!fieldError('countryCode')}>
+            <FieldLabel htmlFor="checkout-country">{dict.checkout.country}</FieldLabel>
+            <NativeSelect
+              id="checkout-country"
               name="countryCode"
               value={countryCode}
               onChange={(event) => setCountryCode(event.currentTarget.value)}
               autoComplete="country"
-              className={inputClass}
+              className="w-full"
             >
               {countries.map((country) => (
-                <option key={country.code} value={country.code}>
+                <NativeSelectOption key={country.code} value={country.code}>
                   {country.name}
-                </option>
+                </NativeSelectOption>
               ))}
-            </select>
+            </NativeSelect>
+            <FieldDescription>{dict.checkout.destinationsNote}</FieldDescription>
+            <FieldError>{fieldError('countryCode')}</FieldError>
           </Field>
-          <p className="-mt-2 text-xs text-muted-foreground">{dict.checkout.destinationsNote}</p>
 
           {pickupAllowed && (
-            <label className="flex items-start gap-2 rounded-md bg-secondary px-3 py-2 text-sm">
-              <input
-                name="pickup"
-                type="checkbox"
-                checked={isPickup}
-                onChange={(event) => setIsPickup(event.currentTarget.checked)}
-                className="mt-0.5"
-              />
-              <span>
-                {dict.checkout.pickup}
-                <span className="block text-xs text-muted-foreground">{dict.checkout.pickupNote}</span>
-              </span>
-            </label>
+            <Field orientation="horizontal" className="items-start rounded-md border border-border bg-paper-deep p-4">
+              <Checkbox id="checkout-pickup" name="pickup" checked={isPickup} onCheckedChange={setIsPickup} className="mt-0.5 size-5 bg-card" />
+              <div className="flex flex-col gap-0.5">
+                <FieldLabel htmlFor="checkout-pickup">{dict.checkout.pickup}</FieldLabel>
+                <FieldDescription>{dict.checkout.pickupNote}</FieldDescription>
+              </div>
+            </Field>
           )}
 
           {!pickupChosen && (
             <>
-              <Field label={dict.checkout.addressLine1} error={fieldError('addressLine1')}>
-                <input name="addressLine1" defaultValue={submitted.addressLine1} type="text" autoComplete="address-line1" required className={inputClass} aria-invalid={!!fieldError('addressLine1')} />
-              </Field>
-              <Field label={dict.checkout.addressLine2}>
-                <input name="addressLine2" defaultValue={submitted.addressLine2} type="text" autoComplete="address-line2" className={inputClass} />
-              </Field>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <Field label={dict.checkout.city} error={fieldError('city')}>
-                  <input name="city" defaultValue={submitted.city} type="text" autoComplete="address-level2" required className={inputClass} aria-invalid={!!fieldError('city')} />
-                </Field>
-                <Field label={dict.checkout.postalCode} error={fieldError('postalCode')}>
-                  <input name="postalCode" defaultValue={submitted.postalCode} type="text" dir="ltr" autoComplete="postal-code" required className={inputClass} aria-invalid={!!fieldError('postalCode')} />
-                </Field>
+              <TextField label={dict.checkout.addressLine1} error={fieldError('addressLine1')} name="addressLine1" defaultValue={submitted.addressLine1} type="text" autoComplete="address-line1" required />
+              <TextField label={dict.checkout.addressLine2} name="addressLine2" defaultValue={submitted.addressLine2} type="text" autoComplete="address-line2" />
+              <div className="grid gap-5 sm:grid-cols-2">
+                <TextField label={dict.checkout.city} error={fieldError('city')} name="city" defaultValue={submitted.city} type="text" autoComplete="address-level2" required />
+                <TextField label={dict.checkout.postalCode} error={fieldError('postalCode')} name="postalCode" defaultValue={submitted.postalCode} type="text" dir="ltr" autoComplete="postal-code" required />
               </div>
             </>
           )}
-        </fieldset>
+        </FieldSet>
       </div>
 
-      <aside className="flex flex-col gap-3 self-start rounded-md border border-border bg-card p-4">
-        <h2 className="font-serif text-lg font-semibold text-teal-deep">{dict.checkout.summaryHeading}</h2>
-        <ul className="flex flex-col gap-1.5 text-sm">
-          {lines.map((line) => (
-            <li key={line.bookId} className="flex justify-between gap-3">
-              <span>
-                {line.title} <span className="text-muted-foreground">× {line.quantity}</span>
-              </span>
-              <span className="shrink-0">{money(line.unitPrice * line.quantity)}</span>
-            </li>
-          ))}
-        </ul>
-        <dl className="flex flex-col gap-1.5 border-t border-border pt-3 text-sm">
-          <div className="flex justify-between">
-            <dt className="text-muted-foreground">{dict.checkout.subtotal}</dt>
-            <dd>{money(subtotal)}</dd>
+      <Card className="lg:sticky lg:top-6">
+        <CardHeader>
+          <CardTitle className="type-subheading!">{dict.checkout.summaryHeading}</CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          <ul className="flex flex-col gap-2 text-sm">
+            {lines.map((line) => (
+              <li key={line.bookId} className="flex justify-between gap-3">
+                <span>
+                  {line.title} <span className="text-muted-foreground">× {line.quantity}</span>
+                </span>
+                <span className="shrink-0 tabular-nums">{money(line.unitPrice * line.quantity)}</span>
+              </li>
+            ))}
+          </ul>
+          <Separator />
+          <dl className="flex flex-col gap-2 text-sm">
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">{dict.checkout.subtotal}</dt>
+              <dd className="tabular-nums">{money(subtotal)}</dd>
+            </div>
+            <div className="flex justify-between">
+              <dt className="text-muted-foreground">{dict.checkout.shipping}</dt>
+              <dd className="tabular-nums">{shippingCost === 0 ? dict.checkout.shippingFree : money(shippingCost)}</dd>
+            </div>
+          </dl>
+          <Separator />
+          <div className="flex items-baseline justify-between font-semibold">
+            <span>{dict.checkout.total}</span>
+            <span className="text-xl tabular-nums text-teal-deep">{money(total)}</span>
           </div>
-          <div className="flex justify-between">
-            <dt className="text-muted-foreground">{dict.checkout.shipping}</dt>
-            <dd>{shippingCost === 0 ? dict.checkout.shippingFree : money(shippingCost)}</dd>
-          </div>
-          <div className="flex justify-between border-t border-border pt-2 text-base font-semibold">
-            <dt>{dict.checkout.total}</dt>
-            <dd>{money(total)}</dd>
-          </div>
-        </dl>
 
-        <input type="hidden" name="expectedTotal" value={total} />
+          <Input type="hidden" name="expectedTotal" value={total} />
 
-        {state?.problem && (
-          <p role="alert" className="rounded-md bg-destructive/10 px-3 py-2 text-sm text-destructive">
-            {problemMessage(state.problem, dict)}
-          </p>
-        )}
-
-        <button
-          type="submit"
-          disabled={isPending}
-          className="rounded-md bg-teal px-4 py-2.5 text-sm font-medium text-white hover:bg-teal-deep disabled:opacity-60"
-        >
-          {isPending ? dict.checkout.submitting : dict.checkout.submit}
-        </button>
-        <Link href={localePath(locale, '/cart')} className="text-center text-sm text-muted-foreground underline-offset-4 hover:underline">
-          {dict.checkout.backToCart}
-        </Link>
-      </aside>
+          {state?.problem && (
+            <p role="alert" className="rounded-sm bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              {problemMessage(state.problem, dict)}
+            </p>
+          )}
+        </CardContent>
+        <CardFooter className="flex-col items-stretch gap-3">
+          <Button type="submit" size="lg" disabled={isPending}>
+            {isPending ? dict.checkout.submitting : dict.checkout.submit}
+          </Button>
+          <Link href={localePath(locale, '/cart')} className="text-center text-sm text-muted-foreground underline-offset-4 hover:underline">
+            {dict.checkout.backToCart}
+          </Link>
+        </CardFooter>
+      </Card>
     </form>
   )
 }
 
-function Field({ children, error, label }: { children: React.ReactNode; error?: string | null; label: string }) {
+type TextFieldProps = Omit<ComponentProps<typeof Input>, 'id'> & { error?: string | null; label: string; name: string }
+
+/** One labelled text input with its own error line. The id is the field's
+ * name, which is unique within the form, so the label is always wired to it. */
+function TextField({ error, label, name, ...inputProps }: TextFieldProps) {
   return (
-    <label className="flex flex-col gap-1 text-sm">
-      <span className="font-medium">{label}</span>
-      {children}
-      {error && <span className="text-xs text-destructive">{error}</span>}
-    </label>
+    <Field data-invalid={!!error}>
+      <FieldLabel htmlFor={`checkout-${name}`}>{label}</FieldLabel>
+      <Input id={`checkout-${name}`} name={name} aria-invalid={!!error} {...inputProps} />
+      <FieldError>{error}</FieldError>
+    </Field>
   )
 }
 

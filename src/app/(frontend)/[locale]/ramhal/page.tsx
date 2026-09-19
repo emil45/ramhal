@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 
+import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { isLocale } from '@/lib/locale'
 
 // Short by design — someone deciding whether to buy מסילת ישרים wants
@@ -40,9 +41,9 @@ export default async function RamhalPage({ params }: PageProps<'/[locale]/ramhal
   const content = CONTENT[locale]
 
   return (
-    <article className="mx-auto max-w-2xl px-4 py-8">
-      <h1 className="mb-4 font-serif text-2xl font-semibold text-teal-deep">{content.title}</h1>
-      <div className="flex flex-col gap-4 leading-relaxed">
+    <article className="page-container max-w-3xl py-10">
+      <SectionHeading as="h1">{content.title}</SectionHeading>
+      <div className="flex flex-col gap-5 text-lg leading-[1.8]">
         {content.paragraphs.map((paragraph, index) => (
           <p key={index}>{paragraph}</p>
         ))}

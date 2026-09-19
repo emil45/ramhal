@@ -3,15 +3,15 @@
 import { useTransition } from 'react'
 
 import { chooseMockPaymentOutcome } from '@/app/(frontend)/mockPaymentActions'
+import { Button } from '@/components/ui/button'
 
+import type { ComponentProps } from 'react'
 import type { MockPaymentDecision } from '@/lib/payment/mockPaymentDecision'
 
-const buttonBase = 'w-full rounded-md px-4 py-2.5 text-sm font-medium disabled:opacity-60'
-
-const BUTTON_STYLES: Record<MockPaymentDecision, string> = {
-  paid: 'bg-teal text-white hover:bg-teal-deep',
-  declined: 'border border-destructive text-destructive hover:bg-destructive/10',
-  cancelled: 'border border-border text-muted-foreground hover:bg-muted',
+const BUTTON_VARIANTS: Record<MockPaymentDecision, ComponentProps<typeof Button>['variant']> = {
+  paid: 'default',
+  declined: 'destructive',
+  cancelled: 'outline',
 }
 
 type Labels = { pay: string; decline: string; cancel: string }
@@ -30,9 +30,10 @@ export function MockPaymentChoices({ labels, providerRef }: { labels: Labels; pr
   return (
     <div className="flex flex-col gap-3">
       {choices.map(({ decision, label }) => (
-        <button
+        <Button
           key={decision}
-          type="button"
+          size="lg"
+          variant={BUTTON_VARIANTS[decision]}
           disabled={isPending}
           onClick={() =>
             startTransition(async () => {
@@ -40,10 +41,9 @@ export function MockPaymentChoices({ labels, providerRef }: { labels: Labels; pr
               window.location.assign(returnUrl)
             })
           }
-          className={`${buttonBase} ${BUTTON_STYLES[decision]}`}
         >
           {label}
-        </button>
+        </Button>
       ))}
     </div>
   )

@@ -1,13 +1,18 @@
+import { ArrowLeft } from 'lucide-react'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { AddToCartButton } from '@/components/storefront/AddToCartButton'
 import { CoverImage } from '@/components/storefront/CoverImage'
 import { PriceTag } from '@/components/storefront/PriceTag'
 import { RichText } from '@/components/storefront/RichText'
+import { Card, CardContent } from '@/components/ui/card'
+import { Separator } from '@/components/ui/separator'
 import { getDictionary } from '@/app/(frontend)/dictionary'
 import { isPurchasable } from '@/lib/availability'
 import { getCatalogueBookBySlug, getCatalogueBooks } from '@/lib/booksData'
-import { BOOK_SEGMENT } from '@/lib/routes'
+import { BOOK_SEGMENT, cataloguePath } from '@/lib/routes'
+import { getContactDetails } from '@/lib/siteSettingsData'
 import { isLocale, LOCALE_CONFIG, LOCALES } from '@/lib/locale'
 
 export const revalidate = 3600
@@ -35,84 +40,100 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
   if (!isLocale(locale) || bookWord !== BOOK_SEGMENT[locale]) notFound()
 
   const dict = getDictionary(locale)
-  const book = await getCatalogueBookBySlug(locale, slug)
+  const [book, contact] = await Promise.all([getCatalogueBookBySlug(locale, slug), getContactDetails(locale)])
   if (!book) notFound()
 
   const currency = LOCALE_CONFIG[locale].currency
   const purchasable = isPurchasable(book, currency)
 
   return (
-    <div className="mx-auto grid max-w-4xl gap-8 px-4 py-8 sm:grid-cols-[240px_1fr] sm:items-center">
-      <div className="mx-auto w-48 sm:mx-0 sm:w-full">
-        <CoverImage
-          categorySlug={book.category?.slug}
-          cover={typeof book.cover === 'object' ? book.cover : null}
-          sizes="240px"
-          title={book.displayTitle}
-        />
-      </div>
+    <div className="page-container py-8 md:py-12">
+      <Link
+        href={cataloguePath(locale)}
+        className="mb-8 inline-flex items-center gap-1.5 text-sm text-muted-foreground underline-offset-4 hover:text-teal hover:underline"
+      >
+        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+        {dict.book.backToCatalogue}
+      </Link>
 
-      <div className="flex flex-col gap-4">
-        <div>
-          <h1 className="font-serif text-2xl font-semibold text-teal-deep">{book.displayTitle}</h1>
-          {book.subtitle ? <p className="mt-1 text-muted-foreground">{book.subtitle}</p> : null}
+      <div className="grid gap-10 md:grid-cols-[minmax(0,20rem)_1fr] md:gap-14">
+        <div className="mx-auto w-56 md:mx-0 md:w-full">
+          <CoverImage
+            categorySlug={book.category?.slug}
+            cover={typeof book.cover === 'object' ? book.cover : null}
+            sizes="320px"
+            title={book.displayTitle}
+          />
         </div>
 
-        {purchasable ? (
-          <>
-            <div className="text-lg">
-              <PriceTag book={book} dict={dict} locale={locale} />
-            </div>
-            <div>
+        <div className="flex max-w-2xl flex-col gap-6">
+          <div className="flex flex-col gap-2">
+            <h1 className="type-title">{book.displayTitle}</h1>
+            {book.subtitle ? <p className="text-lg text-muted-foreground">{book.subtitle}</p> : null}
+          </div>
+
+          {purchasable ? (
+            <div className="flex flex-col gap-5">
+              <p className="text-3xl">
+                <PriceTag book={book} dict={dict} locale={locale} />
+              </p>
               <AddToCartButton bookId={book.id} locale={locale} />
             </div>
-          </>
-        ) : (
-          // PriceTag already reads dict.book.unavailableTitle when a book
-          // isn't purchasable (src/components/storefront/PriceTag.tsx) —
-          // this box explains why, so the price row itself is skipped here
-          // rather than printing the same "not available" line twice.
-          <div className="rounded-md border border-border bg-secondary/50 p-4 text-sm">
-            <p className="font-medium text-foreground">{dict.book.unavailableTitle}</p>
-            <p className="mt-1 text-muted-foreground">{dict.book.unavailableBody}</p>
-            <a href="mailto:info@machon-ramhal.org" className="mt-2 inline-block text-teal underline-offset-4 hover:underline">
-              {dict.book.contactUs}
-            </a>
-          </div>
-        )}
+          ) : (
+            // PriceTag already says a book isn't purchasable in a badge
+            // (src/components/storefront/PriceTag.tsx) — this note explains why
+            // and what to do, so the price row itself is skipped here.
+            <Card size="sm" className="bg-paper-deep">
+              <CardContent className="flex flex-col gap-1 text-sm">
+                <p className="font-medium text-foreground">{dict.book.unavailableTitle}</p>
+                <p className="text-muted-foreground">{dict.book.unavailableBody}</p>
+                {contact.email ? (
+                  <a href={`mailto:${contact.email}`} className="mt-1 w-fit font-medium text-teal underline-offset-4 hover:underline">
+                    {dict.book.contactUs}
+                  </a>
+                ) : null}
+              </CardContent>
+            </Card>
+          )}
 
-        <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 border-t border-border pt-4 text-sm">
-          {book.category ? (
+          <Separator />
+
+          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+            {book.category ? (
+              <>
+                <dt className="text-muted-foreground">{dict.book.category}</dt>
+                <dd>{book.category.title}</dd>
+              </>
+            ) : null}
+            <dt className="text-muted-foreground">{dict.book.language}</dt>
+            <dd>{dict.bookLanguageLabel[book.bookLanguage]}</dd>
+            {book.hebrewYear ? (
+              <>
+                <dt className="text-muted-foreground">{dict.book.hebrewYear}</dt>
+                <dd>{book.hebrewYear}</dd>
+              </>
+            ) : null}
+            {book.isbn ? (
+              <>
+                <dt className="text-muted-foreground">{dict.book.isbn}</dt>
+                <dd dir="ltr" className="text-start">
+                  {book.isbn}
+                </dd>
+              </>
+            ) : null}
+            <dt className="text-muted-foreground">{dict.book.publisher}</dt>
+            <dd>{dict.book.publisherValue}</dd>
+          </dl>
+
+          {book.description ? (
             <>
-              <dt className="text-muted-foreground">{dict.book.category}</dt>
-              <dd>{book.category.title}</dd>
+              <Separator />
+              <RichText content={book.description} />
             </>
           ) : null}
-          <dt className="text-muted-foreground">{dict.book.language}</dt>
-          <dd>{dict.bookLanguageLabel[book.bookLanguage]}</dd>
-          {book.hebrewYear ? (
-            <>
-              <dt className="text-muted-foreground">{dict.book.hebrewYear}</dt>
-              <dd>{book.hebrewYear}</dd>
-            </>
-          ) : null}
-          {book.isbn ? (
-            <>
-              <dt className="text-muted-foreground">{dict.book.isbn}</dt>
-              <dd>{book.isbn}</dd>
-            </>
-          ) : null}
-          <dt className="text-muted-foreground">{dict.book.publisher}</dt>
-          <dd>{dict.book.publisherValue}</dd>
-        </dl>
 
-        {book.description ? (
-          <div className="border-t border-border pt-4">
-            <RichText content={book.description} />
-          </div>
-        ) : null}
-
-        <p className="border-t border-border pt-4 text-xs text-muted-foreground">{dict.book.shippingNote}</p>
+          <p className="text-xs leading-relaxed text-muted-foreground">{dict.book.shippingNote}</p>
+        </div>
       </div>
     </div>
   )
