@@ -30,8 +30,9 @@ export default defineConfig({
       // reason (the schema is already correct — it came from a committed
       // migration).
       PAYLOAD_MIGRATING: 'true',
-      // Checkout tests run against the mock; NODE_ENV is 'test' here, so the
-      // production refusal (src/lib/payment/paymentConfiguration.ts) is not in play.
+      // Checkout tests run against the mock, which APP_ENV=development permits
+      // (src/lib/payment/paymentConfiguration.ts).
+      APP_ENV: 'development',
       PAYMENT_PROVIDER: 'mock',
     },
   },
