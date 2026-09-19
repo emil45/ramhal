@@ -66,3 +66,24 @@ export function selectNewBooks<T extends CatalogueEntry>(items: T[], currency: C
     .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
     .slice(0, limit)
 }
+
+type FeaturableItem = PricedItem & {
+  /** A populated Media document, or an unresolved id, or nothing at all. */
+  cover?: unknown
+}
+
+function hasScannedCover(item: FeaturableItem): boolean {
+  return typeof item.cover === 'object' && item.cover !== null
+}
+
+/**
+ * The front page's "from the catalogue" strip: purchasable-in-this-currency
+ * books, ones with a real scanned cover first, otherwise in the order given
+ * (pass an already-sorted catalogue). Unlike selectNewBooks it makes no claim
+ * about recency, so it is never empty while the shop sells anything, and a
+ * front page never depends on someone having filled in publication dates.
+ */
+export function selectFeaturedBooks<T extends FeaturableItem>(items: T[], currency: Currency, limit: number): T[] {
+  const purchasable = items.filter((item) => isPurchasable(item, currency))
+  return [...purchasable.filter(hasScannedCover), ...purchasable.filter((item) => !hasScannedCover(item))].slice(0, limit)
+}

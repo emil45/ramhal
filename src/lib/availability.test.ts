@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { isPurchasable, selectNewBooks, sortCatalogue } from '@/lib/availability'
+import { isPurchasable, selectFeaturedBooks, selectNewBooks, sortCatalogue } from '@/lib/availability'
 
 describe('isPurchasable', () => {
   it('is purchasable when a real, positive price exists in the currency', () => {
@@ -91,5 +91,33 @@ describe('selectNewBooks', () => {
       2,
     )
     expect(result.map((b) => b.displayTitle)).toEqual(['חדש', 'בינוני'])
+  })
+})
+
+describe('selectFeaturedBooks', () => {
+  const book = (title: string, options: { amount?: number; cover?: unknown } = {}) => ({
+    displayTitle: title,
+    prices: [{ amount: options.amount ?? 5000, currency: 'ILS' }],
+    cover: options.cover ?? null,
+  })
+  const scan = { url: '/cover.jpg' }
+
+  it('features only books that can be bought in the currency', () => {
+    const result = selectFeaturedBooks([book('א', { amount: 0 }), book('ב')], 'ILS', 6)
+    expect(result.map((b) => b.displayTitle)).toEqual(['ב'])
+  })
+
+  it('puts books with a scanned cover ahead of typeset ones, keeping the given order within each', () => {
+    const result = selectFeaturedBooks([book('א'), book('ב', { cover: scan }), book('ג'), book('ד', { cover: scan })], 'ILS', 6)
+    expect(result.map((b) => b.displayTitle)).toEqual(['ב', 'ד', 'א', 'ג'])
+  })
+
+  it('does not treat an unresolved cover id as a scanned cover', () => {
+    const result = selectFeaturedBooks([book('א'), book('ב', { cover: 17 })], 'ILS', 6)
+    expect(result.map((b) => b.displayTitle)).toEqual(['א', 'ב'])
+  })
+
+  it('stops at the limit', () => {
+    expect(selectFeaturedBooks([book('א'), book('ב'), book('ג')], 'ILS', 2)).toHaveLength(2)
   })
 })
