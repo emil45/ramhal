@@ -464,3 +464,34 @@ Adopted as requirements for TASK-07:
 The opinion worked from a thinner brief than reality — it describes "more than 30 books"; the
 catalogue is 128. Its conclusions still hold, but it had not seen the audit, the reconciliation, or
 the verified package behaviour.
+
+---
+
+## 17. Work happens on main (19 September 2026)
+
+Task branches are dropped. Every task commits directly to `main`, and `main` is pushed to
+`origin` at the end of it. Recorded in `AGENTS.md` under the workflow protocol, which is the
+binding version; this section is the reasoning.
+
+**Why.** The branches were not buying review. Nothing was ever reviewed *on* a branch — each
+one was merged the moment its task reported done, and TASK-07's was fast-forwarded, so it left
+no trace in the history that a branch had existed at all. What they bought instead was a way to
+forget: TASK-05's branch sat merged-but-undeleted, TASK-06's sat unmerged for two days while
+nine commits went unpushed, and the review trail for twelve accepted defects sat uncommitted in
+a working tree on one laptop. A single line of work removes that whole class of mistake.
+
+**What replaces the safety net.** A branch was, in practice, a place a broken state could live
+without consequence. On `main` there is no such place, so two rules take its weight and are
+recorded in `AGENTS.md` as requirements rather than habits:
+
+1. Nothing is committed that does not pass `tsc --noEmit`, `eslint`, `vitest` and `next build`.
+   Verification happens before the commit, not after the task.
+2. A task that turns out wrong is reverted across its commit range. No force-push, no rewritten
+   history — `origin/main` may already have it, and on a handover-first project the history is
+   part of the deliverable.
+
+**What this does not change.** Commits stay small, single-purpose and conventional — that
+discipline matters more without branches, not less, because `git revert` over a task's range is
+only clean if the range is clean. Review still happens the same way it already did: after the
+work exists, against the running thing, with findings going to `docs/reviews/` and a verdict
+deciding what is acted on.

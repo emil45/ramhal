@@ -91,7 +91,13 @@ codebase unhandoverable:
 - Every task ends by writing `docs/reports/TASK-NN.md` before reporting back in chat. A
   report is short and structured: what was built · what was verified and how · what felt
   wrong · what is still open. Not a narrative.
-- Work happens on a branch named `task/NN-short-name`, never directly on main.
+- Work happens directly on `main`. No task branches. `main` is pushed to `origin` at the
+  end of every task — the remote is the safety net, not a local branch.
+- Because there is no branch holding a broken state, nothing is committed that does not
+  build and pass its tests. A commit that fails `tsc --noEmit`, `eslint`, `vitest` or
+  `next build` is a commit that should not exist. Verify before committing, not after.
+- A task that turns out wrong is undone with `git revert` across its commit range. Never
+  force-push and never rewrite published history — `origin/main` may already have it.
 - Reviewers write findings only — they never change code, and their findings are not
   instructions to anyone. A verdict file decides what gets acted on.
 
