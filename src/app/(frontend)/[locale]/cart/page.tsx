@@ -99,7 +99,12 @@ export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) 
           <span>{formatPrice(subtotal, currency, locale)}</span>
         </div>
 
-        <p className="mt-2 text-center text-sm text-muted-foreground">{dict.cart.checkoutComingSoon}</p>
+        <Link
+          href={localePath(locale, '/checkout')}
+          className="mt-3 rounded-md bg-teal px-4 py-2.5 text-center text-sm font-medium text-white hover:bg-teal-deep"
+        >
+          {dict.cart.proceedToCheckout}
+        </Link>
       </div>
     </div>
   )
