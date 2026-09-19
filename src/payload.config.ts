@@ -21,7 +21,10 @@ import { Categories } from './collections/Categories.ts'
 import { Events } from './collections/Events.ts'
 import { Lessons } from './collections/Lessons.ts'
 import { Media } from './collections/Media.ts'
+import { MockPaymentSessions } from './collections/MockPaymentSessions.ts'
+import { Orders } from './collections/Orders.ts'
 import { Pages } from './collections/Pages.ts'
+import { PaymentEvents } from './collections/PaymentEvents.ts'
 import { Series } from './collections/Series.ts'
 import { Users } from './collections/Users.ts'
 import { Schedule } from './globals/Schedule.ts'
@@ -33,6 +36,9 @@ import { seed } from './seed.ts'
 export default buildConfig({
   admin: {
     user: Users.slug,
+    // Custom admin components are referenced by path from here (src/), not
+    // from the working directory Payload would otherwise assume.
+    importMap: { baseDir: path.resolve(dirname) },
   },
   // Idempotent — see src/seed.ts. Runs on every boot instead of a one-off
   // CLI script because `payload run` currently can't load this config file
@@ -42,7 +48,7 @@ export default buildConfig({
     await seed(payload)
   },
   editor: lexicalEditor(),
-  collections: [Users, Media, Books, Categories, Series, Lessons, Articles, Pages, Announcements, Events, Carts],
+  collections: [Users, Media, Books, Categories, Series, Lessons, Articles, Pages, Announcements, Events, Carts, Orders, PaymentEvents, MockPaymentSessions],
   globals: [Schedule, ShippingSettings, SiteSettings],
   secret: requireEnv('PAYLOAD_SECRET'),
   typescript: {

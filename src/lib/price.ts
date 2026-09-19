@@ -1,4 +1,7 @@
-import { LOCALE_CONFIG } from '@/lib/locale'
+// Relative and extensioned, unlike this folder's usual `@/` imports: the Orders
+// collection formats its total with this file, so it sits in Payload's config
+// graph — see the note at the top of src/payload.config.ts.
+import { LOCALE_CONFIG } from './locale.ts'
 
 import type { Currency } from '@/lib/currency'
 import type { Locale } from '@/lib/locale'

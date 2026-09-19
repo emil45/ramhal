@@ -78,6 +78,9 @@ export interface Config {
     announcements: Announcement;
     events: Event;
     carts: Cart;
+    orders: Order;
+    paymentEvents: PaymentEvent;
+    mockPaymentSessions: MockPaymentSession;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -96,6 +99,9 @@ export interface Config {
     announcements: AnnouncementsSelect<false> | AnnouncementsSelect<true>;
     events: EventsSelect<false> | EventsSelect<true>;
     carts: CartsSelect<false> | CartsSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
+    paymentEvents: PaymentEventsSelect<false> | PaymentEventsSelect<true>;
+    mockPaymentSessions: MockPaymentSessionsSelect<false> | MockPaymentSessionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -559,6 +565,93 @@ export interface Cart {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders".
+ */
+export interface Order {
+  id: number;
+  orderNumber?: number | null;
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'cancelled';
+  fulfilmentStatus?: ('new' | 'packed' | 'posted' | 'collected') | null;
+  customer: {
+    name: string;
+    email: string;
+    phone: string;
+    address?: {
+      line1?: string | null;
+      line2?: string | null;
+      city?: string | null;
+      postalCode?: string | null;
+    };
+  };
+  lines: {
+    book?: (number | null) | Book;
+    title: string;
+    /**
+     * Minor units (agorot/cents) as an integer.
+     */
+    unitPrice: number;
+    currency: 'ILS' | 'EUR' | 'USD';
+    quantity: number;
+    shippingUnits: number;
+    id?: string | null;
+  }[];
+  currency: 'ILS' | 'EUR' | 'USD';
+  /**
+   * Minor units (agorot/cents) as an integer.
+   */
+  subtotal: number;
+  /**
+   * Minor units (agorot/cents) as an integer.
+   */
+  shippingCost: number;
+  /**
+   * Minor units (agorot/cents) as an integer.
+   */
+  total: number;
+  formattedTotal?: string | null;
+  shippingZone: string;
+  destinationCountry: string;
+  isPickup?: boolean | null;
+  locale: 'he' | 'en' | 'fr';
+  provider: string;
+  providerRef?: string | null;
+  paidAt?: string | null;
+  publicToken: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "paymentEvents".
+ */
+export interface PaymentEvent {
+  id: number;
+  providerEventId: string;
+  provider: string;
+  order: number | Order;
+  status: 'paid' | 'failed' | 'cancelled';
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mockPaymentSessions".
+ */
+export interface MockPaymentSession {
+  id: number;
+  providerRef: string;
+  orderNumber: number;
+  currency: 'ILS' | 'EUR' | 'USD';
+  total: number;
+  locale: 'he' | 'en' | 'fr';
+  returnUrl: string;
+  decision: 'awaiting' | 'paid' | 'declined' | 'cancelled';
+  providerEventId?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -624,6 +717,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'carts';
         value: number | Cart;
+      } | null)
+    | ({
+        relationTo: 'orders';
+        value: number | Order;
+      } | null)
+    | ({
+        relationTo: 'paymentEvents';
+        value: number | PaymentEvent;
+      } | null)
+    | ({
+        relationTo: 'mockPaymentSessions';
+        value: number | MockPaymentSession;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -903,6 +1008,84 @@ export interface CartsSelect<T extends boolean = true> {
         quantity?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "orders_select".
+ */
+export interface OrdersSelect<T extends boolean = true> {
+  orderNumber?: T;
+  paymentStatus?: T;
+  fulfilmentStatus?: T;
+  customer?:
+    | T
+    | {
+        name?: T;
+        email?: T;
+        phone?: T;
+        address?:
+          | T
+          | {
+              line1?: T;
+              line2?: T;
+              city?: T;
+              postalCode?: T;
+            };
+      };
+  lines?:
+    | T
+    | {
+        book?: T;
+        title?: T;
+        unitPrice?: T;
+        currency?: T;
+        quantity?: T;
+        shippingUnits?: T;
+        id?: T;
+      };
+  currency?: T;
+  subtotal?: T;
+  shippingCost?: T;
+  total?: T;
+  formattedTotal?: T;
+  shippingZone?: T;
+  destinationCountry?: T;
+  isPickup?: T;
+  locale?: T;
+  provider?: T;
+  providerRef?: T;
+  paidAt?: T;
+  publicToken?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "paymentEvents_select".
+ */
+export interface PaymentEventsSelect<T extends boolean = true> {
+  providerEventId?: T;
+  provider?: T;
+  order?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mockPaymentSessions_select".
+ */
+export interface MockPaymentSessionsSelect<T extends boolean = true> {
+  providerRef?: T;
+  orderNumber?: T;
+  currency?: T;
+  total?: T;
+  locale?: T;
+  returnUrl?: T;
+  decision?: T;
+  providerEventId?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -10,7 +10,10 @@ import { Categories } from './Categories'
 import { Events } from './Events'
 import { Lessons } from './Lessons'
 import { Media } from './Media'
+import { MockPaymentSessions } from './MockPaymentSessions'
+import { Orders } from './Orders'
 import { Pages } from './Pages'
+import { PaymentEvents } from './PaymentEvents'
 import { Series } from './Series'
 import { Users } from './Users'
 import { Schedule } from '../globals/Schedule'
@@ -31,7 +34,10 @@ const collections: CollectionConfig[] = [
   Events,
   Lessons,
   Media,
+  MockPaymentSessions,
+  Orders,
   Pages,
+  PaymentEvents,
   Series,
   Users,
 ]
