@@ -1,5 +1,6 @@
 import Image from 'next/image'
 
+import { CoverFrame } from '@/components/storefront/CoverFrame'
 import { TypographicCover } from '@/components/storefront/TypographicCover'
 
 import type { Media } from '@/payload-types'
@@ -11,8 +12,9 @@ type CoverImageProps = {
   title: string
 }
 
-/** Real covers through next/image; the fallback is rendered, never an image
- * file (docs/tasks/TASK-06-storefront.md §5). */
+/** Real covers through next/image, set inside the same frame as a typeset
+ * cover; without one, the typeset cover — never an empty box
+ * (docs/tasks/TASK-06-storefront.md §5). */
 export function CoverImage({ categorySlug, cover, sizes, title }: CoverImageProps) {
   const src = cover?.sizes?.card?.url ?? cover?.url
   if (!src || !cover?.width || !cover?.height) {
@@ -20,14 +22,13 @@ export function CoverImage({ categorySlug, cover, sizes, title }: CoverImageProp
   }
 
   return (
-    <div className="relative aspect-[2/3] w-full overflow-hidden rounded-sm bg-secondary">
-      <Image
-        src={src}
-        alt={cover.alt || title}
-        fill
-        sizes={sizes}
-        className="object-cover"
-      />
-    </div>
+    <CoverFrame categorySlug={categorySlug}>
+      {/* `contain`, not `cover`: supplied covers range from portrait jackets
+          to full wrap-around spreads, and cropping any of them to 2:3 would
+          cut the title. */}
+      <div className="relative m-[1.6cqw] flex-1">
+        <Image src={src} alt={cover.alt || title} fill sizes={sizes} className="object-contain" />
+      </div>
+    </CoverFrame>
   )
 }
