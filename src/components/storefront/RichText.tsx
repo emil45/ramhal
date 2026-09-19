@@ -17,7 +17,7 @@ export function RichText({ content }: { content: LexicalDocument }) {
   const children = (content.root.children ?? []) as LexicalParagraphNode[]
 
   return (
-    <div className="flex flex-col gap-3 text-sm leading-relaxed text-foreground">
+    <div className="flex flex-col gap-4 text-base leading-relaxed text-foreground">
       {children.map((node, index) => {
         const text = (node.children ?? []).map((child) => child.text ?? '').join('')
         if (!text) return null

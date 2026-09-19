@@ -12,7 +12,7 @@ export function ProductCard({ book, dict, locale }: { book: CatalogueBook; dict:
   return (
     <Link
       href={bookPath(locale, book.urlSlug)}
-      className="group flex flex-col gap-2 rounded-lg p-2 transition-colors hover:bg-secondary/60"
+      className="group/cover flex h-full flex-col gap-3 rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
     >
       <CoverImage
         categorySlug={book.category?.slug}
@@ -20,14 +20,14 @@ export function ProductCard({ book, dict, locale }: { book: CatalogueBook; dict:
         sizes="(min-width: 1024px) 200px, (min-width: 640px) 30vw, 45vw"
         title={book.displayTitle}
       />
-      <div className="flex flex-col gap-0.5">
-        <h3 className="line-clamp-2 font-serif text-sm font-medium text-foreground group-hover:text-teal">
-          {book.displayTitle}
-        </h3>
-        {book.subtitle ? <p className="line-clamp-1 text-xs text-muted-foreground">{book.subtitle}</p> : null}
-        <div className="pt-1 text-sm">
-          <PriceTag book={book} dict={dict} locale={locale} />
-        </div>
+      {/* Two lines are reserved whether the title uses them or not, and the
+          price row is pushed to the bottom of a card that stretches to the
+          row's height — so every price in a row sits on one baseline. */}
+      <h3 className="type-subheading line-clamp-2 min-h-[2lh] text-foreground decoration-gold decoration-2 underline-offset-4 transition-colors group-hover/cover:text-teal group-hover/cover:underline">
+        {book.displayTitle}
+      </h3>
+      <div className="mt-auto flex min-h-7 items-center text-lg">
+        <PriceTag book={book} dict={dict} locale={locale} />
       </div>
     </Link>
   )

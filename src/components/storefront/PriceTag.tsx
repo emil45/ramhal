@@ -1,3 +1,4 @@
+import { Badge } from '@/components/ui/badge'
 import { isPurchasable } from '@/lib/availability'
 import { LOCALE_CONFIG } from '@/lib/locale'
 import { formatPrice, selectPrice } from '@/lib/price'
@@ -11,7 +12,8 @@ type PricedItem = { prices: { amount: number; currency: string }[] }
  * A book with no price in the viewer's currency, or a real 0.00, is visible
  * and clearly not purchasable — never hidden, never free (§3b). Used on
  * both the catalogue card and the book page, so the rule reads the same
- * everywhere.
+ * everywhere. Says so quietly, in a badge: it is a fact about the book, not
+ * an alarm.
  */
 export function PriceTag({ book, dict, locale }: { book: PricedItem; dict: Dictionary; locale: Locale }) {
   const currency = LOCALE_CONFIG[locale].currency
@@ -19,8 +21,12 @@ export function PriceTag({ book, dict, locale }: { book: PricedItem; dict: Dicti
   const purchasable = isPurchasable(book, currency)
 
   if (amount !== null && purchasable) {
-    return <span className="font-medium text-foreground">{formatPrice(amount, currency, locale)}</span>
+    return <span className="font-semibold tabular-nums text-teal-deep">{formatPrice(amount, currency, locale)}</span>
   }
 
-  return <span className="text-sm text-muted-foreground">{dict.book.unavailableTitle}</span>
+  return (
+    <Badge variant="secondary" className="h-auto rounded-[3px] py-0.5 font-normal whitespace-normal text-muted-foreground">
+      {dict.book.unavailableTitle}
+    </Badge>
+  )
 }

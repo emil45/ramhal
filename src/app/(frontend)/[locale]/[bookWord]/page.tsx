@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation'
 
 import { CatalogueClient } from '@/components/storefront/CatalogueClient'
+import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { getDictionary } from '@/app/(frontend)/dictionary'
 import { sortCatalogue } from '@/lib/availability'
 import { getCatalogueBooks, getCategories } from '@/lib/booksData'
@@ -33,8 +34,8 @@ export default async function CataloguePage({ params }: PageProps<'/[locale]/[bo
   const sorted = sortCatalogue(books, currency)
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-6">
-      <h1 className="mb-4 font-serif text-2xl font-semibold text-teal-deep">{dict.catalogue.title}</h1>
+    <div className="page-container py-10">
+      <SectionHeading as="h1">{dict.catalogue.title}</SectionHeading>
       <CatalogueClient books={sorted} categories={categories} locale={locale} />
     </div>
   )
