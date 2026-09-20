@@ -22,14 +22,6 @@ export default defineConfig({
     // Cleaning up a test run's orders one round trip at a time.
     hookTimeout: 60_000,
     env: {
-      // Payload's own flag to skip next dev's dynamic schema push during
-      // these tests — see docs/DECISIONS.md §15 and
-      // src/app/(payload)/api/dev-migrate/route.ts's own comment on the
-      // same flag. Without it, every test run pays a multi-second
-      // "pulling schema from database" round trip against Neon for no
-      // reason (the schema is already correct — it came from a committed
-      // migration).
-      PAYLOAD_MIGRATING: 'true',
       // Checkout tests run against the mock, which APP_ENV=development permits
       // (src/lib/payment/paymentConfiguration.ts).
       APP_ENV: 'development',

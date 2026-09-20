@@ -1,7 +1,8 @@
 import type { CollectionConfig } from 'payload'
 
-// Local disk storage for now. Swapping to Cloudflare R2 later only means adding
-// @payloadcms/storage-s3 to the plugins array — this collection's shape does not change.
+// Where the files live is decided in payload.config.ts — local disk, or an
+// S3-compatible bucket when the S3_* variables are set. The collection's shape
+// is the same either way.
 export const Media: CollectionConfig = {
   slug: 'media',
   labels: {

@@ -7,10 +7,12 @@ import { getPayload } from 'payload'
 import { isDevRouteAuthorized } from '@/lib/devRouteAuth'
 
 /**
- * Dev-only route that calls the exact database-adapter methods Payload's own
- * CLI calls (`payload.db.createMigration` / `payload.db.migrate`) — from
- * inside a process Next already bundles correctly, instead of through the
- * CLI's own module loader, which is broken for this project. Two verified,
+ * Dev-only route that writes a new migration file for the schema changes since
+ * the last one — what `payload migrate:create` does, calling the same adapter
+ * method (`payload.db.createMigration`) from inside a process Next already
+ * bundles correctly, instead of through the CLI's own module loader, which is
+ * broken for this project. Applying migrations is a separate, non-Next script:
+ * scripts/migrate.mjs (`npm run db:migrate`). Two verified,
  * independent upstream causes (both reproduce identically on Node 22.23.2
  * and Node 24.12.0, with tsx pinned to 4.21.0 and the config's imports fixed
  * — see the previous commits):
@@ -94,12 +96,9 @@ export async function GET(request: Request): Promise<Response> {
 
   const { searchParams } = new URL(request.url)
   const action = searchParams.get('action')
-  // disableOnInit, exactly as Payload's own CLI does for migrate/migrate:create
-  // (node_modules/payload/dist/bin/migrate.js) — onInit runs the seed, which
-  // queries `categories`, and that table does not exist yet on a database
-  // this route is about to migrate. Without this, migrating a genuinely
-  // empty database crashes before db.migrate() ever runs (verified against
-  // a disposable empty Neon database — see docs/reports/TASK-05.md).
+  // disableOnInit, as Payload's own CLI does for migrate:create — onInit runs
+  // the seed, which queries tables that may not exist in the database this is
+  // pointed at.
   const payload = await getPayload({ config, disableOnInit: true })
 
   if (action === 'create') {
@@ -120,10 +119,5 @@ export async function GET(request: Request): Promise<Response> {
     return NextResponse.json({ ok: true, action: 'create' })
   }
 
-  if (action === 'run') {
-    await payload.db.migrate()
-    return NextResponse.json({ ok: true, action: 'run' })
-  }
-
-  return NextResponse.json({ error: 'action must be "create" or "run"' }, { status: 400 })
+  return NextResponse.json({ error: 'action must be "create"' }, { status: 400 })
 }

@@ -3,6 +3,7 @@ import * as migration_20260917_172914_books_review_fields from './20260917_17291
 import * as migration_20260918_051142_carts_collection from './20260918_051142_carts_collection';
 import * as migration_20260918_122803_books_url_slug from './20260918_122803_books_url_slug';
 import * as migration_20260919_191433_orders_and_payments from './20260919_191433_orders_and_payments';
+import * as migration_20260920_045628_media_storage_prefix from './20260920_045628_media_storage_prefix';
 
 export const migrations = [
   {
@@ -28,6 +29,11 @@ export const migrations = [
   {
     up: migration_20260919_191433_orders_and_payments.up,
     down: migration_20260919_191433_orders_and_payments.down,
-    name: '20260919_191433_orders_and_payments'
+    name: '20260919_191433_orders_and_payments',
+  },
+  {
+    up: migration_20260920_045628_media_storage_prefix.up,
+    down: migration_20260920_045628_media_storage_prefix.down,
+    name: '20260920_045628_media_storage_prefix',
   },
 ];

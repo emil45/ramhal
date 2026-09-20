@@ -3,10 +3,11 @@ import { unlink, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 
-import { isRecordedMediaTitle } from '@/lib/recordedMedia'
+import { getImportBookUrlSlug } from './lib/importBookUrlSlug.ts'
+import { isRecordedMediaTitle } from './lib/recordedMedia.ts'
 
-import type { Currency } from '@/lib/currency'
-import type { Book } from '@/payload-types'
+import type { Currency } from './lib/currency.ts'
+import type { Book } from './payload-types.ts'
 import type { Payload } from 'payload'
 
 // ---------------------------------------------------------------------------
@@ -225,6 +226,7 @@ type BookInput = {
   reviewNote: string | null
   reviewReasons: ReviewReason[]
   titles: Partial<Record<SiteKey, string>>
+  urlSlug: string | undefined
 }
 
 function isSiteKey(language: BookLanguage): language is SiteKey {
@@ -268,6 +270,7 @@ function buildBookInput(importKey: string, view: ImportView, titles: Partial<Rec
     legacyUrls: [...new Set(view.legacyUrls.map((u) => u.url))],
     reviewReasons: [...new Set(reasons)],
     reviewNote,
+    urlSlug: getImportBookUrlSlug(importKey),
   }
 }
 
@@ -352,11 +355,11 @@ async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<s
         // above — see src/collections/hooks/generateSlugFromTitle.ts. urlSlug
         // reuses the same hook (see src/collections/Books.ts's own comment)
         // to become this book's one canonical public URL, and — unlike
-        // slug — is enforced unique across the whole catalogue: a title that
-        // collides with an existing book's urlSlug makes this create() throw,
-        // which is deliberate (docs/tasks/TASK-07-storefront.md §A1).
+        // slug — is enforced unique across the whole catalogue. Three reviewed
+        // legacy-title collisions have stable `-2` overrides; every other book
+        // lets the hook generate this from its title.
         slug: '',
-        urlSlug: '',
+        urlSlug: input.urlSlug ?? '',
         description: input.descriptions[primaryLocale]
           ? toLexicalRichText(input.descriptions[primaryLocale] as string)
           : undefined,

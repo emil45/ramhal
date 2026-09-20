@@ -141,9 +141,9 @@ async function seedContactDetails(payload: Payload): Promise<void> {
 }
 
 /**
- * Runs on every server boot (see `onInit` in payload.config.ts), so it must
- * be safe to call on a database the son has already been editing for
- * months, not just on a fresh one. Every write above is initialise-if-
+ * Runs explicitly through `npm run seed` and remains safe to repeat on a
+ * database the son has already been editing for months, not just on a fresh
+ * one. Every write above is initialise-if-
  * missing, never overwrite-if-present — the previous unconditional-update
  * version restored default category titles, shipping rates, and the
  * timetable on every restart, silently erasing his edits (see

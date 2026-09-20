@@ -1,0 +1,13 @@
+.DS_Store
+.env*
+!.env.example
+.next
+.previews
+.vercel
+media
+node_modules
+scripts/scrape/.cache
+scripts/scrape/crawl.log
+scripts/scrape/node_modules
+scripts/scrape/out
+*.log

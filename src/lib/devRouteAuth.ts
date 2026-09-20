@@ -1,7 +1,7 @@
 import { timingSafeEqual } from 'node:crypto'
 
 /**
- * Shared gate for every /api/dev-* route (dev-migrate, dev-import,
+ * Shared gate for every /api/dev-* route (dev-migrate,
  * dev-generate-types): a privileged one-off Payload Local API operation, run
  * through Next's bundler because the CLI can't load this project's config
  * (see the security note at the top of src/app/(payload)/api/dev-migrate/route.ts,

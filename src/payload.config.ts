@@ -1,5 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { he } from '@payloadcms/translations/languages/he'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -31,7 +32,9 @@ import { Schedule } from './globals/Schedule.ts'
 import { ShippingSettings } from './globals/ShippingSettings.ts'
 import { SiteSettings } from './globals/SiteSettings.ts'
 import { requireEnv } from './lib/env.ts'
-import { seed } from './seed.ts'
+import { getPublicMediaUrl, readMediaStorageSettings } from './lib/mediaStorage.ts'
+
+const mediaStorage = readMediaStorageSettings(process.env)
 
 export default buildConfig({
   admin: {
@@ -39,13 +42,6 @@ export default buildConfig({
     // Custom admin components are referenced by path from here (src/), not
     // from the working directory Payload would otherwise assume.
     importMap: { baseDir: path.resolve(dirname) },
-  },
-  // Idempotent — see src/seed.ts. Runs on every boot instead of a one-off
-  // CLI script because `payload run` currently can't load this config file
-  // outside Next's bundler in this dependency combination — see
-  // scripts/seed.ts for the two upstream bugs.
-  onInit: async (payload) => {
-    await seed(payload)
   },
   editor: lexicalEditor(),
   collections: [Users, Media, Books, Categories, Series, Lessons, Articles, Pages, Announcements, Events, Carts, Orders, PaymentEvents, MockPaymentSessions],
@@ -58,8 +54,45 @@ export default buildConfig({
     pool: {
       connectionString: requireEnv('DATABASE_URI'),
     },
+    // Schema comes from the committed migrations (`npm run db:migrate`) and
+    // from nowhere else. With Payload's default, `next dev` pushed the schema
+    // straight into the database and recorded a batch -1 "dev" row in
+    // payload_migrations; migrate then refused to run without an interactive
+    // confirmation, so every fresh setup needed that row deleted by hand.
+    // Two writers of one schema, so there is now exactly one.
+    push: false,
   }),
   sharp,
+  plugins: [
+    s3Storage({
+      enabled: mediaStorage !== null,
+      // Adds the plugin's `prefix` column to `media` whether or not a bucket is
+      // configured, so every environment has the same schema and one set of
+      // migrations serves all of them.
+      alwaysInsertFields: true,
+      // Vercel functions accept request bodies only up to 4.5 MB. The admin
+      // obtains a short-lived signed URL and sends the file straight to storage;
+      // public reads likewise go straight to the bucket instead of consuming
+      // a function invocation for every cover.
+      clientUploads: mediaStorage !== null,
+      collections: {
+        media:
+          mediaStorage === null
+            ? true
+            : {
+                disablePayloadAccessControl: true,
+                generateFileURL: ({ filename, prefix }) => getPublicMediaUrl(mediaStorage.publicUrl, prefix, filename),
+              },
+      },
+      bucket: mediaStorage?.bucket ?? '',
+      config: {
+        endpoint: mediaStorage?.endpoint,
+        region: mediaStorage?.region,
+        forcePathStyle: true,
+        credentials: { accessKeyId: mediaStorage?.accessKeyId ?? '', secretAccessKey: mediaStorage?.secretAccessKey ?? '' },
+      },
+    }),
+  ],
   // Hebrew is the root locale; English and French are prefixed. The scheme
   // extends to a fourth language by adding one entry here — see
   // docs/tasks/TASK-01-payload-setup.md §2.

@@ -141,14 +141,16 @@ ahead of time and served from cache, rebuilt on publish. Cart, checkout, orders 
 dynamic. The reading half of the site then stays fast and available even when the database is
 struggling.
 
-**Do not target $0/month.** They already pay ~₪113/month plus ~₪500/year for MP3 hosting — about
-₪1,850/year all in. The constraint was never *free*; it was *no recurring licences, roughly
-cost-neutral, survives without a maintainer.*
+**The demonstration may start on free allowances; the live shop must not depend on them.** They already
+pay ~₪113/month plus ~₪500/year for MP3 hosting — about ₪1,850/year all in. The durable constraint is
+*no recurring licences that degrade the product when unpaid, roughly cost-neutral, survives without a
+maintainer*, not that a pre-launch demonstration must incur hosting cost. The Vercel demo therefore uses
+Hobby with mock payments and moves to Pro before real commerce begins. Neon supplies both Postgres and the
+small demo media bucket; the generic S3 adapter can move media to R2 without changing the content model.
 
-Chasing free tiers buys real fragility for money that is already budgeted: databases that pause on
-inactivity, function timeouts, no support, and terms that change — the same lock-in argument, applied
-to hosting. A small paid host and a paid Postgres, on the order of $10–15/month, is materially more
-reliable and still roughly **half** what they spend today.
+Free tiers still bring real fragility: databases may pause on inactivity, function limits are lower,
+support is absent, and terms change. Imports, migrations, backups and bulk media processing therefore do
+not run as public application requests, even during the free demonstration.
 
 **Two verified sharp edges if a serverless free tier is used anyway:**
 
@@ -315,8 +317,9 @@ catalogues that have drifted apart, that risk here is not hypothetical.
 
 | Concern | Choice | Reasoning |
 |---|---|---|
-| Hosting | **Railway** (Render an equally fine substitute) | App + managed Postgres in one place, no server administration, no serverless function timeouts or connection-pooler traps. ~$10–20/month |
-| Object storage | **Cloudflare R2** | Zero egress fees. The MP3 archive costs ~$1/month rather than being a bandwidth problem — and replaces the ~₪500/year third-party host |
+| Hosting | **Vercel** — Hobby for the temporary demo, Pro before the live shop | Native Next.js deployment and preview workflow. Payload runs in Node functions; migrations run before the build, long imports stay local, and function/database regions are colocated. Pro is $20/month before excess usage |
+| Database | **Neon Postgres** | External to the application host. Runtime traffic uses the pooled connection string; committed migrations remain portable PostgreSQL |
+| Object storage | **Neon Object Storage for the demo; Cloudflare R2 before the full media archive** | The demo bucket is included with the existing Neon project and is S3-compatible. R2 remains the intended larger-scale store because zero egress fees make the MP3 archive cost about $1/month rather than becoming a bandwidth problem |
 | Video | **YouTube**, metadata synced via the YouTube Data API | Never rehosted. We own the index; they pay for delivery |
 | Email | **Resend** | Order confirmations. Was missing from every earlier plan |
 | Search | **Postgres full-text with a custom Hebrew configuration**, plus `pg_trgm` | Postgres ships no Hebrew config; we build one (niqqud stripping, gershayim, the ו/ב/כ/ל/ה/ש/מ prefix letters). At ~2,000 records this is sufficient and adds no service. Escape hatch: Meilisearch |
@@ -324,8 +327,9 @@ catalogues that have drifted apart, that risk here is not hypothetical.
 | Errors | **Sentry**, free tier | |
 | Backups | Managed Postgres backups **plus** a scheduled dump to R2 | Two mechanisms — one is not a backup |
 
-**Total running cost: roughly $15–25/month** — at or below the ~₪113/month currently paid, with nothing
-recurring that can lapse and silently degrade the site.
+**Demo running cost: initially the free allowances of Vercel Hobby and Neon. Live-shop base cost:
+Vercel Pro at $20/month, plus whatever paid Neon/R2/Resend usage the real traffic requires.** Hobby is
+temporary and no real payments run there; the deployed code and data services do not change at upgrade.
 
 ### Explicitly rejected, and the honest cost of rejecting them
 
@@ -376,18 +380,23 @@ done, and worth keeping regardless) nor purely the import-resolution bug in #166
 relative, `.ts`-extensioned imports in the config graph — also done, also worth keeping). Both fixes
 are real and are applied. Neither touches the two causes above.
 
-**The workaround**: `src/app/(payload)/api/dev-migrate/route.ts` calls the exact same
-`payload.db.createMigration()` / `payload.db.migrate()` methods the CLI calls, from inside a Next.js
-route handler — a process Next's own bundler builds correctly, sidestepping both bugs entirely.
-`scripts/dev-migrate.mjs` drives it: starts `next dev` with `PAYLOAD_MIGRATING=true` (Payload's own
-flag to skip the dev-mode schema push, which otherwise marks the database as dev-pushed and makes
-`migrate()` block on an interactive confirmation no route handler can ever answer), waits for the
-route to respond, calls it, shuts the server down. `npm run migrate:create` / `npm run migrate` use
-it. It also fixes a third, smaller issue the workaround itself exposed: Payload's generated migration
+**The workaround**: migration creation and application are separate. For creation,
+`src/app/(payload)/api/dev-migrate/route.ts` calls `payload.db.createMigration()` from inside a Next.js
+development process, whose bundler sidesteps both CLI bugs; `scripts/dev-migrate.mjs` starts that process,
+calls the authenticated development-only route, and shuts it down. For application,
+`scripts/migrate.mjs` loads the self-contained migration files into a minimal Payload/Postgres config,
+without loading the application config at all. `npm run migrate:create` and `npm run db:migrate` expose
+the two paths. `push: false` makes committed migrations the only schema writer, so Payload never creates
+the batch `-1` development marker that used to block unattended migrations. The creation route also fixes
+a third, smaller issue the workaround exposed: Payload's generated migration
 template imports `MigrateUpArgs`/`MigrateDownArgs` as values when they are type-only exports —
 harmless under every bundler, which silently elide unused type imports, but a hard failure under the
 loader `payload.db.migrate()` uses here. The fix-up is a one-line, idempotent string replace on the
 freshly written file, not a forked template.
+
+Seeding follows the same principle but never runs from an application lifecycle hook: Vercel may initialise
+many function instances. `scripts/seed.mjs` builds a minimal config containing only the collection and
+globals the seed touches, and `npm run seed` is an explicit, repeatable operation.
 
 **Verified, not assumed**: generated a real migration and read it (615 lines, the full schema — not
 an empty stub); applied it to a genuinely empty Neon database and confirmed the resulting schema —
@@ -395,7 +404,7 @@ every table, every column and type — matches what `next dev`'s auto-push build
 (`src/seed.ts`) runs clean against that freshly migrated database.
 
 **Delete `src/app/(payload)/api/dev-migrate/route.ts` and `scripts/dev-migrate.mjs`, and revert
-`migrate`/`migrate:create` in `package.json` to call `payload migrate` / `payload migrate:create`
+`db:migrate`/`migrate:create` in `package.json` to call `payload migrate` / `payload migrate:create`
 directly, once either root cause is fixed upstream** — check by running `payload migrate:create`
 directly; if it no longer throws `ERR_REQUIRE_ASYNC_MODULE`, the first cause is fixed, and the route's
 own doc comment names the second to check next.

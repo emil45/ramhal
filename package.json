@@ -2,20 +2,22 @@
   "name": "ramhal",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "engines": {
-    "node": "22.23.2"
+    "node": "22.x"
   },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "deploy:build": "npm run db:migrate && npm run build",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
     "generate:types": "node scripts/dev-generate-types.mjs",
     "generate:importmap": "payload generate:importmap",
-    "migrate": "node scripts/dev-migrate.mjs run",
+    "db:migrate": "node scripts/migrate.mjs",
     "migrate:create": "node scripts/dev-migrate.mjs create",
-    "seed": "payload run scripts/seed.ts",
+    "seed": "node scripts/seed.mjs",
     "import:books": "node scripts/import-books.mjs"
   },
   "dependencies": {
@@ -23,6 +25,7 @@
     "@payloadcms/db-postgres": "^3.89.0",
     "@payloadcms/next": "^3.89.0",
     "@payloadcms/richtext-lexical": "^3.89.0",
+    "@payloadcms/storage-s3": "^3.89.0",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.2.6",
     "graphql": "^16.14.2",

@@ -4,15 +4,15 @@
 // to answer, calls it, then shuts the server down.
 //
 // Usage: node scripts/dev-migrate.mjs create [migrationName]
-//        node scripts/dev-migrate.mjs run
+// (Applying migrations is scripts/migrate.mjs, not this.)
 import { spawn } from 'node:child_process'
 
 process.loadEnvFile('.env')
 
 const [, , action, migrationName] = process.argv
 
-if (action !== 'create' && action !== 'run') {
-  console.error('Usage: dev-migrate.mjs <create [name]|run>')
+if (action !== 'create') {
+  console.error('Usage: dev-migrate.mjs create [name]')
   process.exit(1)
 }
 
@@ -29,14 +29,6 @@ const url = `http://localhost:3000/api/dev-migrate?${params}`
 const server = spawn('node_modules/.bin/next', ['dev'], {
   detached: true,
   stdio: 'inherit',
-  env: {
-    ...process.env,
-    // Payload's own flag for exactly this: skips the dev-mode schema push
-    // that `next dev` normally does on boot, which otherwise marks the
-    // database as dev-pushed and makes `migrate()` block on an interactive
-    // confirmation prompt that a route handler (no TTY) can never answer.
-    PAYLOAD_MIGRATING: 'true',
-  },
 })
 
 const shutdown = () => {

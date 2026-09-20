@@ -21,7 +21,7 @@ function hasLocalePrefix(pathname: string): boolean {
  * Two unrelated jobs, kept in one function because Next only supports one
  * proxy file per project (see node_modules/next/dist/docs/.../proxy.md).
  *
- * 1. Every /api/dev-* route (dev-migrate, dev-import, dev-generate-types —
+ * 1. Every /api/dev-* route (dev-migrate and dev-generate-types —
  *    a privileged one-off Payload Local API operation, run through Next's
  *    bundler because the CLI can't load this project's config) is
  *    unreachable in production, before its route handler ever runs. Each
