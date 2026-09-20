@@ -1,0 +1,264 @@
+{
+  "format": "lossless PNG with transparency",
+  "canvas": {
+    "width": 400,
+    "height": 500,
+    "bookHeight": 420,
+    "maximumWidth": 380
+  },
+  "covers": [
+    {
+      "identifier": "6719586",
+      "title": "דברות הרמח\"ל ח\"א גאולה - תיקון עולם",
+      "file": "divrot-01-geulah.png",
+      "width": 400,
+      "height": 500,
+      "source": "originals/6719586-1991.jpg",
+      "sourceChecksum": "dc3378da661603d55977b4f44dee0763bebf066a49f1ee6e755f507a2a9bfcdd",
+      "sha256": "502369cdd2b0e250c48b10544d90e45afc190d37c0a81fa19a8126ac0d3a393c",
+      "crop": {
+        "left": 38,
+        "top": 54,
+        "width": 364,
+        "height": 606
+      },
+      "placement": {
+        "left": 74,
+        "top": 40
+      },
+      "bookWidth": 252,
+      "bookHeight": 420,
+      "note": "Background and source shadow removed; cover artwork and angle retained."
+    },
+    {
+      "identifier": "6742749",
+      "title": "דברות הרמח\"ל ח\"ב - סוד התפילה",
+      "file": "divrot-02-sod-hatefillah.png",
+      "width": 400,
+      "height": 500,
+      "source": "originals/6742749-6522.jpeg",
+      "sourceChecksum": "8a1bf0d106475156e813e357f53c41c2af865b0e6ee8f3ac1dc387cedc5f051b",
+      "sha256": "1635f45ec5c526d8b9fcb71eb9fd49f2f745c1fbd797c7d8b6f3ece737e542c6",
+      "crop": {
+        "left": 38,
+        "top": 54,
+        "width": 364,
+        "height": 606
+      },
+      "placement": {
+        "left": 74,
+        "top": 40
+      },
+      "bookWidth": 252,
+      "bookHeight": 420,
+      "note": "Background and source shadow removed; cover artwork and angle retained."
+    },
+    {
+      "identifier": "6757970",
+      "title": "דברות רמח\"ל  ח\"ג- סוד האמונה",
+      "file": "divrot-03-sod-haemunah.png",
+      "width": 400,
+      "height": 500,
+      "source": "originals/6757970-7463.jpg",
+      "sourceChecksum": "1d21f0ba6554a774dd07f1061e2a8f3cd3907ceb1617bb26ea6fec8f3840e842",
+      "sha256": "a0bee8dbf15454e904456bebcb3822fe53d964fce317a41809dd2da4aabcd62a",
+      "crop": {
+        "left": 39,
+        "top": 34,
+        "width": 375,
+        "height": 623
+      },
+      "placement": {
+        "left": 73,
+        "top": 40
+      },
+      "bookWidth": 253,
+      "bookHeight": 420,
+      "note": "Background and source shadow removed; cover artwork and angle retained."
+    },
+    {
+      "identifier": "6759121",
+      "title": "דברות הרמח\"ל ח\"ד סוד התשובה",
+      "file": "divrot-04-sod-hateshuvah.png",
+      "width": 400,
+      "height": 500,
+      "source": "originals/6759121-4405.jpg",
+      "sourceChecksum": "1af5a35b978b75aaf3f85ba6ecfc1690dd79289b72550ba1e33f1c4666477a95",
+      "sha256": "40964744886117cc7037fca28f9b370ba678f9a5e2513f9f3f45c46ceeef0fce",
+      "crop": {
+        "left": 11,
+        "top": 12,
+        "width": 430,
+        "height": 681
+      },
+      "placement": {
+        "left": 67,
+        "top": 40
+      },
+      "bookWidth": 265,
+      "bookHeight": 420,
+      "note": "Background and source shadow removed; cover artwork and angle retained."
+    },
+    {
+      "identifier": "6762596",
+      "title": "דברות רמח\"ל ח\"ה - משיח",
+      "file": "divrot-05-mashiach.png",
+      "width": 400,
+      "height": 500,
+      "source": "originals/6762596-1490.jpg",
+      "sourceChecksum": "2ebe87b858d960c36f4d86882131fc0aeb3ea0c55b34ca31446d095d4de53c68",
+      "sha256": "6b91cc94358a0203f9f0d1f49f59953779d9aa4114527a5c7468d91db168d14d",
+      "crop": {
+        "left": 38,
+        "top": 54,
+        "width": 364,
+        "height": 606
+      },
+      "placement": {
+        "left": 74,
+        "top": 40
+      },
+      "bookWidth": 252,
+      "bookHeight": 420,
+      "note": "Background and source shadow removed; cover artwork and angle retained."
+    },
+    {
+      "identifier": "6764331",
+      "title": "דברות רמח\"ל ח\"ו בית מקדש",
+      "file": "divrot-06-beit-hamikdash.png",
+      "width": 400,
+      "height": 500,
+      "source": "originals/6764331-8057.jpeg",
+      "sourceChecksum": "e52b26fac7003cb3299a4558be3909386a692a8564cf18bd0177d30123ff42fa",
+      "sha256": "c0eda9620c148b484d89cde5b1a8c580a830cd3e791f149dadf9cafd13c1df14",
+      "crop": {
+        "left": 36,
+        "top": 69,
+        "width": 345,
+        "height": 572
+      },
+      "placement": {
+        "left": 73,
+        "top": 40
+      },
+      "bookWidth": 253,
+      "bookHeight": 420,
+      "note": "Background and source shadow removed; cover artwork and angle retained."
+    },
+    {
+      "identifier": "6764645",
+      "title": "דברות רמח\"ל ח\"ז עם ישראל",
+      "file": "divrot-07-am-yisrael.png",
+      "width": 400,
+      "height": 500,
+      "source": "originals/6764645-5287.png",
+      "sourceChecksum": "9e229059504b63e98b466ff849f4a255f8485ba9e332b50116f0e341bfae6cb6",
+      "sha256": "57947ba49db3e036370c19403ddb3abc0aa3464b9cdeb4315666e89281cbb02b",
+      "crop": {
+        "left": 38,
+        "top": 54,
+        "width": 365,
+        "height": 607
+      },
+      "placement": {
+        "left": 73,
+        "top": 40
+      },
+      "bookWidth": 253,
+      "bookHeight": 420,
+      "note": "Exclude the rectangular rendering artifact outside the book silhouette."
+    },
+    {
+      "identifier": "6769329",
+      "title": "דברות רמח\"ל ח\"ח סוד הקדושה",
+      "file": "divrot-08-sod-hakedushah.png",
+      "width": 400,
+      "height": 500,
+      "source": "originals/6769329-3675.jpg",
+      "sourceChecksum": "2cf0bc33f6d4ede8124f3d7ffa0c6b57193bd54ef5483343e5a27bec326a5867",
+      "sha256": "2e56458e6ca7466861f64266333260bd5a798aec513d3151e86dd34e0d98d57b",
+      "crop": {
+        "left": 38,
+        "top": 54,
+        "width": 365,
+        "height": 607
+      },
+      "placement": {
+        "left": 73,
+        "top": 40
+      },
+      "bookWidth": 253,
+      "bookHeight": 420,
+      "note": "Background and source shadow removed; cover artwork and angle retained."
+    },
+    {
+      "identifier": "6265202",
+      "title": "זוהר השלם - חיבורה קדמאה מהדורה חדשה",
+      "file": "zohar-hashalem.png",
+      "width": 400,
+      "height": 500,
+      "source": "originals/6265202-7995.jpg",
+      "sourceChecksum": "62236ddea1cd62d8bca7b4852995c18f762b4bc5a22d1cb7f8df16be6f2ee70c",
+      "sha256": "523bfa43ef82d5bcd6419b677ebdbbb7d1a7750995a5e951196616b590032cf7",
+      "crop": {
+        "left": 43,
+        "top": 85,
+        "width": 488,
+        "height": 570
+      },
+      "placement": {
+        "left": 20,
+        "top": 40
+      },
+      "bookWidth": 360,
+      "bookHeight": 420,
+      "note": "Isolate the foreground book and its ribbons. The rear box is excluded from this main image; the source remains available and no claim about box inclusion is made."
+    },
+    {
+      "identifier": "6762597",
+      "title": "רבי יעקב מולכו - הגהות בספר משנה תורה לרמב\"ם",
+      "file": "rabbi-yaakov-molcho.png",
+      "width": 400,
+      "height": 500,
+      "source": "originals/6762597-8967.jpg",
+      "sourceChecksum": "6f66b04094e74ac326c897b7958d49a9b6aee60f70e6ef1f10bd6986bb8bacc4",
+      "sha256": "ce2d5e68f5184d52389f00bc87fd3fdabcd56e429f1cca5f1eb5fadbcbbe4cda",
+      "crop": {
+        "left": 108,
+        "top": 79,
+        "width": 345,
+        "height": 556
+      },
+      "placement": {
+        "left": 69,
+        "top": 40
+      },
+      "bookWidth": 261,
+      "bookHeight": 420,
+      "note": "Background and source shadow removed; cover artwork and angle retained."
+    },
+    {
+      "identifier": "5731208",
+      "title": "מחול לצדיקים (בדברי תכלית הבריאה)",
+      "file": "machol-latzadikim.png",
+      "width": 400,
+      "height": 500,
+      "source": "originals/5731208-2637.png",
+      "sourceChecksum": "f7ac1ab98cdf8543b65c78e1633c80a3880c1e3b78cf0286f68ba49a23ecbc87",
+      "sha256": "8675f01765d9a053594078daed1b43824d86c67fd540a615a352da23b098b920",
+      "crop": {
+        "left": 199,
+        "top": 122,
+        "width": 293,
+        "height": 428
+      },
+      "placement": {
+        "left": 56,
+        "top": 40
+      },
+      "bookWidth": 288,
+      "bookHeight": 420,
+      "note": "Remove the reflection below the book; retain the original page edge and front artwork."
+    }
+  ]
+}
