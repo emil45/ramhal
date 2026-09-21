@@ -18,7 +18,8 @@
     "db:migrate": "node scripts/migrate.mjs",
     "migrate:create": "node scripts/dev-migrate.mjs create",
     "seed": "node scripts/seed.mjs",
-    "import:books": "node scripts/import-books.mjs"
+    "import:books": "node scripts/import-books.mjs",
+    "import:prepared-covers": "node scripts/import-prepared-covers.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

@@ -25,11 +25,14 @@ type LocaleConfig = {
   estimatedShippingCountry: string
   /** BCP 47 tag for Intl formatting (numbers, currency, dates). */
   intlTag: string
+  /** Decorative cue only; the adjacent native-language label carries meaning. */
+  flag: string
   label: string
+  shortLabel: string
 }
 
 export const LOCALE_CONFIG: Record<Locale, LocaleConfig> = {
-  he: { currency: 'ILS', direction: 'rtl', estimatedShippingCountry: 'IL', intlTag: 'he-IL', label: 'עברית' },
-  en: { currency: 'USD', direction: 'ltr', estimatedShippingCountry: 'US', intlTag: 'en-US', label: 'English' },
-  fr: { currency: 'EUR', direction: 'ltr', estimatedShippingCountry: 'FR', intlTag: 'fr-FR', label: 'Français' },
+  he: { currency: 'ILS', direction: 'rtl', estimatedShippingCountry: 'IL', flag: '🇮🇱', intlTag: 'he-IL', label: 'עברית', shortLabel: 'עב' },
+  en: { currency: 'USD', direction: 'ltr', estimatedShippingCountry: 'US', flag: '🇺🇸', intlTag: 'en-US', label: 'English', shortLabel: 'EN' },
+  fr: { currency: 'EUR', direction: 'ltr', estimatedShippingCountry: 'FR', flag: '🇫🇷', intlTag: 'fr-FR', label: 'Français', shortLabel: 'FR' },
 }

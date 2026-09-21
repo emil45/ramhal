@@ -9,6 +9,8 @@ import type { CatalogueBook } from '@/lib/booksData'
 import type { Locale } from '@/lib/locale'
 
 export function ProductCard({ book, dict, locale }: { book: CatalogueBook; dict: Dictionary; locale: Locale }) {
+  const metadata = book.category?.title ?? (book.bookLanguage === 'unknown' ? null : dict.bookLanguageLabel[book.bookLanguage])
+
   return (
     <Link
       href={bookPath(locale, book.urlSlug)}
@@ -20,6 +22,7 @@ export function ProductCard({ book, dict, locale }: { book: CatalogueBook; dict:
         sizes="(min-width: 1024px) 200px, (min-width: 640px) 30vw, 45vw"
         title={book.displayTitle}
       />
+      <p className="line-clamp-1 min-h-4 text-xs text-muted-foreground">{metadata}</p>
       {/* Two lines are reserved whether the title uses them or not, and the
           price row is pushed to the bottom of a card that stretches to the
           row's height — so every price in a row sits on one baseline. */}

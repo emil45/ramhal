@@ -29,7 +29,9 @@ reads as a SaaS landing page. New hues are not introduced; derive from the four 
 
 ## Type
 
-Frank Ruhl Libre (serif) for titles, Heebo (sans) for interface and running text. Defined as
+Noto Serif Hebrew (serif) for titles, Assistant (sans) for interface and running text. Both have
+Hebrew, Latin and extended-Latin coverage, so the same pairing works cleanly in all three locales.
+They are self-hosted by `next/font`, with no browser request to Google. Defined as
 utilities in `globals.css`; use them, never ad-hoc `text-2xl font-serif`.
 
 | Utility | Size | Use |
@@ -78,7 +80,7 @@ Anatomy, outside in:
 2. **Outer rule**, thick (1cqw), then a **thinner inner rule** (0.4cqw), set in from the edge,
    as on a sefer's title page. **This rule colour is the only thing that says which shelf a
    book is on**: teal (Hebrew), gold (French), deep teal (English), dark gold (siddurim).
-3. **Title** in Frank Ruhl Libre, balanced, optically centred in the upper two-thirds, size
+3. **Title** in Noto Serif Hebrew, balanced, optically centred in the upper two-thirds, size
    stepping down by title length (`coverTitleWidthPercent`), clamped at four lines.
 4. **Short gold rule and the imprint** *מכון רמח״ל* in small type at the foot. The imprint is
    hidden on a cover narrower than 7rem, where it would be illegible.
@@ -95,6 +97,26 @@ A catalogue card is a cover, a two-line title with the height **reserved** even 
 is one line, and a price row pushed to the bottom of a card that stretches to the row's height —
 so every price in a row shares a baseline. An unpurchasable book shows a muted `Badge` in the
 price slot, not a sentence. Hover lifts the cover 4px and underlines the title in gold.
+
+## Catalogue browsing
+
+The full catalogue is small enough to load once (100 books in the demo) and filter instantly,
+but too long to present as one uninterrupted wall. Search, category, language and sort therefore
+stay client-side, while the visible result is paged at 20 books: four complete rows on desktop,
+ten on mobile. Changing a filter resets to page one; changing page returns the viewport to the
+result range. Missing prices always sort after priced books instead of pretending to be zero.
+
+The range line says what is visible (`1–20 of 100`) rather than only repeating the total. Cards
+show one quiet metadata value: category when known, otherwise the known book language. The
+literal “unknown” value is an editorial flag, not useful storefront copy, and is not displayed.
+
+## Language navigation
+
+Three locales do not need a large navigation block. Desktop uses one compact native-language
+menu; mobile places the same choices in the navigation sheet. Flags are decorative scanning
+cues only—the visible native name and explicit accessible label carry the meaning. Changing
+language intentionally returns to that locale's home page until equivalent-page routing can be
+resolved from localized content rather than guessed from URLs.
 
 ## No native controls
 
