@@ -5,7 +5,7 @@ import type { Locale } from '@/lib/locale'
 // generic, build the specific. No i18n library earns its keep here.
 const DICTIONARIES = {
   he: {
-    nav: { home: 'מכון רמח״ל', catalogue: 'ספרים', ramhal: 'הרמח״ל', chriqui: 'הרב שריקי', cart: 'עגלה', menu: 'תפריט', closeMenu: 'סגירה', cartLabel: (n: number) => (n === 0 ? 'עגלת הקניות' : n === 1 ? 'עגלת הקניות, פריט אחד' : `עגלת הקניות, ${n} פריטים`) },
+    nav: { home: 'מכון רמח״ל', catalogue: 'ספרים', ramhal: 'הרמח״ל', chriqui: 'הרב שריקי', beitRamhal: 'בית רמח״ל', cart: 'עגלה', menu: 'תפריט', closeMenu: 'סגירה', cartLabel: (n: number) => (n === 0 ? 'עגלת הקניות' : n === 1 ? 'עגלת הקניות, פריט אחד' : `עגלת הקניות, ${n} פריטים`) },
     catalogue: {
       title: 'קטלוג הספרים',
       searchPlaceholder: 'חיפוש לפי כותרת…',
@@ -152,7 +152,7 @@ const DICTIONARIES = {
     },
   },
   en: {
-    nav: { home: 'Machon Ramhal', catalogue: 'Books', ramhal: 'The Ramhal', chriqui: 'Rabbi Chriqui', cart: 'Cart', menu: 'Menu', closeMenu: 'Close', cartLabel: (n: number) => (n === 0 ? 'Shopping cart' : `Shopping cart, ${n} ${n === 1 ? 'item' : 'items'}`) },
+    nav: { home: 'Machon Ramhal', catalogue: 'Books', ramhal: 'The Ramhal', chriqui: 'Rabbi Chriqui', beitRamhal: 'Beit Ramhal', cart: 'Cart', menu: 'Menu', closeMenu: 'Close', cartLabel: (n: number) => (n === 0 ? 'Shopping cart' : `Shopping cart, ${n} ${n === 1 ? 'item' : 'items'}`) },
     catalogue: {
       title: 'Book Catalogue',
       searchPlaceholder: 'Search by title…',
@@ -300,7 +300,7 @@ const DICTIONARIES = {
     },
   },
   fr: {
-    nav: { home: 'Institut Ramhal', catalogue: 'Livres', ramhal: 'Le Ramhal', chriqui: 'Rav Chriqui', cart: 'Panier', menu: 'Menu', closeMenu: 'Fermer', cartLabel: (n: number) => (n === 0 ? 'Panier' : `Panier, ${n} ${n === 1 ? 'article' : 'articles'}`) },
+    nav: { home: 'Institut Ramhal', catalogue: 'Livres', ramhal: 'Le Ramhal', chriqui: 'Rav Chriqui', beitRamhal: 'Beit Ramhal', cart: 'Panier', menu: 'Menu', closeMenu: 'Fermer', cartLabel: (n: number) => (n === 0 ? 'Panier' : `Panier, ${n} ${n === 1 ? 'article' : 'articles'}`) },
     catalogue: {
       title: 'Catalogue des livres',
       searchPlaceholder: 'Rechercher un titre…',

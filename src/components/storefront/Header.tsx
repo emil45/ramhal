@@ -13,6 +13,7 @@ import type { Locale } from '@/lib/locale'
 
 export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const secondaryLinks = [
+    { href: localePath(locale, '/beit-ramhal'), label: dict.nav.beitRamhal },
     { href: localePath(locale, '/ramhal'), label: dict.nav.ramhal },
     { href: localePath(locale, '/rabbi-chriqui'), label: dict.nav.chriqui },
   ]

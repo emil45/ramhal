@@ -12,6 +12,7 @@ export async function Footer({ dict, locale }: { dict: Dictionary; locale: Local
   const contact = await getContactDetails(locale)
   const links = [
     { href: cataloguePath(locale), label: dict.nav.catalogue },
+    { href: localePath(locale, '/beit-ramhal'), label: dict.nav.beitRamhal },
     { href: localePath(locale, '/ramhal'), label: dict.nav.ramhal },
     { href: localePath(locale, '/rabbi-chriqui'), label: dict.nav.chriqui },
   ]

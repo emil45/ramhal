@@ -73,7 +73,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       {/* 2. Announcements — nothing dated may ever go stale here (docs/DECISIONS.md §9); the
           section itself disappears rather than render empty. */}
       {announcements.length > 0 ? (
-        <section className="page-container py-12">
+        <section id="schedule" className="page-container scroll-mt-8 py-12">
           <SectionHeading>{dict.home.announcementsTitle}</SectionHeading>
           <ul className="flex flex-col gap-4">
             {announcements.map((announcement) => (
