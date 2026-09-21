@@ -1,53 +1,39 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
-import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { isLocale } from '@/lib/locale'
 
-// Short by design — someone deciding whether to buy מסילת ישרים wants
-// thirty seconds, not an essay (docs/tasks/TASK-06-storefront.md §4).
-// Source: docs/PROJECT_CONTEXT.md §1. Not Payload-backed: two short, rarely
-// -changing pages don't earn a CMS content model yet — see docs/reports/TASK-06.md.
-const CONTENT = {
+import { EnglishRamhalArticle } from './EnglishRamhalArticle'
+import { FrenchRamhalArticle } from './FrenchRamhalArticle'
+import { HebrewRamhalArticle } from './HebrewRamhalArticle'
+
+const PAGE_METADATA = {
   he: {
-    title: 'הרמח״ל — רבי משה חיים לוצאטו',
-    paragraphs: [
-      'רבי משה חיים לוצאטו (תס״ז–תק״ז / 1707–1746), המוכר בראשי התיבות רמח״ל, נולד בגטו היהודי של פדובה שבאיטליה. מקובל, פילוסוף, איש מוסר ומחזאי, הנחשב לאחד המוחות השיטתיים ביותר במחשבת ישראל.',
-      'בגיל כעשרים דיווח על גילוי מגיד — קול פנימי — שעורר התנגדות עזה מצד הרבנות בת זמנו. חלק גדול מכתביו נאסר, הוסתר או אבד בימי חייו. נפטר בעכו בגיל 39 בלבד.',
-      'כתביו — מסילת ישרים, דעת תבונות, דרך ה׳, קל״ח פתחי חכמה, אדיר במרום, מאמר הגאולה ועוד — הם מיסודות עולם התורה עד ימינו. הכרתו כגאון בעולם התורה באה ברובה לאחר מותו, ועבודת מכון רמח״ל בהוצאת כתביו נתפסת כתיקון אותו עוול.',
-    ],
+    title: 'הרמח״ל — חייו ותורתו | מכון רמח״ל',
+    description: 'חייו של רבי משה חיים לוצאטו ומבוא בהיר לתורתו: אמונה, הנהגה וגילוי היחוד.',
   },
   en: {
-    title: 'The Ramhal — Rabbi Moshe Chaim Luzzatto',
-    paragraphs: [
-      'Rabbi Moshe Chaim Luzzatto (1707–1746), known by the acronym Ramhal, was born in the Jewish ghetto of Padua, Italy — a kabbalist, philosopher, ethicist and playwright regarded as one of the most systematic minds in Jewish thought.',
-      'At around twenty he reported receiving a maggid, an inner revelatory voice, which drew intense opposition from the rabbinic establishment of his day. Much of his writing was suppressed, banned or lost during his lifetime. He died in Acre at 39.',
-      'His works — Mesillat Yesharim, Daat Tevunot, Derech Hashem, Kalach Pitchei Chochma, Adir BaMarom, Maamar HaGeulah and more — are foundational across the Jewish world. He was recognised as a genius largely only after his death, and the institute’s work of publishing him is understood as a rectification of that neglect.',
-    ],
+    title: 'The Ramhal — Life and Works | Machon Ramhal',
+    description: 'The life, writings and lasting influence of Rabbi Moshe Chaim Luzzatto.',
   },
   fr: {
-    title: 'Le Ramhal — Rabbi Moshe Haïm Luzzatto',
-    paragraphs: [
-      'Rabbi Moshe Haïm Luzzatto (1707–1746), connu sous l’acronyme Ramhal, est né dans le ghetto juif de Padoue, en Italie — kabbaliste, philosophe, moraliste et dramaturge, considéré comme l’un des esprits les plus systématiques de la pensée juive.',
-      'Vers l’âge de vingt ans, il rapporte avoir reçu un maguid, une voix intérieure révélatrice, qui suscite une opposition intense de l’establishment rabbinique de son époque. Une grande partie de ses écrits fut supprimée, interdite ou perdue de son vivant. Il meurt à Acre à 39 ans.',
-      'Ses œuvres — Messilat Yécharim, Daat Tevounot, Dérekh Hachem, Kala’h Pit’hé ’Hokhma, Adir BaMarom, Maamar HaGueoula et bien d’autres — sont fondatrices dans le monde juif. Son génie ne fut reconnu, pour l’essentiel, qu’après sa mort, et l’œuvre de l’institut consistant à publier ses écrits est comprise comme une réparation de cette négligence.',
-    ],
+    title: 'Ramhal — Vie et pensée | Institut Ramhal',
+    description: 'La vie, les œuvres et la pensée de Rabbi Moché Haïm Luzzatto.',
   },
-} as const
+} as const satisfies Record<string, Metadata>
+
+export async function generateMetadata({ params }: PageProps<'/[locale]/ramhal'>): Promise<Metadata> {
+  const { locale } = await params
+  if (!isLocale(locale)) notFound()
+
+  return PAGE_METADATA[locale]
+}
 
 export default async function RamhalPage({ params }: PageProps<'/[locale]/ramhal'>) {
   const { locale } = await params
   if (!isLocale(locale)) notFound()
 
-  const content = CONTENT[locale]
-
-  return (
-    <article className="page-container max-w-3xl py-10">
-      <SectionHeading as="h1">{content.title}</SectionHeading>
-      <div className="flex flex-col gap-5 text-lg leading-[1.8]">
-        {content.paragraphs.map((paragraph, index) => (
-          <p key={index}>{paragraph}</p>
-        ))}
-      </div>
-    </article>
-  )
+  if (locale === 'he') return <HebrewRamhalArticle />
+  if (locale === 'fr') return <FrenchRamhalArticle />
+  return <EnglishRamhalArticle />
 }
