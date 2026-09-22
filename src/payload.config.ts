@@ -115,6 +115,18 @@ export default buildConfig({
       tokenEndpoint: 'https://oauth2.googleapis.com/token',
       scopes: ['openid', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'],
       useEmailAsIdentity: true,
+      // The plugin's own default field, minus the admin form ever showing
+      // it — useEmailAsIdentity means it's never read (docs/DECISIONS.md
+      // §19), and an untranslated "Sub" in an otherwise-Hebrew form is
+      // exactly the kind of thing that confuses the non-technical operator
+      // this admin is built for (docs/reports/TASK-24.md).
+      subField: {
+        name: 'sub',
+        type: 'text',
+        index: true,
+        access: { read: () => true, create: () => true, update: () => false },
+        admin: { hidden: true },
+      },
       // The plugin's default ("create") would create a user row — with
       // Users.role defaulting to "editor" — for any Google account that
       // completes the flow. Every admin is provisioned by hand instead.
