@@ -614,8 +614,86 @@ package itself instead of externalising it to Node (`vitest.config.ts`, `test.se
 
 **Google sign-in does not work on Vercel preview deployments.** The redirect URI is registered
 against the exact production URL in the Google Cloud console; a preview URL is a different
-origin. This is not worked around — previews use the local-password break-glass path, same as
-local development without a configured Google client.
+origin. This is not worked around. **Correction, TASK-24:** this paragraph originally went on to
+say previews and local development without a configured Google client fall back to local
+password login. That stopped being true the same day it was written, and §20 makes it
+unconditionally false — there is no local password login left to fall back to. A preview
+deployment simply cannot authenticate at all right now, which is a real, currently-unaddressed
+gap, not a designed fallback.
+
+---
+
+## 20. TASK-24: one production database, and Google sign-in becomes unconditional (22 September 2026)
+
+Three related tightenings, all decided together while closing out TASK-20's loose ends.
+
+### Google sign-in is now required, not optional
+
+§19's `readGoogleSignInConfig` originally returned `null` when both variables were unset, so the
+plugin would quietly disable itself and local password login would carry a deployment with no
+Google Cloud client — meant as the story for local development. That story stopped being true the
+moment `disableLocalStrategy` became unconditional (§19, same day): an unconfigured deployment
+now has *no* way into `/admin` at all, Google or otherwise, and the old comment describing the
+"or neither" branch as a working local-dev path was actively misleading. `GOOGLE_CLIENT_ID` and
+`GOOGLE_CLIENT_SECRET` are now required in every environment, checked at boot
+(`exitUnlessGoogleSignInIsSafe`, the same pattern as `exitUnlessAdminAllowlistIsSafe`) rather than
+documented as optional. `disableLocalStrategy` is not made conditional on `APP_ENV` to compensate
+— that would be exactly the environment-conditional-authentication divergence §18 exists to
+prevent, trading one bad story (local dev quietly has no login) for a worse one (local dev quietly
+has a *different, weaker* login than production).
+
+### One database, not two — the demo project is gone
+
+TASK-20/22/23 all treated the Neon project named "Ramhal" (`lucky-field-60207292`) as production,
+verifying and repairing catalogue data on it directly through the Neon MCP tools. It never was:
+the actual `DATABASE_URI` wired into Vercel's Production environment pointed at a *different*
+Neon project, "ramhal-demo" (`dawn-sun-46089061`, created 20 September during the APP_ENV/demo
+work in §18), sitting at exactly the pre-repair state — 100 books, 11 uncategorized, zero in
+siddurim-machzorim. Three tasks' worth of "verified against production" checks were actually
+checking a database the live site never served. Found while provisioning the son's admin account
+for TASK-24
+(item 1): creating his `users` row through the real `/admin` UI landed nowhere near where the
+Neon MCP tools showed a `users` table — full detail in `docs/reports/TASK-24.md`.
+
+Resolved by decision, not accident: **`lucky-field-60207292` is now the only database**, in every
+environment — local development, testing/debugging, and the live site all point at it
+(`DATABASE_URI` in `.env` locally, and in Vercel's Production environment, are the same
+database). "ramhal-demo" and its Neon Object Storage bucket are deleted. Before deleting it, the
+11 real uploaded book covers were migrated forward by re-running `npm run import:prepared-covers`
+against the surviving database — its source of truth is the checked-in `assets/book-covers/`
+directory, not the old bucket, so this was a fresh, verified re-upload, not a copy of bytes
+between buckets.
+
+**The real cost, stated plainly:** integration tests that hit the real database
+(`*.integration.test.ts`) now write to and clean up from the one production database that also
+serves the live site, on every local test run. This was observed happening in real time while
+this task was in progress — a concurrent local test run left two `ספר בדיקה` (test book) fixture
+rows sitting in production for the seconds between their creation and that test's own teardown.
+The teardown ran and they were gone before anyone but a person watching the database at that exact
+moment would ever see them, which is the only reason this is a note and not an incident. There is
+no staging database standing between "a developer's laptop" and "what the public sees." This is a
+deliberate trade — see `docs/reports/TASK-24.md` for the instruction that made it — not an
+oversight, and it should be revisited before the site has real customers, not after.
+
+### One of TASK-22's four duplicate merges is not encoded
+
+TASK-22 merged four pairs of duplicate books by hand. Three are now encoded as data
+(`REVIEWED_DUPLICATE_IMPORT_KEY` in `src/importBooks.ts`), the same way TASK-23's
+`REVIEWED_LANGUAGE`/`REVIEWED_CATEGORY_SLUG` overrides already are, so a from-scratch import
+reproduces the merge instead of recreating the
+duplicate. The fourth — two listings for "זוהר רשב״י ח״ב", differing only in whether the title
+has commas — is not, and reproducing it would take more than a map entry: the survivor
+(`זוהר רשב״י ח"ב - פרשת נח, לך לך, וירא, ...`, with commas) is a `singleton`-bucket candidate,
+while the duplicate (no commas) is a `confident`-bucket candidate, and confident candidates are
+always processed before singleton ones. Whichever import key `REVIEWED_DUPLICATE_IMPORT_KEY`
+pointed at the survivor, the *duplicate* would still be the one to reach `upsertBook` first and
+actually create the book — under its own (comma-less) title, in whichever locale its own site
+data carries — which would produce a book with the wrong title, silently, rather than reproducing
+what TASK-22 actually did. Fixing that properly means teaching the reconciliation step itself to
+treat differing punctuation as the same title, which is a change to matching logic used across the
+whole catalogue, not a fact about one pair of books. Left alone, with this paragraph as the
+record: a from-scratch import of this one pair is not a valid rebuild, and production is that
+pair's only copy.
 
 **Not verified empirically, recorded as a gap:** whether `www.ramhal.com` will need its own
 authorised domain and redirect URI entry added at that point (it will — see the OAuth client

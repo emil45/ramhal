@@ -30,6 +30,21 @@
   and `scripts/migrate.mjs` are likely broken the same way right now, independent of this task —
   worth a follow-up to either patch the dependency's exports or give those scripts the same
   Vite-inlining workaround `vitest.config.ts` already uses.
+
+  **Correction, added in TASK-24:** half of the claim above is wrong, and it names the deploy
+  path, so it needed fixing rather than leaving as a record of a mistaken belief. `scripts/migrate.mjs`
+  is **not** affected — it never loads `payload.config.ts` at all. Its own header comment says so:
+  "This script sidesteps that by not loading the project's config at all. Migrations are
+  self-contained SQL, so all it needs is a database adapter and Payload's own migrations table — a
+  config with no collections." `scripts/import-books.mjs` **is** affected, for the reason given
+  above (its line 10 does `import config from '../src/payload.config.ts'`) — reproduced directly,
+  independent of this script, with:
+  ```
+  node --input-type=module -e "import('payload-oauth2')"
+  ```
+  which throws `ERR_MODULE_NOT_FOUND` on `payload-oauth2/dist/default-get-token`. TASK-24 fixed
+  `import-books.mjs` (and `import-prepared-covers.mjs`, which has the same problem) by running them
+  through `vite-node` instead of plain `node` — see that task's report.
 - Deciding French vs. English for 9 of the 11 uncategorized titles was easy (explicit French
   articles/prepositions in the title itself); the other 2 ("MAAMAR HA-HOKHMA", "Maamar
   Ha-Gueoula") are bare transliterations with no French/English marker at all, and were placed as
@@ -38,7 +53,7 @@
 
 ## What is still open
 
-- The `scripts/import-books.mjs` / `scripts/migrate.mjs` Node-ESM-vs-`payload-oauth2` issue noted
-  above — not fixed here, since it wasn't this task's scope and no import or migration needed to
-  run.
+- The `scripts/import-books.mjs` Node-ESM-vs-`payload-oauth2` issue noted above (`scripts/migrate.mjs`
+  was never actually affected — see the TASK-24 correction above) — not fixed here, since it wasn't
+  this task's scope and no import or migration needed to run. Fixed in TASK-24.
 - Full task detail and reasoning: `docs/tasks/TASK-23-book-category-mapping.md`.
