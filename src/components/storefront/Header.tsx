@@ -5,7 +5,7 @@ import { CartLink } from '@/components/storefront/CartLink'
 import { LocaleSwitcher } from '@/components/storefront/LocaleSwitcher'
 import { MobileNav } from '@/components/storefront/MobileNav'
 import { buttonVariants } from '@/components/ui/button'
-import { cataloguePath, localePath } from '@/lib/routes'
+import { cataloguePath, coursesPath, localePath } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 
 import type { Dictionary } from '@/app/(frontend)/dictionary'
@@ -13,6 +13,7 @@ import type { Locale } from '@/lib/locale'
 
 export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const secondaryLinks = [
+    { href: coursesPath(locale), label: dict.nav.courses },
     { href: localePath(locale, '/beit-ramhal'), label: dict.nav.beitRamhal },
     { href: localePath(locale, '/ramhal'), label: dict.nav.ramhal },
     { href: localePath(locale, '/rabbi-chriqui'), label: dict.nav.chriqui },
@@ -26,7 +27,7 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
           <span className="font-serif text-xl font-bold text-teal-deep md:text-2xl">{dict.nav.home}</span>
         </Link>
 
-        <nav className="ms-auto hidden items-center gap-1 md:flex">
+        <nav className="ms-auto hidden items-center gap-1 lg:flex">
           <Link href={cataloguePath(locale)} className={cn(buttonVariants({ size: 'default' }), 'me-2 px-5')}>
             {dict.nav.catalogue}
           </Link>
@@ -37,12 +38,12 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
           ))}
         </nav>
 
-        <div className="ms-auto flex items-center gap-1 md:ms-0">
-          <div className="hidden md:block md:border-s md:border-border md:ps-3">
+        <div className="ms-auto flex items-center gap-1 lg:ms-0">
+          <div className="hidden lg:block lg:border-s lg:border-border lg:ps-3">
             <LocaleSwitcher current={locale} />
           </div>
           <CartLink href={localePath(locale, '/cart')} locale={locale} />
-          <div className="md:hidden">
+          <div className="lg:hidden">
             <MobileNav
               closeLabel={dict.nav.closeMenu}
               current={locale}

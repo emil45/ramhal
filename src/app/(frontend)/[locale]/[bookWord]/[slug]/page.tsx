@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { AddToCartButton } from '@/components/storefront/AddToCartButton'
+import { BookCourseCallout } from '@/components/storefront/BookCourseCallout'
 import { CoverImage } from '@/components/storefront/CoverImage'
 import { PriceTag } from '@/components/storefront/PriceTag'
 import { RichText } from '@/components/storefront/RichText'
@@ -13,6 +14,7 @@ import { isPurchasable } from '@/lib/availability'
 import { getCatalogueBookBySlug, getCatalogueBooks } from '@/lib/booksData'
 import { BOOK_SEGMENT, cataloguePath } from '@/lib/routes'
 import { getContactDetails } from '@/lib/siteSettingsData'
+import { fullBookCourseForBook } from '@/lib/fullBookCourses'
 import { isLocale, LOCALE_CONFIG, LOCALES } from '@/lib/locale'
 
 export const revalidate = 3600
@@ -45,6 +47,7 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
 
   const currency = LOCALE_CONFIG[locale].currency
   const purchasable = isPurchasable(book, currency)
+  const course = fullBookCourseForBook(book.urlSlug)
 
   return (
     <div className="page-container py-8 md:py-12">
@@ -95,6 +98,8 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
               </CardContent>
             </Card>
           )}
+
+          {course ? <BookCourseCallout course={course} dict={dict} locale={locale} /> : null}
 
           <Separator />
 

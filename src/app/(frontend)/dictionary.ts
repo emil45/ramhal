@@ -5,7 +5,7 @@ import type { Locale } from '@/lib/locale'
 // generic, build the specific. No i18n library earns its keep here.
 const DICTIONARIES = {
   he: {
-    nav: { home: 'מכון רמח״ל', catalogue: 'ספרים', ramhal: 'הרמח״ל', chriqui: 'הרב שריקי', beitRamhal: 'בית רמח״ל', cart: 'עגלה', menu: 'תפריט', closeMenu: 'סגירה', cartLabel: (n: number) => (n === 0 ? 'עגלת הקניות' : n === 1 ? 'עגלת הקניות, פריט אחד' : `עגלת הקניות, ${n} פריטים`) },
+    nav: { home: 'מכון רמח״ל', catalogue: 'ספרים', courses: 'שיעורים בספרים', ramhal: 'הרמח״ל', chriqui: 'הרב שריקי', beitRamhal: 'בית רמח״ל', cart: 'עגלה', menu: 'תפריט', closeMenu: 'סגירה', cartLabel: (n: number) => (n === 0 ? 'עגלת הקניות' : n === 1 ? 'עגלת הקניות, פריט אחד' : `עגלת הקניות, ${n} פריטים`) },
     catalogue: {
       title: 'קטלוג הספרים',
       searchPlaceholder: 'חיפוש לפי כותרת…',
@@ -44,6 +44,12 @@ const DICTIONARIES = {
       publisherValue: 'מכון רמח״ל',
       shippingNote: 'משלוח מחושב לפי מספר הפריטים ויעד המשלוח, ומוצג במלואו בעגלת הקניות.',
       backToCatalogue: 'חזרה לקטלוג',
+    },
+    bookCourse: {
+      title: 'ללמוד את הספר עם הרב שריקי',
+      body: (title: string, count: number) => `סדרת לימוד מלאה ב${title}, הכוללת ${count} שיעורים מן הפתיחה ועד סיום הספר.`,
+      start: 'לשיעור הראשון',
+      playlist: 'לפלייליסט המלא',
     },
     cart: {
       title: 'עגלת הקניות',
@@ -152,7 +158,7 @@ const DICTIONARIES = {
     },
   },
   en: {
-    nav: { home: 'Machon Ramhal', catalogue: 'Books', ramhal: 'The Ramhal', chriqui: 'Rabbi Chriqui', beitRamhal: 'Beit Ramhal', cart: 'Cart', menu: 'Menu', closeMenu: 'Close', cartLabel: (n: number) => (n === 0 ? 'Shopping cart' : `Shopping cart, ${n} ${n === 1 ? 'item' : 'items'}`) },
+    nav: { home: 'Machon Ramhal', catalogue: 'Books', courses: 'Book courses', ramhal: 'The Ramhal', chriqui: 'Rabbi Chriqui', beitRamhal: 'Beit Ramhal', cart: 'Cart', menu: 'Menu', closeMenu: 'Close', cartLabel: (n: number) => (n === 0 ? 'Shopping cart' : `Shopping cart, ${n} ${n === 1 ? 'item' : 'items'}`) },
     catalogue: {
       title: 'Book Catalogue',
       searchPlaceholder: 'Search by title…',
@@ -192,6 +198,12 @@ const DICTIONARIES = {
       publisherValue: 'Machon Ramhal',
       shippingNote: 'Shipping is calculated by item count and destination, shown in full in the cart.',
       backToCatalogue: 'Back to catalogue',
+    },
+    bookCourse: {
+      title: 'Study this book with Rabbi Chriqui',
+      body: (title: string, count: number) => `A complete ${count}-lesson course through ${title}, from the opening section to the end of the work.`,
+      start: 'Start with lesson one',
+      playlist: 'Full playlist',
     },
     cart: {
       title: 'Cart',
@@ -300,7 +312,7 @@ const DICTIONARIES = {
     },
   },
   fr: {
-    nav: { home: 'Institut Ramhal', catalogue: 'Livres', ramhal: 'Le Ramhal', chriqui: 'Rav Chriqui', beitRamhal: 'Beit Ramhal', cart: 'Panier', menu: 'Menu', closeMenu: 'Fermer', cartLabel: (n: number) => (n === 0 ? 'Panier' : `Panier, ${n} ${n === 1 ? 'article' : 'articles'}`) },
+    nav: { home: 'Institut Ramhal', catalogue: 'Livres', courses: 'Cours sur les livres', ramhal: 'Le Ramhal', chriqui: 'Rav Chriqui', beitRamhal: 'Beit Ramhal', cart: 'Panier', menu: 'Menu', closeMenu: 'Fermer', cartLabel: (n: number) => (n === 0 ? 'Panier' : `Panier, ${n} ${n === 1 ? 'article' : 'articles'}`) },
     catalogue: {
       title: 'Catalogue des livres',
       searchPlaceholder: 'Rechercher un titre…',
@@ -340,6 +352,12 @@ const DICTIONARIES = {
       publisherValue: 'Institut Ramhal',
       shippingNote: 'Les frais de port sont calculés selon le nombre d’articles et la destination, indiqués en détail dans le panier.',
       backToCatalogue: 'Retour au catalogue',
+    },
+    bookCourse: {
+      title: 'Étudier ce livre avec le Rav Chriqui',
+      body: (title: string, count: number) => `Un parcours complet de ${count} cours sur ${title}, depuis l’ouverture jusqu’à l’achèvement de l’ouvrage.`,
+      start: 'Commencer au premier cours',
+      playlist: 'Playlist complète',
     },
     cart: {
       title: 'Panier',

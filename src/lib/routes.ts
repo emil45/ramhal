@@ -26,3 +26,7 @@ export function bookPath(locale: Locale, slug: string): string {
 export function cataloguePath(locale: Locale): string {
   return localePath(locale, `/${CATALOGUE_SEGMENT[locale]}`)
 }
+
+export function coursesPath(locale: Locale): string {
+  return localePath(locale, '/courses')
+}
