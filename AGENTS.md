@@ -99,6 +99,12 @@ codebase unhandoverable:
 - A claim about production must be established through the live URL or through something the
   running application reports about itself — never from a database tool connection alone,
   however it is labelled. See DECISIONS §20.
+- `GET /api/diagnostics` is public but narrow (DECISIONS §22): an anonymous request gets
+  `appEnv`, `builtForAppEnv`, `latestMigration`, `backup`, and `database.fingerprint` — a short
+  hash of the connection host, not the host itself. To check "is this the same database as
+  before?", compare that fingerprint against the value recorded in `docs/RECOVERY.md`, not
+  against a remembered host string. The full `database.host`/`database.name`/`database.user` are
+  only in the response when the request carries a valid, authenticated admin session.
 
 **Commits**
 

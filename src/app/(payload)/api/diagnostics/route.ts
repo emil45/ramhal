@@ -4,20 +4,26 @@ import { getPayload } from 'payload'
 import { readAppEnvironment } from '@/lib/appEnvironment'
 import { readBackupReaderConfig } from '@/lib/backupReaderConfig'
 import { getBackupStatus } from '@/lib/backupStatus'
-import { buildDiagnostics } from '@/lib/diagnostics'
+import { buildDiagnostics, toPublicDiagnostics } from '@/lib/diagnostics'
 import { requireEnv } from '@/lib/env'
 
 import type { LatestMigration } from '@/lib/diagnostics'
 
 /**
  * Public, deliberately — see AGENTS.md's verification rule. Reports which
- * database this deployment is actually talking to (never the password),
- * which APP_ENV it's running as, and the most recent applied migration.
+ * APP_ENV this deployment is running as, a fingerprint of the database it's
+ * talking to, and the most recent applied migration, to anyone. The
+ * database's actual host, name and connecting user — together, most of a
+ * connection string — are only included for a request carrying a valid
+ * admin session: `allowOnlyListedAdmins` is the only way to ever obtain one
+ * (docs/DECISIONS.md §19/§20), so any authenticated user here is an admin.
+ * See docs/DECISIONS.md §22.
+ *
  * `payload_migrations` is Payload's own internal table, not a registered
  * collection, so reading it needs the adapter's raw pool, the same way
  * scripts/migrate.mjs already does.
  */
-export async function GET(): Promise<Response> {
+export async function GET(request: Request): Promise<Response> {
   const payload = await getPayload({ config })
 
   const { rows } = await payload.db.pool.query<{ applied_at: string; name: string }>(
@@ -34,5 +40,7 @@ export async function GET(): Promise<Response> {
     latestMigration,
   })
 
-  return Response.json(diagnostics)
+  const { user } = await payload.auth({ headers: request.headers })
+
+  return Response.json(user ? diagnostics : toPublicDiagnostics(diagnostics))
 }

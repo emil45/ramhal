@@ -93,12 +93,16 @@ earlier copy of the database back. Try them in this order.
 
 Neon (the database host) keeps enough history to restore the whole database to any point in the
 last several hours by itself, without needing a backup file at all. Check
-`GET /<the live site's URL>/api/diagnostics` first — it names the exact database host currently
-serving the site, which is the one to restore.
+`GET /<the live site's URL>/api/diagnostics` first — as of TASK-31 it's public but narrow
+(AGENTS.md's verification rule, docs/DECISIONS.md §22): it reports `database.fingerprint`, a
+short hash of the connection host, not the host itself. Compare it against **`2c951382a7f8`**,
+recorded here as production's own fingerprint (`ep-red-tree-b19ry3lo-pooler…`) — a match confirms
+the live site is still serving from the branch named **production** below. Sign in to `/admin`
+first if you need the actual host: the response includes it for an authenticated admin session.
 
 1. Go to **[console.neon.tech](https://console.neon.tech)** and open the project.
-2. Open the branch named in the diagnostics response (**production**), then
-   **Branches → Restore** (Neon calls this "Instant restore").
+2. Open the branch named **production**, then **Branches → Restore** (Neon calls this "Instant
+   restore").
 3. Pick a timestamp from before the problem happened, and confirm.
 
 **How far back this can reach depends on the plan, and is worth checking before relying on it** —
