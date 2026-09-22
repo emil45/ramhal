@@ -3,9 +3,23 @@ import 'server-only'
 import config from '@payload-config'
 import { commitTransaction, getPayload, initTransaction, killTransaction, ValidationError } from 'payload'
 
+import type { Order } from '@/payload-types'
 import type { PaymentStatus } from '@/lib/orderStatus'
 
 export type PaymentEventResult = 'applied' | 'already-processed'
+
+/** Finds the order a provider's own reference belongs to — what a webhook
+ * has to do first, since it only ever names the provider's own ids. */
+export async function findOrderByProviderRef(providerRef: string): Promise<Order | null> {
+  const payload = await getPayload({ config })
+  const result = await payload.find({
+    collection: 'orders',
+    where: { providerRef: { equals: providerRef } },
+    depth: 0,
+    limit: 1,
+  })
+  return result.docs[0] ?? null
+}
 
 type ProviderVerdict = Exclude<PaymentStatus, 'pending'>
 
