@@ -49,3 +49,28 @@
   a product-owner decision because several carry different prices or locale provenance.
 - Revoke the branch-scoped Neon catalogue-import credential after all remaining catalogue media
   work is complete.
+
+## Follow-up — Hebrew typography selection (2026-09-22)
+
+### What was built
+
+- After reviewing four Hebrew typography variants, the user selected Frank Ruhl Libre for titles
+  and Heebo for interface and running text. This replaces the Noto Serif Hebrew / Assistant pair
+  introduced earlier in TASK-13 while preserving the existing type scale and CSS utilities.
+- Updated `docs/DESIGN.md` so the documented type and typographic-cover rules match the storefront.
+
+### What was verified and how
+
+- Browser QA on the Hebrew homepage confirmed RTL remained active, all fonts finished loading,
+  body text computed to Heebo and the page heading computed to Frank Ruhl Libre.
+- `tsc --noEmit`, ESLint (zero errors; 18 existing generated-migration warnings), Vitest
+  (27 files, 184 tests), and `next build` (328 static pages) passed.
+
+### What felt wrong
+
+- Nothing in the requested scope. The pairing is shared by all locales, as before, and both
+  families include the Hebrew and Latin subsets needed by the trilingual storefront.
+
+### Still open
+
+- None for this follow-up.

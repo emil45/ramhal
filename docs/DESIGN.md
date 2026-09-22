@@ -29,7 +29,7 @@ reads as a SaaS landing page. New hues are not introduced; derive from the four 
 
 ## Type
 
-Noto Serif Hebrew (serif) for titles, Assistant (sans) for interface and running text. Both have
+Frank Ruhl Libre (serif) for titles, Heebo (sans) for interface and running text. Both have
 Hebrew, Latin and extended-Latin coverage, so the same pairing works cleanly in all three locales.
 They are self-hosted by `next/font`, with no browser request to Google. Defined as
 utilities in `globals.css`; use them, never ad-hoc `text-2xl font-serif`.
@@ -80,7 +80,7 @@ Anatomy, outside in:
 2. **Outer rule**, thick (1cqw), then a **thinner inner rule** (0.4cqw), set in from the edge,
    as on a sefer's title page. **This rule colour is the only thing that says which shelf a
    book is on**: teal (Hebrew), gold (French), deep teal (English), dark gold (siddurim).
-3. **Title** in Noto Serif Hebrew, balanced, optically centred in the upper two-thirds, size
+3. **Title** in Frank Ruhl Libre, balanced, optically centred in the upper two-thirds, size
    stepping down by title length (`coverTitleWidthPercent`), clamped at four lines.
 4. **Short gold rule and the imprint** *מכון רמח״ל* in small type at the foot. The imprint is
    hidden on a cover narrower than 7rem, where it would be illegible.
