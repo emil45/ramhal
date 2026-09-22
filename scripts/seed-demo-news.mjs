@@ -1,5 +1,7 @@
 #!/usr/bin/env vite-node
 
+import { fileURLToPath } from 'node:url'
+
 try {
   process.loadEnvFile('.env')
 } catch {
@@ -14,8 +16,15 @@ const { getPayload } = await import('payload')
 const { default: config } = await import('../src/payload.config.ts')
 
 const DAY_IN_MILLISECONDS = 24 * 60 * 60 * 1000
+const FLYER_FILENAME = 'machzor-hamelech-hamishpat-2026-09-06.webp'
+const FLYER_FILE_PATH = fileURLToPath(new URL(`../assets/news/prepared/${FLYER_FILENAME}`, import.meta.url))
 const HAS_HEBREW = /[֐-׿]/
 const LOCALES = ['he', 'en', 'fr']
+const FLYER_ALT = {
+  he: 'עלון המחזור החדש ״המלך והמשפט״ וכנס ראש השנה בבית רמח״ל',
+  en: 'Flyer for the new “HaMelekh HaMishpat” machzor and a Rosh Hashanah event at Beit Ramhal',
+  fr: 'Affiche du nouveau ma’hzor « HaMelekh HaMishpat » et d’un événement de Roch Hachana à Beit Ramhal',
+}
 
 function richText(text) {
   const direction = HAS_HEBREW.test(text) ? 'rtl' : 'ltr'
@@ -56,13 +65,27 @@ const records = [
   },
   {
     collection: 'announcements',
+    image: FLYER_FILENAME,
+    previousHebrewTitle: 'מהדורה חדשה מבית המכון',
     startsAt: new Date(now - DAY_IN_MILLISECONDS).toISOString(),
     endsAt: new Date(now + 30 * DAY_IN_MILLISECONDS).toISOString(),
     url: 'https://ramhal.com',
     localized: {
-      he: { title: 'מהדורה חדשה מבית המכון', body: 'מהדורה חדשה ומוגהת הצטרפה לקטלוג ספרי המכון.', linkLabel: 'לספר בחנות' },
-      en: { title: 'A new edition from the institute', body: 'A newly corrected edition has joined the institute’s catalogue.', linkLabel: 'View the book' },
-      fr: { title: "Une nouvelle édition de l’institut", body: "Une nouvelle édition révisée rejoint le catalogue de l’institut.", linkLabel: 'Voir le livre' },
+      he: {
+        title: 'מהדורה חדשה למחזור ״המלך והמשפט״',
+        body: 'מחזור לראש השנה במהדורה חדשה ומתוקנת, בסט מהודר ובפורמט קטן, זמין במכון רמח״ל.',
+        linkLabel: 'לפרטים באתר',
+      },
+      en: {
+        title: 'New edition of the “HaMelekh HaMishpat” machzor',
+        body: 'A newly corrected, compact Rosh Hashanah machzor set is now available from the Ramhal Institute.',
+        linkLabel: 'Details on the site',
+      },
+      fr: {
+        title: 'Nouvelle édition du ma’hzor « HaMelekh HaMishpat »',
+        body: 'Une nouvelle édition corrigée et compacte du ma’hzor de Roch Hachana est disponible auprès de l’Institut Ramhal.',
+        linkLabel: 'Détails sur le site',
+      },
     },
   },
   {
@@ -95,16 +118,41 @@ function dataForLocale(record, locale) {
   return data
 }
 
-async function upsertRecord(payload, record) {
+async function upsertFlyer(payload) {
+  const existing = await payload.find({
+    collection: 'media',
+    locale: 'he',
+    fallbackLocale: false,
+    where: { filename: { equals: FLYER_FILENAME } },
+    limit: 1,
+  })
+
+  const media = existing.docs[0]
+    ? await payload.update({ collection: 'media', id: existing.docs[0].id, locale: 'he', data: { alt: FLYER_ALT.he } })
+    : await payload.create({ collection: 'media', locale: 'he', data: { alt: FLYER_ALT.he }, filePath: FLYER_FILE_PATH })
+
+  for (const locale of LOCALES.slice(1)) {
+    await payload.update({ collection: 'media', id: media.id, locale, data: { alt: FLYER_ALT[locale] } })
+  }
+
+  return media
+}
+
+async function upsertRecord(payload, record, mediaByFilename) {
+  const hebrewTitles = [record.localized.he.title, record.previousHebrewTitle].filter(Boolean)
   const existing = await payload.find({
     collection: record.collection,
     locale: 'he',
     fallbackLocale: false,
-    where: { title: { equals: record.localized.he.title } },
+    where: { title: { in: hebrewTitles } },
     limit: 1,
   })
 
-  const sharedData = { startsAt: record.startsAt, endsAt: record.endsAt }
+  const sharedData = {
+    startsAt: record.startsAt,
+    endsAt: record.endsAt,
+    ...(record.image ? { image: mediaByFilename.get(record.image)?.id } : {}),
+  }
   const hebrewData = { ...sharedData, ...dataForLocale(record, 'he') }
   const document = existing.docs[0]
     ? await payload.update({ collection: record.collection, id: existing.docs[0].id, locale: 'he', data: hebrewData })
@@ -118,8 +166,10 @@ async function upsertRecord(payload, record) {
 const payload = await getPayload({ config })
 
 try {
-  for (const record of records) await upsertRecord(payload, record)
-  payload.logger.info('Demo news seeded in Hebrew, English, and French.')
+  const flyer = await upsertFlyer(payload)
+  const mediaByFilename = new Map([[FLYER_FILENAME, flyer]])
+  for (const record of records) await upsertRecord(payload, record, mediaByFilename)
+  payload.logger.info('Demo news and its real flyer seeded in Hebrew, English, and French.')
 } finally {
   await payload.destroy()
 }
