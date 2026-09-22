@@ -1,6 +1,6 @@
 import { loadEnvConfig } from '@next/env'
 
-import { assertNotProductionDatabase } from '@/test/refuseProductionDatabase'
+import { assertNotProductionDatabase } from '@/lib/refuseProductionDatabase'
 
 // Loads .env the same way Next itself does (this ships with `next`, already
 // a direct dependency — see docs/DECISIONS.md §15 for why Payload's own CLI
@@ -24,5 +24,8 @@ if (!testDatabaseUri) {
       'long-lived Neon branch named "testing" (docs/reports/TASK-27.md). See .env.example.',
   )
 }
-assertNotProductionDatabase(new URL(testDatabaseUri).hostname)
+assertNotProductionDatabase(
+  new URL(testDatabaseUri).hostname,
+  'Point TEST_DATABASE_URI at the long-lived Neon branch named "testing" instead. See .env.example.',
+)
 process.env.DATABASE_URI = testDatabaseUri
