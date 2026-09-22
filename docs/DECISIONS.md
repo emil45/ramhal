@@ -699,3 +699,35 @@ pair's only copy.
 authorised domain and redirect URI entry added at that point (it will — see the OAuth client
 `ramhal-admin` in the `machon-ramhal` Google Cloud project) was not tested against a live domain,
 since that domain is not yet in use.
+
+---
+
+## 21. TASK-26: a real gap in `PaymentProvider`, against §5's "structured extension work" claim
+
+§5 called `PaymentAdapter`-shaped interfaces "structured extension work, not fighting the
+framework" — reasonable from reading the package, but untested against a real gateway until
+TASK-26 actually wrote one. It mostly held. One real gap didn't: `PaymentRequest` carries a single
+`returnUrl`; PayPal's hosted checkout has two distinct redirect targets, one for an approved
+payment and one for a cancelled one. The interface has no `cancelUrl` at all.
+
+**Why the gap exists:** `PaymentRequest`'s shape was written against the mock provider first — one
+session record, one decision, always answered synchronously, always returning to the same page
+regardless of what the customer chose. That has no cancel/approve distinction to carry, so the
+interface never grew one. A payment interface designed from its first real gateway would very
+likely have had two URLs from the start.
+
+**The fix, not a workaround:** both of PayPal's redirect targets point at the same `returnUrl`.
+`confirmPayment` asks the gateway what actually happened rather than inferring it from which link
+was clicked — which the interface's own doc comment already required ("never taken from the
+customer's browser"). This is arguably *better* than adding a `cancelUrl` would have been: a
+return URL is buyer-typeable (nothing stops a customer from hand-editing it or a gateway from
+mishandling it), so a design that never trusts *which* URL was hit is more correct than one that
+does, not merely a smaller diff. Recorded as a finding rather than as a defect fixed, because nothing
+about `PaymentProvider` needed to change to make it work.
+
+**What this means for the Israeli gateway, whenever it is named:** expect more of this, not less.
+§5's claim holds in the sense that matters — writing a second adapter did not require touching
+Payload or restructuring the checkout flow — but the interface itself still carries assumptions
+from being shaped by its first, synthetic implementation. Read it against the specific gateway's
+own hosted-checkout shape before assuming it fits, rather than assuming "PayPal fit, so this will
+too."
