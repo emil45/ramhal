@@ -8,7 +8,13 @@ export const Users: CollectionConfig = {
     singular: 'משתמש',
     plural: 'משתמשים',
   },
-  auth: true,
+  // Local (email+password) login is disabled — Google sign-in is the only
+  // way in. enableFields keeps the password columns in the schema (no
+  // migration to drop them) even though nothing can use them for login
+  // anymore. See docs/DECISIONS.md §19: this was originally a deliberate
+  // break-glass path, reversed on 22 September 2026 at Emanuel's explicit
+  // instruction after production briefly carried a real password.
+  auth: { disableLocalStrategy: { enableFields: true } },
   admin: {
     useAsTitle: 'email',
     defaultColumns: ['email', 'role'],

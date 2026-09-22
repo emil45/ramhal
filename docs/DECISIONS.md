@@ -564,9 +564,27 @@ Payload's own dependency moves.
 4. **`useAPIKey` stays off** on `Users`. A third door is not a defence in depth, it is a second
    thing to secure.
 
-**The local strategy is deliberately retained.** `disableLocalStrategy` is never set —
-email+password is Emanuel's break-glass path if Google, this laptop's Google Cloud project, or
-the son's Google account is ever unavailable.
+**The local strategy was retained at first, then removed the same day.** The original plan kept
+`disableLocalStrategy` unset, reasoning that email+password should stay as Emanuel's break-glass
+path if Google, this Google Cloud project, or the son's Google account were ever unavailable. That
+plan met reality once: `create-first-user` only ever shows itself while a collection has zero
+users, and that was briefly, unavoidably true of the freshly-deployed production database — the
+Google callback's `onUserNotFoundBehavior: 'error'` cannot bootstrap the first account, only a
+person completing that screen can. Emanuel did, closing the window, but the account created to
+close it had a real password sitting in the database. Emanuel's
+instruction on seeing it was direct — remove the password path entirely, not just this one
+password. `Users.auth` is now `{ disableLocalStrategy: { enableFields: true } }`: `enableFields`
+keeps the password columns in the schema (no migration to drop them; nothing can use them for
+login) rather than forcing an immediate destructive column drop in the same change.
+
+**The real cost of that reversal, verified by reading `@payloadcms/next`'s own admin root view**
+(`views/Root/index.js`): the redirect to `create-first-user` when the collection is empty is
+itself gated on `!disableLocalStrategy`. With it set, an empty `users` table does not fall back to
+create-first-user — it just shows a login screen with a Google button and nobody to match against
+(`onUserNotFoundBehavior: 'error'` refuses to invent one). If the table is ever fully emptied,
+there is no self-service way back into the admin UI at all; recovery means either a direct
+database insert or temporarily re-enabling the local strategy in code and redeploying. This is a
+real trade against convenience, made with full knowledge of the cost, not an oversight.
 
 **This amends §3.** A second editor is no longer addable from the admin UI alone — Users' `create`
 access already required an existing admin, but a *login-capable* admin now also takes an
