@@ -7,9 +7,14 @@ import { cn } from '@/lib/utils'
 
 import type { Dictionary } from '@/app/(frontend)/dictionary'
 import type { FullBookCourse } from '@/lib/fullBookCourses'
-import type { Locale } from '@/lib/locale'
 
-export function BookCourseCallout({ course, dict, locale }: { course: FullBookCourse; dict: Dictionary; locale: Locale }) {
+export function BookCourseCallout({
+  course,
+  dict,
+}: {
+  course: FullBookCourse
+  dict: Dictionary
+}) {
   return (
     <Card className="rounded-[2px] border-s-[3px] border-s-gold bg-paper-deep py-5 ring-0">
       <CardContent className="flex flex-col gap-4">
@@ -18,15 +23,22 @@ export function BookCourseCallout({ course, dict, locale }: { course: FullBookCo
             <Play className="size-4" fill="currentColor" aria-hidden />
           </span>
           <div>
-            <p className="type-subheading text-teal-deep">{dict.bookCourse.title}</p>
+            <p className="type-subheading text-teal-deep">
+              {dict.bookCourse.title}
+            </p>
             <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-              {dict.bookCourse.body(course.title[locale], course.lessonCount)}
+              {dict.bookCourse.body(course.lessonCount)}
             </p>
           </div>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <a href={firstLessonUrl(course)} target="_blank" rel="noreferrer" className={buttonVariants()}>
+          <a
+            href={firstLessonUrl(course)}
+            target="_blank"
+            rel="noreferrer"
+            className={buttonVariants()}
+          >
             <Play data-icon="inline-start" fill="currentColor" aria-hidden />
             {dict.bookCourse.start}
           </a>
@@ -34,7 +46,10 @@ export function BookCourseCallout({ course, dict, locale }: { course: FullBookCo
             href={playlistUrl(course)}
             target="_blank"
             rel="noreferrer"
-            className={cn(buttonVariants({ variant: 'outline' }), 'bg-background')}
+            className={cn(
+              buttonVariants({ variant: 'outline' }),
+              'bg-background',
+            )}
           >
             <ListVideo data-icon="inline-start" aria-hidden />
             {dict.bookCourse.playlist}

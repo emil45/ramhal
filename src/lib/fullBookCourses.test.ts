@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 
 import {
   firstLessonUrl,
+  firstLessonThumbnailUrl,
   FULL_BOOK_COURSE_LESSON_COUNT,
   FULL_BOOK_COURSES,
   fullBookCourseForBook,
@@ -22,11 +23,14 @@ describe('full book courses', () => {
       `https://www.youtube.com/watch?v=${course.firstLessonYoutubeId}&list=${course.playlistId}`,
     )
     expect(playlistUrl(course)).toBe(`https://www.youtube.com/playlist?list=${course.playlistId}`)
+    expect(firstLessonThumbnailUrl(course)).toBe(`https://i.ytimg.com/vi/${course.firstLessonYoutubeId}/hqdefault.jpg`)
   })
 
   it('maps every edition of a work back to its course', () => {
     expect(fullBookCourseForBook('דעת-תבונות')?.id).toBe('daat-tevunot')
     expect(fullBookCourseForBook('דעת-תבונות-צרפתית-עברית')?.id).toBe('daat-tevunot')
+    expect(fullBookCourseForBook('פינות-המרכבה')?.id).toBe('pinot-hamerkava')
+    expect(fullBookCourseForBook('משכני-עליון')?.id).toBe('mishkenei-elyon')
     expect(fullBookCourseForBook('מסילת-ישרים')).toBeNull()
   })
 
@@ -39,6 +43,6 @@ describe('full book courses', () => {
   })
 
   it('records the complete library total', () => {
-    expect(FULL_BOOK_COURSE_LESSON_COUNT).toBe(766)
+    expect(FULL_BOOK_COURSE_LESSON_COUNT).toBe(795)
   })
 })

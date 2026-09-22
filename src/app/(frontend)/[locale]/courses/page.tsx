@@ -1,16 +1,17 @@
-import { ArrowUpRight, BookOpenText, CirclePlay, Library, ListVideo, Play } from 'lucide-react'
+import { ArrowUpRight, CirclePlay, ListVideo, Play } from 'lucide-react'
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { CoverImage } from '@/components/storefront/CoverImage'
-import { Badge } from '@/components/ui/badge'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { getCatalogueBooks } from '@/lib/booksData'
 import {
+  firstLessonThumbnailUrl,
   firstLessonUrl,
-  FULL_BOOK_COURSE_LESSON_COUNT,
   FULL_BOOK_COURSES,
   playlistUrl,
   preferredBookSlug,
@@ -22,80 +23,63 @@ const CHANNEL_URL = 'https://www.youtube.com/@ramhalInstit/playlists'
 
 const CONTENT = {
   he: {
-    metadataDescription: 'לימוד מלא ושיטתי של ספרי הרמח״ל עם הרב מרדכי שריקי — מן השיעור הראשון ועד לסיום הספר.',
-    eyebrow: 'בית מדרש פתוח · מכון רמח״ל',
-    title: 'ללמוד ספר שלם עם הרב שריקי',
-    lead: 'לא רק שיעור בודד: מהלך רצוף בתוך הספר, סעיף אחר סעיף, מן הפתיחה ועד הסיום.',
-    browseCourses: 'לקורסים המלאים',
+    metadataDescription:
+      'סדרות שיעורים מלאות בספרי הרמח״ל מפי הרב מרדכי שריקי, מן השיעור הראשון ועד סיום הספר.',
+    title: 'שיעורים מלאים בספרי הרמח״ל',
+    lead: 'הרב מרדכי שריקי מלמד את הספרים מתחילתם ועד סופם.',
     youtubeChannel: 'לערוץ ביוטיוב',
-    promise: 'הספר פתוח. הרב מלמד. אפשר להתחיל מההתחלה.',
-    courseCount: 'ספרים נלמדים במלואם',
-    lessonCount: 'שיעורים בארכיון',
-    teacherCount: 'רב אחד לאורך כל הדרך',
-    coursesTitle: 'קורסים מלאים בספרי הרמח״ל',
-    coursesIntro: 'כל קורס כאן מוביל ישירות לשיעור הראשון. אפשר גם לפתוח את הפלייליסט המלא, ולצד הספרים הקיימים בחנות לעבור אל המהדורה המתאימה.',
-    language: 'עברית',
+    seriesTitle: 'סדרות השיעורים',
     lessons: (count: number) => `${count} שיעורים`,
-    start: 'התחילו בשיעור הראשון',
+    start: 'לשיעור הראשון',
     playlist: 'לכל השיעורים',
-    book: 'לעמוד הספר',
-    bookUnavailable: 'הספר אינו מוצע כרגע בחנות',
-    opensOnYoutube: 'השיעורים נפתחים בערוץ הרשמי של מכון רמח״ל ביוטיוב.',
+    book: 'הספר בחנות',
+    thumbnailAlt: (title: string) => `השיעור הראשון בסדרת ${title}`,
   },
   en: {
-    metadataDescription: 'Complete, systematic courses through the Ramhal’s books with Rabbi Mordechai Chriqui, from the first lesson to the end of the work.',
-    eyebrow: 'An open beit midrash · Machon Ramhal',
-    title: 'Study a complete book with Rabbi Chriqui',
-    lead: 'Not a single lecture, but a continuous journey through the text — section by section, from its opening to its conclusion.',
-    browseCourses: 'Explore the full courses',
+    metadataDescription:
+      'Complete lesson series on the Ramhal’s books taught by Rabbi Mordechai Chriqui, from the first lesson to the end of each work.',
+    title: 'Complete lessons on the Ramhal’s books',
+    lead: 'Rabbi Mordechai Chriqui teaches each work from beginning to end.',
     youtubeChannel: 'YouTube channel',
-    promise: 'Open the book. Join the Rabbi. Begin at the beginning.',
-    courseCount: 'complete book courses',
-    lessonCount: 'lessons in the library',
-    teacherCount: 'one teacher throughout',
-    coursesTitle: 'Complete courses through the Ramhal’s books',
-    coursesIntro: 'Every course begins with a direct link to lesson one. You can also open the full playlist and, where the institute publishes the work, visit its catalogue page.',
-    language: 'Hebrew',
+    seriesTitle: 'Lesson series',
     lessons: (count: number) => `${count} lessons`,
     start: 'Start with lesson one',
-    playlist: 'View every lesson',
-    book: 'View the book',
-    bookUnavailable: 'This work is not currently in the catalogue',
-    opensOnYoutube: 'Lessons open on Machon Ramhal’s official YouTube channel.',
+    playlist: 'All lessons',
+    book: 'Book in the store',
+    thumbnailAlt: (title: string) => `First lesson in the ${title} series`,
   },
   fr: {
-    metadataDescription: 'Des cours complets et méthodiques sur les livres du Ramhal avec le Rav Mordekhaï Chriqui, du premier cours jusqu’à l’achèvement de l’ouvrage.',
-    eyebrow: 'Un beit hamidrach ouvert · Institut Ramhal',
-    title: 'Étudier un livre entier avec le Rav Chriqui',
-    lead: 'Non pas un cours isolé, mais un parcours suivi dans le texte — section après section, de l’ouverture à l’achèvement.',
-    browseCourses: 'Découvrir les cours complets',
+    metadataDescription:
+      'Séries complètes de cours sur les livres du Ramhal par le Rav Mordekhaï Chriqui, du premier cours jusqu’à la fin de l’ouvrage.',
+    title: 'Étude complète des livres du Ramhal',
+    lead: 'Le Rav Mordekhaï Chriqui enseigne chaque ouvrage du début à la fin.',
     youtubeChannel: 'Chaîne YouTube',
-    promise: 'Ouvrir le livre. Rejoindre le Rav. Commencer au commencement.',
-    courseCount: 'livres étudiés intégralement',
-    lessonCount: 'cours dans la bibliothèque',
-    teacherCount: 'un même enseignant du début à la fin',
-    coursesTitle: 'Cours complets sur les livres du Ramhal',
-    coursesIntro: 'Chaque parcours mène directement au premier cours. Vous pouvez aussi ouvrir la playlist complète et, lorsque l’institut publie l’ouvrage, rejoindre sa page dans le catalogue.',
-    language: 'Hébreu',
+    seriesTitle: 'Séries de cours',
     lessons: (count: number) => `${count} cours`,
     start: 'Commencer par le premier cours',
-    playlist: 'Voir tous les cours',
-    book: 'Voir le livre',
-    bookUnavailable: 'Cet ouvrage n’est pas proposé actuellement',
-    opensOnYoutube: 'Les cours s’ouvrent sur la chaîne YouTube officielle de l’Institut Ramhal.',
+    playlist: 'Tous les cours',
+    book: 'Livre en boutique',
+    thumbnailAlt: (title: string) => `Premier cours de la série ${title}`,
   },
 } as const
 
 export const revalidate = 3600
 
-export async function generateMetadata({ params }: PageProps<'/[locale]/courses'>): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps<'/[locale]/courses'>): Promise<Metadata> {
   const { locale } = await params
   if (!isLocale(locale)) return {}
 
-  return { title: CONTENT[locale].title, description: CONTENT[locale].metadataDescription }
+  return {
+    title: CONTENT[locale].title,
+    description: CONTENT[locale].metadataDescription,
+  }
 }
 
-export default async function CoursesPage({ params }: PageProps<'/[locale]/courses'>) {
+export default async function CoursesPage({
+  params,
+}: PageProps<'/[locale]/courses'>) {
   const { locale } = await params
   if (!isLocale(locale)) notFound()
 
@@ -106,118 +90,150 @@ export default async function CoursesPage({ params }: PageProps<'/[locale]/cours
   return (
     <article>
       <section className="border-b border-border bg-paper-deep">
-        <div className="page-container grid items-center gap-10 py-12 lg:grid-cols-[1.25fr_0.75fr] lg:gap-16 lg:py-16">
+        <div className="page-container py-12 lg:py-16">
           <div className="flex max-w-3xl flex-col items-start gap-5">
-            <Badge variant="outline" className="rounded-[2px] border-gold/70 bg-background/60 px-3 text-gold-ink">
-              {content.eyebrow}
-            </Badge>
             <h1 className="type-display">{content.title}</h1>
-            <p className="max-w-2xl text-xl leading-relaxed sm:text-2xl">{content.lead}</p>
-            <div className="flex flex-wrap gap-3 pt-2">
-              <a href="#courses" className={buttonVariants({ size: 'lg' })}>
-                <BookOpenText data-icon="inline-start" aria-hidden />
-                {content.browseCourses}
-              </a>
-              <a href={CHANNEL_URL} target="_blank" rel="noreferrer" className={buttonVariants({ variant: 'outline', size: 'lg' })}>
+            <p className="max-w-2xl text-xl leading-relaxed sm:text-2xl">
+              {content.lead}
+            </p>
+            <div className="pt-2">
+              <a
+                href={CHANNEL_URL}
+                target="_blank"
+                rel="noreferrer"
+                className={buttonVariants({ variant: 'outline', size: 'lg' })}
+              >
                 <CirclePlay data-icon="inline-start" aria-hidden />
                 {content.youtubeChannel}
               </a>
             </div>
           </div>
-
-          <aside className="border border-gold bg-background p-6 sm:p-8">
-            <p className="font-serif text-2xl leading-relaxed text-teal-deep sm:text-3xl">{content.promise}</p>
-            <span aria-hidden className="my-6 block h-[3px] w-16 bg-gold" />
-            <dl className="grid grid-cols-3 gap-4">
-              <div>
-                <dt className="text-xs leading-relaxed text-muted-foreground">{content.courseCount}</dt>
-                <dd className="mt-1 font-serif text-3xl text-teal-deep">{FULL_BOOK_COURSES.length}</dd>
-              </div>
-              <div className="border-s border-border ps-4">
-                <dt className="text-xs leading-relaxed text-muted-foreground">{content.lessonCount}</dt>
-                <dd className="mt-1 font-serif text-3xl text-teal-deep">{FULL_BOOK_COURSE_LESSON_COUNT}</dd>
-              </div>
-              <div className="border-s border-border ps-4">
-                <dt className="text-xs leading-relaxed text-muted-foreground">{content.teacherCount}</dt>
-                <dd className="mt-1 font-serif text-3xl text-teal-deep">1</dd>
-              </div>
-            </dl>
-          </aside>
         </div>
       </section>
 
-      <section id="courses" className="page-container scroll-mt-6 py-12 lg:py-16">
+      <section className="page-container py-12 lg:py-16">
         <div className="mb-10 max-w-3xl">
           <div className="relative border-b border-border pb-3">
-            <h2 className="type-heading">{content.coursesTitle}</h2>
-            <span aria-hidden className="absolute start-0 -bottom-px h-[3px] w-16 bg-gold" />
+            <h2 className="type-heading">{content.seriesTitle}</h2>
+            <span
+              aria-hidden
+              className="absolute start-0 -bottom-px h-[3px] w-16 bg-gold"
+            />
           </div>
-          <p className="mt-5 leading-relaxed text-muted-foreground">{content.coursesIntro}</p>
         </div>
 
-        <div className="grid gap-5 lg:grid-cols-2">
-          {FULL_BOOK_COURSES.map((course) => {
+        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+          {FULL_BOOK_COURSES.map((course, courseIndex) => {
             const bookSlug = preferredBookSlug(course, locale)
             const book = bookSlug ? booksBySlug.get(bookSlug) : undefined
 
             return (
-              <Card key={course.id} className="rounded-[2px] border border-border py-5 ring-0">
-                <CardContent className="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-5 sm:grid-cols-[7.5rem_minmax(0,1fr)]">
-                  <div className="group/cover">
-                    <CoverImage
-                      categorySlug={book?.category?.slug ?? 'hebrew-books'}
-                      cover={book && typeof book.cover === 'object' ? book.cover : null}
-                      sizes="120px"
-                      title={book?.displayTitle ?? course.title[locale]}
+              <Card
+                key={course.id}
+                className="gap-0 rounded-[2px] border border-border py-0 ring-0"
+              >
+                <a
+                  href={firstLessonUrl(course)}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`${content.start}: ${course.title[locale]}`}
+                  className="group/video block outline-none focus-visible:ring-3 focus-visible:ring-inset focus-visible:ring-ring/50"
+                >
+                  <AspectRatio
+                    ratio={16 / 9}
+                    className="relative overflow-hidden bg-muted"
+                  >
+                    <Image
+                      src={firstLessonThumbnailUrl(course)}
+                      alt={content.thumbnailAlt(course.title[locale])}
+                      fill
+                      loading={courseIndex === 0 ? 'eager' : 'lazy'}
+                      sizes="(min-width: 1280px) 360px, (min-width: 768px) 50vw, 100vw"
+                      className="object-cover transition-transform duration-200 group-hover/video:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover/video:scale-100"
                     />
+                    <span className="absolute inset-0 flex items-center justify-center">
+                      <span className="flex size-12 items-center justify-center rounded-full border border-gold bg-background/95 text-teal shadow-sm transition-transform group-hover/video:scale-105 motion-reduce:transition-none motion-reduce:group-hover/video:scale-100">
+                        <Play
+                          className="size-5"
+                          fill="currentColor"
+                          aria-hidden
+                        />
+                      </span>
+                    </span>
+                  </AspectRatio>
+                </a>
+
+                <CardContent className="flex flex-1 flex-col items-start p-5">
+                  <h3 className="type-subheading text-teal-deep">
+                    {course.title[locale]}
+                  </h3>
+                  <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
+                    <ListVideo className="size-4 text-gold-ink" aria-hidden />
+                    {content.lessons(course.lessonCount)}
+                  </p>
+
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    <a
+                      href={firstLessonUrl(course)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={buttonVariants({ size: 'sm' })}
+                    >
+                      <Play
+                        data-icon="inline-start"
+                        fill="currentColor"
+                        aria-hidden
+                      />
+                      {content.start}
+                    </a>
+                    <a
+                      href={playlistUrl(course)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className={buttonVariants({
+                        variant: 'outline',
+                        size: 'sm',
+                      })}
+                    >
+                      <ListVideo data-icon="inline-start" aria-hidden />
+                      {content.playlist}
+                    </a>
                   </div>
 
-                  <div className="flex min-w-0 flex-col items-start">
-                    <Badge variant="outline" className="rounded-[2px] text-muted-foreground">
-                      {content.language}
-                    </Badge>
-                    <h3 className="type-subheading mt-3 text-teal-deep">{course.title[locale]}</h3>
-                    <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
-                      <ListVideo className="size-4 text-gold-ink" aria-hidden />
-                      {content.lessons(course.lessonCount)}
-                    </p>
-
-                    <div className="mt-5 flex flex-wrap gap-2">
-                      <a href={firstLessonUrl(course)} target="_blank" rel="noreferrer" className={buttonVariants({ size: 'sm' })}>
-                        <Play data-icon="inline-start" fill="currentColor" aria-hidden />
-                        {content.start}
-                      </a>
-                      <a href={playlistUrl(course)} target="_blank" rel="noreferrer" className={buttonVariants({ variant: 'outline', size: 'sm' })}>
-                        <ListVideo data-icon="inline-start" aria-hidden />
-                        {content.playlist}
-                      </a>
-                    </div>
-
-                    {book ? (
-                      <Link
-                        href={bookPath(locale, book.urlSlug)}
-                        className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-teal underline-offset-4 hover:underline"
-                      >
-                        {content.book}
-                        <ArrowUpRight className="size-4 rtl:-scale-x-100" aria-hidden />
-                      </Link>
-                    ) : (
-                      <p className="mt-4 flex items-center gap-1.5 text-xs text-muted-foreground">
-                        <Library className="size-3.5" aria-hidden />
-                        {content.bookUnavailable}
-                      </p>
-                    )}
-                  </div>
+                  {book ? (
+                    <Link
+                      href={bookPath(locale, book.urlSlug)}
+                      className="group/book mt-5 flex w-full items-center gap-3 border-t border-border pt-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+                    >
+                      <span className="group/cover w-10 shrink-0">
+                        <CoverImage
+                          categorySlug={book.category?.slug}
+                          cover={
+                            typeof book.cover === 'object' ? book.cover : null
+                          }
+                          sizes="40px"
+                          title={book.displayTitle}
+                        />
+                      </span>
+                      <span className="min-w-0">
+                        <span className="block text-xs text-muted-foreground">
+                          {content.book}
+                        </span>
+                        <span className="line-clamp-2 text-sm font-medium text-teal group-hover/book:underline">
+                          {book.displayTitle}
+                        </span>
+                      </span>
+                      <ArrowUpRight
+                        className="ms-auto size-4 shrink-0 text-teal rtl:-scale-x-100"
+                        aria-hidden
+                      />
+                    </Link>
+                  ) : null}
                 </CardContent>
               </Card>
             )
           })}
         </div>
-
-        <p className="mt-8 text-center text-sm text-muted-foreground">
-          <CirclePlay className="me-1.5 inline size-4 align-[-0.15em] text-gold-ink" aria-hidden />
-          {content.opensOnYoutube}
-        </p>
       </section>
     </article>
   )

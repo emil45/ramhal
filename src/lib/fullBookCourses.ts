@@ -13,9 +13,8 @@ export type FullBookCourse = {
 }
 
 // Curated from the institute's public YouTube playlists on 22 September
-// 2026. This deliberately lists completed, book-length walkthroughs only;
-// shorter thematic playlists and courses still being published do not belong
-// on a page that promises a complete work.
+// 2026. This lists book-length walkthroughs rather than shorter thematic
+// playlists.
 export const FULL_BOOK_COURSES: readonly FullBookCourse[] = [
   {
     id: 'daat-tevunot',
@@ -43,6 +42,24 @@ export const FULL_BOOK_COURSES: readonly FullBookCourse[] = [
     playlistId: 'PLI4WtgHMTlAc0TX_0fy57GeHHatGFz_8t',
     firstLessonYoutubeId: 'JZRG0z6YL5A',
     bookSlugByLocale: { he: 'קלח-פתחי-חכמה', en: 'קלח-פתחי-חכמה', fr: 'קלח-פתחי-חכמה-צרפתית-עברית' },
+  },
+  {
+    id: 'pinot-hamerkava',
+    title: { he: 'פינות המרכבה', en: 'Pinot HaMerkava', fr: 'Pinot HaMerkava' },
+    language: 'he',
+    lessonCount: 27,
+    playlistId: 'PLI4WtgHMTlAccFS82ct85NsknLQ4WKmnv',
+    firstLessonYoutubeId: 'Ld1F0C0tBYE',
+    bookSlugByLocale: { he: 'פינות-המרכבה', en: 'פינות-המרכבה', fr: 'פינות-המרכבה' },
+  },
+  {
+    id: 'mishkenei-elyon',
+    title: { he: 'משכני עליון', en: 'Mishkenei Elyon', fr: 'Michkené Elyon' },
+    language: 'he',
+    lessonCount: 2,
+    playlistId: 'PLI4WtgHMTlAf9UBHF6iC7piUZM64ovwv4',
+    firstLessonYoutubeId: 'nvp9cdefYdY',
+    bookSlugByLocale: { he: 'משכני-עליון', en: 'משכני-עליון', fr: 'משכני-עליון' },
   },
   {
     id: 'adir-bamarom',
@@ -108,6 +125,10 @@ export function firstLessonUrl(course: FullBookCourse): string {
 
 export function playlistUrl(course: FullBookCourse): string {
   return `https://www.youtube.com/playlist?list=${course.playlistId}`
+}
+
+export function firstLessonThumbnailUrl(course: FullBookCourse): string {
+  return `https://i.ytimg.com/vi/${course.firstLessonYoutubeId}/hqdefault.jpg`
 }
 
 export function fullBookCourseForBook(bookSlug: string): FullBookCourse | null {

@@ -99,7 +99,7 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
             </Card>
           )}
 
-          {course ? <BookCourseCallout course={course} dict={dict} locale={locale} /> : null}
+          {course ? <BookCourseCallout course={course} dict={dict} /> : null}
 
           <Separator />
 

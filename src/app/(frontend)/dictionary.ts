@@ -46,10 +46,10 @@ const DICTIONARIES = {
       backToCatalogue: 'חזרה לקטלוג',
     },
     bookCourse: {
-      title: 'ללמוד את הספר עם הרב שריקי',
-      body: (title: string, count: number) => `סדרת לימוד מלאה ב${title}, הכוללת ${count} שיעורים מן הפתיחה ועד סיום הספר.`,
+      title: 'שיעורים על הספר',
+      body: (count: number) => `בסדרה: ${count} שיעורים.`,
       start: 'לשיעור הראשון',
-      playlist: 'לפלייליסט המלא',
+      playlist: 'כל השיעורים',
     },
     cart: {
       title: 'עגלת הקניות',
@@ -158,7 +158,7 @@ const DICTIONARIES = {
     },
   },
   en: {
-    nav: { home: 'Machon Ramhal', catalogue: 'Books', courses: 'Book courses', ramhal: 'The Ramhal', chriqui: 'Rabbi Chriqui', beitRamhal: 'Beit Ramhal', cart: 'Cart', menu: 'Menu', closeMenu: 'Close', cartLabel: (n: number) => (n === 0 ? 'Shopping cart' : `Shopping cart, ${n} ${n === 1 ? 'item' : 'items'}`) },
+    nav: { home: 'Machon Ramhal', catalogue: 'Books', courses: 'Lessons', ramhal: 'The Ramhal', chriqui: 'Rabbi Chriqui', beitRamhal: 'Beit Ramhal', cart: 'Cart', menu: 'Menu', closeMenu: 'Close', cartLabel: (n: number) => (n === 0 ? 'Shopping cart' : `Shopping cart, ${n} ${n === 1 ? 'item' : 'items'}`) },
     catalogue: {
       title: 'Book Catalogue',
       searchPlaceholder: 'Search by title…',
@@ -200,10 +200,10 @@ const DICTIONARIES = {
       backToCatalogue: 'Back to catalogue',
     },
     bookCourse: {
-      title: 'Study this book with Rabbi Chriqui',
-      body: (title: string, count: number) => `A complete ${count}-lesson course through ${title}, from the opening section to the end of the work.`,
+      title: 'Lessons on this book',
+      body: (count: number) => `${count} lessons in this series.`,
       start: 'Start with lesson one',
-      playlist: 'Full playlist',
+      playlist: 'All lessons',
     },
     cart: {
       title: 'Cart',
@@ -312,7 +312,7 @@ const DICTIONARIES = {
     },
   },
   fr: {
-    nav: { home: 'Institut Ramhal', catalogue: 'Livres', courses: 'Cours sur les livres', ramhal: 'Le Ramhal', chriqui: 'Rav Chriqui', beitRamhal: 'Beit Ramhal', cart: 'Panier', menu: 'Menu', closeMenu: 'Fermer', cartLabel: (n: number) => (n === 0 ? 'Panier' : `Panier, ${n} ${n === 1 ? 'article' : 'articles'}`) },
+    nav: { home: 'Institut Ramhal', catalogue: 'Livres', courses: 'Cours', ramhal: 'Le Ramhal', chriqui: 'Rav Chriqui', beitRamhal: 'Beit Ramhal', cart: 'Panier', menu: 'Menu', closeMenu: 'Fermer', cartLabel: (n: number) => (n === 0 ? 'Panier' : `Panier, ${n} ${n === 1 ? 'article' : 'articles'}`) },
     catalogue: {
       title: 'Catalogue des livres',
       searchPlaceholder: 'Rechercher un titre…',
@@ -354,10 +354,10 @@ const DICTIONARIES = {
       backToCatalogue: 'Retour au catalogue',
     },
     bookCourse: {
-      title: 'Étudier ce livre avec le Rav Chriqui',
-      body: (title: string, count: number) => `Un parcours complet de ${count} cours sur ${title}, depuis l’ouverture jusqu’à l’achèvement de l’ouvrage.`,
+      title: 'Cours sur ce livre',
+      body: (count: number) => `${count} cours dans cette série.`,
       start: 'Commencer au premier cours',
-      playlist: 'Playlist complète',
+      playlist: 'Tous les cours',
     },
     cart: {
       title: 'Panier',
