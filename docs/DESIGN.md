@@ -29,24 +29,32 @@ reads as a SaaS landing page. New hues are not introduced; derive from the four 
 
 ## Type
 
-Frank Ruhl Libre (serif) for titles, Heebo (sans) for interface and running text. Both have
+David Libre (serif) for titles, Assistant (sans) for interface and running text. Both have
 Hebrew, Latin and extended-Latin coverage, so the same pairing works cleanly in all three locales.
 They are self-hosted by `next/font`, with no browser request to Google. Defined as
 utilities in `globals.css`; use them, never ad-hoc `text-2xl font-serif`.
 
-| Utility | Size | Use |
-|---|---|---|
-| `type-display` | 40 → 64px | The front-page masthead, once |
-| `type-title` | 30 → 40px | A page's `<h1>` |
-| `type-heading` | 22 → 28px | A section's `<h2>`, a form fieldset legend |
-| `type-subheading` | 18px | A card or book title, a summary heading |
-| body | 16px (`text-base`) | Running text, form controls |
-| small | 14px (`text-sm`) | Interface text, metadata |
-| caption | 12px (`text-xs`) | Footnotes, shipping notes |
+| Utility | Size | Weight | Line-height | Use |
+|---|---|---|---|---|
+| `type-display` | 40 → 64px | 500 | 1.2 | The front-page masthead, once |
+| `type-title` | 30 → 40px | 500 | 1.3 | A page's `<h1>` |
+| `type-heading` | 22 → 28px | 500 | 1.35 | A section's `<h2>`, a form fieldset legend |
+| `type-subheading` | 18px | 500 | 1.5 | A card or book title, a summary heading |
+| body | 16px (`text-base`) | — | 1.65 | Running text, form controls |
+| `type-prose` | inherits size | — | 1.75 | The Ramhal article body, other long-form page content |
+| small | 14px, 15px below `sm` (`text-sm`) | — | inherits | Interface text, metadata |
+| caption | 12px (`text-xs`) | — | inherits | Footnotes, shipping notes |
+
+All four heading utilities are weight 500, never 700: David Libre's bold closes the counters
+in ע, ם and ס, and Hebrew hierarchy is carried by size, not weight. Letter-spacing stays at 0 on
+Hebrew headings — Hebrew is not tracked.
 
 Prices are `font-semibold tabular-nums text-teal-deep`. shadcn components set their own
 title size, so on `CardTitle`, `EmptyTitle` and `FieldLegend` write the utility with a trailing
 `!` (`type-subheading!`).
+
+The cover system (below) sets its title and imprint in the sans, not the serif — David Libre is
+too light-boned at the 9–13px covers actually render at.
 
 ## Spacing and layout
 
@@ -80,7 +88,7 @@ Anatomy, outside in:
 2. **Outer rule**, thick (1cqw), then a **thinner inner rule** (0.4cqw), set in from the edge,
    as on a sefer's title page. **This rule colour is the only thing that says which shelf a
    book is on**: teal (Hebrew), gold (French), deep teal (English), dark gold (siddurim).
-3. **Title** in Frank Ruhl Libre, balanced, optically centred in the upper two-thirds, size
+3. **Title** in Assistant, balanced, optically centred in the upper two-thirds, size
    stepping down by title length (`coverTitleWidthPercent`), clamped at four lines.
 4. **Short gold rule and the imprint** *מכון רמח״ל* in small type at the foot. The imprint is
    hidden on a cover narrower than 7rem, where it would be illegible.

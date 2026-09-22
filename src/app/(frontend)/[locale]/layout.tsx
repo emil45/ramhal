@@ -1,4 +1,4 @@
-import { Frank_Ruhl_Libre, Heebo } from 'next/font/google'
+import { Assistant, David_Libre } from 'next/font/google'
 import { notFound } from 'next/navigation'
 
 import { DemoBanner } from '@/components/storefront/DemoBanner'
@@ -10,8 +10,8 @@ import { isLocale, LOCALE_CONFIG, LOCALES } from '@/lib/locale'
 
 import '@/app/(frontend)/globals.css'
 
-const heebo = Heebo({ subsets: ['hebrew', 'latin'], variable: '--font-sans' })
-const frankRuhlLibre = Frank_Ruhl_Libre({
+const assistant = Assistant({ subsets: ['hebrew', 'latin'], variable: '--font-sans' })
+const davidLibre = David_Libre({
   subsets: ['hebrew', 'latin'],
   weight: ['400', '500', '700'],
   variable: '--font-serif',
@@ -29,7 +29,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
   const { direction } = LOCALE_CONFIG[locale]
 
   return (
-    <html lang={locale} dir={direction} className={`${heebo.variable} ${frankRuhlLibre.variable} h-full antialiased`}>
+    <html lang={locale} dir={direction} className={`${assistant.variable} ${davidLibre.variable} h-full`}>
       <body className="flex min-h-full flex-col bg-background text-foreground">
         {/* Base UI's popups (the mobile nav sheet) place themselves from this,
             not from the document's dir attribute. */}
