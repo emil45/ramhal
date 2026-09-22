@@ -1,6 +1,9 @@
-import type { CollectionConfig } from 'payload'
-
+import { localizedDisplayTitleFields } from './fields/localizedDisplayTitleFields.ts'
+import { computeDisplayTitleBeforeChange } from './hooks/displayTitle.ts'
 import { generateSlugFromTitle } from './hooks/generateSlugFromTitle.ts'
+import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
+
+import type { CollectionConfig } from 'payload'
 
 export const Categories: CollectionConfig = {
   slug: 'categories',
@@ -9,17 +12,22 @@ export const Categories: CollectionConfig = {
     plural: 'קטגוריות',
   },
   admin: {
-    useAsTitle: 'title',
+    group: 'חנות',
+    useAsTitle: 'displayTitle',
+    defaultColumns: ['displayTitle', 'displayTitleLocale'],
+  },
+  hooks: {
+    beforeChange: [computeDisplayTitleBeforeChange('categories')],
   },
   fields: [
+    ...localizedDisplayTitleFields(),
     {
       name: 'title',
       type: 'text',
       label: 'כותרת',
-      required: true,
+      required: false, // enforced by validate below, in at least one locale, not this one
       localized: true,
-      // Structural field: shown in admin lists, so a missing translation
-      // may fall back to the default locale rather than reading as absent.
+      validate: requiredInAtLeastOneLocale('categories'),
     },
     {
       name: 'slug',
@@ -27,6 +35,9 @@ export const Categories: CollectionConfig = {
       label: 'כתובת (Slug)',
       required: true,
       unique: true,
+      admin: {
+        description: 'נוצרת אוטומטית מהכותרת. שינוי ידני משנה גם את כתובת האתר הציבורית של הקטגוריה.',
+      },
       hooks: {
         beforeValidate: [generateSlugFromTitle],
       },

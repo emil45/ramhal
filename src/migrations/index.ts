@@ -7,6 +7,7 @@ import * as migration_20260920_045628_media_storage_prefix from './20260920_0456
 import * as migration_20260922_062811_google_sign_in from './20260922_062811_google_sign_in';
 import * as migration_20260922_105315_news_images_and_links from './20260922_105315_news_images_and_links';
 import * as migration_20260922_130000_money_to_major_units from './20260922_130000_money_to_major_units';
+import * as migration_20260922_190439_TASK_32_admin_facelift from './20260922_190439_TASK_32_admin_facelift';
 
 export const migrations = [
   {
@@ -53,5 +54,10 @@ export const migrations = [
     up: migration_20260922_130000_money_to_major_units.up,
     down: migration_20260922_130000_money_to_major_units.down,
     name: '20260922_130000_money_to_major_units',
+  },
+  {
+    up: migration_20260922_190439_TASK_32_admin_facelift.up,
+    down: migration_20260922_190439_TASK_32_admin_facelift.down,
+    name: '20260922_190439_TASK_32_admin_facelift'
   },
 ];

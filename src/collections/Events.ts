@@ -1,3 +1,7 @@
+import { localizedDisplayTitleFields } from './fields/localizedDisplayTitleFields.ts'
+import { computeDisplayTitleBeforeChange } from './hooks/displayTitle.ts'
+import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
+
 import type { CollectionConfig } from 'payload'
 
 import { validateNewsLinkUrl } from '@/lib/newsLink'
@@ -12,45 +16,67 @@ export const Events: CollectionConfig = {
     plural: 'אירועים',
   },
   admin: {
-    useAsTitle: 'title',
-    defaultColumns: ['title', 'startsAt', 'endsAt', 'location'],
+    group: 'תוכן',
+    useAsTitle: 'displayTitle',
+    defaultColumns: ['displayTitle', 'displayTitleLocale', 'startsAt', 'endsAt', 'location'],
+  },
+  defaultSort: '-startsAt',
+  hooks: {
+    beforeChange: [computeDisplayTitleBeforeChange('events')],
   },
   fields: [
+    ...localizedDisplayTitleFields(),
     {
-      name: 'title',
-      type: 'text',
-      label: 'כותרת',
-      required: true,
-      localized: true,
-    },
-    {
-      name: 'description',
-      type: 'richText',
-      label: 'תיאור',
-      localized: true,
-    },
-    {
-      name: 'image',
-      type: 'upload',
-      relationTo: 'media',
-      label: 'תמונה',
-    },
-    {
-      name: 'link',
-      type: 'group',
-      label: 'קישור',
-      fields: [
+      type: 'tabs',
+      tabs: [
         {
-          name: 'label',
-          type: 'text',
-          label: 'טקסט הקישור',
-          localized: true,
-        },
-        {
-          name: 'url',
-          type: 'text',
-          label: 'כתובת',
-          validate: validateNewsLinkUrl,
+          label: 'תוכן',
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              label: 'כותרת',
+              required: false, // enforced by validate below, in at least one locale, not this one
+              localized: true,
+              validate: requiredInAtLeastOneLocale('events'),
+            },
+            {
+              name: 'description',
+              type: 'richText',
+              label: 'תיאור',
+              localized: true,
+            },
+            {
+              name: 'image',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'תמונה',
+            },
+            {
+              name: 'link',
+              type: 'group',
+              label: 'קישור',
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'label',
+                      type: 'text',
+                      label: 'טקסט הקישור',
+                      localized: true,
+                    },
+                    {
+                      name: 'url',
+                      type: 'text',
+                      label: 'כתובת',
+                      validate: validateNewsLinkUrl,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
         },
       ],
     },
@@ -59,17 +85,23 @@ export const Events: CollectionConfig = {
       type: 'date',
       label: 'תאריך התחלה',
       required: true,
+      admin: { position: 'sidebar' },
     },
     {
       name: 'endsAt',
       type: 'date',
       label: 'תאריך סיום',
+      admin: {
+        position: 'sidebar',
+        description: 'האירוע ייעלם מהאתר אוטומטית אחרי תאריך זה. השאירו ריק לאירוע ללא תאריך סיום.',
+      },
     },
     {
       name: 'location',
       type: 'text',
       label: 'מיקום',
       localized: true,
+      admin: { position: 'sidebar' },
     },
   ],
 }

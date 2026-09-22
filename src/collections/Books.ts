@@ -1,8 +1,11 @@
-import type { CollectionConfig } from 'payload'
-
+import { localizedDisplayTitleFields } from './fields/localizedDisplayTitleFields.ts'
+import { computeDisplayTitleBeforeChange } from './hooks/displayTitle.ts'
 import { generateSlugFromTitle } from './hooks/generateSlugFromTitle.ts'
+import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
 import { CURRENCIES } from '../lib/currency.ts'
 import { validateMoneyAmount } from '../lib/validateMoneyAmount.ts'
+
+import type { CollectionConfig } from 'payload'
 
 const BOOK_LANGUAGES = [
   { label: 'עברית', value: 'he' },
@@ -36,70 +39,208 @@ export const Books: CollectionConfig = {
     plural: 'ספרים',
   },
   admin: {
-    useAsTitle: 'title',
-    defaultColumns: ['title', 'bookLanguage', 'category', 'inStock', 'needsReview'],
+    group: 'חנות',
+    // he -> fr -> en, whichever exists — see localizedDisplayTitleFields.
+    // Fixes the list, the relationship picker AND the document header at
+    // once, since Payload renders useAsTitle in all three places.
+    useAsTitle: 'displayTitle',
+    defaultColumns: ['cover', 'displayTitle', 'displayTitleLocale', 'category', 'prices', 'inStock'],
+    components: {
+      beforeListTable: ['/components/admin/BookQuickFilters#BookQuickFilters'],
+    },
+  },
+  hooks: {
+    beforeChange: [computeDisplayTitleBeforeChange('books')],
   },
   fields: [
+    ...localizedDisplayTitleFields(),
     {
-      name: 'title',
-      type: 'text',
-      label: 'כותרת',
-      required: true,
-      localized: true,
-    },
-    {
-      // Legacy, per-locale slug — kept for redirecting old locale-scoped URLs,
-      // never read for routing any more (see urlSlug below and
-      // docs/reports/TASK-07.md §A1). `unique: true` here is per-locale
-      // (Postgres enforces UNIQUE(slug, _locale)), which is exactly the bug
-      // that made two books collapse onto one cross-locale public URL —
-      // uniqueness for the public URL is urlSlug's job now, not this field's.
-      name: 'slug',
-      type: 'text',
-      label: 'כתובת ישנה (Slug, לכל שפה)',
-      required: true,
-      unique: true,
-      localized: true,
-      hooks: {
-        beforeValidate: [generateSlugFromTitle],
-      },
-    },
-    {
-      // The one canonical public URL for this book — one work, one address,
-      // the same in every locale (docs/DECISIONS.md §1: a book is a work,
-      // not a SKU). Not localized, so `unique: true` is a real
-      // UNIQUE(url_slug) constraint across the whole catalogue: two books
-      // can never resolve to the same page. Auto-filled from the title in
-      // whichever locale the book is first created (generateSlugFromTitle
-      // reads data.title the same way it does for `slug` above), then
-      // stable — an editor can override it, but never re-generates once set.
-      // See docs/reports/TASK-07.md §A1 for why this exists and how the
-      // small number of pre-existing title collisions were resolved.
-      name: 'urlSlug',
-      type: 'text',
-      label: 'כתובת קנונית (URL)',
-      required: true,
-      unique: true,
-      hooks: {
-        beforeValidate: [generateSlugFromTitle],
-      },
-      admin: {
-        description: 'כתובת ה-URL הציבורית והיחידה של הספר, זהה בכל שפה. נוצרת אוטומטית מהכותרת; שינוי ידני אפשרי אך חייב להישאר ייחודי בכל הקטלוג.',
-      },
-    },
-    {
-      name: 'subtitle',
-      type: 'text',
-      label: 'כותרת משנה',
-      localized: true,
-    },
-    {
-      name: 'description',
-      type: 'richText',
-      label: 'תיאור',
-      localized: true,
-      // No fallback: a missing translation must read as absent, not backfilled
-      // with Hebrew prose. See docs/tasks/TASK-01-payload-setup.md §2.
+      type: 'tabs',
+      tabs: [
+        {
+          label: 'פרטי הספר',
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              label: 'כותרת',
+              required: false, // enforced by validate below, in at least one locale, not this one
+              localized: true,
+              validate: requiredInAtLeastOneLocale('books'),
+              admin: {
+                description: 'כותרת הספר. אם הספר קיים רק בשפה אחת (למשל צרפתית בלבד), אפשר להשאיר את שאר השפות ריקות.',
+              },
+            },
+            {
+              name: 'subtitle',
+              type: 'text',
+              label: 'כותרת משנה',
+              localized: true,
+            },
+            {
+              name: 'description',
+              type: 'richText',
+              label: 'תיאור',
+              localized: true,
+              // No fallback: a missing translation must read as absent, not backfilled
+              // with Hebrew prose. See docs/tasks/TASK-01-payload-setup.md §2.
+            },
+            {
+              name: 'cover',
+              type: 'upload',
+              label: 'עטיפה',
+              relationTo: 'media',
+              admin: {
+                components: { Cell: '/components/admin/CoverThumbnail#CoverThumbnail' },
+              },
+            },
+            {
+              name: 'gallery',
+              type: 'array',
+              label: 'גלריה',
+              labels: { singular: 'תמונה', plural: 'תמונות' },
+              fields: [
+                {
+                  name: 'image',
+                  type: 'upload',
+                  label: 'תמונה',
+                  relationTo: 'media',
+                  required: true,
+                },
+              ],
+            },
+            {
+              name: 'publishedAt',
+              type: 'date',
+              label: 'תאריך פרסום',
+              admin: {
+                description: 'קובע את הופעת הספר תחת "חדש באתר". השאירו ריק אם תאריך הפרסום האמיתי אינו ידוע.',
+              },
+            },
+            {
+              name: 'hebrewYear',
+              type: 'text',
+              label: 'שנה עברית',
+              admin: {
+                description: 'למשל תשפ״ו.',
+              },
+            },
+            {
+              name: 'isbn',
+              type: 'text',
+              label: 'מספר ISBN',
+              admin: {
+                description: 'אם קיים לספר מספר ISBN מודפס.',
+              },
+            },
+            {
+              name: 'relatedSeries',
+              type: 'relationship',
+              label: 'סדרות שיעורים קשורות',
+              relationTo: 'series',
+              hasMany: true,
+              admin: {
+                description: 'סדרות שיעורים המבוססות על ספר זה, לקישור מעמוד הספר.',
+              },
+            },
+          ],
+        },
+        {
+          label: 'מחיר ומלאי',
+          fields: [
+            {
+              name: 'prices',
+              type: 'array',
+              label: 'מחירים',
+              labels: { singular: 'מחיר', plural: 'מחירים' },
+              required: true,
+              minRows: 1,
+              admin: {
+                components: { Cell: '/components/admin/PriceList#PriceList' },
+              },
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'currency',
+                      type: 'select',
+                      label: 'מטבע',
+                      required: true,
+                      options: CURRENCIES.map((currency) => ({ label: currency, value: currency })),
+                    },
+                    {
+                      name: 'amount',
+                      type: 'number',
+                      label: 'סכום',
+                      required: true,
+                      min: 0,
+                      validate: validateMoneyAmount,
+                      admin: {
+                        description: 'עד שתי ספרות עשרוניות, למשל 55 או 55.50.',
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+            {
+              name: 'shippingUnits',
+              type: 'number',
+              label: 'יחידות משלוח',
+              required: true,
+              defaultValue: 1,
+              min: 1,
+              admin: {
+                description: 'כמה יחידות משלוח סופר הספר הזה בחישוב עלות המשלוח (בדרך כלל 1).',
+              },
+            },
+          ],
+        },
+        {
+          label: 'מתקדם',
+          description: 'שדות טכניים — נדרשים רק לעיתים רחוקות.',
+          fields: [
+            {
+              name: 'urlSlug',
+              type: 'text',
+              label: 'כתובת קנונית (URL)',
+              required: true,
+              unique: true,
+              hooks: {
+                beforeValidate: [generateSlugFromTitle],
+              },
+              admin: {
+                description: 'כתובת ה-URL הציבורית והיחידה של הספר, זהה בכל שפה. נוצרת אוטומטית מהכותרת; שינוי ידני אפשרי אך חייב להישאר ייחודי בכל הקטלוג.',
+              },
+            },
+            {
+              name: 'needsReview',
+              type: 'checkbox',
+              label: 'דורש בדיקה',
+              defaultValue: false,
+              admin: {
+                description: 'סומן אוטומטית בייבוא הנתונים כשמשהו בספר זה לא היה ודאי. ראו את סיבות הבדיקה למטה.',
+              },
+            },
+            {
+              name: 'reviewReasons',
+              type: 'select',
+              label: 'סיבות לבדיקה',
+              hasMany: true,
+              options: REVIEW_REASONS,
+            },
+            {
+              name: 'reviewNote',
+              type: 'textarea',
+              label: 'הערת בדיקה',
+              admin: {
+                description: 'למשל, כותרת הספר המקביל שההתאמה אליו לא הייתה ודאית.',
+              },
+            },
+          ],
+        },
+      ],
     },
     {
       // The language the book is WRITTEN in — not the locale it is described in.
@@ -109,6 +250,7 @@ export const Books: CollectionConfig = {
       label: 'שפת החיבור',
       required: true,
       options: BOOK_LANGUAGES,
+      admin: { position: 'sidebar' },
     },
     {
       // Not required: a book imported with an uncertain bookLanguage (see
@@ -120,108 +262,38 @@ export const Books: CollectionConfig = {
       type: 'relationship',
       label: 'קטגוריה',
       relationTo: 'categories',
-    },
-    {
-      name: 'prices',
-      type: 'array',
-      label: 'מחירים',
-      labels: { singular: 'מחיר', plural: 'מחירים' },
-      required: true,
-      minRows: 1,
-      fields: [
-        {
-          name: 'currency',
-          type: 'select',
-          label: 'מטבע',
-          required: true,
-          options: CURRENCIES.map((currency) => ({ label: currency, value: currency })),
-        },
-        {
-          name: 'amount',
-          type: 'number',
-          label: 'סכום',
-          required: true,
-          min: 0,
-          validate: validateMoneyAmount,
-          admin: {
-            description: 'סכום בשקלים/דולרים/יורו (למשל 55 או 55.50) — עד שתי ספרות עשרוניות.',
-          },
-        },
-      ],
-    },
-    {
-      name: 'cover',
-      type: 'upload',
-      label: 'עטיפה',
-      relationTo: 'media',
-    },
-    {
-      name: 'gallery',
-      type: 'array',
-      label: 'גלריה',
-      labels: { singular: 'תמונה', plural: 'תמונות' },
-      fields: [
-        {
-          name: 'image',
-          type: 'upload',
-          label: 'תמונה',
-          relationTo: 'media',
-          required: true,
-        },
-      ],
+      admin: { position: 'sidebar' },
     },
     {
       name: 'inStock',
       type: 'checkbox',
       label: 'במלאי',
       defaultValue: true,
-    },
-    {
-      // OPEN (docs/tasks/TASK-01-payload-setup.md §4, §9): shipping tiers count
-      // items, not weight — whether a multi-volume set counts as more than 1
-      // unit is still to be confirmed with the client. Field ships with a safe
-      // default; the counting rule for sets is a data-entry question, not a
-      // schema one.
-      name: 'shippingUnits',
-      type: 'number',
-      label: 'יחידות משלוח',
-      required: true,
-      defaultValue: 1,
-      min: 1,
-    },
-    {
-      // Drives "new books" on the homepage automatically — no manual
-      // "featured" flag for anyone to forget to clear. Left blank means
-      // genuinely unknown (most of the legacy catalogue): a fabricated date
-      // would make historical stock read as newly published. See importedAt
-      // below for when the record was brought into this system, which is a
-      // different fact and must never be confused with this one.
-      name: 'publishedAt',
-      type: 'date',
-      label: 'תאריך פרסום',
       admin: {
-        description: 'השאירו ריק אם תאריך הפרסום האמיתי אינו ידוע.',
+        position: 'sidebar',
+        components: { Cell: '/components/admin/StockBadge#StockBadge' },
       },
     },
     {
-      name: 'hebrewYear',
+      // Legacy, per-locale slug — kept for redirecting old locale-scoped URLs,
+      // never read for routing any more (see urlSlug above and
+      // docs/reports/TASK-07.md §A1). Import plumbing, not something the son
+      // ever needs to fill in — not required, and out of his way.
+      // `unique: true` here is per-locale (Postgres enforces
+      // UNIQUE(slug, _locale)), which is exactly the bug that made two books
+      // collapse onto one cross-locale public URL — uniqueness for the
+      // public URL is urlSlug's job now, not this field's.
+      name: 'slug',
       type: 'text',
-      label: 'שנה עברית',
-      admin: {
-        description: 'e.g. תשפ״ו',
+      label: 'כתובת ישנה (Slug, לכל שפה)',
+      unique: true,
+      localized: true,
+      hooks: {
+        beforeValidate: [generateSlugFromTitle],
       },
-    },
-    {
-      name: 'isbn',
-      type: 'text',
-      label: 'מספר ISBN',
-    },
-    {
-      name: 'relatedSeries',
-      type: 'relationship',
-      label: 'סדרות שיעורים קשורות',
-      relationTo: 'series',
-      hasMany: true,
+      admin: {
+        hidden: true,
+      },
     },
     {
       name: 'legacyUrls',
@@ -239,31 +311,6 @@ export const Books: CollectionConfig = {
           required: true,
         },
       ],
-    },
-    {
-      // Migration-era fields: the reconciliation of the three legacy
-      // catalogues (scripts/scrape/reconcile.mjs) found that most imported
-      // books need a human decision, not a few exceptions — this is the
-      // admin's ordinary worklist for that, not a one-time flag.
-      name: 'needsReview',
-      type: 'checkbox',
-      label: 'דורש בדיקה',
-      defaultValue: false,
-    },
-    {
-      name: 'reviewReasons',
-      type: 'select',
-      label: 'סיבות לבדיקה',
-      hasMany: true,
-      options: REVIEW_REASONS,
-    },
-    {
-      name: 'reviewNote',
-      type: 'textarea',
-      label: 'הערת בדיקה',
-      admin: {
-        description: 'For example, an ambiguous-match counterpart\'s title.',
-      },
     },
     {
       name: 'importKey',

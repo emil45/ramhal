@@ -1,3 +1,7 @@
+import { localizedDisplayTitleFields } from './fields/localizedDisplayTitleFields.ts'
+import { computeDisplayTitleBeforeChange } from './hooks/displayTitle.ts'
+import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
+
 import type { CollectionConfig } from 'payload'
 
 import { validateNewsLinkUrl } from '@/lib/newsLink'
@@ -12,45 +16,67 @@ export const Announcements: CollectionConfig = {
     plural: 'הודעות',
   },
   admin: {
-    useAsTitle: 'title',
-    defaultColumns: ['title', 'startsAt', 'endsAt'],
+    group: 'תוכן',
+    useAsTitle: 'displayTitle',
+    defaultColumns: ['displayTitle', 'displayTitleLocale', 'startsAt', 'endsAt'],
+  },
+  defaultSort: '-startsAt',
+  hooks: {
+    beforeChange: [computeDisplayTitleBeforeChange('announcements')],
   },
   fields: [
+    ...localizedDisplayTitleFields(),
     {
-      name: 'title',
-      type: 'text',
-      label: 'כותרת',
-      required: true,
-      localized: true,
-    },
-    {
-      name: 'body',
-      type: 'richText',
-      label: 'תוכן',
-      localized: true,
-    },
-    {
-      name: 'image',
-      type: 'upload',
-      relationTo: 'media',
-      label: 'תמונה',
-    },
-    {
-      name: 'link',
-      type: 'group',
-      label: 'קישור',
-      fields: [
+      type: 'tabs',
+      tabs: [
         {
-          name: 'label',
-          type: 'text',
-          label: 'טקסט הקישור',
-          localized: true,
-        },
-        {
-          name: 'url',
-          type: 'text',
-          label: 'כתובת',
-          validate: validateNewsLinkUrl,
+          label: 'תוכן',
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              label: 'כותרת',
+              required: false, // enforced by validate below, in at least one locale, not this one
+              localized: true,
+              validate: requiredInAtLeastOneLocale('announcements'),
+            },
+            {
+              name: 'body',
+              type: 'richText',
+              label: 'תוכן',
+              localized: true,
+            },
+            {
+              name: 'image',
+              type: 'upload',
+              relationTo: 'media',
+              label: 'תמונה',
+            },
+            {
+              name: 'link',
+              type: 'group',
+              label: 'קישור',
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'label',
+                      type: 'text',
+                      label: 'טקסט הקישור',
+                      localized: true,
+                    },
+                    {
+                      name: 'url',
+                      type: 'text',
+                      label: 'כתובת',
+                      validate: validateNewsLinkUrl,
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
         },
       ],
     },
@@ -59,11 +85,16 @@ export const Announcements: CollectionConfig = {
       type: 'date',
       label: 'תאריך התחלה',
       required: true,
+      admin: { position: 'sidebar' },
     },
     {
       name: 'endsAt',
       type: 'date',
       label: 'תאריך סיום',
+      admin: {
+        position: 'sidebar',
+        description: 'ההודעה תיעלם מהאתר אוטומטית אחרי תאריך זה. השאירו ריק כדי שתישאר ללא הגבלת זמן.',
+      },
     },
   ],
 }

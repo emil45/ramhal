@@ -1,6 +1,9 @@
-import type { CollectionConfig } from 'payload'
-
+import { localizedDisplayTitleFields } from './fields/localizedDisplayTitleFields.ts'
+import { computeDisplayTitleBeforeChange } from './hooks/displayTitle.ts'
+import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
 import { PARSHIYOT } from './parshiyot.ts'
+
+import type { CollectionConfig } from 'payload'
 
 const HOLIDAYS = [
   'ימים נוראים',
@@ -23,23 +26,47 @@ export const Articles: CollectionConfig = {
     plural: 'כתבות',
   },
   admin: {
-    useAsTitle: 'title',
-    defaultColumns: ['title', 'type', 'parsha', 'holiday', 'publishedAt'],
+    group: 'תוכן',
+    useAsTitle: 'displayTitle',
+    defaultColumns: ['displayTitle', 'displayTitleLocale', 'type', 'parsha', 'holiday', 'publishedAt'],
+  },
+  hooks: {
+    beforeChange: [computeDisplayTitleBeforeChange('articles')],
   },
   fields: [
+    ...localizedDisplayTitleFields(),
     {
-      name: 'title',
-      type: 'text',
-      label: 'כותרת',
-      required: true,
-      localized: true,
-    },
-    {
-      name: 'body',
-      type: 'richText',
-      label: 'תוכן',
-      localized: true,
-      // No fallback: see Books.description for the same reasoning.
+      type: 'tabs',
+      tabs: [
+        {
+          label: 'תוכן',
+          fields: [
+            {
+              name: 'title',
+              type: 'text',
+              label: 'כותרת',
+              required: false, // enforced by validate below, in at least one locale, not this one
+              localized: true,
+              validate: requiredInAtLeastOneLocale('articles'),
+              admin: {
+                description: 'רבים ממאמרי הפרשה בצרפתית קיימים רק בצרפתית — אין צורך למלא כותרת בעברית אם הכתבה מעולם לא נכתבה בעברית.',
+              },
+            },
+            {
+              name: 'body',
+              type: 'richText',
+              label: 'תוכן',
+              localized: true,
+              // No fallback: see Books.description for the same reasoning.
+            },
+            {
+              name: 'publishedAt',
+              type: 'date',
+              label: 'תאריך פרסום',
+            },
+          ],
+        },
+      ],
     },
     {
       name: 'type',
@@ -51,6 +78,7 @@ export const Articles: CollectionConfig = {
         { label: 'חג', value: 'holiday' },
         { label: 'כללי', value: 'general' },
       ],
+      admin: { position: 'sidebar' },
     },
     {
       name: 'parsha',
@@ -58,6 +86,7 @@ export const Articles: CollectionConfig = {
       label: 'פרשה',
       options: PARSHIYOT.map((name) => ({ label: name, value: name })),
       admin: {
+        position: 'sidebar',
         condition: (data) => data?.type === 'parsha',
       },
     },
@@ -67,13 +96,9 @@ export const Articles: CollectionConfig = {
       label: 'חג',
       options: HOLIDAYS.map((name) => ({ label: name, value: name })),
       admin: {
+        position: 'sidebar',
         condition: (data) => data?.type === 'holiday',
       },
-    },
-    {
-      name: 'publishedAt',
-      type: 'date',
-      label: 'תאריך פרסום',
     },
     {
       name: 'legacyUrls',

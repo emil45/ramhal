@@ -201,12 +201,12 @@ export interface Media {
  */
 export interface Book {
   id: number;
-  title: string;
-  slug: string;
+  displayTitle?: string | null;
+  displayTitleLocale?: string | null;
   /**
-   * כתובת ה-URL הציבורית והיחידה של הספר, זהה בכל שפה. נוצרת אוטומטית מהכותרת; שינוי ידני אפשרי אך חייב להישאר ייחודי בכל הקטלוג.
+   * כותרת הספר. אם הספר קיים רק בשפה אחת (למשל צרפתית בלבד), אפשר להשאיר את שאר השפות ריקות.
    */
-  urlSlug: string;
+  title?: string | null;
   subtitle?: string | null;
   description?: {
     root: {
@@ -223,16 +223,6 @@ export interface Book {
     };
     [k: string]: unknown;
   } | null;
-  bookLanguage: 'he' | 'fr' | 'en' | 'he-fr' | 'aramaic-fr' | 'unknown';
-  category?: (number | null) | Category;
-  prices: {
-    currency: 'ILS' | 'EUR' | 'USD';
-    /**
-     * סכום בשקלים/דולרים/יורו (למשל 55 או 55.50) — עד שתי ספרות עשרוניות.
-     */
-    amount: number;
-    id?: string | null;
-  }[];
   cover?: (number | null) | Media;
   gallery?:
     | {
@@ -240,24 +230,41 @@ export interface Book {
         id?: string | null;
       }[]
     | null;
-  inStock?: boolean | null;
-  shippingUnits: number;
   /**
-   * השאירו ריק אם תאריך הפרסום האמיתי אינו ידוע.
+   * קובע את הופעת הספר תחת "חדש באתר". השאירו ריק אם תאריך הפרסום האמיתי אינו ידוע.
    */
   publishedAt?: string | null;
   /**
-   * e.g. תשפ״ו
+   * למשל תשפ״ו.
    */
   hebrewYear?: string | null;
+  /**
+   * אם קיים לספר מספר ISBN מודפס.
+   */
   isbn?: string | null;
+  /**
+   * סדרות שיעורים המבוססות על ספר זה, לקישור מעמוד הספר.
+   */
   relatedSeries?: (number | Series)[] | null;
-  legacyUrls?:
-    | {
-        url: string;
-        id?: string | null;
-      }[]
-    | null;
+  prices: {
+    currency: 'ILS' | 'EUR' | 'USD';
+    /**
+     * עד שתי ספרות עשרוניות, למשל 55 או 55.50.
+     */
+    amount: number;
+    id?: string | null;
+  }[];
+  /**
+   * כמה יחידות משלוח סופר הספר הזה בחישוב עלות המשלוח (בדרך כלל 1).
+   */
+  shippingUnits: number;
+  /**
+   * כתובת ה-URL הציבורית והיחידה של הספר, זהה בכל שפה. נוצרת אוטומטית מהכותרת; שינוי ידני אפשרי אך חייב להישאר ייחודי בכל הקטלוג.
+   */
+  urlSlug: string;
+  /**
+   * סומן אוטומטית בייבוא הנתונים כשמשהו בספר זה לא היה ודאי. ראו את סיבות הבדיקה למטה.
+   */
   needsReview?: boolean | null;
   reviewReasons?:
     | (
@@ -270,22 +277,21 @@ export interface Book {
       )[]
     | null;
   /**
-   * For example, an ambiguous-match counterpart's title.
+   * למשל, כותרת הספר המקביל שההתאמה אליו לא הייתה ודאית.
    */
   reviewNote?: string | null;
+  bookLanguage: 'he' | 'fr' | 'en' | 'he-fr' | 'aramaic-fr' | 'unknown';
+  category?: (number | null) | Category;
+  inStock?: boolean | null;
+  slug?: string | null;
+  legacyUrls?:
+    | {
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
   importKey?: string | null;
   importedAt?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "categories".
- */
-export interface Category {
-  id: number;
-  title: string;
-  slug: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -295,7 +301,9 @@ export interface Category {
  */
 export interface Series {
   id: number;
-  title: string;
+  displayTitle?: string | null;
+  displayTitleLocale?: string | null;
+  title?: string | null;
   description?: {
     root: {
       type: string;
@@ -311,10 +319,32 @@ export interface Series {
     };
     [k: string]: unknown;
   } | null;
-  language: 'he' | 'fr';
   relatedBook?: (number | null) | Book;
+  /**
+   * מזהה הפלייליסט מכתובת היוטיוב, לא הכתובת המלאה.
+   */
   youtubePlaylistId?: string | null;
+  language: 'he' | 'fr';
+  /**
+   * קובע את סדר הופעת הסדרות ברשימה. השאירו ריק לסדר ברירת מחדל.
+   */
   order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "categories".
+ */
+export interface Category {
+  id: number;
+  displayTitle?: string | null;
+  displayTitleLocale?: string | null;
+  title?: string | null;
+  /**
+   * נוצרת אוטומטית מהכותרת. שינוי ידני משנה גם את כתובת האתר הציבורית של הקטגוריה.
+   */
+  slug: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -347,7 +377,12 @@ export interface Lesson {
  */
 export interface Article {
   id: number;
-  title: string;
+  displayTitle?: string | null;
+  displayTitleLocale?: string | null;
+  /**
+   * רבים ממאמרי הפרשה בצרפתית קיימים רק בצרפתית — אין צורך למלא כותרת בעברית אם הכתבה מעולם לא נכתבה בעברית.
+   */
+  title?: string | null;
   body?: {
     root: {
       type: string;
@@ -363,6 +398,7 @@ export interface Article {
     };
     [k: string]: unknown;
   } | null;
+  publishedAt?: string | null;
   type: 'parsha' | 'holiday' | 'general';
   parsha?:
     | (
@@ -424,7 +460,6 @@ export interface Article {
     | null;
   holiday?:
     ('ימים נוראים' | 'סוכות' | 'חנוכה' | 'פורים' | 'פסח' | 'שבועות' | 'ט״ו בשבט' | 'י״ז בתמוז ותשעה באב') | null;
-  publishedAt?: string | null;
   legacyUrls?:
     | {
         url: string;
@@ -440,7 +475,9 @@ export interface Article {
  */
 export interface Page {
   id: number;
-  title: string;
+  displayTitle?: string | null;
+  displayTitleLocale?: string | null;
+  title?: string | null;
   body?: {
     root: {
       type: string;
@@ -472,7 +509,9 @@ export interface Page {
  */
 export interface Announcement {
   id: number;
-  title: string;
+  displayTitle?: string | null;
+  displayTitleLocale?: string | null;
+  title?: string | null;
   body?: {
     root: {
       type: string;
@@ -494,6 +533,9 @@ export interface Announcement {
     url?: string | null;
   };
   startsAt: string;
+  /**
+   * ההודעה תיעלם מהאתר אוטומטית אחרי תאריך זה. השאירו ריק כדי שתישאר ללא הגבלת זמן.
+   */
   endsAt?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -504,7 +546,9 @@ export interface Announcement {
  */
 export interface Event {
   id: number;
-  title: string;
+  displayTitle?: string | null;
+  displayTitleLocale?: string | null;
+  title?: string | null;
   description?: {
     root: {
       type: string;
@@ -526,6 +570,9 @@ export interface Event {
     url?: string | null;
   };
   startsAt: string;
+  /**
+   * האירוע ייעלם מהאתר אוטומטית אחרי תאריך זה. השאירו ריק לאירוע ללא תאריך סיום.
+   */
   endsAt?: string | null;
   location?: string | null;
   updatedAt: string;
@@ -555,6 +602,8 @@ export interface Cart {
 export interface Order {
   id: number;
   orderNumber?: number | null;
+  customerName?: string | null;
+  customerPhone?: string | null;
   paymentStatus: 'pending' | 'paid' | 'failed' | 'cancelled';
   fulfilmentStatus?: ('new' | 'packed' | 'posted' | 'collected') | null;
   customer: {
@@ -842,20 +891,11 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "books_select".
  */
 export interface BooksSelect<T extends boolean = true> {
+  displayTitle?: T;
+  displayTitleLocale?: T;
   title?: T;
-  slug?: T;
-  urlSlug?: T;
   subtitle?: T;
   description?: T;
-  bookLanguage?: T;
-  category?: T;
-  prices?:
-    | T
-    | {
-        currency?: T;
-        amount?: T;
-        id?: T;
-      };
   cover?: T;
   gallery?:
     | T
@@ -863,21 +903,32 @@ export interface BooksSelect<T extends boolean = true> {
         image?: T;
         id?: T;
       };
-  inStock?: T;
-  shippingUnits?: T;
   publishedAt?: T;
   hebrewYear?: T;
   isbn?: T;
   relatedSeries?: T;
+  prices?:
+    | T
+    | {
+        currency?: T;
+        amount?: T;
+        id?: T;
+      };
+  shippingUnits?: T;
+  urlSlug?: T;
+  needsReview?: T;
+  reviewReasons?: T;
+  reviewNote?: T;
+  bookLanguage?: T;
+  category?: T;
+  inStock?: T;
+  slug?: T;
   legacyUrls?:
     | T
     | {
         url?: T;
         id?: T;
       };
-  needsReview?: T;
-  reviewReasons?: T;
-  reviewNote?: T;
   importKey?: T;
   importedAt?: T;
   updatedAt?: T;
@@ -888,6 +939,8 @@ export interface BooksSelect<T extends boolean = true> {
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
+  displayTitle?: T;
+  displayTitleLocale?: T;
   title?: T;
   slug?: T;
   updatedAt?: T;
@@ -898,11 +951,13 @@ export interface CategoriesSelect<T extends boolean = true> {
  * via the `definition` "series_select".
  */
 export interface SeriesSelect<T extends boolean = true> {
+  displayTitle?: T;
+  displayTitleLocale?: T;
   title?: T;
   description?: T;
-  language?: T;
   relatedBook?: T;
   youtubePlaylistId?: T;
+  language?: T;
   order?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -928,12 +983,14 @@ export interface LessonsSelect<T extends boolean = true> {
  * via the `definition` "articles_select".
  */
 export interface ArticlesSelect<T extends boolean = true> {
+  displayTitle?: T;
+  displayTitleLocale?: T;
   title?: T;
   body?: T;
+  publishedAt?: T;
   type?: T;
   parsha?: T;
   holiday?: T;
-  publishedAt?: T;
   legacyUrls?:
     | T
     | {
@@ -948,6 +1005,8 @@ export interface ArticlesSelect<T extends boolean = true> {
  * via the `definition` "pages_select".
  */
 export interface PagesSelect<T extends boolean = true> {
+  displayTitle?: T;
+  displayTitleLocale?: T;
   title?: T;
   body?: T;
   slug?: T;
@@ -965,6 +1024,8 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "announcements_select".
  */
 export interface AnnouncementsSelect<T extends boolean = true> {
+  displayTitle?: T;
+  displayTitleLocale?: T;
   title?: T;
   body?: T;
   image?: T;
@@ -984,6 +1045,8 @@ export interface AnnouncementsSelect<T extends boolean = true> {
  * via the `definition` "events_select".
  */
 export interface EventsSelect<T extends boolean = true> {
+  displayTitle?: T;
+  displayTitleLocale?: T;
   title?: T;
   description?: T;
   image?: T;
@@ -1021,6 +1084,8 @@ export interface CartsSelect<T extends boolean = true> {
  */
 export interface OrdersSelect<T extends boolean = true> {
   orderNumber?: T;
+  customerName?: T;
+  customerPhone?: T;
   paymentStatus?: T;
   fulfilmentStatus?: T;
   customer?:

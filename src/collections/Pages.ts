@@ -1,6 +1,9 @@
-import type { CollectionConfig } from 'payload'
-
+import { localizedDisplayTitleFields } from './fields/localizedDisplayTitleFields.ts'
+import { computeDisplayTitleBeforeChange } from './hooks/displayTitle.ts'
 import { generateSlugFromTitle } from './hooks/generateSlugFromTitle.ts'
+import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
+
+import type { CollectionConfig } from 'payload'
 
 // Institutional pages: about the institute, Beit Ramhal, contact, donations.
 export const Pages: CollectionConfig = {
@@ -10,15 +13,22 @@ export const Pages: CollectionConfig = {
     plural: 'עמודים',
   },
   admin: {
-    useAsTitle: 'title',
+    group: 'תוכן',
+    useAsTitle: 'displayTitle',
+    defaultColumns: ['displayTitle', 'displayTitleLocale'],
+  },
+  hooks: {
+    beforeChange: [computeDisplayTitleBeforeChange('pages')],
   },
   fields: [
+    ...localizedDisplayTitleFields(),
     {
       name: 'title',
       type: 'text',
       label: 'כותרת',
-      required: true,
+      required: false, // enforced by validate below, in at least one locale, not this one
       localized: true,
+      validate: requiredInAtLeastOneLocale('pages'),
     },
     {
       name: 'body',
@@ -34,6 +44,9 @@ export const Pages: CollectionConfig = {
       unique: true,
       hooks: {
         beforeValidate: [generateSlugFromTitle],
+      },
+      admin: {
+        hidden: true,
       },
     },
     {

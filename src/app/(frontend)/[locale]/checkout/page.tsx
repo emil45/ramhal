@@ -61,7 +61,12 @@ export default async function CheckoutPage({ params }: PageProps<'/[locale]/chec
           defaultCountry={countries.some((country) => country.code === estimatedShippingCountry) ? estimatedShippingCountry : countries[0]?.code}
           lines={lines.map((line) => ({
             bookId: line.book.id,
-            title: line.book.title,
+            // A book can legitimately have no title in the current locale
+            // (docs/tasks/TASK-32-admin-facelift.md §1) — this becomes the
+            // order's own permanent snapshot of what was sold
+            // (docs/DECISIONS.md §16), so it falls back to the same
+            // he -> fr -> en display title the admin uses, never to blank.
+            title: line.book.title ?? line.book.displayTitle ?? '',
             quantity: line.quantity,
             unitPrice: selectPrice(line.book, currency) ?? 0,
           }))}

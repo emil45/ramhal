@@ -8,7 +8,12 @@ type NewsLink = {
 
 type StreamAnnouncement = {
   id: string | number
-  title: string
+  title?: string | null
+  // Never blank in practice once a document has been saved at least once
+  // (docs/tasks/TASK-32-admin-facelift.md §1c) — the fallback below is for
+  // the requested locale specifically having no title, not for a title
+  // missing everywhere.
+  displayTitle?: string | null
   body?: RichTextContent | null
   image?: number | Media | null
   link?: NewsLink | null
@@ -17,7 +22,8 @@ type StreamAnnouncement = {
 
 type StreamEvent = {
   id: string | number
-  title: string
+  title?: string | null
+  displayTitle?: string | null
   description?: RichTextContent | null
   image?: number | Media | null
   link?: NewsLink | null
@@ -57,7 +63,7 @@ export function buildNewsStream(
     ...announcements.map((announcement) => ({
       id: String(announcement.id),
       kind: 'announcement' as const,
-      title: announcement.title,
+      title: announcement.title ?? announcement.displayTitle ?? '',
       body: announcement.body ?? null,
       image: resolveImage(announcement.image),
       link: resolveLink(announcement.link),
@@ -67,7 +73,7 @@ export function buildNewsStream(
     ...events.map((event) => ({
       id: String(event.id),
       kind: 'event' as const,
-      title: event.title,
+      title: event.title ?? event.displayTitle ?? '',
       body: event.description ?? null,
       image: resolveImage(event.image),
       link: resolveLink(event.link),

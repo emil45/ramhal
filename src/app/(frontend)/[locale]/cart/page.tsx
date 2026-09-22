@@ -73,13 +73,17 @@ export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) 
                     categorySlug={typeof line.book.category === 'object' ? line.book.category?.slug : null}
                     cover={typeof line.book.cover === 'object' ? line.book.cover : null}
                     sizes="112px"
-                    title={line.book.title}
+                    // A book can legitimately have no title in the current
+                    // locale (docs/tasks/TASK-32-admin-facelift.md §1) — the
+                    // typeset cover falls back to the same he -> fr -> en
+                    // display title the admin uses, not to blank.
+                    title={line.book.title ?? line.book.displayTitle ?? ''}
                   />
                 </div>
                 <div className="flex flex-1 flex-col gap-2">
                   <div className="flex items-start justify-between gap-4">
                     <Link href={bookPath(locale, line.book.urlSlug)} className="type-subheading hover:text-teal">
-                      {line.book.title}
+                      {line.book.title ?? line.book.displayTitle}
                     </Link>
                     <span className="shrink-0 text-lg font-semibold tabular-nums text-teal-deep">
                       {lineAmount !== null ? money(lineAmount * line.quantity) : '—'}
