@@ -731,3 +731,99 @@ Payload or restructuring the checkout flow — but the interface itself still ca
 from being shaped by its first, synthetic implementation. Read it against the specific gateway's
 own hosted-checkout shape before assuming it fits, rather than assuming "PayPal fit, so this will
 too."
+
+---
+
+## 22. TASK-31: development gets its own database branch, and diagnostics is narrowed
+
+§20 named the real cost of "one database everywhere" plainly and said it should be revisited
+before the site has real customers. This is that revisit, triggered by a live, confirmed
+consequence rather than a schedule: `GET /api/diagnostics` on the deployed demo showed local
+`.env`'s `DATABASE_URI` was byte-identical to production's own (`ep-red-tree-b19ry3lo…`), and
+TASK-29's report drew a wrong conclusion (local has a record production "does not") for exactly
+that reason — local *was* production the whole time.
+
+### Development gets its own Neon branch
+
+A new, long-lived branch named **`development`** (`br-gentle-term-b11mvbu3`), forked
+copy-on-write from **`production`** (`br-delicate-math-b1b1mbw7`) so the local catalogue is
+realistic — the same pattern TASK-27 already used for the `testing` branch. Local `.env`'s
+`DATABASE_URI` now points at it. To refresh it with production's latest data later: Neon console →
+the branch → "Reset from parent" (destructive to whatever was written locally since the last
+reset — documented in `.env.example`).
+
+**The guard is reused, not rewritten.** `assertNotProductionDatabase` — the function that already
+refused a test run pointed at production (TASK-27) — moved from `src/test/` to `src/lib/` (it's
+runtime logic now, not test-only) and gained a second, generalised parameter (`guidance`) so both
+callers get a message pointing at the right variable. `exitUnlessDevelopmentDatabaseIsSafe`
+(`src/instrumentation.ts`) calls it under `APP_ENV=development` only — demo and production are
+still meant to share the one production database, per §20; only development is being carved out
+here. Verified for real, not just by inspection: pointed local `DATABASE_URI` at production's own
+host with `APP_ENV=development` and started the app — it printed the refusal and exited before
+`next dev` reported ready, the same way TASK-27's test-suite guard already did.
+
+**Media: no new bucket, argued rather than assumed.** Local development already has all six
+`S3_*` variables unset, so uploads already go to the local `media/` folder (`readMediaStorageSettings`)
+— nothing to change there, but it's now a deliberate answer, not an accident of which variables
+happened to be set. The remaining question was whether existing covers, whose `Media` rows carry
+URLs pointing at production's bucket, would still render locally once local pointed at a
+*different* database. Verified against the live site rather than assumed: `curl`ing the live
+homepage shows cover URLs like
+`https://br-delicate-math-b1b1mbw7.storage.c-5.eu-central-1.aws.neon.tech/ramhal-media/….webp` —
+a plain public HTTPS URL, unauthenticated, independent of which database served the row that
+contains it. The `development` branch (forked from production) carries the same URLs in its own
+`Media` rows, so they render locally exactly as they do in production. Only a *new* local upload
+is affected, and that already goes to disk, never to the production bucket.
+
+**The trade, stated plainly, as §20 asked for:** content entered locally — a seed script, an
+admin edit made against a `next dev` session — no longer reaches the live site. TASK-28 and
+TASK-29 only appeared to work because problem 1 existed; that path is now deliberately closed.
+From here on, real content reaches the live site only two ways: an allowlisted editor using the
+real `/admin`, or a script explicitly pointed at production's own `DATABASE_URI` (a committed
+one-off under `scripts/one-off/`, per the workflow protocol, never a routine seed script run
+against a developer's `.env`).
+
+### Production can now see its own backups
+
+TASK-27 built the nightly `pg_dump` mechanism and a read-only reader credential
+(`ramhal-backups-app-reader`, scope `storage:read` only, already narrower than the
+`storage:read`+`storage:write` credential the GitHub Action itself writes with) — but the five
+`BACKUP_S3_*` variables were only ever set in local `.env`, never in Vercel's Production
+environment, so `GET /api/diagnostics` on the live site reported `"backup": null` regardless of
+whether the nightly workflow was succeeding. Set in Vercel Production for the first time in this
+task (`docs/reports/TASK-31.md` has the live verification).
+
+**On scoping "to the bucket alone":** Neon's object-storage credentials (`create_credential`)
+scope to `storage:read` / `storage:write` on a *branch*, not to one bucket within it — there is no
+narrower scope Neon's API offers. `ramhal-backups-app-reader` (branch-wide read, no write) is
+already the narrowest credential available, not a broader one chosen for convenience; recorded
+here rather than treated as a gap, since the brief for this task asked to stop and report if a
+bucket-scoped key wasn't available, and it isn't.
+
+**The bucket check's own error is now generic on purpose.** `getBackupStatus`'s catch branch used
+to return the AWS SDK's own error message verbatim — which, for a network or credential failure,
+can contain the endpoint hostname. Since this route is public, that branch now logs the real
+error server-side and returns a fixed, generic string (`src/lib/backupStatus.ts`); tested by
+mocking a leaky SDK error and asserting the response never contains it.
+
+### The public diagnostics payload is narrower
+
+The live payload showed `database.host`, `database.name` and `database.user` to anyone —
+three of a connection string's four parts. `GET /api/diagnostics` (`src/app/(payload)/api/diagnostics/route.ts`)
+now returns those three only when the request carries a valid, authenticated Payload session.
+`allowOnlyListedAdmins` (§19) is the *only* way any session is ever issued, so "authenticated" and
+"admin" are the same fact here — no separate role check was needed. An anonymous request instead
+gets `database.fingerprint`: a truncated SHA-256 of the connection host
+(`computeDatabaseFingerprint`, `src/lib/diagnostics.ts`), stable and comparable without exposing
+the value it's derived from. Production's is recorded in `docs/RECOVERY.md` as **`2c951382a7f8`**
+so a stranger who only has the public endpoint can still answer "is this the database I expect?".
+AGENTS.md's verification rule was updated to describe this. A dedicated test asserts the
+unauthenticated response contains none of the host, the database name, the role name or the
+password — the last already covered by an existing test, kept.
+
+**Verifying "authenticated" for real, not by mocking `payload.auth`:** the local password login
+strategy is disabled (§19/§20), so the integration test signs its own session token the same way
+the codebase's own login path does — `payload.update`'s public Local API to attach a session
+record to a throwaway user, then `jose`'s `SignJWT` (already a direct dependency) with the app's
+own `PAYLOAD_SECRET` — and sends it as `Authorization: JWT …`. This exercises Payload's real JWT
+verification, not a stand-in for it.
