@@ -30,3 +30,7 @@ export function cataloguePath(locale: Locale): string {
 export function coursesPath(locale: Locale): string {
   return localePath(locale, '/courses')
 }
+
+export function donatePath(locale: Locale): string {
+  return localePath(locale, '/donate')
+}

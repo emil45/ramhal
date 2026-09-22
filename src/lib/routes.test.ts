@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { bookPath, cataloguePath, coursesPath, localePath } from '@/lib/routes'
+import { bookPath, cataloguePath, coursesPath, donatePath, localePath } from '@/lib/routes'
 
 describe('localePath', () => {
   it('gives Hebrew no prefix', () => {
@@ -35,5 +35,13 @@ describe('coursesPath', () => {
     expect(coursesPath('he')).toBe('/courses')
     expect(coursesPath('en')).toBe('/en/courses')
     expect(coursesPath('fr')).toBe('/fr/courses')
+  })
+})
+
+describe('donatePath', () => {
+  it('places the shared donation segment under the locale root', () => {
+    expect(donatePath('he')).toBe('/donate')
+    expect(donatePath('en')).toBe('/en/donate')
+    expect(donatePath('fr')).toBe('/fr/donate')
   })
 })

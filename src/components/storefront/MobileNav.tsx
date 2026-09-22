@@ -1,6 +1,6 @@
 'use client'
 
-import { Menu } from 'lucide-react'
+import { HeartHandshake, Menu } from 'lucide-react'
 import Link from 'next/link'
 
 import { Button } from '@/components/ui/button'
@@ -14,14 +14,15 @@ import type { Locale } from '@/lib/locale'
 type MobileNavProps = {
   closeLabel: string
   current: Locale
+  donationLink: { href: string; label: string }
   links: { href: string; label: string }[]
   menuLabel: string
 }
 
-/** The site's navigation below the `md` breakpoint. Each link closes the
+/** The site's navigation below the `xl` breakpoint. Each link closes the
  * sheet: navigating within the shop keeps this component mounted, so the
  * sheet would otherwise stay open over the page just chosen. */
-export function MobileNav({ closeLabel, current, links, menuLabel }: MobileNavProps) {
+export function MobileNav({ closeLabel, current, donationLink, links, menuLabel }: MobileNavProps) {
   return (
     <Sheet>
       <SheetTrigger render={<Button variant="ghost" size="icon" aria-label={menuLabel} />}>
@@ -39,6 +40,18 @@ export function MobileNav({ closeLabel, current, links, menuLabel }: MobileNavPr
               {link.label}
             </SheetClose>
           ))}
+          <SheetClose
+            nativeButton={false}
+            render={
+              <Link
+                href={donationLink.href}
+                className="mt-2 flex items-center gap-3 rounded-md border border-teal bg-paper-deep px-3 py-3 text-lg font-semibold text-teal-deep hover:bg-teal-deep hover:text-paper"
+              />
+            }
+          >
+            <HeartHandshake aria-hidden className="size-5" />
+            <span>{donationLink.label}</span>
+          </SheetClose>
         </nav>
         <div className="px-5">
           <Separator />

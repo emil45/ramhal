@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { getContactDetails } from '@/lib/siteSettingsData'
-import { cataloguePath, coursesPath, localePath } from '@/lib/routes'
+import { cataloguePath, coursesPath, donatePath, localePath } from '@/lib/routes'
 
 import type { Dictionary } from '@/app/(frontend)/dictionary'
 import type { Locale } from '@/lib/locale'
@@ -16,6 +16,7 @@ export async function Footer({ dict, locale }: { dict: Dictionary; locale: Local
     { href: localePath(locale, '/beit-ramhal'), label: dict.nav.beitRamhal },
     { href: localePath(locale, '/ramhal'), label: dict.nav.ramhal },
     { href: localePath(locale, '/rabbi-chriqui'), label: dict.nav.chriqui },
+    { href: donatePath(locale), label: dict.nav.donate },
   ]
 
   return (
