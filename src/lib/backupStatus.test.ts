@@ -1,6 +1,13 @@
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 
-import { backupStatusFromObjects } from '@/lib/backupStatus'
+import { backupStatusFromObjects, getBackupStatus } from '@/lib/backupStatus'
+
+vi.mock('@aws-sdk/client-s3', () => ({
+  S3Client: vi.fn().mockImplementation(() => ({
+    send: vi.fn().mockRejectedValue(new Error('getaddrinfo ENOTFOUND br-secret-endpoint.storage.example.neon.tech')),
+  })),
+  ListObjectsV2Command: vi.fn(),
+}))
 
 describe('backupStatusFromObjects', () => {
   it('reports an error rather than a status when the bucket is empty', () => {
@@ -26,5 +33,22 @@ describe('backupStatusFromObjects', () => {
     const dates = [new Date('2026-01-10T00:00:00.000Z')] // 12.5 hours earlier
 
     expect(backupStatusFromObjects(dates, now)).toMatchObject({ ageHours: 12.5 })
+  })
+})
+
+describe('getBackupStatus', () => {
+  it('reports a generic error rather than the underlying SDK message, which can name the endpoint or bucket', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    const status = await getBackupStatus({
+      accessKeyId: 'id',
+      bucket: 'ramhal-backups',
+      endpoint: 'https://br-secret-endpoint.storage.example.neon.tech',
+      region: 'eu-central-1',
+      secretAccessKey: 'secret',
+    })
+
+    expect(status).toEqual({ error: 'Could not read the backup bucket.' })
+    consoleError.mockRestore()
   })
 })
