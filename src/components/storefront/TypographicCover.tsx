@@ -18,7 +18,7 @@ export function TypographicCover({ categorySlug, title }: { categorySlug: string
       {/* Bottom padding lifts the title just above true centre, where the eye expects it. */}
       <div className="flex min-h-0 flex-1 items-center justify-center px-[7cqw] pb-[6cqw]">
         <p
-          className="line-clamp-4 text-center font-sans font-semibold leading-[1.25] break-words text-teal-deep [text-wrap:balance]"
+          className="line-clamp-4 text-center font-serif font-medium leading-[1.25] break-words text-teal-deep [text-wrap:balance]"
           style={{ fontSize: `${coverTitleWidthPercent(title)}cqw` }}
         >
           {title}
@@ -26,7 +26,7 @@ export function TypographicCover({ categorySlug, title }: { categorySlug: string
       </div>
       <div className="flex flex-col items-center gap-[3cqw] pb-[7cqw] @max-[7rem]:hidden">
         <span className="h-px w-[14cqw] bg-gold" aria-hidden />
-        <span className="font-sans text-[5.5cqw] leading-none text-gold-ink">{INSTITUTE_MARK}</span>
+        <span className="font-serif text-[5.5cqw] leading-none text-gold-ink">{INSTITUTE_MARK}</span>
       </div>
     </CoverFrame>
   )

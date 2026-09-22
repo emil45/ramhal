@@ -78,5 +78,5 @@ export function ArticleSection({ children, first = false, id, kicker, ornament, 
 }
 
 export function Prose({ children }: { children: ReactNode }) {
-  return <div className="type-prose mt-5 flex flex-col gap-5 text-lg">{children}</div>
+  return <div className="mt-5 flex flex-col gap-5 text-lg leading-[1.9]">{children}</div>
 }
