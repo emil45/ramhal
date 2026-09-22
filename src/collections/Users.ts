@@ -1,3 +1,5 @@
+import { allowOnlyListedAdmins } from './hooks/allowOnlyListedAdmins.ts'
+
 import type { CollectionConfig } from 'payload'
 
 export const Users: CollectionConfig = {
@@ -10,6 +12,11 @@ export const Users: CollectionConfig = {
   admin: {
     useAsTitle: 'email',
     defaultColumns: ['email', 'role'],
+  },
+  hooks: {
+    // Covers password login, the Google callback and REST /api/users/login
+    // alike — see the hook's own comment and docs/DECISIONS.md §19.
+    beforeLogin: [allowOnlyListedAdmins],
   },
   access: {
     // Only admins manage user accounts; editors can see who else has access.

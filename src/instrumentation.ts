@@ -13,6 +13,8 @@ export async function register(): Promise<void> {
   const { exitUnlessPaymentConfigurationIsSafe } = await import(
     './lib/payment/exitUnlessPaymentConfigurationIsSafe'
   )
+  const { exitUnlessAdminAllowlistIsSafe } = await import('./lib/auth/exitUnlessAdminAllowlistIsSafe')
   exitUnlessBuildMatchesEnvironment()
   exitUnlessPaymentConfigurationIsSafe()
+  exitUnlessAdminAllowlistIsSafe()
 }
