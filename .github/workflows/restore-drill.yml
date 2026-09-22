@@ -1,0 +1,68 @@
+name: restore-drill
+
+# Proves the second backup mechanism (.github/workflows/backup.yml,
+# docs/tasks/TASK-27-database-hardening.md §3d) actually restores, instead
+# of leaving that as a documented but never-executed hypothesis
+# (docs/RECOVERY.md). Never touches production — it only ever writes to
+# whatever RESTORE_DRILL_TARGET_URI points at, which must be a fresh,
+# empty, disposable database (a throwaway Neon branch, created and
+# destroyed outside this workflow — see docs/RECOVERY.md's restore section
+# for the manual steps). Run manually, from the Actions tab, whenever
+# someone wants to re-verify the procedure still works — not on a schedule.
+on:
+  workflow_dispatch:
+    inputs:
+      dump_object_key:
+        description: 'Which dump to restore, e.g. ramhal-2026-09-22T15-33-42Z.sql.gz — leave blank for the most recent'
+        required: false
+
+jobs:
+  restore-and-verify:
+    runs-on: ubuntu-latest
+    env:
+      RAMHAL_BACKUP_S3_ENDPOINT: ${{ secrets.RAMHAL_BACKUP_S3_ENDPOINT }}
+      RAMHAL_BACKUP_S3_BUCKET: ${{ secrets.RAMHAL_BACKUP_S3_BUCKET }}
+      RAMHAL_BACKUP_S3_REGION: ${{ secrets.RAMHAL_BACKUP_S3_REGION }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.RAMHAL_BACKUP_S3_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.RAMHAL_BACKUP_S3_SECRET_ACCESS_KEY }}
+      # Set only for the duration of a drill, then removed — see
+      # docs/RECOVERY.md. Never production: this is a throwaway branch's
+      # own connection string.
+      TARGET_DATABASE_URI: ${{ secrets.RESTORE_DRILL_TARGET_URI }}
+      PG_VERSION: '18'
+    steps:
+      - name: Install the matching PostgreSQL client
+        run: |
+          sudo apt update
+          yes '' | sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
+          sudo apt install -y postgresql-client-${{ env.PG_VERSION }}
+          echo "/usr/lib/postgresql/${{ env.PG_VERSION }}/bin" >> "$GITHUB_PATH"
+
+      - name: Refuse to run without a target
+        run: |
+          : "${TARGET_DATABASE_URI:?RESTORE_DRILL_TARGET_URI secret is not set — see docs/RECOVERY.md}"
+
+      - name: Find the dump to restore
+        run: |
+          KEY="${{ inputs.dump_object_key }}"
+          if [ -z "$KEY" ]; then
+            KEY=$(aws s3api list-objects-v2 \
+              --endpoint-url "$RAMHAL_BACKUP_S3_ENDPOINT" --region "$RAMHAL_BACKUP_S3_REGION" \
+              --bucket "$RAMHAL_BACKUP_S3_BUCKET" \
+              --query 'sort_by(Contents,&LastModified)[-1].Key' --output text)
+          fi
+          echo "Restoring ${KEY}"
+          echo "DUMP_KEY=${KEY}" >> "$GITHUB_ENV"
+
+      - name: Download it
+        run: |
+          aws s3 cp "s3://${RAMHAL_BACKUP_S3_BUCKET}/${DUMP_KEY}" dump.sql.gz \
+            --endpoint-url "$RAMHAL_BACKUP_S3_ENDPOINT" --region "$RAMHAL_BACKUP_S3_REGION"
+
+      - name: Restore into the target
+        run: gunzip -c dump.sql.gz | psql "$TARGET_DATABASE_URI"
+
+      - name: Verify the catalogue and users came back
+        run: |
+          echo "books:" && psql "$TARGET_DATABASE_URI" -t -c "SELECT count(*) FROM books;"
+          echo "users:" && psql "$TARGET_DATABASE_URI" -t -c "SELECT count(*) FROM users;"
