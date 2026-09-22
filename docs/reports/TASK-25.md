@@ -28,6 +28,9 @@
 - Browser QA covered Hebrew RTL and English LTR at desktop and 390 × 844 mobile widths, the full
   page, the distinct desktop donation action, the mobile-sheet treatment, and the disabled PayPal
   placeholder. No horizontal overflow or direction errors were observed.
+- Pushed commit `dde7eeb` to `origin/main`; Vercel promoted the production build. `/donate`,
+  `/en/donate`, and `/fr/donate` each return HTTP 200 with their localized page content. The live
+  WebP returns `image/webp` and its SHA-256 matches the committed asset exactly.
 
 ## What felt wrong
 
