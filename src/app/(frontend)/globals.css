@@ -103,11 +103,23 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html,
+  body {
+    line-height: 1.65;
+  }
   body {
     @apply bg-background text-foreground;
   }
   html {
     @apply font-sans;
+  }
+}
+
+/* Hebrew at 14px separates letter pairs (ד/ר, ה/ח, כ/ב) that read fine in
+   Latin at the same size — one step up below the sm breakpoint. */
+@media (width < 40rem) {
+  :root {
+    --text-sm: 0.9375rem;
   }
 }
 
@@ -120,29 +132,36 @@
 @utility type-display {
   font-family: var(--font-serif);
   font-size: clamp(2.5rem, 1.7rem + 3.4vw, 4rem);
-  font-weight: 700;
-  line-height: 1.1;
+  font-weight: 500;
+  line-height: 1.2;
   color: var(--teal-deep);
   text-wrap: balance;
 }
 @utility type-title {
   font-family: var(--font-serif);
   font-size: clamp(1.875rem, 1.5rem + 1.6vw, 2.5rem);
-  font-weight: 700;
-  line-height: 1.2;
+  font-weight: 500;
+  line-height: 1.3;
   color: var(--teal-deep);
   text-wrap: balance;
 }
 @utility type-heading {
   font-family: var(--font-serif);
   font-size: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
-  font-weight: 700;
-  line-height: 1.25;
+  font-weight: 500;
+  line-height: 1.35;
   color: var(--teal-deep);
 }
 @utility type-subheading {
   font-family: var(--font-serif);
   font-size: 1.125rem;
   font-weight: 500;
-  line-height: 1.35;
+  line-height: 1.5;
+}
+
+/* Running prose (the Ramhal article body, long-form page content) reads
+   easier looser than short headings — Hebrew has no ascenders/descenders
+   to break up a tight stack of lines. */
+@utility type-prose {
+  line-height: 1.75;
 }
