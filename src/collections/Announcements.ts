@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { validateNewsLinkUrl } from '@/lib/newsLink'
+
 // Anything dated expires itself. A stale "coming soon" notice is the commonest
 // way an institute site announces that nobody is home — public queries must
 // filter on endsAt, not rely on someone remembering to unpublish.
@@ -26,6 +28,31 @@ export const Announcements: CollectionConfig = {
       type: 'richText',
       label: 'תוכן',
       localized: true,
+    },
+    {
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'תמונה',
+    },
+    {
+      name: 'link',
+      type: 'group',
+      label: 'קישור',
+      fields: [
+        {
+          name: 'label',
+          type: 'text',
+          label: 'טקסט הקישור',
+          localized: true,
+        },
+        {
+          name: 'url',
+          type: 'text',
+          label: 'כתובת',
+          validate: validateNewsLinkUrl,
+        },
+      ],
     },
     {
       name: 'startsAt',

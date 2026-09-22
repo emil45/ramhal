@@ -5,6 +5,7 @@ import * as migration_20260918_122803_books_url_slug from './20260918_122803_boo
 import * as migration_20260919_191433_orders_and_payments from './20260919_191433_orders_and_payments';
 import * as migration_20260920_045628_media_storage_prefix from './20260920_045628_media_storage_prefix';
 import * as migration_20260922_062811_google_sign_in from './20260922_062811_google_sign_in';
+import * as migration_20260922_105315_news_images_and_links from './20260922_105315_news_images_and_links';
 import * as migration_20260922_130000_money_to_major_units from './20260922_130000_money_to_major_units';
 
 export const migrations = [
@@ -41,7 +42,12 @@ export const migrations = [
   {
     up: migration_20260922_062811_google_sign_in.up,
     down: migration_20260922_062811_google_sign_in.down,
-    name: '20260922_062811_google_sign_in'
+    name: '20260922_062811_google_sign_in',
+  },
+  {
+    up: migration_20260922_105315_news_images_and_links.up,
+    down: migration_20260922_105315_news_images_and_links.down,
+    name: '20260922_105315_news_images_and_links',
   },
   {
     up: migration_20260922_130000_money_to_major_units.up,

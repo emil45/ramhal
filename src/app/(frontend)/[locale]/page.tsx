@@ -2,16 +2,17 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
+import { NewsBand } from '@/components/storefront/NewsBand'
+import { NewsCard } from '@/components/storefront/NewsCard'
 import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { ProductCard } from '@/components/storefront/ProductCard'
-import { RichText } from '@/components/storefront/RichText'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { buttonVariants } from '@/components/ui/button'
 import { getDictionary } from '@/app/(frontend)/dictionary'
 import { getActiveAnnouncements } from '@/lib/announcementsData'
 import { selectFeaturedBooks, selectNewBooks, sortCatalogue } from '@/lib/availability'
 import { getCatalogueBooks } from '@/lib/booksData'
 import { getUpcomingEvents } from '@/lib/eventsData'
+import { buildNewsStream } from '@/lib/homeStream'
 import { isLocale, LOCALE_CONFIG } from '@/lib/locale'
 import { cataloguePath, localePath } from '@/lib/routes'
 import { getSchedule } from '@/lib/scheduleData'
@@ -37,16 +38,18 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   ])
 
   const newBooks = selectNewBooks(books, currency, BOOK_STRIP_COUNT)
+  const newsStream = buildNewsStream(announcements, events, new Date())
   // "New books" is a claim about dates, so it only appears once books carry
   // one. Until then the strip is plainly a selection from the catalogue.
   const stripBooks = newBooks.length > 0 ? newBooks : selectFeaturedBooks(sortCatalogue(books, currency), currency, BOOK_STRIP_COUNT)
   const stripTitle = newBooks.length > 0 ? dict.home.newBooksTitle : dict.home.fromCatalogueTitle
   const shiurim = schedule.shiurim ?? []
   const prayers = schedule.prayers ?? []
-  const eventDateFormatter = new Intl.DateTimeFormat(intlTag, { dateStyle: 'long' })
 
   return (
     <div className="flex flex-col">
+      <NewsBand item={newsStream[0]} intlTag={intlTag} moreLabel={dict.home.newsBandMore} />
+
       {/* 1. Masthead: who the institute is, and the way to its books. */}
       <section className="border-b border-border bg-paper-deep">
         <div className="page-container flex flex-col items-center gap-8 py-12 text-center md:flex-row md:justify-center md:gap-16 md:py-20 md:text-start">
@@ -70,24 +73,14 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         </div>
       </section>
 
-      {/* 2. Announcements — nothing dated may ever go stale here (docs/DECISIONS.md §9); the
-          section itself disappears rather than render empty. */}
-      {announcements.length > 0 ? (
-        <section id="schedule" className="page-container scroll-mt-8 py-12">
-          <SectionHeading>{dict.home.announcementsTitle}</SectionHeading>
+      {/* 2. One visitor-facing stream; announcements and events remain distinct in the admin. */}
+      {newsStream.length > 0 ? (
+        <section id="news" className="page-container scroll-mt-8 py-12">
+          <SectionHeading>{dict.home.newsTitle}</SectionHeading>
           <ul className="flex flex-col gap-4">
-            {announcements.map((announcement) => (
-              <li key={announcement.id}>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="type-subheading!">{announcement.title}</CardTitle>
-                  </CardHeader>
-                  {announcement.body ? (
-                    <CardContent>
-                      <RichText content={announcement.body} />
-                    </CardContent>
-                  ) : null}
-                </Card>
+            {newsStream.map((item) => (
+              <li key={`${item.kind}-${item.id}`}>
+                <NewsCard item={item} intlTag={intlTag} />
               </li>
             ))}
           </ul>
@@ -117,7 +110,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
 
       {/* 4. The standing shiur/prayer schedule — one global, already seeded, previously rendered nowhere. */}
       {shiurim.length > 0 || prayers.length > 0 ? (
-        <section className="page-container py-12">
+        <section id="schedule" className="page-container scroll-mt-8 py-12">
           <SectionHeading>{dict.home.scheduleTitle}</SectionHeading>
           <div className="grid gap-8 sm:grid-cols-2">
             {shiurim.length > 0 ? (
@@ -153,32 +146,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         </section>
       ) : null}
 
-      {/* 5. Upcoming events — same disappear-if-empty rule as announcements. */}
-      {events.length > 0 ? (
-        <section className="page-container py-12">
-          <SectionHeading>{dict.home.eventsTitle}</SectionHeading>
-          <ul className="flex flex-col gap-4">
-            {events.map((event) => (
-              <li key={event.id}>
-                <Card>
-                  <CardHeader>
-                    <div className="flex flex-wrap items-baseline justify-between gap-2">
-                      <CardTitle className="type-subheading!">{event.title}</CardTitle>
-                      <span className="text-sm text-muted-foreground">{eventDateFormatter.format(new Date(event.startsAt))}</span>
-                    </div>
-                    {event.location ? <p className="text-sm text-muted-foreground">{event.location}</p> : null}
-                  </CardHeader>
-                  {event.description ? (
-                    <CardContent>
-                      <RichText content={event.description} />
-                    </CardContent>
-                  ) : null}
-                </Card>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
     </div>
   )
 }

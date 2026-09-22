@@ -18,6 +18,7 @@
     "db:migrate": "node scripts/migrate.mjs",
     "migrate:create": "node scripts/dev-migrate.mjs create",
     "seed": "node scripts/seed.mjs",
+    "seed:demo-news": "vite-node -c vitest.config.ts --options.deps.inline=payload-oauth2 scripts/seed-demo-news.mjs",
     "import:books": "vite-node -c vitest.config.ts --options.deps.inline=payload-oauth2 scripts/import-books.mjs",
     "import:prepared-covers": "vite-node -c vitest.config.ts --options.deps.inline=payload-oauth2 scripts/import-prepared-covers.mjs"
   },

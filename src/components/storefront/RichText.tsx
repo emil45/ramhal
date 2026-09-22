@@ -1,10 +1,7 @@
+import type { RichTextContent } from '@/lib/richText'
+
 type LexicalTextNode = { text?: string; type: string }
 type LexicalParagraphNode = { children?: LexicalTextNode[]; direction?: 'ltr' | 'rtl' | null; type: string }
-
-/** The shape every Payload richText field shares (Book.description,
- * Announcement.body, Event.description) — structural rather than imported
- * from one collection's generated type, since this renders all three. */
-type LexicalDocument = { root: { children?: unknown[] } }
 
 /**
  * Minimal Lexical renderer for richText fields — every one imported so far
@@ -13,7 +10,7 @@ type LexicalDocument = { root: { children?: unknown[] } }
  * runs, not marks, links, or blocks. Extend when a real formatted document
  * shows up in the admin, not before.
  */
-export function RichText({ content }: { content: LexicalDocument }) {
+export function RichText({ content }: { content: RichTextContent }) {
   const children = (content.root.children ?? []) as LexicalParagraphNode[]
 
   return (

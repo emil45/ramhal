@@ -1,5 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
+import { validateNewsLinkUrl } from '@/lib/newsLink'
+
 // One-off events — a hilula, a seminar. Recurring shiurim are NOT events; they
 // live in the schedule global. The two look alike on the page and are nothing
 // alike in the admin — see docs/tasks/TASK-01-payload-setup.md §4.
@@ -26,6 +28,31 @@ export const Events: CollectionConfig = {
       type: 'richText',
       label: 'תיאור',
       localized: true,
+    },
+    {
+      name: 'image',
+      type: 'upload',
+      relationTo: 'media',
+      label: 'תמונה',
+    },
+    {
+      name: 'link',
+      type: 'group',
+      label: 'קישור',
+      fields: [
+        {
+          name: 'label',
+          type: 'text',
+          label: 'טקסט הקישור',
+          localized: true,
+        },
+        {
+          name: 'url',
+          type: 'text',
+          label: 'כתובת',
+          validate: validateNewsLinkUrl,
+        },
+      ],
     },
     {
       name: 'startsAt',

@@ -488,6 +488,11 @@ export interface Announcement {
     };
     [k: string]: unknown;
   } | null;
+  image?: (number | null) | Media;
+  link?: {
+    label?: string | null;
+    url?: string | null;
+  };
   startsAt: string;
   endsAt?: string | null;
   updatedAt: string;
@@ -515,6 +520,11 @@ export interface Event {
     };
     [k: string]: unknown;
   } | null;
+  image?: (number | null) | Media;
+  link?: {
+    label?: string | null;
+    url?: string | null;
+  };
   startsAt: string;
   endsAt?: string | null;
   location?: string | null;
@@ -957,6 +967,13 @@ export interface PagesSelect<T extends boolean = true> {
 export interface AnnouncementsSelect<T extends boolean = true> {
   title?: T;
   body?: T;
+  image?: T;
+  link?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+      };
   startsAt?: T;
   endsAt?: T;
   updatedAt?: T;
@@ -969,6 +986,13 @@ export interface AnnouncementsSelect<T extends boolean = true> {
 export interface EventsSelect<T extends boolean = true> {
   title?: T;
   description?: T;
+  image?: T;
+  link?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+      };
   startsAt?: T;
   endsAt?: T;
   location?: T;

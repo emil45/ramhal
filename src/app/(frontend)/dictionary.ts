@@ -146,7 +146,8 @@ const DICTIONARIES = {
     home: {
       tagline: 'מכון רמח״ל מפרסם ומלמד את כתבי רבנו רמח״ל, בהנהגת הרב מרדכי שריקי.',
       browseCatalogue: 'לקטלוג הספרים',
-      announcementsTitle: 'הודעות',
+      newsTitle: 'מה חדש',
+      newsBandMore: 'לפרטים',
       since: 'מאז תשמ״ו · 1986',
       fromCatalogueTitle: 'מן הקטלוג',
       newBooksTitle: 'ספרים חדשים',
@@ -154,7 +155,6 @@ const DICTIONARIES = {
       scheduleTitle: 'לוח זמנים',
       shiurimTitle: 'שיעורים',
       prayersTitle: 'תפילות',
-      eventsTitle: 'אירועים קרובים',
     },
   },
   en: {
@@ -300,7 +300,8 @@ const DICTIONARIES = {
     home: {
       tagline: 'Machon Ramhal publishes and teaches the writings of the Ramhal, under the guidance of Rabbi Mordechai Chriqui.',
       browseCatalogue: 'Browse the catalogue',
-      announcementsTitle: 'Announcements',
+      newsTitle: "What's new",
+      newsBandMore: 'Details',
       since: 'Since 1986',
       fromCatalogueTitle: 'From the catalogue',
       newBooksTitle: 'New books',
@@ -308,7 +309,6 @@ const DICTIONARIES = {
       scheduleTitle: 'Schedule',
       shiurimTitle: 'Shiurim',
       prayersTitle: 'Prayer times',
-      eventsTitle: 'Upcoming events',
     },
   },
   fr: {
@@ -454,7 +454,8 @@ const DICTIONARIES = {
     home: {
       tagline: "L'Institut Ramhal publie et enseigne les écrits du Ramhal, sous la direction du Rav Mordekhaï Chriqui.",
       browseCatalogue: 'Voir le catalogue',
-      announcementsTitle: 'Annonces',
+      newsTitle: 'Actualités',
+      newsBandMore: 'En savoir plus',
       since: 'Depuis 1986',
       fromCatalogueTitle: 'Du catalogue',
       newBooksTitle: 'Nouveautés',
@@ -462,7 +463,6 @@ const DICTIONARIES = {
       scheduleTitle: 'Horaires',
       shiurimTitle: 'Cours',
       prayersTitle: 'Offices',
-      eventsTitle: 'Événements à venir',
     },
   },
 } as const
