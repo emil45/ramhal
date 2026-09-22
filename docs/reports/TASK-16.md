@@ -21,9 +21,10 @@
     unrelated to this change).
   - `vitest run` — 27 files, 184 tests, all passing.
   - `next build` — succeeds, all 328 static paths generated.
-- **Deployed**: pushed to `origin/main`, deployed to the linked Vercel
-  production project. Confirmed the production favicon URL serves the new
-  256×256 icon.
+- **Deployed**: pushed to `origin/main`; Vercel's GitHub integration built and
+  promoted it to production automatically. Confirmed
+  `https://ramhal-theta.vercel.app/favicon.ico` returns HTTP 200 with the same
+  270,622-byte 256×256 icon as the committed file.
 
 ## What felt wrong
 
