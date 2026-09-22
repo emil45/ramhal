@@ -25,7 +25,7 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
     <header className="border-b border-border bg-card">
       <div className="page-container flex h-16 items-center gap-3 md:h-20 md:gap-6">
         <Link href={localePath(locale, '/')} className="flex items-center gap-3">
-          <Image src="/logo.png" alt="" width={362} height={512} className="h-10 w-auto md:h-12" priority />
+          <Image src="/logo.png" alt="" width={362} height={512} className="h-12 w-auto md:h-16" priority />
           <span className="font-serif text-xl font-bold text-teal-deep md:text-2xl">{dict.nav.home}</span>
         </Link>
 

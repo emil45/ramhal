@@ -52,8 +52,9 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
 
       {/* 1. Masthead: who the institute is, and the way to its books. */}
       <section className="border-b border-border bg-paper-deep">
-        <div className="page-container flex flex-col items-center gap-8 py-12 text-center md:flex-row md:justify-center md:gap-16 md:py-20 md:text-start">
-          <Image src="/logo.png" alt="" width={362} height={512} className="h-44 w-auto shrink-0 md:h-64" priority />
+        <div className="page-container flex flex-col items-center gap-6 py-12 text-center md:flex-row md:justify-center md:gap-10 md:py-20 md:text-start">
+          <Image src="/logo.png" alt="" width={362} height={512} className="h-48 w-auto shrink-0 md:h-80" priority />
+          <span aria-hidden className="hidden self-stretch w-px bg-gold/40 md:block" />
           <div className="flex flex-col items-center gap-5 md:items-start">
             <p className="flex items-center gap-3 text-sm font-semibold text-gold-ink">
               <span aria-hidden className="h-0.5 w-8 bg-gold" />
