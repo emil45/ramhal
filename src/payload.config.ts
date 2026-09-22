@@ -48,10 +48,7 @@ export default buildConfig({
     // from the working directory Payload would otherwise assume.
     importMap: { baseDir: path.resolve(dirname) },
     components: {
-      // Only shown when Google sign-in is actually configured — an
-      // unconfigured deployment (e.g. plain local dev) would otherwise show
-      // a button that leads nowhere useful.
-      beforeLogin: googleSignIn === null ? undefined : ['/components/admin/GoogleSignInLink#GoogleSignInLink'],
+      beforeLogin: ['/components/admin/GoogleSignInLink#GoogleSignInLink'],
     },
   },
   editor: lexicalEditor(),
@@ -103,17 +100,17 @@ export default buildConfig({
         credentials: { accessKeyId: mediaStorage?.accessKeyId ?? '', secretAccessKey: mediaStorage?.secretAccessKey ?? '' },
       },
     }),
-    // Google sign-in for the admin panel — see docs/DECISIONS.md §19. The
+    // Google sign-in for the admin panel — see docs/DECISIONS.md §19/§20. The
     // package is a single-maintainer auth plugin pinned to an exact version
     // in package.json; an upgrade is a diff to read, not a number to bump.
-    // disableLocalStrategy is deliberately never set: password login stays
-    // as the break-glass path.
+    // Users.auth.disableLocalStrategy is unconditional: this is the only way
+    // into /admin, in every environment, which is why readGoogleSignInConfig
+    // requires both variables instead of allowing an unconfigured deployment.
     OAuth2Plugin({
-      enabled: googleSignIn !== null,
       strategyName: 'google',
       serverURL: serverUrl,
-      clientId: googleSignIn?.clientId ?? '',
-      clientSecret: googleSignIn?.clientSecret ?? '',
+      clientId: googleSignIn.clientId,
+      clientSecret: googleSignIn.clientSecret,
       providerAuthorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
       tokenEndpoint: 'https://oauth2.googleapis.com/token',
       scopes: ['openid', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'],

@@ -6,23 +6,21 @@ export type GoogleSignInConfig = {
 const VARIABLE_NAMES = ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'] as const
 
 /**
- * Google sign-in for the admin panel. Unset, the plugin is disabled and
- * email+password is the only way in — right for local development without
- * a Google Cloud client. All or none: a half-configured deployment would
- * otherwise register the plugin's routes with an empty client secret and
- * fail at the first sign-in attempt instead of at boot.
+ * Google sign-in for the admin panel — required in every environment,
+ * local development included. Users.auth.disableLocalStrategy is
+ * unconditional (docs/DECISIONS.md §19/§20), so there is no email+password
+ * fallback left for an unset pair to fall back to: a deployment missing
+ * either variable would boot with a login screen nobody can use.
  */
-export function readGoogleSignInConfig(env: Record<string, string | undefined>): GoogleSignInConfig | null {
+export function readGoogleSignInConfig(env: Record<string, string | undefined>): GoogleSignInConfig {
   const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = env
-
   const missing = VARIABLE_NAMES.filter((name) => !env[name])
-  if (missing.length === VARIABLE_NAMES.length) return null
 
-  if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
-    throw new Error(`Google sign-in is half-configured: ${missing.join(', ')} not set. Set both GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET, or neither. See .env.example.`)
+  if (missing.length > 0) {
+    throw new Error(`Google sign-in is the only way into /admin and must be configured: ${missing.join(', ')} not set. See .env.example.`)
   }
 
-  return { clientId: GOOGLE_CLIENT_ID, clientSecret: GOOGLE_CLIENT_SECRET }
+  return { clientId: GOOGLE_CLIENT_ID as string, clientSecret: GOOGLE_CLIENT_SECRET as string }
 }
 
 const USERINFO_ENDPOINT = 'https://openidconnect.googleapis.com/v1/userinfo'

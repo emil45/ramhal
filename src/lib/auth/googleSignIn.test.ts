@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest'
 import { parseGoogleUserInfo, readGoogleSignInConfig } from '@/lib/auth/googleSignIn'
 
 describe('readGoogleSignInConfig', () => {
-  it('means Google sign-in is disabled when neither variable is set', () => {
-    expect(readGoogleSignInConfig({})).toBeNull()
+  it('refuses to boot when neither variable is set — there is no local-only fallback left', () => {
+    expect(() => readGoogleSignInConfig({})).toThrow(/GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET/)
   })
 
   it('reads a fully configured client', () => {
@@ -14,7 +14,7 @@ describe('readGoogleSignInConfig', () => {
     })
   })
 
-  it('refuses a half-configured client, naming what is missing, rather than fall back to local-only sign-in', () => {
+  it('refuses a half-configured client, naming what is missing', () => {
     expect(() => readGoogleSignInConfig({ GOOGLE_CLIENT_ID: 'id' })).toThrow(/GOOGLE_CLIENT_SECRET/)
   })
 
