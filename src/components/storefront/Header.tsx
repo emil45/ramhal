@@ -54,12 +54,22 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
           <div className="hidden xl:block xl:border-s xl:border-border xl:ps-3">
             <LocaleSwitcher current={locale} />
           </div>
+          <Link
+            href={donationLink.href}
+            aria-label={donationLink.label}
+            className={cn(
+              buttonVariants({ variant: 'outline' }),
+              'size-10 border-teal bg-paper-deep px-0 text-teal-deep hover:bg-teal-deep hover:text-paper sm:w-auto sm:px-3 xl:hidden',
+            )}
+          >
+            <HeartHandshake aria-hidden className="size-4" />
+            <span className="hidden sm:inline">{donationLink.label}</span>
+          </Link>
           <CartLink href={localePath(locale, '/cart')} locale={locale} />
           <div className="xl:hidden">
             <MobileNav
               closeLabel={dict.nav.closeMenu}
               current={locale}
-              donationLink={donationLink}
               links={[{ href: cataloguePath(locale), label: dict.nav.catalogue }, ...secondaryLinks]}
               menuLabel={dict.nav.menu}
             />
