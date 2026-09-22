@@ -158,6 +158,32 @@ const REVIEWED_CATEGORY_SLUG: Readonly<Record<string, string>> = {
   'he:סידור כוונות לימות החול (פורמט קטן)': 'siddurim-machzorim',
 }
 
+// TASK-22 found the reconciliation step's own similarity check had already
+// flagged these as probable duplicates (reviewNote: "possible duplicate of
+// ... not auto-merged") and merged them by hand: the duplicate's row was
+// deleted, any price it held in a currency the survivor lacked was carried
+// over, and its legacy URLs were unioned onto the survivor. Mapping the
+// duplicate's importKey to the survivor's here means a from-scratch import
+// reproduces that merge (via upsertBook's existing-importKey branch, which
+// now also unions in prices — see its own comment) instead of recreating the
+// duplicate as its own book. Keyed and valued exactly as reconciliation.json
+// still has them (the duplicate side is gone from the live database, but not
+// from that file, which is how these were confirmed — see docs/reports/TASK-24.md).
+//
+// A fourth pair TASK-22 merged (a DVD box set) is deliberately not here: both
+// its sides are skipped by isRecordedMediaTitle already, so a fresh import
+// never recreates either half — there is nothing left to merge.
+//
+// A fifth pair TASK-22 merged (the two "זוהר רשב"י ח"ב" listings, one a
+// punctuation variant of the other) is ALSO deliberately not here — see
+// docs/DECISIONS.md §20 for why encoding it would produce a book with the
+// wrong title rather than silently doing nothing.
+const REVIEWED_DUPLICATE_IMPORT_KEY: Readonly<Record<string, string>> = {
+  'en:סידור כוונות לימות החול (פורמט קטן) במבצע': 'he:סידור כוונות לימות החול (פורמט קטן)',
+  'fr:דברות רמחל חו בית המקדש': 'he:דברות רמחל חו בית מקדש',
+  'fr:דברות רמחל חה משיח': 'he:דברות רמחל חה - משיח',
+}
+
 const CURRENCY_CODE: Record<string, Currency> = { $: 'USD', '€': 'EUR', '₪': 'ILS', EUR: 'EUR', ILS: 'ILS', USD: 'USD' }
 
 const HAS_HEBREW = /[֐-׿]/
@@ -310,7 +336,8 @@ function isSiteKey(language: BookLanguage): language is SiteKey {
   return language !== 'unknown'
 }
 
-export function buildBookInput(importKey: string, view: ImportView, rawTitles: Partial<Record<SiteKey, string>>, reviewNote: string | null): BookInput | null {
+export function buildBookInput(rawImportKey: string, view: ImportView, rawTitles: Partial<Record<SiteKey, string>>, reviewNote: string | null): BookInput | null {
+  const importKey = REVIEWED_DUPLICATE_IMPORT_KEY[rawImportKey] ?? rawImportKey
   const prices = priceRows(view.prices)
   if (prices.length === 0) return null // nothing to import — see the report for how many, if any
 
@@ -400,17 +427,37 @@ async function attachCover(payload: Payload, bookId: number | string, locale: Si
 }
 
 /**
+ * The price rows a re-import would add to an already-existing book: any
+ * currency the candidate has that the existing record doesn't, added
+ * alongside what's there. Never replaces an existing currency's amount —
+ * that's exactly the kind of admin edit upsertBook otherwise refuses to
+ * touch. This is what turns a REVIEWED_DUPLICATE_IMPORT_KEY entry into a
+ * real merge: the survivor keeps its own price(s), and gains whichever ones
+ * only the (now-deleted) duplicate had.
+ */
+export function newPriceRowsFor(
+  existingPrices: readonly { amount: number; currency: Currency }[],
+  candidatePrices: readonly { amount: number; currency: Currency }[],
+): { amount: number; currency: Currency }[] {
+  const existingCurrencies = new Set(existingPrices.map((price) => price.currency))
+  return candidatePrices.filter((price) => !existingCurrencies.has(price.currency))
+}
+
+/**
  * Idempotent, keyed on importKey.
  *
  * On a NEW importKey: creates the book with every field below.
- * On an EXISTING importKey: only unions in any legacyUrls not already on the
- * record. Nothing else is touched — not title, description, prices,
- * category, bookLanguage, needsReview, nor reviewReasons/reviewNote. Those
- * are exactly the fields the admin (the son) is expected to edit once a book
- * is flagged; a re-run that overwrote them would silently erase that work
- * every time the reconciliation is regenerated.
+ * On an EXISTING importKey: unions in any legacyUrls not already on the
+ * record, and any price in a currency the record doesn't already have (see
+ * newPriceRowsFor — this is how REVIEWED_DUPLICATE_IMPORT_KEY's merges bring
+ * over a price the survivor was missing). Nothing else is touched — not
+ * title, description, category, bookLanguage, needsReview, nor
+ * reviewReasons/reviewNote. Those are exactly the fields the admin (the son)
+ * is expected to edit once a book is flagged; a re-run that overwrote them
+ * would silently erase that work every time the reconciliation is
+ * regenerated.
  */
-type UpsertResult = { cover?: CoverResult; status: 'created' | 'unchanged' | 'urls-added' }
+type UpsertResult = { cover?: CoverResult; status: 'created' | 'prices-added' | 'unchanged' | 'urls-added' }
 
 async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<string, number>): Promise<UpsertResult> {
   const existing = await payload.find({
@@ -484,16 +531,18 @@ async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<s
   const existingDoc = existing.docs[0]
   const existingUrls = new Set((existingDoc.legacyUrls ?? []).map((row: { url: string }) => row.url))
   const newUrls = input.legacyUrls.filter((url) => !existingUrls.has(url))
-  if (newUrls.length === 0) return { status: 'unchanged' }
+  const newPrices = newPriceRowsFor(existingDoc.prices, input.prices)
+  if (newUrls.length === 0 && newPrices.length === 0) return { status: 'unchanged' }
 
   await payload.update({
     collection: 'books',
     id: existingDoc.id,
     data: {
       legacyUrls: [...(existingDoc.legacyUrls ?? []), ...newUrls.map((url) => ({ url }))],
+      prices: [...existingDoc.prices, ...newPrices],
     },
   })
-  return { status: 'urls-added' }
+  return { status: newUrls.length > 0 ? 'urls-added' : 'prices-added' }
 }
 
 export type ImportSummary = {
@@ -502,6 +551,7 @@ export type ImportSummary = {
   coversAttached: number
   coversMissing: number
   created: number
+  pricesAdded: number
   singleton: number
   skipped: string[]
   unchanged: number
@@ -517,6 +567,7 @@ export async function importBooks(payload: Payload, reconciliation: Reconciliati
     created: 0,
     unchanged: 0,
     urlsAdded: 0,
+    pricesAdded: 0,
     coversAttached: 0,
     coversMissing: 0,
     skipped: [],
@@ -534,6 +585,7 @@ export async function importBooks(payload: Payload, reconciliation: Reconciliati
       if (result.cover === 'attached') summary.coversAttached++
       else summary.coversMissing++
     } else if (result.status === 'urls-added') summary.urlsAdded++
+    else if (result.status === 'prices-added') summary.pricesAdded++
     else summary.unchanged++
   }
 

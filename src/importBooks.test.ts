@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { buildBookInput, localizeTitles } from './importBooks.ts'
+import { buildBookInput, localizeTitles, newPriceRowsFor } from './importBooks.ts'
 
 import type { ImportView } from './importBooks.ts'
 
@@ -74,5 +74,43 @@ describe('buildBookInput reviewed overrides', () => {
     const input = buildBookInput('מסילת ישרים', view({ categories: { he: 'ספרים בעברית' } }), { he: 'מסילת ישרים' }, null)
 
     expect(input?.categorySlug).toBe('hebrew-books')
+  })
+
+  it('remaps a known duplicate importKey to its survivor, so a re-import merges into the same book TASK-22 kept', () => {
+    // TASK-22 merged "en:...במבצע" into "he:...(פורמט קטן)" by hand and
+    // deleted the duplicate row; see REVIEWED_DUPLICATE_IMPORT_KEY's own
+    // comment for how this pair was confirmed.
+    const input = buildBookInput(
+      'en:סידור כוונות לימות החול (פורמט קטן) במבצע',
+      view({ categories: { he: 'ספרים בעברית' } }),
+      { en: 'סידור כוונות לימות החול (פורמט קטן) במבצע' },
+      null,
+    )
+
+    expect(input?.importKey).toBe('he:סידור כוונות לימות החול (פורמט קטן)')
+  })
+})
+
+describe('newPriceRowsFor', () => {
+  it('adds a currency the existing record lacks', () => {
+    expect(newPriceRowsFor([{ amount: 50, currency: 'ILS' }], [{ amount: 30, currency: 'USD' }])).toEqual([
+      { amount: 30, currency: 'USD' },
+    ])
+  })
+
+  it('never replaces an existing currency, even at a different amount', () => {
+    expect(newPriceRowsFor([{ amount: 50, currency: 'ILS' }], [{ amount: 999, currency: 'ILS' }])).toEqual([])
+  })
+
+  it('adds nothing when every candidate currency is already present', () => {
+    expect(
+      newPriceRowsFor(
+        [
+          { amount: 50, currency: 'ILS' },
+          { amount: 30, currency: 'USD' },
+        ],
+        [{ amount: 30, currency: 'USD' }],
+      ),
+    ).toEqual([])
   })
 })
