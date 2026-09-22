@@ -2,7 +2,7 @@ import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
 import { CURRENCIES } from '../lib/currency.ts'
 import { LOCALES } from '../lib/locale.ts'
-import { FULFILMENT_STATUSES, PAYMENT_STATUSES } from '../lib/orderStatus.ts'
+import { FULFILMENT_STATUS_LABELS, FULFILMENT_STATUSES, PAYMENT_STATUS_LABELS, PAYMENT_STATUSES } from '../lib/orderStatus.ts'
 import { formatPrice } from '../lib/price.ts'
 
 /**
@@ -21,22 +21,6 @@ function setByServerOnly(description?: string) {
 }
 
 const MAJOR_UNITS_NOTE = 'סכום בשקלים/דולרים/יורו — עד שתי ספרות עשרוניות.'
-
-/** Hebrew labels for the two statuses' options. Kept beside the option lists
- * so a new status cannot be added without one. */
-const PAYMENT_STATUS_LABELS: Record<(typeof PAYMENT_STATUSES)[number], string> = {
-  pending: 'ממתין לתשלום',
-  paid: 'שולם',
-  failed: 'התשלום נכשל',
-  cancelled: 'בוטל',
-}
-
-const FULFILMENT_STATUS_LABELS: Record<(typeof FULFILMENT_STATUSES)[number], string> = {
-  new: 'חדשה',
-  packed: 'ארוזה',
-  posted: 'נשלחה',
-  collected: 'נאספה',
-}
 
 const LOCALE_LABELS: Record<(typeof LOCALES)[number], string> = { he: 'עברית', en: 'English', fr: 'Français' }
 
@@ -57,8 +41,9 @@ export const Orders: CollectionConfig = {
     plural: 'הזמנות',
   },
   admin: {
+    group: 'חנות',
     useAsTitle: 'id',
-    defaultColumns: ['orderNumber', 'createdAt', 'customer.name', 'formattedTotal', 'paymentStatus', 'fulfilmentStatus'],
+    defaultColumns: ['orderNumber', 'createdAt', 'customerName', 'customerPhone', 'formattedTotal', 'paymentStatus', 'fulfilmentStatus'],
     listSearchableFields: ['id', 'customer.name', 'customer.email', 'customer.phone'],
     components: {
       beforeListTable: ['/components/admin/OrderQuickFilters#OrderQuickFilters'],
@@ -88,6 +73,25 @@ export const Orders: CollectionConfig = {
       hooks: { afterRead: [({ data }) => data?.id ?? null] },
     },
     {
+      // A list column cannot reliably reference a nested group field
+      // (`customer.name`) — this mirrors `orderNumber` above to give the
+      // list a flat, always-renderable column instead.
+      name: 'customerName',
+      type: 'text',
+      label: 'שם הלקוח',
+      virtual: true,
+      admin: { hidden: true },
+      hooks: { afterRead: [({ data }) => data?.customer?.name ?? null] },
+    },
+    {
+      name: 'customerPhone',
+      type: 'text',
+      label: 'טלפון',
+      virtual: true,
+      admin: { hidden: true },
+      hooks: { afterRead: [({ data }) => data?.customer?.phone ?? null] },
+    },
+    {
       name: 'paymentStatus',
       type: 'select',
       label: 'סטטוס תשלום',
@@ -95,7 +99,12 @@ export const Orders: CollectionConfig = {
       defaultValue: 'pending',
       index: true,
       options: PAYMENT_STATUSES.map((value) => ({ label: PAYMENT_STATUS_LABELS[value], value })),
-      ...setByServerOnly(),
+      admin: {
+        position: 'sidebar',
+        readOnly: true,
+        components: { Cell: '/components/admin/PaymentStatusBadge#PaymentStatusBadge' },
+      },
+      access: { update: () => false },
     },
     {
       // Null until the order is paid: an abandoned checkout is a pending
@@ -107,7 +116,9 @@ export const Orders: CollectionConfig = {
       index: true,
       options: FULFILMENT_STATUSES.map((value) => ({ label: FULFILMENT_STATUS_LABELS[value], value })),
       admin: {
+        position: 'sidebar',
         condition: (data) => data.paymentStatus === 'paid',
+        components: { Cell: '/components/admin/FulfilmentStatusBadge#FulfilmentStatusBadge' },
       },
     },
     {
@@ -208,7 +219,7 @@ export const Orders: CollectionConfig = {
       type: 'text',
       label: 'סה״כ',
       virtual: true,
-      admin: { readOnly: true },
+      admin: { position: 'sidebar', readOnly: true },
       hooks: {
         afterRead: [({ data }) => (data ? formatPrice(data.total, data.currency, 'he') : null)],
       },
@@ -230,7 +241,8 @@ export const Orders: CollectionConfig = {
       label: 'שפת הלקוח',
       required: true,
       options: LOCALES.map((value) => ({ label: LOCALE_LABELS[value], value })),
-      ...setByServerOnly(),
+      admin: { position: 'sidebar', readOnly: true },
+      access: { update: () => false },
     },
     { name: 'provider', type: 'text', label: 'ספק תשלום', required: true, ...setByServerOnly() },
     { name: 'providerRef', type: 'text', label: 'מזהה תשלום אצל הספק', index: true, ...setByServerOnly() },

@@ -11,3 +11,20 @@ export type FulfilmentStatus = (typeof FULFILMENT_STATUSES)[number]
  * the son's daily "paid, not yet posted" list. `collected` is the pickup
  * equivalent of `posted`, so neither belongs here. */
 export const FULFILMENT_OUTSTANDING_STATUSES: readonly FulfilmentStatus[] = ['new', 'packed']
+
+// Kept beside the option lists (not duplicated in the collection config and
+// the list-view badge component) so a new status cannot be added in one
+// place and forgotten in the other.
+export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
+  pending: 'ממתין לתשלום',
+  paid: 'שולם',
+  failed: 'התשלום נכשל',
+  cancelled: 'בוטל',
+}
+
+export const FULFILMENT_STATUS_LABELS: Record<FulfilmentStatus, string> = {
+  new: 'חדשה',
+  packed: 'ארוזה',
+  posted: 'נשלחה',
+  collected: 'נאספה',
+}

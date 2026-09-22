@@ -1,16 +1,9 @@
+import { adminListFilterHref } from './adminListFilters.ts'
 import { FULFILMENT_OUTSTANDING_STATUSES } from './orderStatus.ts'
 
 const ORDERS_LIST_PATH = '/admin/collections/orders'
 
 type ListFilter = { label: string; href: string }
-
-function listHref(conditions: [field: string, operator: string, value: string][]): string {
-  const query = new URLSearchParams()
-  conditions.forEach(([field, operator, value], index) => {
-    query.set(`where[and][${index}][${field}][${operator}]`, value)
-  })
-  return `${ORDERS_LIST_PATH}?${query}`
-}
 
 /**
  * The order list's one-click views, as links into Payload's own list
@@ -21,10 +14,10 @@ export const ORDER_LIST_FILTERS: ListFilter[] = [
   { label: 'כל ההזמנות', href: ORDERS_LIST_PATH },
   {
     label: 'שולם, טרם נשלח',
-    href: listHref([
+    href: adminListFilterHref(ORDERS_LIST_PATH, [
       ['paymentStatus', 'equals', 'paid'],
       ['fulfilmentStatus', 'in', FULFILMENT_OUTSTANDING_STATUSES.join(',')],
     ]),
   },
-  { label: 'ממתין לתשלום', href: listHref([['paymentStatus', 'equals', 'pending']]) },
+  { label: 'ממתין לתשלום', href: adminListFilterHref(ORDERS_LIST_PATH, [['paymentStatus', 'equals', 'pending']]) },
 ]

@@ -10,6 +10,7 @@ export const Lessons: CollectionConfig = {
     plural: 'שיעורים',
   },
   admin: {
+    group: 'תוכן',
     useAsTitle: 'title',
     defaultColumns: ['title', 'series', 'recordedAt', 'language'],
   },

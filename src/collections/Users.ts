@@ -16,6 +16,7 @@ export const Users: CollectionConfig = {
   // instruction after production briefly carried a real password.
   auth: { disableLocalStrategy: { enableFields: true } },
   admin: {
+    group: 'מערכת',
     useAsTitle: 'email',
     defaultColumns: ['email', 'role'],
   },
