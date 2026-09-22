@@ -10,8 +10,10 @@
   Padua replica is unique worldwide to the institute rather than presenting it as independently
   verified.
 - Added Beit Ramhal to the desktop header, mobile sheet and footer navigation in all locales.
-- Produced four web-ready WebP derivatives from the supplied source photographs: a 16:9 teaching
-  hero, sanctuary, exterior and ark. Together they weigh about 687 KB.
+- Produced ten web-ready WebP derivatives from all supplied source photographs: a 16:9 teaching
+  hero, sanctuary, exterior and ark, plus six gallery images. Together they weigh about 1.6 MB.
+- Added a responsive shadcn/Embla carousel with localized captions and controls, touch and keyboard
+  navigation, locale-aware direction, looping, and one, two or three visible images by breakpoint.
 
 ## What was verified and how
 
@@ -20,10 +22,10 @@
 - Convention scans: no raw inputs, selects or buttons under the storefront/frontend paths, and no
   physical left/right spacing utilities in the touched layout files.
 - Visual QA: inspected Hebrew RTL and English LTR at 1269 px desktop and 390 × 844 mobile widths.
-  Checked navigation fit, hero cropping, statistic wrapping, card stacking, image loading and the
-  closing gallery.
+  Checked navigation fit, hero cropping, statistic wrapping, card stacking, image loading, carousel
+  direction and controls, and the closing gallery.
 - Accessibility surface: the page exposes one h1, ordered h2 sections, descriptive image text,
-  a real list for subjects and a named schedule link.
+  a real list for subjects, a labelled carousel with localized controls, and a named schedule link.
 
 ## What felt wrong
 

@@ -9,6 +9,7 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import { Separator } from '@/components/ui/separator'
 import { isLocale } from '@/lib/locale'
 import { localePath } from '@/lib/routes'
@@ -45,6 +46,19 @@ const CONTENT = {
       { title: 'קהילה', description: 'בית כנסת פעיל לתפילה ולחיי קהילה.' },
       { title: 'לימוד', description: 'כולל, בית מדרש וחדרי שיעורים ללימוד מתמשך.' },
       { title: 'המכון', description: 'משרדי מכון רמח״ל ומרכז מפעל ההוצאה לאור.' },
+    ],
+    galleryTitle: 'מראות מבית רמח״ל',
+    galleryDescription: 'המפגש בין זיכרון פדובה, אומנות בית הכנסת וחיי בית המדרש.',
+    galleryLabel: 'גלריית בית רמח״ל',
+    previousImage: 'לתמונה הקודמת',
+    nextImage: 'לתמונה הבאה',
+    galleryImages: [
+      { src: '/beit-ramhal/padua-ark.webp', caption: 'פרט מתיעוד בית הכנסת בפדובה' },
+      { src: '/beit-ramhal/padua-details.webp', caption: 'הקשתות והעיטורים הפדובאיים' },
+      { src: '/beit-ramhal/sanctuary-ark.webp', caption: 'מבט אל ארון הקודש' },
+      { src: '/beit-ramhal/sanctuary-gallery.webp', caption: 'עבודת העץ לאורך עזרת התפילה' },
+      { src: '/beit-ramhal/bimah.webp', caption: 'הבימה והחלון הירושלמי' },
+      { src: '/beit-ramhal/teaching-close.webp', caption: 'שיעור בבית המדרש' },
     ],
     closingTitle: 'מסורת שנכנסים לתוכה',
     closingBody: 'האדריכלות מחברת בין פדובה לירושלים; הלימוד והתפילה הם שהופכים את המבנה לבית.',
@@ -84,6 +98,19 @@ const CONTENT = {
       { title: 'Study', description: 'A kollel, beit midrash and classrooms for sustained learning.' },
       { title: 'Institute', description: 'The offices of Machon Ramhal and the centre of its publishing work.' },
     ],
+    galleryTitle: 'Inside Beit Ramhal',
+    galleryDescription: 'Where the memory of Padua, the craftsmanship of the synagogue and the life of the beit midrash meet.',
+    galleryLabel: 'Beit Ramhal gallery',
+    previousImage: 'Previous image',
+    nextImage: 'Next image',
+    galleryImages: [
+      { src: '/beit-ramhal/padua-ark.webp', caption: 'A detail from the record of the Padua synagogue' },
+      { src: '/beit-ramhal/padua-details.webp', caption: 'The arches and ornament of the Padua original' },
+      { src: '/beit-ramhal/sanctuary-ark.webp', caption: 'A view towards the Torah ark' },
+      { src: '/beit-ramhal/sanctuary-gallery.webp', caption: 'Woodwork along the prayer hall' },
+      { src: '/beit-ramhal/bimah.webp', caption: 'The bimah and its Jerusalem window' },
+      { src: '/beit-ramhal/teaching-close.webp', caption: 'A class in the beit midrash' },
+    ],
     closingTitle: 'A tradition you can enter',
     closingBody: 'The architecture connects Padua and Jerusalem; study and prayer are what turn the building into a home.',
     exteriorAlt: 'The exterior of Beit Ramhal in Har Nof, Jerusalem',
@@ -121,6 +148,19 @@ const CONTENT = {
       { title: 'Communauté', description: 'Une synagogue active pour la prière et la vie communautaire.' },
       { title: 'Étude', description: 'Un kollel, un beit hamidrach et des salles pour une étude suivie.' },
       { title: 'Institut', description: 'Les bureaux de l’Institut Ramhal et le centre de son travail éditorial.' },
+    ],
+    galleryTitle: 'À l’intérieur de Beit Ramhal',
+    galleryDescription: 'Là où se rencontrent la mémoire de Padoue, le travail d’art de la synagogue et la vie du beit hamidrach.',
+    galleryLabel: 'Galerie de Beit Ramhal',
+    previousImage: 'Image précédente',
+    nextImage: 'Image suivante',
+    galleryImages: [
+      { src: '/beit-ramhal/padua-ark.webp', caption: 'Un détail du témoignage sur la synagogue de Padoue' },
+      { src: '/beit-ramhal/padua-details.webp', caption: 'Les arcs et les ornements du modèle de Padoue' },
+      { src: '/beit-ramhal/sanctuary-ark.webp', caption: 'Vue vers l’arche sainte' },
+      { src: '/beit-ramhal/sanctuary-gallery.webp', caption: 'Le travail du bois dans la salle de prière' },
+      { src: '/beit-ramhal/bimah.webp', caption: 'La bimah et sa fenêtre sur Jérusalem' },
+      { src: '/beit-ramhal/teaching-close.webp', caption: 'Un cours au beit hamidrach' },
     ],
     closingTitle: 'Une tradition dans laquelle entrer',
     closingBody: 'L’architecture relie Padoue à Jérusalem ; l’étude et la prière font du bâtiment une maison.',
@@ -270,6 +310,38 @@ export default async function BeitRamhalPage({ params }: PageProps<'/[locale]/be
               </Card>
             )
           })}
+        </div>
+      </section>
+
+      <section className="border-y border-border bg-paper-deep">
+        <div className="page-container py-16">
+          <SectionHeading>{content.galleryTitle}</SectionHeading>
+          <p className="mb-8 max-w-2xl text-lg leading-relaxed text-muted-foreground">{content.galleryDescription}</p>
+          <Carousel
+            aria-label={content.galleryLabel}
+            opts={{ align: 'start', direction: locale === 'he' ? 'rtl' : 'ltr', loop: true }}
+          >
+            <CarouselContent>
+              {content.galleryImages.map((image) => (
+                <CarouselItem key={image.src} className="basis-[88%] sm:basis-1/2 lg:basis-1/3">
+                  <figure className="overflow-hidden rounded-[2px] border border-gold bg-card">
+                    <AspectRatio ratio={4 / 3} className="overflow-hidden bg-muted">
+                      <Image
+                        src={image.src}
+                        alt={image.caption}
+                        fill
+                        sizes="(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 88vw"
+                        className="object-cover"
+                      />
+                    </AspectRatio>
+                    <figcaption className="border-t border-border px-4 py-3 text-sm text-muted-foreground">{image.caption}</figcaption>
+                  </figure>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselPrevious label={content.previousImage} />
+            <CarouselNext label={content.nextImage} />
+          </Carousel>
         </div>
       </section>
 
