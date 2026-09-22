@@ -525,3 +525,81 @@ The `cd-dvd` category and 28 books (10 filed under it, 18 more identifiable by "
 in the title) were deleted from the database, the category is no longer seeded, and the importer
 skips both (`DISCONTINUED_CATEGORY_SLUGS`, `isRecordedMediaTitle`) so a re-import cannot bring
 them back. Orders keep their own snapshot of what was sold, so past orders are unaffected.
+
+## 19. Google sign-in for the admin panel (22 September 2026)
+
+§16 left this open: "if staff genuinely require Google sign-in... the auth design should be
+revisited." They do — the son should never have to remember a password.
+
+**Rejected: Payload's enterprise SSO product.** Negotiated pricing, and a licence that can lapse
+is exactly what §5/§10 rule out — nothing recurring, nothing that degrades the product when
+unpaid.
+
+**Accepted: `payload-oauth2`** (WilsonLe, MIT), via `auth.strategies` — a first-party extension
+socket on the collection (`node_modules/payload/dist/auth/types.d.ts`), the same shape as the
+`PaymentAdapter` interface already accepted in §5. Pinned to an exact version
+(`"payload-oauth2": "1.0.21"`, no caret) in `package.json`: it is a single-maintainer auth
+package, and an upgrade to it is a diff to read, not a number to bump. `jose` is added as a
+direct dependency for the same reason — the plugin imports it while declaring no runtime
+dependency of its own, living off Payload's transitive copy today; that breaks silently the day
+Payload's own dependency moves.
+
+**Four defences, and what each one defends against:**
+
+1. **`onUserNotFoundBehavior: 'error'`**, not the plugin's default `'create'`. The default would
+   create a user row — with `Users.role` defaulting to `'editor'` — for *any* Google account that
+   completed the flow. This is the difference between "an allowlist" and "an invite link."
+2. **`allowOnlyListedAdmins`, a `beforeLogin` hook, the only gate.** It throws Payload's
+   `Forbidden` unless the authenticating email is in `ADMIN_ALLOWED_EMAILS`. Verified by reading
+   Payload's own login operation and the plugin's callback endpoint: both run the collection's
+   `beforeLogin` hook array before issuing a session, so one hook covers password login, the
+   Google callback, and REST `/api/users/login` alike. It does not live in the login UI or in
+   plugin options, because `/api/users/oauth/authorize` is a URL anyone can type regardless of
+   what the UI shows.
+3. **`email_verified` checked, and only `email` extracted** (`getGoogleUserInfo` /
+   `parseGoogleUserInfo` in `src/lib/auth/googleSignIn.ts`). The plugin writes its `getUserInfo`
+   return value straight onto the user document via `payload.update({ data: userInfo })` — so
+   `role` must never be in the blast radius of a third party's JSON, and an email Google itself
+   has not verified must never be trusted as an identity.
+4. **`useAPIKey` stays off** on `Users`. A third door is not a defence in depth, it is a second
+   thing to secure.
+
+**The local strategy is deliberately retained.** `disableLocalStrategy` is never set —
+email+password is Emanuel's break-glass path if Google, this laptop's Google Cloud project, or
+the son's Google account is ever unavailable.
+
+**This amends §3.** A second editor is no longer addable from the admin UI alone — Users' `create`
+access already required an existing admin, but a *login-capable* admin now also takes an
+environment change (`ADMIN_ALLOWED_EMAILS`) plus a redeploy, not just a form. The trade: the
+allowlist is the one thing that must stay correct for anyone — including Emanuel — to get in at
+all, and an attacker holding a session cannot edit it from inside the admin UI, because it is not
+in the admin UI. If `ADMIN_ALLOWED_EMAILS` is ever wiped in Vercel, nobody can log in, including
+Emanuel — that is the correct failure direction (closed, not open), and it is written down here so
+whoever finds a locked-out deployment knows where to look.
+
+**A real, verified cost, not assumed:** `payload-oauth2` adds a `sub` text/indexed field to the
+Users collection unconditionally whenever it is enabled, regardless of `useEmailAsIdentity`
+(`modify-auth-collection.js` — there is no plugin option to suppress it). With this repo's
+`push: false` (§1/TASK-01: schema comes from committed migrations only, in every environment),
+that is a real migration, not a config-only change — confirmed by generating one
+(`20260922_062811_google_sign_in.ts`: one additive column, one index) and applying it. The field
+is never read, since `useEmailAsIdentity: true` looks users up by email, but it exists in the
+schema regardless.
+
+**Also verified, and worth recording plainly:** the package's compiled output re-exports sibling
+modules without a `.js` extension (`payload-oauth2/dist/index.js`), which Node's native ESM
+resolver refuses. This is the exact class of bug §15 documents for Payload's own CLI — Next's
+bundler tolerates it, raw Node does not. It surfaced in this repo's Vitest integration tests
+(which boot the real Payload config under Node), fixed by telling Vite to inline and resolve the
+package itself instead of externalising it to Node (`vitest.config.ts`, `test.server.deps.inline`).
+`next dev` and `next build`, which go through Turbopack/webpack, were never affected.
+
+**Google sign-in does not work on Vercel preview deployments.** The redirect URI is registered
+against the exact production URL in the Google Cloud console; a preview URL is a different
+origin. This is not worked around — previews use the local-password break-glass path, same as
+local development without a configured Google client.
+
+**Not verified empirically, recorded as a gap:** whether `www.ramhal.com` will need its own
+authorised domain and redirect URI entry added at that point (it will — see the OAuth client
+`ramhal-admin` in the `machon-ramhal` Google Cloud project) was not tested against a live domain,
+since that domain is not yet in use.
