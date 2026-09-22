@@ -3,6 +3,15 @@
 // the exact legacy product URL recorded by both the asset audit and each book;
 // titles are deliberately not used as identifiers because the legacy
 // catalogue contains near-duplicates and punctuation variants.
+//
+// Run through vite-node (npm run import:prepared-covers), not plain node —
+// see scripts/import-books.mjs's own comment for why loading
+// src/payload.config.ts requires it since payload-oauth2 entered the config.
+// The config is loaded with a dynamic `await import(...)` below rather than
+// a static one so it runs after process.loadEnvFile, not before — but that
+// also moves it out of vite-node's default `test.server.deps.inline`
+// coverage, which is why the npm script adds `--options.deps.inline`
+// explicitly rather than relying on `-c vitest.config.ts` alone.
 import { readFile } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 

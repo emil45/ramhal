@@ -18,8 +18,8 @@
     "db:migrate": "node scripts/migrate.mjs",
     "migrate:create": "node scripts/dev-migrate.mjs create",
     "seed": "node scripts/seed.mjs",
-    "import:books": "node scripts/import-books.mjs",
-    "import:prepared-covers": "node scripts/import-prepared-covers.mjs"
+    "import:books": "vite-node -c vitest.config.ts --options.deps.inline=payload-oauth2 scripts/import-books.mjs",
+    "import:prepared-covers": "vite-node -c vitest.config.ts --options.deps.inline=payload-oauth2 scripts/import-prepared-covers.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -51,6 +51,7 @@
     "eslint-config-next": "16.3.4",
     "tailwindcss": "^4",
     "typescript": "^5",
+    "vite-node": "^3.2.4",
     "vitest": "^3.2.7"
   },
   "overrides": {
