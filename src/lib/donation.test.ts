@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { parsePaypalDonationUrl } from '@/lib/donation'
+import { parsePaypalDonationUrl, resolvePaypalDonationUrl } from '@/lib/donation'
 
 describe('parsePaypalDonationUrl', () => {
   it('uses the placeholder state when no link has been configured', () => {
@@ -19,5 +19,15 @@ describe('parsePaypalDonationUrl', () => {
     expect(() => parsePaypalDonationUrl('http://paypal.com/donate')).toThrow(/HTTPS/)
     expect(() => parsePaypalDonationUrl('https://paypal.com.example.org/donate')).toThrow(/paypal\.com/)
     expect(() => parsePaypalDonationUrl('not a URL')).toThrow(/valid HTTPS/)
+  })
+})
+
+describe('resolvePaypalDonationUrl', () => {
+  const donationUrl = 'https://www.paypal.com/donate/?hosted_button_id=example'
+
+  it('activates a configured link only in production', () => {
+    expect(resolvePaypalDonationUrl(donationUrl, 'production')).toBe(donationUrl)
+    expect(resolvePaypalDonationUrl(donationUrl, 'demo')).toBeNull()
+    expect(resolvePaypalDonationUrl(donationUrl, 'development')).toBeNull()
   })
 })

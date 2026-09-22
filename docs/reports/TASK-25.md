@@ -12,7 +12,8 @@
   mobile treatment below `xl` so the additional item does not crowd longer French and English labels.
 - Added optional `PAYPAL_DONATION_URL` configuration. With no verified URL configured, the page
   shows an explicit disabled placeholder; a valid HTTPS `paypal.com` or `paypal.me` URL turns it
-  into the external donation action after the next deployment.
+  into the external donation action on an `APP_ENV=production` deployment. Development and demo
+  builds keep the placeholder because those environments promise that no money changes hands.
 - Added a tested locale-aware donation route helper and tested PayPal URL validation.
 
 ## What was verified and how
@@ -40,5 +41,6 @@
 
 ## What is still open
 
-- Add the institute's verified hosted donation URL as `PAYPAL_DONATION_URL` in Vercel and redeploy.
-  The URL must use HTTPS on `paypal.com` or `paypal.me`.
+- Add the institute's verified hosted donation URL as `PAYPAL_DONATION_URL` to the real
+  `APP_ENV=production` deployment and redeploy. The URL must use HTTPS on `paypal.com` or
+  `paypal.me`.

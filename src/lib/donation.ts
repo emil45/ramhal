@@ -1,3 +1,7 @@
+import { readAppEnvironment } from '@/lib/appEnvironment'
+
+import type { AppEnvironment } from '@/lib/appEnvironment'
+
 const PAYPAL_HOSTS = ['paypal.com', 'paypal.me'] as const
 
 function isPaypalHost(hostname: string): boolean {
@@ -27,6 +31,11 @@ export function parsePaypalDonationUrl(value: string | undefined): string | null
   return url.toString()
 }
 
+export function resolvePaypalDonationUrl(value: string | undefined, appEnvironment: AppEnvironment): string | null {
+  const donationUrl = parsePaypalDonationUrl(value)
+  return appEnvironment === 'production' ? donationUrl : null
+}
+
 export function readPaypalDonationUrl(): string | null {
-  return parsePaypalDonationUrl(process.env.PAYPAL_DONATION_URL)
+  return resolvePaypalDonationUrl(process.env.PAYPAL_DONATION_URL, readAppEnvironment())
 }
