@@ -144,7 +144,7 @@ export const Books: CollectionConfig = {
           min: 0,
           validate: validateMoneyAmount,
           admin: {
-            description: 'Major units (shekels/dollars/euros), e.g. 55 or 55.50 — at most two decimal places.',
+            description: 'סכום בשקלים/דולרים/יורו (למשל 55 או 55.50) — עד שתי ספרות עשרוניות.',
           },
         },
       ],

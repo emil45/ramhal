@@ -68,7 +68,7 @@ export const ShippingSettings: GlobalConfig = {
               min: 0,
               validate: validateMoneyAmount,
               admin: {
-                description: 'Major units (shekels/dollars/euros), e.g. 30 or 30.50 — at most two decimal places.',
+                description: 'סכום בשקלים/דולרים/יורו (למשל 30 או 30.50) — עד שתי ספרות עשרוניות.',
               },
             },
           ],

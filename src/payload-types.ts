@@ -228,7 +228,7 @@ export interface Book {
   prices: {
     currency: 'ILS' | 'EUR' | 'USD';
     /**
-     * Major units (shekels/dollars/euros), e.g. 55 or 55.50 — at most two decimal places.
+     * סכום בשקלים/דולרים/יורו (למשל 55 או 55.50) — עד שתי ספרות עשרוניות.
      */
     amount: number;
     id?: string | null;
@@ -562,7 +562,7 @@ export interface Order {
     book?: (number | null) | Book;
     title: string;
     /**
-     * Major units (shekels/dollars/euros), at most two decimal places.
+     * סכום בשקלים/דולרים/יורו — עד שתי ספרות עשרוניות.
      */
     unitPrice: number;
     currency: 'ILS' | 'EUR' | 'USD';
@@ -572,15 +572,15 @@ export interface Order {
   }[];
   currency: 'ILS' | 'EUR' | 'USD';
   /**
-   * Major units (shekels/dollars/euros), at most two decimal places.
+   * סכום בשקלים/דולרים/יורו — עד שתי ספרות עשרוניות.
    */
   subtotal: number;
   /**
-   * Major units (shekels/dollars/euros), at most two decimal places.
+   * סכום בשקלים/דולרים/יורו — עד שתי ספרות עשרוניות.
    */
   shippingCost: number;
   /**
-   * Major units (shekels/dollars/euros), at most two decimal places.
+   * סכום בשקלים/דולרים/יורו — עד שתי ספרות עשרוניות.
    */
   total: number;
   formattedTotal?: string | null;
@@ -1185,7 +1185,7 @@ export interface ShippingSetting {
     tiers: {
       minUnits: number;
       /**
-       * Major units (shekels/dollars/euros), e.g. 30 or 30.50 — at most two decimal places.
+       * סכום בשקלים/דולרים/יורו (למשל 30 או 30.50) — עד שתי ספרות עשרוניות.
        */
       amount: number;
       id?: string | null;

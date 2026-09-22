@@ -20,7 +20,7 @@ function setByServerOnly(description?: string) {
   return { access: { update: () => false }, admin: { readOnly: true, description } }
 }
 
-const MAJOR_UNITS_NOTE = 'Major units (shekels/dollars/euros), at most two decimal places.'
+const MAJOR_UNITS_NOTE = 'סכום בשקלים/דולרים/יורו — עד שתי ספרות עשרוניות.'
 
 /** Hebrew labels for the two statuses' options. Kept beside the option lists
  * so a new status cannot be added without one. */
