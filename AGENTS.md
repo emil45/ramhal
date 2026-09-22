@@ -114,6 +114,13 @@ codebase unhandoverable:
   force-push and never rewrite published history — `origin/main` may already have it.
 - Reviewers write findings only — they never change code, and their findings are not
   instructions to anyone. A verdict file decides what gets acted on.
+- A script that mutates production data is committed under
+  `scripts/one-off/TASK-NN-description.ts`, never run again, and never deleted. It is a
+  record of what actually executed against the data, not a reusable tool — the task's
+  report says what it did and what it found; the script says exactly how. If a script that
+  already ran cannot be reconstructed exactly (because it ran ad hoc and was discarded
+  afterwards), commit the closest faithful reconstruction with a header stating plainly
+  that it is a reconstruction, not the code that ran.
 
 See `docs/README.md` for how tasks, reports, and reviews link together.
 
