@@ -128,16 +128,7 @@ async function upsertFlyer(payload) {
   })
 
   const media = existing.docs[0]
-    ? await payload.update({
-        collection: 'media',
-        id: existing.docs[0].id,
-        locale: 'he',
-        data: { alt: FLYER_ALT.he },
-        filePath: FLYER_FILE_PATH,
-        // A database row can outlive ignored local files or point at an empty
-        // object-storage key. Re-seeding must restore bytes, not only metadata.
-        overwriteExistingFiles: true,
-      })
+    ? await payload.update({ collection: 'media', id: existing.docs[0].id, locale: 'he', data: { alt: FLYER_ALT.he } })
     : await payload.create({ collection: 'media', locale: 'he', data: { alt: FLYER_ALT.he }, filePath: FLYER_FILE_PATH })
 
   for (const locale of LOCALES.slice(1)) {
