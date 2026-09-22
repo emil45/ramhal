@@ -94,6 +94,12 @@ codebase unhandoverable:
   fallback, slug generation. Not UI.
 - Tests describe behaviour, not implementation.
 
+**Verification**
+
+- A claim about production must be established through the live URL or through something the
+  running application reports about itself — never from a database tool connection alone,
+  however it is labelled. See DECISIONS §20.
+
 **Commits**
 
 - Small, single-purpose, conventional commits. A reviewer should be able to read the log
