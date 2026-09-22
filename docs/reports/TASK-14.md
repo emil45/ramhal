@@ -6,9 +6,8 @@
   metadata and a responsive RTL-first editorial layout.
 - Reworked the legacy copy into separate beit midrash and synagogue narratives, a study-subject
   panel, building-use cards, historical statistics and a link to the live site schedule.
-- Clearly labels the kollel and attendance figures as 2015 data, and attributes the claim that the
-  Padua replica is unique worldwide to the institute rather than presenting it as independently
-  verified.
+- Presents the kollel, attendance and Padua-replica details directly in the institute's own voice,
+  without exposing migration notes or third-person attribution to visitors.
 - Added Beit Ramhal to the desktop header, mobile sheet and footer navigation in all locales.
 - Produced ten web-ready WebP derivatives from all supplied source photographs: a 16:9 teaching
   hero, sanctuary, exterior and ark, plus six gallery images. Together they weigh about 1.6 MB.
@@ -29,8 +28,8 @@
 
 ## What felt wrong
 
-- The legacy copy presents decade-old attendance figures alongside timeless institutional facts.
-  The page preserves those figures only as explicitly dated historical context.
+- The supplied attendance figures are retained as institutional copy without adding editorial
+  caveats that would sound out of place on the institute's own website.
 - The supplied exterior photograph is visibly older and softer than the recent teaching image;
   careful sizing keeps it useful without asking it to carry the hero.
 
