@@ -170,6 +170,33 @@ function deriveBookLanguage(categories: Partial<Record<SiteKey, string | null>>,
   return 'unknown'
 }
 
+/**
+ * A title's key in `titles` is the SITE it was scraped from, not the
+ * language of the text — the son's Hebrew books are sometimes cross-listed
+ * on the French or English legacy storefronts with no separate Hebrew-site
+ * entry, so `titles` can hold `{ fr: "<hebrew text>" }` with no `he` key at
+ * all. Writing that straight to Payload's `fr` locale, as the site key
+ * suggests, buried the book's actual (Hebrew) title where the admin's
+ * default Hebrew locale would never see it — found via TASK-20's data
+ * audit, docs/reports/TASK-20.md. This reassigns any Hebrew-script title to
+ * the `he` locale regardless of which site it came from; the first one
+ * found wins per locale, so a book already correctly matched to a real `he`
+ * site entry is untouched, and a duplicate Hebrew string on a second site is
+ * dropped rather than also written under that site's own key — a missing
+ * translation must read as absent, not backfilled with the same Hebrew text
+ * relabelled as French or English.
+ */
+export function localizeTitles(titles: Partial<Record<SiteKey, string>>): Partial<Record<SiteKey, string>> {
+  const result: Partial<Record<SiteKey, string>> = {}
+  for (const site of Object.keys(titles) as SiteKey[]) {
+    const title = titles[site]
+    if (title === undefined) continue
+    const locale: SiteKey = HAS_HEBREW.test(title) ? 'he' : site
+    if (!(locale in result)) result[locale] = title
+  }
+  return result
+}
+
 const SITE_PREFERENCE: SiteKey[] = ['he', 'fr', 'en']
 
 /**
@@ -233,14 +260,15 @@ function isSiteKey(language: BookLanguage): language is SiteKey {
   return language !== 'unknown'
 }
 
-function buildBookInput(importKey: string, view: ImportView, titles: Partial<Record<SiteKey, string>>, reviewNote: string | null): BookInput | null {
+function buildBookInput(importKey: string, view: ImportView, rawTitles: Partial<Record<SiteKey, string>>, reviewNote: string | null): BookInput | null {
   const prices = priceRows(view.prices)
   if (prices.length === 0) return null // nothing to import — see the report for how many, if any
 
   const shelf = categorySlugOf(view.categories)
   if (shelf && DISCONTINUED_CATEGORY_SLUGS.includes(shelf)) return null
-  if (Object.values(titles).some(isRecordedMediaTitle)) return null
+  if (Object.values(rawTitles).some(isRecordedMediaTitle)) return null
 
+  const titles = localizeTitles(rawTitles)
   const bookLanguage = deriveBookLanguage(view.categories, Object.values(titles))
 
   const reasons: ReviewReason[] = []
