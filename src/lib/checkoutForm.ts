@@ -1,3 +1,5 @@
+import { hasAtMostTwoDecimalPlaces } from '@/lib/validateMoneyAmount'
+
 export type CheckoutFormValues = {
   name: string
   email: string
@@ -5,10 +7,10 @@ export type CheckoutFormValues = {
   countryCode: string
   isPickup: boolean
   address: { line1: string; line2: string; city: string; postalCode: string }
-  /** The total the customer was looking at when they submitted. Never used to
-   * price the order — only compared against the server's own total, so a
-   * price that changed between page load and submit is caught rather than
-   * silently charged. */
+  /** The total the customer was looking at when they submitted, in major
+   * units (shekels/dollars/euros). Never used to price the order — only
+   * compared against the server's own total, so a price that changed between
+   * page load and submit is caught rather than silently charged. */
   expectedTotal: number
 }
 
@@ -80,7 +82,9 @@ export function parseCheckoutForm(source: FormSource): CheckoutFormResult {
 
   const expectedTotalText = readText(source, 'expectedTotal')
   const expectedTotal = Number(expectedTotalText)
-  if (!expectedTotalText || !Number.isInteger(expectedTotal) || expectedTotal < 0) errors.expectedTotal = 'invalid'
+  if (!expectedTotalText || !Number.isFinite(expectedTotal) || expectedTotal < 0 || hasAtMostTwoDecimalPlaces(expectedTotal) !== true) {
+    errors.expectedTotal = 'invalid'
+  }
 
   if (Object.keys(errors).length > 0) return { ok: false, errors }
 

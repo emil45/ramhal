@@ -21,7 +21,7 @@ import type { Book, Order } from '@/payload-types'
 // Real database — see src/test/checkoutFixtures.ts. The UNIQUE constraint on
 // paymentEvents.providerEventId is what these tests lean on: nothing here
 // would pass against an "if already paid" check in application code.
-const ISRAEL_TOTAL = 5500 + 3000
+const ISRAEL_TOTAL = 55 + 30
 
 const run = startTestRun()
 let book: Book

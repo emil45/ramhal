@@ -1,7 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { CURRENCIES } from '../lib/currency.ts'
-import { validateMoneyAmount } from '../lib/validateIntegerAmount.ts'
+import { validateMoneyAmount } from '../lib/validateMoneyAmount.ts'
 
 // The shipping rules engine, editable by the son. Payload's ecommerce plugin
 // ships no shipping logic at all (verified — see docs/DECISIONS.md §5), so
@@ -68,7 +68,7 @@ export const ShippingSettings: GlobalConfig = {
               min: 0,
               validate: validateMoneyAmount,
               admin: {
-                description: 'Minor units (agorot/cents) as an integer — never a float.',
+                description: 'Major units (shekels/dollars/euros), e.g. 30 or 30.50 — at most two decimal places.',
               },
             },
           ],

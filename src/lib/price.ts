@@ -21,9 +21,20 @@ export function selectPrice(item: PricedItem, currency: Currency): number | null
   return match ? match.amount : null
 }
 
-/** Minor units (agorot/cents) to a localized display string, e.g. 5500 → "₪55.00". */
-export function formatPrice(amountMinorUnits: number, currency: Currency, locale: Locale): string {
-  return new Intl.NumberFormat(LOCALE_CONFIG[locale].intlTag, { style: 'currency', currency }).format(
-    amountMinorUnits / 100,
-  )
+/** A major-unit amount (shekels/dollars/euros) to a localized display string,
+ * e.g. 55 → "₪55.00". */
+export function formatPrice(amount: number, currency: Currency, locale: Locale): string {
+  return new Intl.NumberFormat(LOCALE_CONFIG[locale].intlTag, { style: 'currency', currency }).format(amount)
+}
+
+/**
+ * Rounds a computed money value (a sum or product of major-unit amounts) back
+ * to its currency's two decimal places, so float arithmetic never leaves a
+ * value like 59.97000000000001 sitting in an order total or a hidden form
+ * field. Every derived money value — a line total, a subtotal, an order
+ * total — must be rounded through this before it is stored, compared, or
+ * sent to the browser.
+ */
+export function roundMoney(amount: number): number {
+  return Math.round(amount * 100) / 100
 }

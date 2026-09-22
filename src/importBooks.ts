@@ -276,7 +276,9 @@ function priceRows(prices: Partial<Record<SiteKey, Price | null>>): { amount: nu
     if (!price) continue
     const currency = CURRENCY_CODE[price.currency]
     if (!currency) continue
-    rows.push({ amount: Math.round(price.value * 100), currency })
+    // Prices scrape as major-unit decimals already (e.g. 55.00); round to the
+    // cent to drop any float noise from the scraper's own parsing.
+    rows.push({ amount: Math.round(price.value * 100) / 100, currency })
   }
   return rows
 }

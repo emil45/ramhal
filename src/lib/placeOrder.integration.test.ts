@@ -9,8 +9,8 @@ import type { Book } from '@/payload-types'
 
 // Real database, real Local API — see src/test/checkoutFixtures.ts. Israel
 // shipping is seeded at ₪30 for fewer than 10 units.
-const ISRAEL_SHIPPING = 3000
-const BOOK_PRICE = 5500
+const ISRAEL_SHIPPING = 30
+const BOOK_PRICE = 55
 
 const run = startTestRun()
 const books: Book[] = []
@@ -29,7 +29,7 @@ const cartOf = (quantity: number) => [{ bookId: book.id, quantity }]
 
 describe('placeOrder', () => {
   it('rejects a client total that does not match the database, and creates no order', async () => {
-    const tamperedTotal = 1 // the client claims the two books cost one agora
+    const tamperedTotal = 0.01 // the client claims the two books cost one agora
 
     const result = await placeOrder({ cart: cartOf(2), form: checkoutFormFor(run, tamperedTotal), locale: 'he' })
 
@@ -74,7 +74,7 @@ describe('placeOrder', () => {
     await payload.update({
       collection: 'books',
       id: soldBook.id,
-      data: { prices: [{ currency: 'ILS', amount: 9900 }] },
+      data: { prices: [{ currency: 'ILS', amount: 99 }] },
     })
     await payload.delete({ collection: 'books', id: soldBook.id })
 
@@ -100,12 +100,12 @@ describe('placeOrder', () => {
   })
 
   it('fails naming the book when it has no price in the shopper\'s currency', async () => {
-    const eurOnly = await createTestBook(run, { title: `ספר באירו בלבד ${run.id}`, prices: [{ currency: 'EUR', amount: 1800 }] })
+    const eurOnly = await createTestBook(run, { title: `ספר באירו בלבד ${run.id}`, prices: [{ currency: 'EUR', amount: 18 }] })
     books.push(eurOnly)
 
     const result = await placeOrder({
       cart: [{ bookId: eurOnly.id, quantity: 1 }],
-      form: checkoutFormFor(run, 1800 + ISRAEL_SHIPPING),
+      form: checkoutFormFor(run, 18 + ISRAEL_SHIPPING),
       locale: 'he',
     })
 

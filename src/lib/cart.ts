@@ -1,4 +1,4 @@
-import { selectPrice } from '@/lib/price'
+import { roundMoney, selectPrice } from '@/lib/price'
 
 import type { Currency } from '@/lib/currency'
 import type { ShippingZone } from '@/lib/shipping'
@@ -22,7 +22,7 @@ export function cartUnits(lines: CartLine[]): number {
  * the mechanism that enforces purchasability.
  */
 export function cartSubtotal(lines: CartLine[], currency: Currency): number {
-  return lines.reduce((sum, line) => sum + (selectPrice(line.book, currency) ?? 0) * line.quantity, 0)
+  return roundMoney(lines.reduce((sum, line) => sum + (selectPrice(line.book, currency) ?? 0) * line.quantity, 0))
 }
 
 /**

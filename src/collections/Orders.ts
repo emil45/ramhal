@@ -9,9 +9,9 @@ import { formatPrice } from '../lib/price.ts'
  * A sale, as it was at the moment of sale. Written only by the server
  * (src/lib/placeOrder.ts and src/lib/payment/orderPayment.ts) — the son
  * reads orders and moves them through fulfilment; he never creates one or
- * edits what was sold and for how much. Every money field is an integer in
- * minor units, and every line snapshots its book instead of pointing at it
- * (docs/DECISIONS.md §16).
+ * edits what was sold and for how much. Every money field is a major-unit
+ * amount (shekels/dollars/euros), and every line snapshots its book instead
+ * of pointing at it (docs/DECISIONS.md §16).
  */
 
 // Nobody edits these through the admin or the REST API. The server's Local
@@ -20,7 +20,7 @@ function setByServerOnly(description?: string) {
   return { access: { update: () => false }, admin: { readOnly: true, description } }
 }
 
-const MINOR_UNITS_NOTE = 'Minor units (agorot/cents) as an integer.'
+const MAJOR_UNITS_NOTE = 'Major units (shekels/dollars/euros), at most two decimal places.'
 
 /** Hebrew labels for the two statuses' options. Kept beside the option lists
  * so a new status cannot be added without one. */
@@ -156,7 +156,7 @@ export const Orders: CollectionConfig = {
           label: 'מחיר ליחידה ששולם',
           required: true,
           min: 0,
-          admin: { description: MINOR_UNITS_NOTE },
+          admin: { description: MAJOR_UNITS_NOTE },
         },
         {
           name: 'currency',
@@ -183,7 +183,7 @@ export const Orders: CollectionConfig = {
       label: 'סכום ביניים',
       required: true,
       min: 0,
-      ...setByServerOnly(MINOR_UNITS_NOTE),
+      ...setByServerOnly(MAJOR_UNITS_NOTE),
     },
     {
       name: 'shippingCost',
@@ -191,7 +191,7 @@ export const Orders: CollectionConfig = {
       label: 'עלות משלוח',
       required: true,
       min: 0,
-      ...setByServerOnly(MINOR_UNITS_NOTE),
+      ...setByServerOnly(MAJOR_UNITS_NOTE),
     },
     {
       name: 'total',
@@ -199,11 +199,11 @@ export const Orders: CollectionConfig = {
       label: 'סה״כ',
       required: true,
       min: 0,
-      ...setByServerOnly(MINOR_UNITS_NOTE),
+      ...setByServerOnly(MAJOR_UNITS_NOTE),
     },
     {
-      // The total in a form he can read at a glance — the stored integer is
-      // agorot, and "5500" is easy to misread as ₪5,500.
+      // The total in a form he can read at a glance, with the currency
+      // symbol and thousands separators — friendlier than the raw number.
       name: 'formattedTotal',
       type: 'text',
       label: 'סה״כ',

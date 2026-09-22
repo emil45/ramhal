@@ -9,7 +9,7 @@ import type { Locale } from '@/lib/locale'
 export type PaymentRequest = {
   orderNumber: number
   currency: Currency
-  /** Minor units (agorot/cents). */
+  /** Major units (shekels/dollars/euros). */
   total: number
   /** Language to present the provider's payment page in. */
   locale: Locale

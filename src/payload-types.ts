@@ -228,7 +228,7 @@ export interface Book {
   prices: {
     currency: 'ILS' | 'EUR' | 'USD';
     /**
-     * Minor units (agorot/cents) as an integer — never a float.
+     * Major units (shekels/dollars/euros), e.g. 55 or 55.50 — at most two decimal places.
      */
     amount: number;
     id?: string | null;
@@ -562,7 +562,7 @@ export interface Order {
     book?: (number | null) | Book;
     title: string;
     /**
-     * Minor units (agorot/cents) as an integer.
+     * Major units (shekels/dollars/euros), at most two decimal places.
      */
     unitPrice: number;
     currency: 'ILS' | 'EUR' | 'USD';
@@ -572,15 +572,15 @@ export interface Order {
   }[];
   currency: 'ILS' | 'EUR' | 'USD';
   /**
-   * Minor units (agorot/cents) as an integer.
+   * Major units (shekels/dollars/euros), at most two decimal places.
    */
   subtotal: number;
   /**
-   * Minor units (agorot/cents) as an integer.
+   * Major units (shekels/dollars/euros), at most two decimal places.
    */
   shippingCost: number;
   /**
-   * Minor units (agorot/cents) as an integer.
+   * Major units (shekels/dollars/euros), at most two decimal places.
    */
   total: number;
   formattedTotal?: string | null;
@@ -1185,7 +1185,7 @@ export interface ShippingSetting {
     tiers: {
       minUnits: number;
       /**
-       * Minor units (agorot/cents) as an integer — never a float.
+       * Major units (shekels/dollars/euros), e.g. 30 or 30.50 — at most two decimal places.
        */
       amount: number;
       id?: string | null;

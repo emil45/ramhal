@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input'
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
 import { Separator } from '@/components/ui/separator'
 import { orderShippingCost } from '@/lib/orderPricing'
-import { formatPrice } from '@/lib/price'
+import { formatPrice, roundMoney } from '@/lib/price'
 import { localePath } from '@/lib/routes'
 import { calculateShipping } from '@/lib/shipping'
 
@@ -52,7 +52,7 @@ export function CheckoutForm({ countries, currency, defaultCountry, lines, local
   const pickupAllowed = quote.allowPickup
   const pickupChosen = isPickup && pickupAllowed
   const shippingCost = orderShippingCost(quote, pickupChosen)
-  const total = subtotal + shippingCost
+  const total = roundMoney(subtotal + shippingCost)
 
   // The server re-prices everything; if it found a different total than the
   // one this page showed (a price changed under the customer), re-fetch the

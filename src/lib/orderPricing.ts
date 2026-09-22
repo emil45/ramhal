@@ -1,6 +1,6 @@
 import { cartUnits } from '@/lib/cart'
 import { isPurchasable } from '@/lib/availability'
-import { selectPrice } from '@/lib/price'
+import { roundMoney, selectPrice } from '@/lib/price'
 import { calculateShipping } from '@/lib/shipping'
 
 import type { Currency } from '@/lib/currency'
@@ -118,7 +118,7 @@ export function priceOrder(input: {
     }
   })
 
-  const subtotal = snapshots.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0)
+  const subtotal = roundMoney(snapshots.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0))
   const shippingCost = orderShippingCost(quote, isPickup)
 
   return {
@@ -128,7 +128,7 @@ export function priceOrder(input: {
       lines: snapshots,
       subtotal,
       shippingCost,
-      total: subtotal + shippingCost,
+      total: roundMoney(subtotal + shippingCost),
       shippingZone: quote.zoneName,
       destinationCountry,
       isPickup,

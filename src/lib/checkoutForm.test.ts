@@ -39,10 +39,16 @@ describe('parseCheckoutForm', () => {
 
   it('needs no postal address for self-pickup', () => {
     const result = parseCheckoutForm(
-      form({ name: 'דנה', email: 'dana@example.com', phone: '0501234567', countryCode: 'IL', pickup: 'on', expectedTotal: '5500' }),
+      form({ name: 'דנה', email: 'dana@example.com', phone: '0501234567', countryCode: 'IL', pickup: 'on', expectedTotal: '55.50' }),
     )
 
     expect(result).toMatchObject({ ok: true, values: { isPickup: true } })
+  })
+
+  it('accepts an expected total with exactly two decimal places', () => {
+    const result = parseCheckoutForm(form({ ...validDelivery, expectedTotal: '12.50' }))
+
+    expect(result).toMatchObject({ ok: true, values: { expectedTotal: 12.5 } })
   })
 
   it('reports every missing required field', () => {
@@ -68,7 +74,7 @@ describe('parseCheckoutForm', () => {
     expect(result).toMatchObject({ ok: false, errors: { email: 'invalid', phone: 'invalid' } })
   })
 
-  it.each(['', 'abc', '-5', '12.5'])('rejects an expected total of "%s"', (expectedTotal) => {
+  it.each(['', 'abc', '-5', '12.555'])('rejects an expected total of "%s"', (expectedTotal) => {
     const result = parseCheckoutForm(form({ ...validDelivery, expectedTotal }))
 
     expect(result).toMatchObject({ ok: false, errors: { expectedTotal: 'invalid' } })

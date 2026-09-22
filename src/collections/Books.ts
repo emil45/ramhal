@@ -2,7 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { generateSlugFromTitle } from './hooks/generateSlugFromTitle.ts'
 import { CURRENCIES } from '../lib/currency.ts'
-import { validateMoneyAmount } from '../lib/validateIntegerAmount.ts'
+import { validateMoneyAmount } from '../lib/validateMoneyAmount.ts'
 
 const BOOK_LANGUAGES = [
   { label: 'עברית', value: 'he' },
@@ -144,7 +144,7 @@ export const Books: CollectionConfig = {
           min: 0,
           validate: validateMoneyAmount,
           admin: {
-            description: 'Minor units (agorot/cents) as an integer — never a float.',
+            description: 'Major units (shekels/dollars/euros), e.g. 55 or 55.50 — at most two decimal places.',
           },
         },
       ],

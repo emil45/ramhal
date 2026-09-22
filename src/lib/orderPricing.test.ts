@@ -10,7 +10,7 @@ const zones: ShippingZone[] = [
     name: 'ישראל',
     countries: ['IL'],
     currency: 'ILS',
-    tiers: [{ minUnits: 0, amount: 3000 }],
+    tiers: [{ minUnits: 0, amount: 30 }],
     freeAboveUnits: 10,
     allowPickup: true,
     isDefault: false,
@@ -19,7 +19,7 @@ const zones: ShippingZone[] = [
     name: 'אירופה',
     countries: ['FR', 'BE'],
     currency: 'EUR',
-    tiers: [{ minUnits: 0, amount: 5000 }],
+    tiers: [{ minUnits: 0, amount: 50 }],
     freeAboveUnits: 10,
     allowPickup: false,
     isDefault: false,
@@ -28,7 +28,7 @@ const zones: ShippingZone[] = [
     name: 'שאר העולם',
     countries: ['US'],
     currency: 'USD',
-    tiers: [{ minUnits: 0, amount: 8600 }],
+    tiers: [{ minUnits: 0, amount: 86 }],
     freeAboveUnits: 10,
     allowPickup: false,
     isDefault: true,
@@ -38,7 +38,7 @@ const zones: ShippingZone[] = [
 const book = (overrides: Partial<PricingBook> = {}): PricingBook => ({
   id: 1,
   title: 'מסילת ישרים',
-  prices: [{ amount: 5500, currency: 'ILS' }, { amount: 1800, currency: 'EUR' }],
+  prices: [{ amount: 55, currency: 'ILS' }, { amount: 18, currency: 'EUR' }],
   shippingUnits: 1,
   inStock: true,
   ...overrides,
@@ -54,7 +54,7 @@ describe('priceOrder', () => {
       ok: true,
       order: {
         currency: 'ILS',
-        lines: [{ bookId: 1, title: 'מסילת ישרים', unitPrice: 5500, currency: 'ILS', quantity: 2, shippingUnits: 1 }],
+        lines: [{ bookId: 1, title: 'מסילת ישרים', unitPrice: 55, currency: 'ILS', quantity: 2, shippingUnits: 1 }],
       },
     })
   })
@@ -62,19 +62,25 @@ describe('priceOrder', () => {
   it('adds the destination zone shipping to the subtotal', () => {
     const result = priceOrder({ ...israelDelivery, lines: [{ book: book(), quantity: 2 }] })
 
-    expect(result).toMatchObject({ ok: true, order: { subtotal: 11000, shippingCost: 3000, total: 14000, shippingZone: 'ישראל' } })
+    expect(result).toMatchObject({ ok: true, order: { subtotal: 110, shippingCost: 30, total: 140, shippingZone: 'ישראל' } })
+  })
+
+  it('rounds a float-arithmetic subtotal back to two decimal places', () => {
+    const result = priceOrder({ ...israelDelivery, lines: [{ book: book({ prices: [{ amount: 19.99, currency: 'ILS' }] }), quantity: 3 }] })
+
+    expect(result).toMatchObject({ ok: true, order: { subtotal: 59.97 } })
   })
 
   it('counts shipping units, not lines, against the free-shipping threshold', () => {
     const result = priceOrder({ ...israelDelivery, lines: [{ book: book({ shippingUnits: 5 }), quantity: 2 }] })
 
-    expect(result).toMatchObject({ ok: true, order: { shippingCost: 0, total: 11000 } })
+    expect(result).toMatchObject({ ok: true, order: { shippingCost: 0, total: 110 } })
   })
 
   it('makes self-pickup free in a zone that allows it', () => {
     const result = priceOrder({ ...israelDelivery, isPickup: true, lines: [{ book: book(), quantity: 1 }] })
 
-    expect(result).toMatchObject({ ok: true, order: { isPickup: true, shippingCost: 0, total: 5500 } })
+    expect(result).toMatchObject({ ok: true, order: { isPickup: true, shippingCost: 0, total: 55 } })
   })
 
   it('refuses self-pickup where the zone does not allow it', () => {
@@ -100,7 +106,7 @@ describe('priceOrder', () => {
       currency: 'USD',
       destinationCountry: 'AR',
       isPickup: false,
-      lines: [{ book: book({ prices: [{ amount: 2000, currency: 'USD' }] }), quantity: 1 }],
+      lines: [{ book: book({ prices: [{ amount: 20, currency: 'USD' }] }), quantity: 1 }],
       zones,
     })
 
@@ -110,7 +116,7 @@ describe('priceOrder', () => {
   it('names the book that is no longer purchasable in this currency', () => {
     const result = priceOrder({
       ...israelDelivery,
-      lines: [{ book: book({ title: 'אדיר במרום', prices: [{ amount: 1800, currency: 'EUR' }] }), quantity: 1 }],
+      lines: [{ book: book({ title: 'אדיר במרום', prices: [{ amount: 18, currency: 'EUR' }] }), quantity: 1 }],
     })
 
     expect(result).toEqual({ ok: false, problem: { kind: 'book-not-purchasable', bookTitle: 'אדיר במרום' } })

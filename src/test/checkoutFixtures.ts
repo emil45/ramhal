@@ -33,7 +33,7 @@ export async function createTestBook(
       slug: '',
       urlSlug: '',
       bookLanguage: 'he',
-      prices: overrides.prices ?? [{ currency: 'ILS', amount: 5500 }],
+      prices: overrides.prices ?? [{ currency: 'ILS', amount: 55 }],
       inStock: overrides.inStock ?? true,
       shippingUnits: overrides.shippingUnits ?? 1,
     },
