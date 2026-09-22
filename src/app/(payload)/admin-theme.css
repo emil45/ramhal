@@ -1,0 +1,72 @@
+/*
+ * Brand overrides for the admin panel. Loaded after @payloadcms/next/css in
+ * layout.tsx, deliberately OUTSIDE any @layer: Payload's own admin styles
+ * ship inside `@layer payload-default` (confirmed by reading
+ * node_modules/@payloadcms/next/dist/prod/styles.css), and an unlayered
+ * rule always wins over a layered one at equal selector weight — so this
+ * file needs no !important and no selector arms race with Payload's own.
+ *
+ * Payload's entire neutral chrome — every background, border and the
+ * "primary button" hover/active state — derives from one grayscale ramp,
+ * --color-base-0 through --color-base-1000 (confirmed the same way: there
+ * is no separate brand/primary colour token in this version). Retinting
+ * that one scale, rather than chasing individual component classes, is
+ * what actually re-colours the whole panel. The success, error and warning
+ * scales derive from their own, separate tokens and are left alone —
+ * docs/DESIGN.md keeps an error from ever looking like a brand colour, and
+ * the same reasoning applies here.
+ *
+ * The tint is deliberately light (6-14%): DESIGN.md's own `paper`/`paper-deep`
+ * are barely-tinted near-whites (oklch chroma 0.004-0.018) for the same
+ * reason — a felt warmth, not a wall of colour. See docs/DESIGN.md.
+ */
+
+:root {
+  /* Brand tokens, duplicated from src/app/(frontend)/globals.css — the
+     admin route group does not share that stylesheet, and three scalar
+     values are not worth a shared-tokens file for two consumers. If these
+     ever drift, globals.css is the source of truth (docs/DESIGN.md). */
+  --teal-deep: #004f58;
+  --paper-deep: oklch(0.955 0.018 85);
+  --gold: #b08d42;
+
+  /* Light half of the ramp (used as backgrounds in light mode, and as
+     high-contrast text/surfaces in dark mode): warmed toward paper. */
+  --color-base-0: color-mix(in oklch, rgb(255, 255, 255), var(--paper-deep) 6%);
+  --color-base-50: color-mix(in oklch, rgb(245, 245, 245), var(--paper-deep) 7%);
+  --color-base-100: color-mix(in oklch, rgb(235, 235, 235), var(--paper-deep) 7%);
+  --color-base-150: color-mix(in oklch, rgb(221, 221, 221), var(--paper-deep) 8%);
+  --color-base-200: color-mix(in oklch, rgb(208, 208, 208), var(--paper-deep) 8%);
+  --color-base-250: color-mix(in oklch, rgb(195, 195, 195), var(--paper-deep) 9%);
+  --color-base-300: color-mix(in oklch, rgb(181, 181, 181), var(--paper-deep) 9%);
+  --color-base-350: color-mix(in oklch, rgb(168, 168, 168), var(--paper-deep) 10%);
+  --color-base-400: color-mix(in oklch, rgb(154, 154, 154), var(--paper-deep) 10%);
+  --color-base-450: color-mix(in oklch, rgb(141, 141, 141), var(--paper-deep) 10%);
+
+  /* Dark half (used as text/borders/primary-button surfaces in light mode,
+     and as backgrounds in dark mode): cooled toward teal-deep. */
+  --color-base-500: color-mix(in oklch, rgb(128, 128, 128), var(--teal-deep) 10%);
+  --color-base-550: color-mix(in oklch, rgb(114, 114, 114), var(--teal-deep) 11%);
+  --color-base-600: color-mix(in oklch, rgb(101, 101, 101), var(--teal-deep) 12%);
+  --color-base-650: color-mix(in oklch, rgb(87, 87, 87), var(--teal-deep) 13%);
+  --color-base-700: color-mix(in oklch, rgb(74, 74, 74), var(--teal-deep) 14%);
+  --color-base-750: color-mix(in oklch, rgb(60, 60, 60), var(--teal-deep) 15%);
+  --color-base-800: color-mix(in oklch, rgb(47, 47, 47), var(--teal-deep) 17%);
+  --color-base-850: color-mix(in oklch, rgb(34, 34, 34), var(--teal-deep) 19%);
+  --color-base-900: color-mix(in oklch, rgb(20, 20, 20), var(--teal-deep) 21%);
+  --color-base-950: color-mix(in oklch, rgb(7, 7, 7), var(--teal-deep) 22%);
+  --color-base-1000: color-mix(in oklch, rgb(0, 0, 0), var(--teal-deep) 22%);
+
+  /* Assistant, the storefront's interface font (docs/DESIGN.md) — self-
+     hosted via next/font in layout.tsx, exposed as --font-sans on <html>. */
+  --font-body: var(--font-sans), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* The one deliberate gold touch: the active nav item's rule, exactly the
+   role gold plays throughout the storefront (DESIGN.md: "rules and
+   ornaments only... nothing gold is clickable"). Already logical-property
+   positioned (inset-inline-start) in Payload's own rule, so this inherits
+   correct RTL placement for free. */
+.nav__link-indicator {
+  background: var(--gold);
+}

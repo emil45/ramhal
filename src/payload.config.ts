@@ -44,11 +44,33 @@ const serverUrl = readServerUrl()
 export default buildConfig({
   admin: {
     user: Users.slug,
+    // Without this, Payload defaults to the browser/OS colour-scheme
+    // preference — confirmed live: this admin opened dark by default on a
+    // machine with no cookie set yet, on a dark-mode OS. There is no config
+    // for "default to light but stay togglable" in this Payload version
+    // (checked its own admin.theme type: 'all' | 'dark' | 'light', where
+    // 'all' means "follow the browser," not "default to X"). One
+    // predictable theme for one non-technical user beats a panel whose
+    // colours depend on a setting he never touched
+    // (docs/tasks/TASK-32-admin-facelift.md §2).
+    theme: 'light',
     // Custom admin components are referenced by path from here (src/), not
     // from the working directory Payload would otherwise assume.
     importMap: { baseDir: path.resolve(dirname) },
     components: {
       beforeLogin: ['/components/admin/GoogleSignInLink#GoogleSignInLink'],
+      graphics: {
+        Logo: '/components/admin/graphics/Logo#Logo',
+        Icon: '/components/admin/graphics/Icon#Icon',
+      },
+      views: {
+        dashboard: {
+          Component: '/components/admin/Dashboard#Dashboard',
+        },
+      },
+    },
+    meta: {
+      titleSuffix: '- מכון רמח״ל',
     },
   },
   editor: lexicalEditor(),
