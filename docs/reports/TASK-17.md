@@ -6,8 +6,8 @@
   a prominent portrait hero, concise introduction and dedicated biography section.
 - Added the Kan Moreshet interview “שמישהו יעצור אותי” as a responsive, privacy-enhanced YouTube
   embed with lazy loading and locale-specific accessible titles.
-- Added the supplied Hanukkah photograph beside the interview with translated alternative text and
-  captions.
+- Added the supplied Hanukkah photograph to the “life’s work” biography section, where it runs
+  alongside the text on desktop, with translated alternative text and captions.
 - Replaced the small legacy portrait with the supplied high-resolution photograph and increased its
   desktop presence while keeping the mobile composition contained.
 - Used FFmpeg to correct EXIF orientation, resize and encode both photographs as WebP. Organised the

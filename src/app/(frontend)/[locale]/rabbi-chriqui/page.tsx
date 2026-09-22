@@ -113,13 +113,28 @@ export default async function RabbiChriquiPage({ params }: PageProps<'/[locale]/
       </section>
 
       <section className="page-container py-14 lg:py-16">
-        <div className="mx-auto max-w-3xl">
-          <SectionHeading>{content.biographyTitle}</SectionHeading>
-          <div className="flex flex-col gap-5 text-lg leading-[1.8]">
-            {content.paragraphs.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
-            ))}
+        <div className="grid items-start gap-10 lg:grid-cols-[1fr_0.46fr] lg:gap-14">
+          <div>
+            <SectionHeading>{content.biographyTitle}</SectionHeading>
+            <div className="flex flex-col gap-5 text-lg leading-[1.8]">
+              {content.paragraphs.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
           </div>
+
+          <figure className="mx-auto w-full max-w-sm border border-border bg-paper-deep p-2 lg:mt-16 lg:max-w-none">
+            <AspectRatio ratio={3 / 4} className="overflow-hidden bg-muted">
+              <Image
+                src="/rabbi-chriqui/hanukkah-lighting.webp"
+                alt={content.secondImageAlt}
+                fill
+                sizes="(min-width: 1024px) 29vw, 90vw"
+                className="object-cover"
+              />
+            </AspectRatio>
+            <figcaption className="px-2 pb-1 pt-3 text-sm text-muted-foreground">{content.secondImageCaption}</figcaption>
+          </figure>
         </div>
       </section>
 
@@ -134,7 +149,7 @@ export default async function RabbiChriquiPage({ params }: PageProps<'/[locale]/
             <p className="text-lg leading-relaxed text-muted-foreground">{content.videoDescription}</p>
           </div>
 
-          <div className="grid items-start gap-8 lg:grid-cols-[1.45fr_0.55fr] lg:gap-10">
+          <div className="max-w-5xl">
             <div className="border border-gold bg-background p-2 shadow-[0_14px_40px_rgb(0_79_88/0.10)]">
               <AspectRatio ratio={16 / 9} className="overflow-hidden bg-teal-deep">
                 <iframe
@@ -148,19 +163,6 @@ export default async function RabbiChriquiPage({ params }: PageProps<'/[locale]/
                 />
               </AspectRatio>
             </div>
-
-            <figure className="mx-auto w-full max-w-sm border border-border bg-background p-2 lg:max-w-none">
-              <AspectRatio ratio={3 / 4} className="overflow-hidden bg-muted">
-                <Image
-                  src="/rabbi-chriqui/hanukkah-lighting.webp"
-                  alt={content.secondImageAlt}
-                  fill
-                  sizes="(min-width: 1024px) 24vw, 90vw"
-                  className="object-cover"
-                />
-              </AspectRatio>
-              <figcaption className="px-2 pb-1 pt-3 text-sm text-muted-foreground">{content.secondImageCaption}</figcaption>
-            </figure>
           </div>
         </div>
       </section>
