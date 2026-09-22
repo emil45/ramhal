@@ -1,0 +1,72 @@
+name: nightly-database-backup
+
+# The second of §14's two backup mechanisms — Neon's own instant restore
+# (docs/reports/TASK-27.md §3a) only reaches 6 hours back on the free plan.
+# This is independent of it: a plain pg_dump, stored outside Neon entirely,
+# so a problem with Neon's own infrastructure can't take out both copies at
+# once. Neon's own guide for this pattern targets real AWS S3 with IAM
+# roles; adapted here for Neon Object Storage (already this project's
+# storage layer — docs/DECISIONS.md §14) with static, scoped credentials
+# instead, since there is no separate AWS account to hold an IAM role in.
+#
+# Failure here must be visible, not silent: a failed run shows in this
+# repo's Actions tab (and notifies whoever GitHub is configured to notify on
+# workflow failure) independently of anything the application itself does.
+# GET /api/diagnostics separately surfaces the age of the last *successful*
+# dump, so "are backups running" is answerable without knowing to check here
+# at all — see src/lib/diagnostics.ts.
+on:
+  schedule:
+    - cron: '0 2 * * *' # 02:00 UTC daily
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    env:
+      # Unpooled on purpose — Neon's own guidance against running pg_dump
+      # over a pooled (transaction-mode) connection string.
+      DATABASE_URI: ${{ secrets.BACKUP_DATABASE_URI }}
+      RAMHAL_BACKUP_S3_ENDPOINT: ${{ secrets.RAMHAL_BACKUP_S3_ENDPOINT }}
+      RAMHAL_BACKUP_S3_BUCKET: ${{ secrets.RAMHAL_BACKUP_S3_BUCKET }}
+      RAMHAL_BACKUP_S3_REGION: ${{ secrets.RAMHAL_BACKUP_S3_REGION }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.RAMHAL_BACKUP_S3_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.RAMHAL_BACKUP_S3_SECRET_ACCESS_KEY }}
+      PG_VERSION: '18'
+      RETENTION_DAYS: 14
+    steps:
+      - name: Install the matching PostgreSQL client
+        run: |
+          sudo apt update
+          yes '' | sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
+          sudo apt install -y postgresql-client-${{ env.PG_VERSION }}
+          echo "/usr/lib/postgresql/${{ env.PG_VERSION }}/bin" >> "$GITHUB_PATH"
+
+      - name: Dump and compress
+        run: |
+          set -o pipefail
+          : "${DATABASE_URI:?BACKUP_DATABASE_URI secret is not set}"
+          NAME="ramhal-$(date -u +'%Y-%m-%dT%H-%M-%SZ').sql.gz"
+          echo "DUMP_NAME=${NAME}" >> "$GITHUB_ENV"
+          pg_dump "$DATABASE_URI" | gzip > "$NAME"
+
+      - name: Upload to Neon Object Storage
+        run: |
+          aws s3 cp "$DUMP_NAME" "s3://${RAMHAL_BACKUP_S3_BUCKET}/${DUMP_NAME}" \
+            --endpoint-url "$RAMHAL_BACKUP_S3_ENDPOINT" \
+            --region "$RAMHAL_BACKUP_S3_REGION"
+
+      - name: Remove dumps older than the retention window
+        run: |
+          THRESHOLD=$(date -u -d "-${RETENTION_DAYS} days" +%Y-%m-%dT%H:%M:%SZ)
+          aws s3api list-objects-v2 \
+            --endpoint-url "$RAMHAL_BACKUP_S3_ENDPOINT" \
+            --region "$RAMHAL_BACKUP_S3_REGION" \
+            --bucket "$RAMHAL_BACKUP_S3_BUCKET" \
+            --query "Contents[?LastModified<'${THRESHOLD}'].Key" \
+            --output text |
+            tr '\t' '\n' |
+            while read -r key; do
+              [ -n "$key" ] && aws s3 rm "s3://${RAMHAL_BACKUP_S3_BUCKET}/${key}" \
+                --endpoint-url "$RAMHAL_BACKUP_S3_ENDPOINT" --region "$RAMHAL_BACKUP_S3_REGION"
+            done

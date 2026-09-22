@@ -25,4 +25,21 @@ describe('GET /api/diagnostics', () => {
 
     expect(raw).not.toContain(passwordFromEnv)
   })
+
+  it('reports the real backup bucket state, and never leaks the reader secret either way', async () => {
+    const response = await GET()
+    const raw = await response.text()
+    const body = JSON.parse(raw)
+
+    // Whichever shape it is — an empty bucket or a real dump present —
+    // this asserts the route actually reached the real bucket rather than
+    // silently falling back to null (which only means "not configured").
+    expect(body.backup).not.toBeNull()
+    if ('error' in body.backup) {
+      expect(body.backup.error).toEqual(expect.any(String))
+    } else {
+      expect(body.backup).toMatchObject({ lastSuccessAt: expect.any(String), ageHours: expect.any(Number) })
+    }
+    expect(raw).not.toContain(process.env.BACKUP_S3_SECRET_ACCESS_KEY)
+  })
 })

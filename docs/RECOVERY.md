@@ -80,3 +80,81 @@ overwrite it, you don't read it first):
 
 If any of these five is missing, the site will not start, and none of the above will get you in
 until it's restored.
+
+---
+
+# Recovering the database itself
+
+This is for the moment the *data* is wrong or gone — a bad migration, a mistaken bulk edit, a
+corrupted table — not just admin access. There are two independent, unrelated ways to get an
+earlier copy of the database back. Try them in this order.
+
+## Situation A: the problem happened less than a few hours ago
+
+Neon (the database host) keeps enough history to restore the whole database to any point in the
+last several hours by itself, without needing a backup file at all. Check
+`GET /<the live site's URL>/api/diagnostics` first — it names the exact database host currently
+serving the site, which is the one to restore.
+
+1. Go to **[console.neon.tech](https://console.neon.tech)** and open the project.
+2. Open the branch named in the diagnostics response (**production**), then
+   **Branches → Restore** (Neon calls this "Instant restore").
+3. Pick a timestamp from before the problem happened, and confirm.
+
+**How far back this can reach depends on the plan, and is worth checking before relying on it** —
+open the project's **Settings → Postgres → History window** to see the current number, in the
+Neon console; do not assume it is longer than it says. As of writing (docs/reports/TASK-27.md
+§3a), this project is on Neon's free plan, whose history window **cannot exceed 6 hours**, no
+matter how it's configured — a problem noticed the next morning is already outside it. That is
+exactly what Situation B is for.
+
+## Situation B: it's been longer than that, or Situation A's window has already passed
+
+A separate, independent copy exists outside Neon entirely: a nightly `pg_dump` uploaded to its own
+object storage bucket (`.github/workflows/backup.yml`), kept for two weeks. This is slower and
+more manual than Situation A, but it doesn't depend on Neon's own history at all — a problem with
+Neon's infrastructure, not just this database's history window, can't take out both copies at
+once.
+
+**Never restore directly into the live database.** Always restore into a brand new, empty branch
+first, and only point the live site at it once you've confirmed it's actually correct — restoring
+onto the real database, sight unseen, turns "the data might be wrong" into "the data is definitely
+gone."
+
+### 1. Find the dump to restore
+
+The bucket is private (not a public URL) — you need a connection to Neon Object Storage. Ask
+whoever manages the Neon project for read access to the `ramhal-backups` bucket (Neon console →
+the project → **Storage** — the endpoint, region and bucket name are also all visible there), or
+for the dump file itself. Files are named `ramhal-<UTC timestamp>.sql.gz` — pick the most recent
+one from before the problem happened. `GET /api/diagnostics` reports how old the *most recent*
+dump is (`backup.ageHours`), which tells you whether last night's dump already contains the
+problem or not.
+
+### 2. Create a fresh, empty branch to restore into
+
+In the Neon console: the project → **Branches → Create branch**. Give it a clearly temporary name
+(e.g. `restore-check-2026-09-22`) so nobody mistakes it for anything permanent. Get its connection
+string (**Connect** on that branch) — use the **unpooled** one (no `-pooler` in the hostname).
+
+### 3. Restore
+
+On a machine with PostgreSQL's client tools installed (`pg_restore`/`psql` — these are not part of
+this repository or its dependencies; install PostgreSQL itself, or use `apt`/`brew` if available):
+
+```bash
+gunzip -c ramhal-<timestamp>.sql.gz | psql "<the new branch's unpooled connection string>"
+```
+
+### 4. Confirm it's actually right before trusting it
+
+Point a local copy of the app at that branch's connection string (`DATABASE_URI` in a local
+`.env`, temporarily) and start it (`npm run dev`). Sign in to `/admin` with an account you expect
+to exist, and check the books collection has the catalogue you expect. Only once this looks right
+should the branch's connection string ever be considered for promoting to the live `DATABASE_URI`
+— and that promotion is a decision for whoever owns the deployment, not a mechanical step.
+
+### 5. Clean up
+
+Delete the temporary branch once you're done with it (Neon console → the branch → delete), whether
+or not you used it — an unused branch is easy to forget and costs nothing to remove immediately.

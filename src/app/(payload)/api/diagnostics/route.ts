@@ -2,6 +2,8 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 
 import { readAppEnvironment } from '@/lib/appEnvironment'
+import { readBackupReaderConfig } from '@/lib/backupReaderConfig'
+import { getBackupStatus } from '@/lib/backupStatus'
 import { buildDiagnostics } from '@/lib/diagnostics'
 import { requireEnv } from '@/lib/env'
 
@@ -22,10 +24,11 @@ export async function GET(): Promise<Response> {
     'SELECT name, created_at AS applied_at FROM payload_migrations ORDER BY id DESC LIMIT 1',
   )
   const latestMigration: LatestMigration = rows[0] ? { name: rows[0].name, appliedAt: rows[0].applied_at } : null
+  const backup = await getBackupStatus(readBackupReaderConfig(process.env))
 
   const diagnostics = buildDiagnostics({
     appEnv: readAppEnvironment(),
-    backup: null,
+    backup,
     builtForAppEnv: process.env.BUILT_FOR_APP_ENV,
     databaseUri: requireEnv('DATABASE_URI'),
     latestMigration,
