@@ -5,6 +5,7 @@ import { he } from '@payloadcms/translations/languages/he'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { buildConfig } from 'payload'
+import { OAuth2Plugin } from 'payload-oauth2'
 import sharp from 'sharp'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -31,10 +32,14 @@ import { Users } from './collections/Users.ts'
 import { Schedule } from './globals/Schedule.ts'
 import { ShippingSettings } from './globals/ShippingSettings.ts'
 import { SiteSettings } from './globals/SiteSettings.ts'
+import { getGoogleUserInfo, readGoogleSignInConfig } from './lib/auth/googleSignIn.ts'
 import { requireEnv } from './lib/env.ts'
 import { getPublicMediaUrl, readMediaStorageSettings } from './lib/mediaStorage.ts'
+import { readServerUrl } from './lib/serverUrl.ts'
 
 const mediaStorage = readMediaStorageSettings(process.env)
+const googleSignIn = readGoogleSignInConfig(process.env)
+const serverUrl = readServerUrl()
 
 export default buildConfig({
   admin: {
@@ -42,6 +47,12 @@ export default buildConfig({
     // Custom admin components are referenced by path from here (src/), not
     // from the working directory Payload would otherwise assume.
     importMap: { baseDir: path.resolve(dirname) },
+    components: {
+      // Only shown when Google sign-in is actually configured — an
+      // unconfigured deployment (e.g. plain local dev) would otherwise show
+      // a button that leads nowhere useful.
+      beforeLogin: googleSignIn === null ? undefined : ['/components/admin/GoogleSignInLink#GoogleSignInLink'],
+    },
   },
   editor: lexicalEditor(),
   collections: [Users, Media, Books, Categories, Series, Lessons, Articles, Pages, Announcements, Events, Carts, Orders, PaymentEvents, MockPaymentSessions],
@@ -91,6 +102,35 @@ export default buildConfig({
         forcePathStyle: true,
         credentials: { accessKeyId: mediaStorage?.accessKeyId ?? '', secretAccessKey: mediaStorage?.secretAccessKey ?? '' },
       },
+    }),
+    // Google sign-in for the admin panel — see docs/DECISIONS.md §19. The
+    // package is a single-maintainer auth plugin pinned to an exact version
+    // in package.json; an upgrade is a diff to read, not a number to bump.
+    // disableLocalStrategy is deliberately never set: password login stays
+    // as the break-glass path.
+    OAuth2Plugin({
+      enabled: googleSignIn !== null,
+      strategyName: 'google',
+      serverURL: serverUrl,
+      clientId: googleSignIn?.clientId ?? '',
+      clientSecret: googleSignIn?.clientSecret ?? '',
+      providerAuthorizationUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+      tokenEndpoint: 'https://oauth2.googleapis.com/token',
+      scopes: ['openid', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'],
+      useEmailAsIdentity: true,
+      // The plugin's default ("create") would create a user row — with
+      // Users.role defaulting to "editor" — for any Google account that
+      // completes the flow. Every admin is provisioned by hand instead.
+      onUserNotFoundBehavior: 'error',
+      // The authorize endpoint never generates or verifies `state` on its
+      // own; this is what makes that step happen.
+      pkceEnabled: true,
+      // The son may be signed into more than one Google account.
+      prompt: 'select_account',
+      getUserInfo: getGoogleUserInfo,
+      successRedirect: () => '/admin',
+      // Never reflects the provider's error back to the browser.
+      failureRedirect: () => '/admin',
     }),
   ],
   // Hebrew is the root locale; English and French are prefixed. The scheme

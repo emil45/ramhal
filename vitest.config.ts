@@ -15,6 +15,17 @@ export default defineConfig({
   test: {
     environment: 'node',
     setupFiles: ['./vitest.setup.ts'],
+    server: {
+      deps: {
+        // payload-oauth2's compiled output re-exports sibling modules
+        // without a `.js` extension (e.g. `from "./default-get-token"`),
+        // which Node's own ESM resolver refuses. Next's bundler tolerates
+        // it (docs/DECISIONS.md §15 covers this exact class of bug for
+        // Payload's own CLI), and inlining it here makes Vite resolve it
+        // too, instead of handing it to Node as an external module.
+        inline: ['payload-oauth2'],
+      },
+    },
     // The Local API tests hit the real dev database over the network
     // (Neon) — comfortably inside a minute, but well past vitest's 5s
     // default.
