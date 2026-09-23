@@ -14,7 +14,6 @@ export async function Footer({ dict, locale }: { dict: Dictionary; locale: Local
     { href: cataloguePath(locale), label: dict.nav.catalogue },
     { href: coursesPath(locale), label: dict.nav.courses },
     { href: questionsPath(locale), label: dict.nav.questions },
-    { href: localePath(locale, '/press'), label: dict.nav.press },
     { href: localePath(locale, '/beit-ramhal'), label: dict.nav.beitRamhal },
     { href: localePath(locale, '/ramhal'), label: dict.nav.ramhal },
     { href: localePath(locale, '/rabbi-chriqui'), label: dict.nav.chriqui },

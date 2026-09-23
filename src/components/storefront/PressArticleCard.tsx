@@ -33,8 +33,8 @@ export function PressArticleCard({ article, dateLabel, locale, openLabel, opensI
             {dateLabel}
           </time>
         </CardAction>
-        <CardTitle className="type-subheading! col-span-2 mt-1 text-teal-deep" lang="he" dir="rtl">
-          {article.title}
+        <CardTitle className="col-span-2 mt-1">
+          <h3 className="type-subheading text-teal-deep" lang="he" dir="rtl">{article.title}</h3>
         </CardTitle>
       </CardHeader>
       <CardContent className="flex-1 px-5 py-5 sm:px-6">

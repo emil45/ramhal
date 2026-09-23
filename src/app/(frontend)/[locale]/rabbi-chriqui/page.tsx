@@ -3,6 +3,7 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
+import { PressCoverageSection } from '@/components/storefront/PressCoverageSection'
 import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Badge } from '@/components/ui/badge'
@@ -29,6 +30,14 @@ const CONTENT = {
     videoPlayerTitle: 'שמישהו יעצור אותי — הרב מרדכי שריקי על הדור של הרמח״ל',
     secondImageAlt: 'הרב מרדכי שריקי מדליק נרות חנוכה בבית רמח״ל',
     secondImageCaption: 'הדלקת נרות חנוכה בבית רמח״ל',
+    press: {
+      title: 'מן העיתונות',
+      introduction: 'סיקור נבחר על הרב שריקי, מפעלו להפצת תורת הרמח״ל ובית המדרש שהקים בירושלים.',
+      latestLabel: 'הכתבה האחרונה',
+      openLabel: 'לקריאת הכתבה',
+      opensInNewTabLabel: 'נפתח באתר חיצוני בחלון חדש',
+      externalNote: 'הכתבות מתפרסמות באתרים חיצוניים ונפתחות בחלון חדש.',
+    },
   },
   en: {
     metadataDescription: 'Rabbi Mordechai Chriqui, founder of Machon Ramhal and a leading contemporary authority on the Ramhal — his life, work and a filmed conversation.',
@@ -48,6 +57,14 @@ const CONTENT = {
     videoPlayerTitle: 'Let someone stop me — Rabbi Mordechai Chriqui on the Ramhal’s generation',
     secondImageAlt: 'Rabbi Mordechai Chriqui lighting Hanukkah candles at Beit Ramhal',
     secondImageCaption: 'Lighting Hanukkah candles at Beit Ramhal',
+    press: {
+      title: 'In the press',
+      introduction: 'Selected coverage of Rabbi Chriqui, his work sharing the Ramhal’s teachings, and the Jerusalem beit midrash he founded.',
+      latestLabel: 'Latest article',
+      openLabel: 'Read the article',
+      opensInNewTabLabel: 'Opens an external Hebrew website in a new tab',
+      externalNote: 'The original articles are in Hebrew and open on external websites in a new tab.',
+    },
   },
   fr: {
     metadataDescription: 'Le Rav Mordekhaï Chriqui, fondateur de l’Institut Ramhal et grande autorité contemporaine sur le Ramhal — sa vie, son œuvre et un entretien filmé.',
@@ -67,6 +84,14 @@ const CONTENT = {
     videoPlayerTitle: 'Que quelqu’un m’arrête — le Rav Mordekhaï Chriqui et la génération du Ramhal',
     secondImageAlt: 'Le Rav Mordekhaï Chriqui allume les lumières de Hanoucca à Beit Ramhal',
     secondImageCaption: 'Allumage des lumières de Hanoucca à Beit Ramhal',
+    press: {
+      title: 'Dans la presse',
+      introduction: 'Une sélection d’articles sur le Rav Chriqui, son œuvre de diffusion de la pensée du Ramhal et le beit midrash qu’il a fondé à Jérusalem.',
+      latestLabel: 'Article récent',
+      openLabel: 'Lire l’article',
+      opensInNewTabLabel: 'Ouvre un site hébreu externe dans un nouvel onglet',
+      externalNote: 'Les articles originaux sont en hébreu et s’ouvrent sur des sites externes dans un nouvel onglet.',
+    },
   },
 } as const
 
@@ -137,6 +162,8 @@ export default async function RabbiChriquiPage({ params }: PageProps<'/[locale]/
           </figure>
         </div>
       </section>
+
+      <PressCoverageSection content={content.press} locale={locale} />
 
       <section className="border-y border-border bg-paper-deep">
         <div className="page-container py-14 lg:py-16">
