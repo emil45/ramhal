@@ -1,26 +1,43 @@
 // Presentation rules for a book cover. Kept out of the components so the
 // rules can be read, and tested, in one place — see docs/DESIGN.md.
 
+import type { Book } from '@/payload-types'
+
 /** Every cover is portrait 2:3, whatever it holds, so a grid row is level. */
 export const COVER_ASPECT_RATIO = 2 / 3
 
+// siddurim-machzorim is the only category that still overrides the rule
+// colour (docs/DECISIONS.md §24) — named here rather than imported from
+// data, since it's a presentation rule, not a lookup.
+const SIDDURIM_CATEGORY_SLUG = 'siddurim-machzorim'
+
+/** The minimal shape the cover components need to pick a rule colour —
+ * shared by CoverFrame, TypographicCover and CoverImage so each doesn't
+ * declare its own prop list. */
+export type CoverIdentity = {
+  bookLanguage: Book['bookLanguage']
+  categorySlug: string | null | undefined
+}
+
 /**
- * The frame's rule colour is the only thing a cover says about its
- * category: same paper, same ink, same frame — a differently coloured
- * rule. Values are brand tokens from globals.css, never a new colour.
+ * The frame's rule colour is the only thing a cover says about its shelf:
+ * same paper, same ink, same frame — a differently coloured rule. Values
+ * are brand tokens from globals.css, never a new colour. Language, not
+ * category, carries this for every book except a siddur/machzor — see
+ * docs/DECISIONS.md §24 (a category used to duplicate language for
+ * hebrew-books/french-books/english-books; that duplication is gone).
  */
-const RULE_COLOUR_BY_CATEGORY: Record<string, string> = {
-  'hebrew-books': 'var(--teal)',
-  'french-books': 'var(--gold)',
-  'english-books': 'var(--teal-deep)',
-  'siddurim-machzorim': 'var(--gold-ink)',
+const RULE_COLOUR_BY_LANGUAGE: Partial<Record<Book['bookLanguage'], string>> = {
+  he: 'var(--teal)',
+  fr: 'var(--gold)',
+  en: 'var(--teal-deep)',
 }
 
 const DEFAULT_RULE_COLOUR = 'var(--teal)'
 
-export function coverRuleColour(categorySlug: string | null | undefined): string {
-  if (!categorySlug) return DEFAULT_RULE_COLOUR
-  return RULE_COLOUR_BY_CATEGORY[categorySlug] ?? DEFAULT_RULE_COLOUR
+export function coverRuleColour({ bookLanguage, categorySlug }: CoverIdentity): string {
+  if (categorySlug === SIDDURIM_CATEGORY_SLUG) return 'var(--gold-ink)'
+  return RULE_COLOUR_BY_LANGUAGE[bookLanguage] ?? DEFAULT_RULE_COLOUR
 }
 
 /**

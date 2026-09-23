@@ -1,6 +1,8 @@
 import { CoverFrame } from '@/components/storefront/CoverFrame'
 import { coverTitleWidthPercent } from '@/lib/cover'
 
+import type { CoverIdentity } from '@/lib/cover'
+
 // The imprint printed at the foot of every cover, whatever the book's
 // language — a publisher's mark, not interface text to translate.
 const INSTITUTE_MARK = 'מכון רמח״ל'
@@ -12,9 +14,9 @@ const INSTITUTE_MARK = 'מכון רמח״ל'
  * the title, centred in the upper part of a double-ruled frame, a short rule
  * and the imprint below.
  */
-export function TypographicCover({ categorySlug, title }: { categorySlug: string | null | undefined; title: string }) {
+export function TypographicCover({ book, title }: { book: CoverIdentity; title: string }) {
   return (
-    <CoverFrame categorySlug={categorySlug}>
+    <CoverFrame book={book}>
       {/* Bottom padding lifts the title just above true centre, where the eye expects it. */}
       <div className="flex min-h-0 flex-1 items-center justify-center px-[7cqw] pb-[6cqw]">
         <p

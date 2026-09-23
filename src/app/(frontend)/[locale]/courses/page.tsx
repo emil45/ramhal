@@ -207,7 +207,7 @@ export default async function CoursesPage({
                     >
                       <span className="group/cover w-10 shrink-0">
                         <CoverImage
-                          categorySlug={book.category?.slug}
+                          book={{ bookLanguage: book.bookLanguage, categorySlug: book.category?.slug }}
                           cover={
                             typeof book.cover === 'object' ? book.cover : null
                           }

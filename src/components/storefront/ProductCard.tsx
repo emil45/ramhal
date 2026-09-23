@@ -17,7 +17,7 @@ export function ProductCard({ book, dict, locale }: { book: CatalogueBook; dict:
       className="group/cover flex h-full flex-col gap-3 rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
     >
       <CoverImage
-        categorySlug={book.category?.slug}
+        book={{ bookLanguage: book.bookLanguage, categorySlug: book.category?.slug }}
         cover={typeof book.cover === 'object' ? book.cover : null}
         sizes="(min-width: 1024px) 200px, (min-width: 640px) 30vw, 45vw"
         title={book.displayTitle}

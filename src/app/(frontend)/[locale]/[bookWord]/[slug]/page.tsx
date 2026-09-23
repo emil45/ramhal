@@ -62,7 +62,7 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
       <div className="grid gap-10 md:grid-cols-[minmax(0,20rem)_1fr] md:gap-14">
         <div className="mx-auto w-56 md:mx-0 md:w-full">
           <CoverImage
-            categorySlug={book.category?.slug}
+            book={{ bookLanguage: book.bookLanguage, categorySlug: book.category?.slug }}
             cover={typeof book.cover === 'object' ? book.cover : null}
             sizes="320px"
             title={book.displayTitle}

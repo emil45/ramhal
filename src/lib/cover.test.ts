@@ -20,13 +20,27 @@ describe('coverTitleWidthPercent', () => {
 })
 
 describe('coverRuleColour', () => {
-  it('gives each shelf its own rule colour', () => {
-    const colours = ['hebrew-books', 'french-books', 'english-books'].map(coverRuleColour)
-    expect(new Set(colours).size).toBe(3)
+  it('colours a Hebrew book teal', () => {
+    expect(coverRuleColour({ bookLanguage: 'he', categorySlug: null })).toBe('var(--teal)')
   })
 
-  it('falls back to a brand colour for an unknown or missing category', () => {
-    expect(coverRuleColour(null)).toBe(coverRuleColour('not-a-shelf'))
-    expect(coverRuleColour(undefined)).toMatch(/^var\(--/)
+  it('colours a French book gold', () => {
+    expect(coverRuleColour({ bookLanguage: 'fr', categorySlug: null })).toBe('var(--gold)')
+  })
+
+  it('colours an English book deep teal', () => {
+    expect(coverRuleColour({ bookLanguage: 'en', categorySlug: null })).toBe('var(--teal-deep)')
+  })
+
+  it('colours a siddur/machzor gold-ink regardless of its language', () => {
+    expect(coverRuleColour({ bookLanguage: 'he', categorySlug: 'siddurim-machzorim' })).toBe('var(--gold-ink)')
+    expect(coverRuleColour({ bookLanguage: 'fr', categorySlug: 'siddurim-machzorim' })).toBe('var(--gold-ink)')
+  })
+
+  it('falls back to the default rule colour for a bilingual, uncertain or missing language', () => {
+    const fallback = coverRuleColour({ bookLanguage: 'unknown', categorySlug: null })
+    expect(fallback).toMatch(/^var\(--/)
+    expect(coverRuleColour({ bookLanguage: 'he-fr', categorySlug: null })).toBe(fallback)
+    expect(coverRuleColour({ bookLanguage: 'aramaic-fr', categorySlug: undefined })).toBe(fallback)
   })
 })

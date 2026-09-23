@@ -1,6 +1,7 @@
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { COVER_ASPECT_RATIO, coverRuleColour } from '@/lib/cover'
 
+import type { CoverIdentity } from '@/lib/cover'
 import type { CSSProperties, ReactNode } from 'react'
 
 /**
@@ -10,8 +11,8 @@ import type { CSSProperties, ReactNode } from 'react'
  * this box's own width), so the frame scales from a cart thumbnail to the
  * book page without a breakpoint.
  */
-export function CoverFrame({ categorySlug, children }: { categorySlug: string | null | undefined; children: ReactNode }) {
-  const style: CSSProperties & { '--cover-rule': string } = { '--cover-rule': coverRuleColour(categorySlug) }
+export function CoverFrame({ book, children }: { book: CoverIdentity; children: ReactNode }) {
+  const style: CSSProperties & { '--cover-rule': string } = { '--cover-rule': coverRuleColour(book) }
 
   return (
     <AspectRatio

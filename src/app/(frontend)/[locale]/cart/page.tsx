@@ -70,7 +70,10 @@ export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) 
               <li key={line.book.id} className="flex gap-5 border-b border-border py-6 first:pt-0">
                 <div className="w-24 shrink-0 sm:w-28">
                   <CoverImage
-                    categorySlug={typeof line.book.category === 'object' ? line.book.category?.slug : null}
+                    book={{
+                      bookLanguage: line.book.bookLanguage,
+                      categorySlug: typeof line.book.category === 'object' ? line.book.category?.slug : null,
+                    }}
                     cover={typeof line.book.cover === 'object' ? line.book.cover : null}
                     sizes="112px"
                     // A book can legitimately have no title in the current
