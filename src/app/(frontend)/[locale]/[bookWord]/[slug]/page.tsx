@@ -11,7 +11,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { getDictionary } from '@/app/(frontend)/dictionary'
 import { isPurchasable } from '@/lib/availability'
-import { getCatalogueBookBySlug, getCatalogueBooks } from '@/lib/booksData'
+import { getBookUrlSlugs, getCatalogueBookBySlug } from '@/lib/booksData'
 import { BOOK_SEGMENT, cataloguePath } from '@/lib/routes'
 import { getContactDetails } from '@/lib/siteSettingsData'
 import { fullBookCourseForBook } from '@/lib/fullBookCourses'
@@ -20,14 +20,8 @@ import { isLocale, LOCALE_CONFIG, LOCALES } from '@/lib/locale'
 export const revalidate = 3600
 
 export async function generateStaticParams() {
-  const params: { bookWord: string; locale: string; slug: string }[] = []
-  for (const locale of LOCALES) {
-    const books = await getCatalogueBooks(locale)
-    for (const book of books) {
-      params.push({ locale, bookWord: BOOK_SEGMENT[locale], slug: book.urlSlug })
-    }
-  }
-  return params
+  const slugs = await getBookUrlSlugs()
+  return LOCALES.flatMap((locale) => slugs.map((slug) => ({ locale, bookWord: BOOK_SEGMENT[locale], slug })))
 }
 
 export default async function BookPage({ params }: PageProps<'/[locale]/[bookWord]/[slug]'>) {

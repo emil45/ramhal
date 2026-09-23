@@ -27,6 +27,21 @@ actionable without reading anything else. Grouped, not ordered by priority withi
   exceeded the quota"). This blocks every environment sharing the project, not just one branch.
   Needs either a plan upgrade or waiting for the monthly reset before any deploy, migration, or
   live verification against Neon can proceed.
+- **Neon network transfer is shared by everything in the project, media included** (Neon docs,
+  "Reduce network transfer costs" and "Neon plans": the allowance is "per project and shared across
+  all products in that project, including Postgres, Object Storage, and Functions"; Object Storage
+  "data transferred out counts toward your public network transfer allowance"). Free plan: 5 GB per
+  project per month, compute suspended once exceeded. Every visitor download of a cover from the
+  Neon bucket spends the same allowance as a database query. Decide before go-live whether the
+  media bucket moves to Cloudflare R2 (already named in `.env.example` as the intended home for
+  the larger archive) and whether the plan is upgraded.
+- **Local checks should not touch Neon.** `next build` prerenders every book page against the live
+  database, and AGENTS.md requires a build before every commit. Proposal, not yet built: restore
+  the nightly `pg_dump` into a local PostgreSQL 18 and point local `DATABASE_URI` and
+  `TEST_DATABASE_URI` at it; only Vercel builds reach Neon. See `docs/reports/TASK-44.md`.
+- **Verify TASK-44 once Neon accepts connections again:** log the JSON byte size of
+  `getCatalogueBooks(locale)` and of one `getCatalogueBookBySlug` result before and after, and
+  count Payload queries during one `next build` before and after.
 
 ## Store & payments
 
