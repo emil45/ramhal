@@ -856,3 +856,60 @@ now refuses any reconciliation candidate without a Hebrew-domain (`site: 'he'`) 
 from-scratch import produces the same canonical set instead of recreating the drift. This also
 supersedes §20's duplicate-import exceptions: cross-site-only variants no longer reach the import
 at all, so the special import-key remaps and the punctuation-order caveat are unnecessary.
+
+---
+
+## 24. TASK-38: language is a field, not a category
+
+Three of the four categories — `hebrew-books`, `french-books`, `english-books` — stored the same
+fact as `books.bookLanguage`. The importer translated between the two in both directions
+(`CATEGORY_TO_LANGUAGE`/`LANGUAGE_TO_CATEGORY`), and the storefront showed both: `/fr` offered
+"Livres en hébreu" under Catégorie *and* "Hébreu" under Langue for the same book. Two fields
+recording one fact drift apart, and the son had to set both by hand — the same shape of bug as the
+legacy per-currency cloning §2 describes, just at field scale instead of site scale.
+
+**The rule, from here on:** language lives only in `bookLanguage`. A category says what *kind of
+work* a book is — its form or genre — never its language. Today the only real category is
+`siddurim-machzorim`; the schema still supports adding more (קבלה, מוסר, …), left open for the
+client.
+
+**Why the `categories` collection stays instead of being removed:** it already models exactly what
+a real, non-language category should be — see `siddurim-machzorim`. Removing the collection to fix
+a *data* problem (three of its four rows encoding the wrong fact) would have thrown out a
+correctly-shaped tool along with the one thing that was actually wrong.
+
+**The audit, before anything was deleted:** a read-only check against both the development and
+production databases (23 September 2026) found no book whose category contradicted its
+`bookLanguage`, and no book with `bookLanguage = 'unknown'` in either database — so there was no
+case where a category was the only surviving record of a book's language, and nothing to stop and
+report. Production (62 books): `hebrew-books` 45, `french-books` 9, `english-books` 2,
+`siddurim-machzorim` 6. Development (96 books, forked from production before TASK-34's cleanup so
+its counts run higher): `hebrew-books` 61, `french-books` 24, `english-books` 2,
+`siddurim-machzorim` 9. `scripts/one-off/TASK-38-remove-language-categories.mjs` reran both counts
+inside its transaction immediately before writing, hardcoded per host, and aborts on any drift —
+the same guard-then-act shape as TASK-34's script, generalised to run against either database
+rather than refusing everywhere but one.
+
+**Covers, unaffected by the removal:** `coverRuleColour` (`src/lib/cover.ts`) used to key the
+frame's rule colour off the category slug directly, so deleting the three language categories
+would have silently turned every French and English cover teal — the fallback colour. It now takes
+the book's language and category together: `siddurim-machzorim` still gives `--gold-ink`; otherwise
+`he`/`fr`/`en` give `--teal`/`--gold`/`--teal-deep` exactly as the old category-keyed rule did.
+Visually identical for every book in the catalogue, verified in the browser before and after the
+data migration — the code change and the data change were deliberately sequenced (code deployed
+first, data migrated after) so this was never observably broken in between.
+
+**The storefront category filter is conditional, not removed.** With only `siddurim-machzorim`
+left, offering a "category" dropdown with one option (or the unfiltered "all") is not a real
+choice — see docs/DESIGN.md's "Catalogue browsing". `CatalogueClient` now builds its category
+options from whatever categories are actually populated on the catalogue's books, the same way it
+already derives `languagesPresent`, and renders the control only when there are at least two. It
+returns on its own, with no code change, the moment a second real category is in use — which is the
+point: the model already supports more categories, so the UI shouldn't need a separate flag to
+notice one arrived. `getCategories` (`lib/booksData.ts`) had no caller left once the filter stopped
+needing the full collection unconditionally, so it was removed rather than left unused.
+
+**Out of scope, recorded rather than fixed:** a `he-fr` or `aramaic-fr` book matches neither the
+Hebrew nor the French language filter, since the filter is an exact match — no such book exists in
+the catalogue today, so this is a note, not a bug fix. Redirects for legacy category-page URLs
+were not added; none exist on the live site to begin with.

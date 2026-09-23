@@ -87,7 +87,8 @@ Anatomy, outside in:
    produces a wall of swatches.
 2. **Outer rule**, thick (1cqw), then a **thinner inner rule** (0.4cqw), set in from the edge,
    as on a sefer's title page. **This rule colour is the only thing that says which shelf a
-   book is on**: teal (Hebrew), gold (French), deep teal (English), dark gold (siddurim).
+   book is on**: teal (Hebrew), gold (French), deep teal (English), dark gold (siddurim — the
+   one case where the category overrides the language; see docs/DECISIONS.md §24).
 3. **Title** in Assistant, balanced, optically centred in the upper two-thirds, size
    stepping down by title length (`coverTitleWidthPercent`), clamped at four lines.
 4. **Short gold rule and the imprint** *מכון רמח״ל* in small type at the foot. The imprint is
@@ -117,6 +118,10 @@ result range. Missing prices always sort after priced books instead of pretendin
 The range line says what is visible (`1–20 of 100`) rather than only repeating the total. Cards
 show one quiet metadata value: category when known, otherwise the known book language. The
 literal “unknown” value is an editorial flag, not useful storefront copy, and is not displayed.
+
+The category filter only renders when the catalogue's books use at least two distinct categories
+— a dropdown offering one real choice (or none) isn't a filter. It reappears by itself the moment
+a second category is in use; see docs/DECISIONS.md §24.
 
 ## Language navigation
 
