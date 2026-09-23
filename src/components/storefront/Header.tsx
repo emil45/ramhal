@@ -6,7 +6,7 @@ import { CartLink } from '@/components/storefront/CartLink'
 import { LocaleSwitcher } from '@/components/storefront/LocaleSwitcher'
 import { MobileNav } from '@/components/storefront/MobileNav'
 import { buttonVariants } from '@/components/ui/button'
-import { cataloguePath, coursesPath, donatePath, localePath } from '@/lib/routes'
+import { cataloguePath, coursesPath, donatePath, localePath, questionsPath } from '@/lib/routes'
 import { cn } from '@/lib/utils'
 
 import type { Dictionary } from '@/app/(frontend)/dictionary'
@@ -16,6 +16,7 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const donationLink = { href: donatePath(locale), label: dict.nav.donate }
   const secondaryLinks = [
     { href: coursesPath(locale), label: dict.nav.courses },
+    { href: questionsPath(locale), label: dict.nav.questions },
     { href: localePath(locale, '/press'), label: dict.nav.press },
     { href: localePath(locale, '/beit-ramhal'), label: dict.nav.beitRamhal },
     { href: localePath(locale, '/ramhal'), label: dict.nav.ramhal },

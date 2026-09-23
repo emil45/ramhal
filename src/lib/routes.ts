@@ -34,3 +34,7 @@ export function coursesPath(locale: Locale): string {
 export function donatePath(locale: Locale): string {
   return localePath(locale, '/donate')
 }
+
+export function questionsPath(locale: Locale): string {
+  return localePath(locale, '/questions-and-answers')
+}
