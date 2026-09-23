@@ -19,7 +19,9 @@ function thumbnailUrl(media: PopulatedMedia): string | null {
  * populated document — this fetches the cover itself rather than assuming
  * data the list query never returns. */
 export function CoverThumbnail({ cellData }: DefaultCellComponentProps) {
-  const mediaId = typeof cellData === 'string' ? cellData : null
+  // The Postgres adapter's media IDs are numbers, not the ObjectId strings
+  // Mongo would give — the Cell must handle both.
+  const mediaId = typeof cellData === 'string' || typeof cellData === 'number' ? cellData : null
   const [url, setUrl] = useState<string | null>(null)
 
   useEffect(() => {
