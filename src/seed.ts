@@ -3,12 +3,10 @@ import type { Payload } from 'payload'
 type LocalizedText = { en: string; fr: string; he: string }
 
 // Seed values from docs/tasks/TASK-01-payload-setup.md §4-5 and
-// docs/DECISIONS.md §8 (shipping). English/French category names are
-// straightforward translations; nothing else in the brief specified them.
+// docs/DECISIONS.md §8 (shipping) / §24 (categories describe a kind of
+// work, never a language — hebrew-books/french-books/english-books were
+// removed for exactly that reason and must not be re-added here).
 const CATEGORIES: { slug: string; title: LocalizedText }[] = [
-  { slug: 'hebrew-books', title: { he: 'ספרים בעברית', en: 'Hebrew Books', fr: 'Livres en hébreu' } },
-  { slug: 'french-books', title: { he: 'ספרים בצרפתית', en: 'French Books', fr: 'Livres en français' } },
-  { slug: 'english-books', title: { he: 'ספרים באנגלית', en: 'English Books', fr: 'Livres en anglais' } },
   {
     slug: 'siddurim-machzorim',
     title: { he: 'סידורים ומחזורים', en: 'Siddurim and Machzorim', fr: "Sidourim et Ma'hzorim" },
