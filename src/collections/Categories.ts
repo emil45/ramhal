@@ -15,6 +15,8 @@ export const Categories: CollectionConfig = {
     group: 'חנות',
     useAsTitle: 'displayTitle',
     defaultColumns: ['displayTitle', 'displayTitleLocale'],
+    description:
+      'קטגוריה מתארת את סוג החיבור (למשל: סידורים ומחזורים) — לא את השפה. שפת הספר נקבעת בשדה ׳שפת החיבור׳ שבכל ספר.',
   },
   hooks: {
     beforeChange: [computeDisplayTitleBeforeChange('categories')],

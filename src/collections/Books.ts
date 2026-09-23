@@ -44,7 +44,7 @@ export const Books: CollectionConfig = {
     // Fixes the list, the relationship picker AND the document header at
     // once, since Payload renders useAsTitle in all three places.
     useAsTitle: 'displayTitle',
-    defaultColumns: ['cover', 'displayTitle', 'displayTitleLocale', 'category', 'prices', 'inStock'],
+    defaultColumns: ['cover', 'displayTitle', 'displayTitleLocale', 'bookLanguage', 'prices', 'inStock'],
     components: {
       beforeListTable: ['/components/admin/BookQuickFilters#BookQuickFilters'],
     },

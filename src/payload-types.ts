@@ -356,6 +356,8 @@ export interface Series {
   createdAt: string;
 }
 /**
+ * קטגוריה מתארת את סוג החיבור (למשל: סידורים ומחזורים) — לא את השפה. שפת הספר נקבעת בשדה ׳שפת החיבור׳ שבכל ספר.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories".
  */
