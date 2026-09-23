@@ -33,13 +33,28 @@ import { Schedule } from './globals/Schedule.ts'
 import { ShippingSettings } from './globals/ShippingSettings.ts'
 import { SiteSettings } from './globals/SiteSettings.ts'
 import { getGoogleUserInfo, readGoogleSignInConfig } from './lib/auth/googleSignIn.ts'
+import { readAppEnvironment } from './lib/appEnvironment.ts'
 import { requireEnv } from './lib/env.ts'
 import { getPublicMediaUrl, readMediaStorageSettings } from './lib/mediaStorage.ts'
+import { assertDevelopmentDoesNotUseNeon, PRODUCTION_ONE_OFF_OVERRIDE } from './lib/refuseProductionDatabase.ts'
 import { readServerUrl } from './lib/serverUrl.ts'
 
+// Covers and page images are a few hundred KB; a larger file is almost always
+// an unoptimised original that would slow every page it appears on. Media is the
+// only upload collection, so Payload's one global limit is Media's limit.
+const MEDIA_UPLOAD_LIMIT_BYTES = 10 * 1024 * 1024
+
 const mediaStorage = readMediaStorageSettings(process.env)
+const writableMediaStorage = mediaStorage?.access === 'read-write' ? mediaStorage : null
 const googleSignIn = readGoogleSignInConfig(process.env)
 const serverUrl = readServerUrl()
+const databaseUri = requireEnv('DATABASE_URI')
+
+assertDevelopmentDoesNotUseNeon({
+  appEnvironment: readAppEnvironment(),
+  host: new URL(databaseUri).hostname,
+  override: process.env[PRODUCTION_ONE_OFF_OVERRIDE],
+})
 
 export default buildConfig({
   admin: {
@@ -81,7 +96,7 @@ export default buildConfig({
   },
   db: postgresAdapter({
     pool: {
-      connectionString: requireEnv('DATABASE_URI'),
+      connectionString: databaseUri,
     },
     // Schema comes from the committed migrations (`npm run db:migrate`) and
     // from nowhere else. With Payload's default, `next dev` pushed the schema
@@ -91,6 +106,7 @@ export default buildConfig({
     // Two writers of one schema, so there is now exactly one.
     push: false,
   }),
+  upload: { limits: { fileSize: MEDIA_UPLOAD_LIMIT_BYTES } },
   sharp,
   plugins: [
     s3Storage({
@@ -103,7 +119,7 @@ export default buildConfig({
       // obtains a short-lived signed URL and sends the file straight to storage;
       // public reads likewise go straight to the bucket instead of consuming
       // a function invocation for every cover.
-      clientUploads: mediaStorage !== null,
+      clientUploads: writableMediaStorage !== null,
       collections: {
         media:
           mediaStorage === null
@@ -113,12 +129,12 @@ export default buildConfig({
                 generateFileURL: ({ filename, prefix }) => getPublicMediaUrl(mediaStorage.publicUrl, prefix, filename),
               },
       },
-      bucket: mediaStorage?.bucket ?? '',
+      bucket: writableMediaStorage?.bucket ?? '',
       config: {
-        endpoint: mediaStorage?.endpoint,
-        region: mediaStorage?.region,
+        endpoint: writableMediaStorage?.endpoint,
+        region: writableMediaStorage?.region,
         forcePathStyle: true,
-        credentials: { accessKeyId: mediaStorage?.accessKeyId ?? '', secretAccessKey: mediaStorage?.secretAccessKey ?? '' },
+        credentials: { accessKeyId: writableMediaStorage?.accessKeyId ?? '', secretAccessKey: writableMediaStorage?.secretAccessKey ?? '' },
       },
     }),
     // Google sign-in for the admin panel — see docs/DECISIONS.md §10. The

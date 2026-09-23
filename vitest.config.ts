@@ -26,9 +26,9 @@ export default defineConfig({
         inline: ['payload-oauth2'],
       },
     },
-    // The Local API tests hit the real dev database over the network
-    // (Neon) — comfortably inside a minute, but well past vitest's 5s
-    // default.
+    // The Local API tests run against the local ramhal_test database
+    // (vitest.setup.ts refuses any Neon host). Seeding and cleaning up a
+    // test's orders is still many round trips — well past vitest's 5s default.
     testTimeout: 30_000,
     // Cleaning up a test run's orders one round trip at a time.
     hookTimeout: 60_000,

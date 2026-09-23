@@ -1,6 +1,6 @@
 import { loadEnvConfig } from '@next/env'
 
-import { assertNotProductionDatabase } from '@/lib/refuseProductionDatabase'
+import { assertNotNeonDatabase, assertNotProductionDatabase } from '@/lib/refuseProductionDatabase'
 
 // Loads .env the same way Next itself does (this ships with `next`, already
 // a direct dependency — see docs/DECISIONS.md §15 for why Payload's own CLI
@@ -21,11 +21,11 @@ const testDatabaseUri = process.env.TEST_DATABASE_URI
 if (!testDatabaseUri) {
   throw new Error(
     'TEST_DATABASE_URI is not set. Tests never fall back to DATABASE_URI — point TEST_DATABASE_URI at the ' +
-      'long-lived Neon branch named "testing" (docs/DECISIONS.md §5). See .env.example.',
+      'local ramhal_test database (docs/DECISIONS.md §5). See .env.example.',
   )
 }
-assertNotProductionDatabase(
-  new URL(testDatabaseUri).hostname,
-  'Point TEST_DATABASE_URI at the long-lived Neon branch named "testing" instead. See .env.example.',
-)
+const testDatabaseHost = new URL(testDatabaseUri).hostname
+const guidance = 'Point TEST_DATABASE_URI at the local ramhal_test database instead. See .env.example.'
+assertNotNeonDatabase(testDatabaseHost, guidance)
+assertNotProductionDatabase(testDatabaseHost, guidance)
 process.env.DATABASE_URI = testDatabaseUri

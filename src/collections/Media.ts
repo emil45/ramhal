@@ -1,7 +1,10 @@
+import { refuseReadOnlyMediaDelete, refuseReadOnlyMediaUpload } from './hooks/refuseReadOnlyMediaWrites.ts'
+
 import type { CollectionConfig } from 'payload'
 
-// Where the files live is decided in payload.config.ts — local disk, or an
-// S3-compatible bucket when the S3_* variables are set. The collection's shape
+// Where the files live is decided in payload.config.ts — local disk, an
+// S3-compatible bucket when the S3_* variables are set, or read-only when only
+// S3_PUBLIC_URL is (src/lib/mediaStorage.ts). The collection's shape
 // is the same either way.
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -18,6 +21,10 @@ export const Media: CollectionConfig = {
   // writing stays restricted to signed-in users.
   access: {
     read: () => true,
+  },
+  hooks: {
+    beforeChange: [refuseReadOnlyMediaUpload],
+    beforeDelete: [refuseReadOnlyMediaDelete],
   },
   upload: {
     imageSizes: [
