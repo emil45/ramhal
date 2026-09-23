@@ -2,7 +2,7 @@
 // page — an <a> tag, not next/link, is what actually belongs here.
 const GOOGLE_AUTHORIZE_PATH = '/api/users/oauth/authorize'
 
-/** Link to the Google OAuth flow, shown above the local login form — see docs/DECISIONS.md §19. */
+/** Link to the Google OAuth flow — the only way into /admin (docs/DECISIONS.md §10). */
 export function GoogleSignInLink() {
   return (
     <div style={{ marginBottom: '1.5rem' }}>

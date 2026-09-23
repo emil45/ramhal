@@ -8,7 +8,7 @@ type DatedAnnouncement = {
  * — when `endsAt` is set — on or before it. No `endsAt` means it never
  * expires on its own; the son must still remove it by hand, but the common
  * case (a dated notice left in place) can never go stale on the page — see
- * docs/DECISIONS.md §9.
+ * docs/DECISIONS.md §8.
  */
 export function isAnnouncementActive(announcement: DatedAnnouncement, now: Date): boolean {
   const startsAt = new Date(announcement.startsAt)

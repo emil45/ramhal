@@ -14,8 +14,7 @@ type CoverImageProps = {
 }
 
 /** Real covers through next/image, set inside the same frame as a typeset
- * cover; without one, the typeset cover — never an empty box
- * (docs/tasks/TASK-06-storefront.md §5). */
+ * cover; without one, the typeset cover — never an empty box. */
 export function CoverImage({ book, cover, sizes, title }: CoverImageProps) {
   const src = cover?.sizes?.card?.url ?? cover?.url
   if (!src || !cover?.width || !cover?.height) {

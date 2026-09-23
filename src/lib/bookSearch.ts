@@ -6,8 +6,8 @@ const NIQQUD_RE = /[֑-ׇ]/g
 const QUOTE_RE = /["'׳״]/g
 
 /** Case-folded, quote/niqqud-stripped form used for a client-side substring
- * search — see docs/tasks/TASK-06-storefront.md §3c: no search
- * infrastructure, no Hebrew full-text configuration to fight. */
+ * search — the catalogue is small enough that client-side filtering needs
+ * no search infrastructure or Hebrew full-text configuration. */
 export function normalizeForSearch(text: string): string {
   return text.replace(NIQQUD_RE, '').replace(QUOTE_RE, '').toLowerCase().trim()
 }

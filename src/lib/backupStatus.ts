@@ -43,7 +43,7 @@ export async function getBackupStatus(config: BackupReaderConfig | null): Promis
     // GET /api/diagnostics is public — the underlying error (from the AWS
     // SDK) can otherwise contain the endpoint or bucket name, which the rest
     // of this route deliberately never exposes to an anonymous caller
-    // (docs/DECISIONS.md §22). Logged so an operator can still see it.
+    // (docs/DECISIONS.md §11). Logged so an operator can still see it.
     console.error('Backup status check failed:', error)
     return { error: 'Could not read the backup bucket.' }
   }

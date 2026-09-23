@@ -16,8 +16,8 @@ import type { LatestMigration } from '@/lib/diagnostics'
  * database's actual host, name and connecting user — together, most of a
  * connection string — are only included for a request carrying a valid
  * admin session: `allowOnlyListedAdmins` is the only way to ever obtain one
- * (docs/DECISIONS.md §19/§20), so any authenticated user here is an admin.
- * See docs/DECISIONS.md §22.
+ * (docs/DECISIONS.md §10), so any authenticated user here is an admin.
+ * See docs/DECISIONS.md §11.
  *
  * `payload_migrations` is Payload's own internal table, not a registered
  * collection, so reading it needs the adapter's raw pool, the same way

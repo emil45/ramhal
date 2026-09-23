@@ -17,8 +17,7 @@ import { isLocale, LOCALE_CONFIG } from '@/lib/locale'
 import { cataloguePath, localePath } from '@/lib/routes'
 import { getSchedule } from '@/lib/scheduleData'
 
-// Same revalidation window as the catalogue and book pages — see
-// docs/tasks/TASK-06-storefront.md §7.
+// Same revalidation window as the catalogue and book pages (docs/DECISIONS.md §5).
 export const revalidate = 3600
 
 const BOOK_STRIP_COUNT = 6

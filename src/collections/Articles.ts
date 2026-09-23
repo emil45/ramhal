@@ -17,8 +17,7 @@ const HOLIDAYS = [
 ]
 
 // Teaching content: the Hebrew holiday articles and the French parsha essays.
-// A parsha article with only a French body is normal, not broken — see
-// docs/tasks/TASK-01-payload-setup.md §2 and §4.
+// A parsha article with only a French body is normal, not broken.
 export const Articles: CollectionConfig = {
   slug: 'articles',
   labels: {

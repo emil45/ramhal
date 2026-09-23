@@ -15,8 +15,8 @@ const BOOK_LANGUAGES = [
   { label: 'ארמית/צרפתית', value: 'aramaic-fr' },
   // A Latin-script title with no shelf category is genuinely ambiguous
   // between French and English — script detection cannot tell them apart.
-  // See docs/reviews/REVIEW-01-findings.md #7: guessing "English" here
-  // corrupted the French catalogue. This value preserves that uncertainty.
+  // Guessing "English" here once corrupted the French catalogue. This value
+  // preserves that uncertainty.
   { label: 'לא ידוע (דורש בדיקה)', value: 'unknown' },
 ]
 
@@ -44,7 +44,10 @@ export const Books: CollectionConfig = {
     // Fixes the list, the relationship picker AND the document header at
     // once, since Payload renders useAsTitle in all three places.
     useAsTitle: 'displayTitle',
-    defaultColumns: ['cover', 'displayTitle', 'displayTitleLocale', 'bookLanguage', 'prices', 'inStock'],
+    // displayTitle must be first: Payload links only the first defaultColumns
+    // entry to the edit view (buildColumnState isLinkedColumn), so this is
+    // what makes a row title clickable.
+    defaultColumns: ['displayTitle', 'cover', 'displayTitleLocale', 'bookLanguage', 'prices', 'inStock'],
     components: {
       beforeListTable: ['/components/admin/BookQuickFilters#BookQuickFilters'],
     },
@@ -136,8 +139,8 @@ export const Books: CollectionConfig = {
               type: 'richText',
               label: 'תיאור',
               localized: true,
-              // No fallback: a missing translation must read as absent, not backfilled
-              // with Hebrew prose. See docs/tasks/TASK-01-payload-setup.md §2.
+              // No fallback: a missing translation must read as absent, not
+              // backfilled with Hebrew prose.
             },
             {
               name: 'cover',
@@ -298,7 +301,7 @@ export const Books: CollectionConfig = {
     },
     {
       // The language the book is WRITTEN in — not the locale it is described in.
-      // See docs/tasks/TASK-01-payload-setup.md §3.
+      // See docs/DECISIONS.md §3.
       name: 'bookLanguage',
       type: 'select',
       label: 'שפת החיבור',
@@ -309,7 +312,7 @@ export const Books: CollectionConfig = {
     {
       // What KIND of work this is (a siddur, say) — never its language.
       // Language lives only in bookLanguage above; see docs/DECISIONS.md
-      // §24 for why the two used to duplicate each other. Not required: the
+      // §13 for why the two used to duplicate each other. Not required: the
       // importer only sets this from a human-reviewed list, so most books
       // are left uncategorised rather than guessed.
       name: 'category',
@@ -333,9 +336,9 @@ export const Books: CollectionConfig = {
     },
     {
       // Legacy, per-locale slug — kept for redirecting old locale-scoped URLs,
-      // never read for routing any more (see urlSlug above and
-      // docs/reports/TASK-07.md §A1). Import plumbing, not something the son
-      // ever needs to fill in — not required, and out of his way.
+      // never read for routing any more (see urlSlug above). Import plumbing,
+      // not something the son ever needs to fill in — not required, and out
+      // of his way.
       // `unique: true` here is per-locale (Postgres enforces
       // UNIQUE(slug, _locale)), which is exactly the bug that made two books
       // collapse onto one cross-locale public URL — uniqueness for the

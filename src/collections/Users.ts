@@ -11,9 +11,9 @@ export const Users: CollectionConfig = {
   // Local (email+password) login is disabled — Google sign-in is the only
   // way in. enableFields keeps the password columns in the schema (no
   // migration to drop them) even though nothing can use them for login
-  // anymore. See docs/DECISIONS.md §19: this was originally a deliberate
-  // break-glass path, reversed on 22 September 2026 at Emanuel's explicit
-  // instruction after production briefly carried a real password.
+  // anymore (docs/DECISIONS.md §10): this was originally a deliberate
+  // break-glass path, reversed at Emanuel's explicit instruction after
+  // production briefly carried a real password.
   auth: { disableLocalStrategy: { enableFields: true } },
   admin: {
     group: 'מערכת',
@@ -22,7 +22,7 @@ export const Users: CollectionConfig = {
   },
   hooks: {
     // Covers password login, the Google callback and REST /api/users/login
-    // alike — see the hook's own comment and docs/DECISIONS.md §19.
+    // alike — see the hook's own comment and docs/DECISIONS.md §10.
     beforeLogin: [allowOnlyListedAdmins],
   },
   access: {

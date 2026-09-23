@@ -23,8 +23,8 @@ export type DashboardSummary = {
 
 /**
  * Everything the dashboard shows, in one place — every number here is a
- * real query against the current database, never a static count
- * (docs/tasks/TASK-32-admin-facelift.md §5). `payload` is the same instance
+ * real query against the current database, never a static count.
+ * `payload` is the same instance
  * already open for the admin request (src/components/admin/Dashboard.tsx),
  * not a fresh connection.
  */

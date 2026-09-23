@@ -18,7 +18,7 @@ const LOCALE_PREFERENCE = ['he', 'en', 'fr'] as const
 // migration cast the query result straight to a camelCase type without
 // renaming anything, which silently read every field as undefined and sent
 // every pre-existing book down the `book-${id}` fallback path. Caught before
-// this migration was committed; see docs/reports/TASK-07.md §A1.
+// this migration was committed.
 type LocalizedTitleRow = { parent_id: number; _locale: string; title: string | null }
 
 /**
@@ -29,17 +29,16 @@ type LocalizedTitleRow = { parent_id: number; _locale: string; title: string | n
  * urlSlug).
  *
  * Four pairs of pre-existing books collapse to the same slug once titles are
- * compared across the whole catalogue rather than per locale (see
- * docs/reports/TASK-07.md §A1) — real "ambiguous-match" duplicates flagged
- * for the son to merge in a future task, not a bug in this backfill. Both
+ * compared across the whole catalogue rather than per locale — real
+ * "ambiguous-match" duplicates flagged for the son to merge, not a bug in
+ * this backfill. Both
  * members of a pair must stay independently reachable until then, so on a
  * collision the lower book id keeps the bare slug (matching which one the
  * old, buggy cross-locale lookup already happened to resolve to — no URL
  * changes for it) and each later id gets a deterministic `-2`, `-3`, …
  * suffix. A brand new title collision after this migration is a different
  * situation — Books.ts's UNIQUE(url_slug) constraint makes that fail loudly
- * at write time instead, exactly as docs/tasks/TASK-07-storefront.md §A1
- * requires of the import.
+ * at write time instead, as the import requires.
  */
 async function backfillUrlSlugs(db: MigrateUpArgs['db']): Promise<void> {
   const books = await db.execute<{ id: number }>(sql`SELECT "id" FROM "books" ORDER BY "id" ASC`)

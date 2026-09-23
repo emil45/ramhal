@@ -1,7 +1,7 @@
 import type { Currency } from '@/lib/currency'
 
 // Hebrew at the root, no prefix; English and French prefixed. Adding a
-// fourth locale means adding one entry here — see docs/DECISIONS.md §2 and
+// fourth locale means adding one entry here (docs/DECISIONS.md §2) and
 // src/proxy.ts, which rewrites an unprefixed request onto /he.
 export const LOCALES = ['he', 'en', 'fr'] as const
 
@@ -14,7 +14,7 @@ export function isLocale(value: string): value is Locale {
 }
 
 type LocaleConfig = {
-  /** Currency shown by default in this locale (docs/DECISIONS.md §2, §8). */
+  /** Currency shown by default in this locale (docs/DECISIONS.md §2, §7). */
   currency: Currency
   direction: 'ltr' | 'rtl'
   /**

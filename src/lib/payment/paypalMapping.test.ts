@@ -12,8 +12,8 @@ import {
 } from '@/lib/payment/paypalMapping'
 
 describe('toPayPalAmount', () => {
-  // The gate requires ILS and at least one other currency (TASK-26 brief) —
-  // this is the one place an amount could silently cross currencies.
+  // The gate requires ILS and at least one other currency — this is the one
+  // place an amount could silently cross currencies.
   it.each([
     ['ILS', 55, { currency_code: 'ILS', value: '55.00' }],
     ['EUR', 30.5, { currency_code: 'EUR', value: '30.50' }],

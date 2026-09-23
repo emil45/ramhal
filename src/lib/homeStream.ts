@@ -9,9 +9,9 @@ type NewsLink = {
 type StreamAnnouncement = {
   id: string | number
   title?: string | null
-  // Never blank in practice once a document has been saved at least once
-  // (docs/tasks/TASK-32-admin-facelift.md §1c) — the fallback below is for
-  // the requested locale specifically having no title, not for a title
+  // Never blank in practice once a document has been saved at least once —
+  // the fallback below is for the requested locale specifically having no
+  // title, not for a title
   // missing everywhere.
   displayTitle?: string | null
   body?: RichTextContent | null

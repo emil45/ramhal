@@ -1,8 +1,7 @@
 import type { Locale } from '@/lib/locale'
 
 // Small enough (three locales, one small storefront) that a hand-written
-// dictionary is the right size — see docs/DECISIONS.md §4: adopt the
-// generic, build the specific. No i18n library earns its keep here.
+// dictionary is the right size. No i18n library earns its keep here.
 const DICTIONARIES = {
   he: {
     nav: { home: 'מכון רמח״ל', catalogue: 'ספרים', courses: 'שיעורים בספרים', questions: 'שו״ת', ramhal: 'הרמח״ל', chriqui: 'הרב שריקי', beitRamhal: 'בית רמח״ל', donate: 'תרומה', cart: 'עגלה', menu: 'תפריט', closeMenu: 'סגירה', cartLabel: (n: number) => (n === 0 ? 'עגלת הקניות' : n === 1 ? 'עגלת הקניות, פריט אחד' : `עגלת הקניות, ${n} פריטים`) },

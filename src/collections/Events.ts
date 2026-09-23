@@ -7,8 +7,8 @@ import type { CollectionConfig } from 'payload'
 import { validateNewsLinkUrl } from '@/lib/newsLink'
 
 // One-off events — a hilula, a seminar. Recurring shiurim are NOT events; they
-// live in the schedule global. The two look alike on the page and are nothing
-// alike in the admin — see docs/tasks/TASK-01-payload-setup.md §4.
+// live in the schedule global. The two look alike on the page and are
+// nothing alike in the admin (docs/DECISIONS.md §8).
 export const Events: CollectionConfig = {
   slug: 'events',
   labels: {

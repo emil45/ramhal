@@ -21,7 +21,7 @@ export function AddToCartButton({ bookId, locale }: { bookId: number; locale: Lo
   const [isPending, startTransition] = useTransition()
   const [added, setAdded] = useState(false)
   // Shipping tiers count items, so buying several copies at once should be
-  // one action, not N clicks — docs/tasks/TASK-07-storefront.md §A3.
+  // one action, not N clicks.
   const [quantity, setQuantity] = useState(1)
 
   return (

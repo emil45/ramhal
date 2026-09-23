@@ -79,9 +79,9 @@ export async function createOrder(
       application_context: {
         brand_name: 'מכון רמח״ל',
         locale: params.locale,
-        // Both approve and cancel land on the same URL — see
-        // docs/tasks/TASK-26-paypal-adapter.md for why: confirmPayment asks
-        // PayPal what happened rather than trusting which link was clicked.
+        // Both approve and cancel land on the same URL (docs/DECISIONS.md
+        // §7): confirmPayment asks PayPal what happened rather than
+        // trusting which link was clicked.
         return_url: params.returnUrl,
         cancel_url: params.returnUrl,
         user_action: 'PAY_NOW',
@@ -95,9 +95,9 @@ export async function getOrder(config: PayPalConfig, accessToken: string, orderI
 }
 
 /**
- * Throws PayPalApiError on a refused capture (e.g. sandbox negative testing
- * — docs/reports/TASK-26.md) rather than returning a capture object, since
- * PayPal itself returns an HTTP error with no capture id in that case.
+ * Throws PayPalApiError on a refused capture (e.g. sandbox negative testing)
+ * rather than returning a capture object, since PayPal itself returns an
+ * HTTP error with no capture id in that case.
  */
 export async function captureOrder(config: PayPalConfig, accessToken: string, orderId: string): Promise<PayPalOrder> {
   return (await paypalFetch(config, `/v2/checkout/orders/${orderId}/capture`, {

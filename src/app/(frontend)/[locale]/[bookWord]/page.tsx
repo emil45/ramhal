@@ -8,10 +8,10 @@ import { getCatalogueBooks } from '@/lib/booksData'
 import { isLocale, LOCALE_CONFIG, LOCALES } from '@/lib/locale'
 import { CATALOGUE_SEGMENT } from '@/lib/routes'
 
-// Revalidated periodically rather than on every request — see
-// docs/tasks/TASK-06-storefront.md §7 ("static per locale, revalidated on
-// publish"). Wiring an afterChange hook to trigger on-demand revalidation
-// immediately on publish is left for a follow-up — see docs/reports/TASK-06.md.
+// Revalidated periodically rather than on every request — content is
+// static, revalidated on publish (docs/DECISIONS.md §5). An afterChange
+// hook that triggers on-demand revalidation immediately on publish is left
+// as future work (docs/BACKLOG.md).
 export const revalidate = 3600
 
 export function generateStaticParams() {
@@ -30,7 +30,7 @@ export default async function CataloguePage({ params }: PageProps<'/[locale]/[bo
   const { currency } = LOCALE_CONFIG[locale]
   const books = await getCatalogueBooks(locale)
   // Purchasable-in-this-currency books lead; nothing is hidden — see
-  // sortCatalogue's own comment and docs/tasks/TASK-07-storefront.md §A2.
+  // sortCatalogue's own comment.
   const sorted = sortCatalogue(books, currency)
 
   return (

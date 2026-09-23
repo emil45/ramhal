@@ -9,8 +9,7 @@ const REQUIRED_MESSAGE = 'שדה זה נדרש בלפחות שפה אחת.'
  * locale the admin currently has open. The field itself must be configured
  * `required: false` — Payload derives the database's `NOT NULL` constraint
  * from that static flag regardless of a custom `validate` (confirmed by
- * reading Payload's own field-validation code; see
- * docs/tasks/TASK-32-admin-facelift.md §1b), and a French-only book
+ * reading Payload's own field-validation code), and a French-only book
  * genuinely has no `he` row to be non-null in. This function is what
  * actually enforces "required," unconditionally, in its place.
  *

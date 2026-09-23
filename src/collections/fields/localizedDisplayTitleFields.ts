@@ -13,7 +13,7 @@ import type { Field } from 'payload'
  * this was found). They are computed and overwritten on every save by
  * `computeDisplayTitleBeforeChange` (wired into the collection's own
  * `hooks.beforeChange`) — never edited by hand, and never fed back into
- * `title` itself (docs/tasks/TASK-32-admin-facelift.md §1c).
+ * `title` itself.
  */
 export function localizedDisplayTitleFields(): Field[] {
   return [

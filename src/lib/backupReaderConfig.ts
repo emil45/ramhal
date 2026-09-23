@@ -16,8 +16,8 @@ const VARIABLE_NAMES = [
 
 /**
  * Read-only credentials for GET /api/diagnostics to check the age of the
- * last successful backup (docs/tasks/TASK-27-database-hardening.md §3c) —
- * deliberately a *different*, narrower-scoped credential than the one the
+ * last successful backup — deliberately a *different*, narrower-scoped
+ * credential than the one the
  * nightly GitHub Action writes with (that one is a repo secret, never an
  * application environment variable). All or none, the same pattern as
  * readMediaStorageSettings: unset entirely means "no backup reporting

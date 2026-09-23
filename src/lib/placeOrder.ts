@@ -53,8 +53,8 @@ export async function placeOrder(input: {
     const book = books.docs.find((candidate) => candidate.id === item.bookId)
     if (!book) return []
     // The query's own fallbackLocale chain above already guarantees a title
-    // in practice; book.displayTitle (docs/tasks/TASK-32-admin-facelift.md
-    // §1c) is the same guarantee the type system can express, since a
+    // in practice; book.displayTitle is the same guarantee the type system
+    // can express, since a
     // title's requiredness is now data-driven rather than schema-enforced.
     return [{ book: { ...book, title: book.title ?? book.displayTitle ?? '' }, quantity: item.quantity }]
   })

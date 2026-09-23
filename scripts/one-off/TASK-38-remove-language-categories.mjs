@@ -2,7 +2,7 @@
 // One-time removal of the three language categories for TASK-38.
 //
 // hebrew-books/french-books/english-books duplicated books.bookLanguage as a
-// category — see docs/DECISIONS.md §24. A read-only audit against both
+// category — see docs/DECISIONS.md §13. A read-only audit against both
 // databases on 23 September 2026 found no book whose category contradicted
 // its bookLanguage and no book with bookLanguage 'unknown'; the per-database
 // numbers below are hardcoded from that audit, the way TASK-34 does it.

@@ -11,7 +11,7 @@ import type { User } from '@/payload-types'
 // Real database and real env (vitest.config.ts's own test.env plus .env) —
 // this route reads process.env.DATABASE_URI directly, so there is nothing
 // meaningful to mock here. "Authenticated" is simulated with a real,
-// validly signed session (docs/DECISIONS.md §22) rather than a mock of
+// validly signed session (docs/DECISIONS.md §11) rather than a mock of
 // payload.auth — the local (password) login strategy is disabled
 // (src/collections/Users.ts), so this is the only way to exercise the real
 // verification path in a test.

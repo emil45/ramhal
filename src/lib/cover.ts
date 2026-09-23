@@ -7,7 +7,7 @@ import type { Book } from '@/payload-types'
 export const COVER_ASPECT_RATIO = 2 / 3
 
 // siddurim-machzorim is the only category that still overrides the rule
-// colour (docs/DECISIONS.md §24) — named here rather than imported from
+// colour (docs/DECISIONS.md §13) — named here rather than imported from
 // data, since it's a presentation rule, not a lookup.
 const SIDDURIM_CATEGORY_SLUG = 'siddurim-machzorim'
 
@@ -24,7 +24,7 @@ export type CoverIdentity = {
  * same paper, same ink, same frame — a differently coloured rule. Values
  * are brand tokens from globals.css, never a new colour. Language, not
  * category, carries this for every book except a siddur/machzor — see
- * docs/DECISIONS.md §24 (a category used to duplicate language for
+ * docs/DECISIONS.md §13 (a category used to duplicate language for
  * hebrew-books/french-books/english-books; that duplication is gone).
  */
 const RULE_COLOUR_BY_LANGUAGE: Partial<Record<Book['bookLanguage'], string>> = {

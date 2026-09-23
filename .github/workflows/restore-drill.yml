@@ -1,7 +1,7 @@
 name: restore-drill
 
 # Proves the second backup mechanism (.github/workflows/backup.yml,
-# docs/tasks/TASK-27-database-hardening.md §3d) actually restores, instead
+# docs/DECISIONS.md §11) actually restores, instead
 # of leaving that as a documented but never-executed hypothesis
 # (docs/RECOVERY.md). Never touches production — it only ever writes to
 # whatever RESTORE_DRILL_TARGET_URI points at, which must be a fresh,

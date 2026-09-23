@@ -79,7 +79,7 @@ export type Reconciliation = {
 // ---------------------------------------------------------------------------
 
 // A legacy shelf breadcrumb is evidence of a book's LANGUAGE, never of its
-// category (docs/DECISIONS.md §24) — hebrew-books/french-books/english-books
+// category (docs/DECISIONS.md §13) — hebrew-books/french-books/english-books
 // no longer exist as categories to assign. siddurim-machzorim and cd-dvd
 // aren't languages, so they're handled separately below, not through this map.
 const SHELF_LANGUAGE: Record<string, SiteKey> = {
@@ -159,9 +159,9 @@ function toLexicalRichText(text: string): NonNullable<Book['description']> {
  * Hebrew script is a confident signal (see the reconciliation report: the
  * English and French sites mostly sell Hebrew-titled books) and returns
  * 'he'. Latin script is NOT a confident signal — it cannot distinguish
- * French from English (see docs/reviews/REVIEW-01-findings.md #7, which
- * caught French titles such as "La voix des justes" being filed as
- * English) — so it returns 'unknown' rather than guessing.
+ * French from English (a real defect once filed French titles such as
+ * "La voix des justes" as English) — so it returns 'unknown' rather than
+ * guessing.
  */
 function deriveBookLanguage(categories: Partial<Record<SiteKey, string | null>>, titles: string[]): BookLanguage {
   for (const raw of Object.values(categories)) {
@@ -179,8 +179,8 @@ function deriveBookLanguage(categories: Partial<Record<SiteKey, string | null>>,
  * entry, so `titles` can hold `{ fr: "<hebrew text>" }` with no `he` key at
  * all. Writing that straight to Payload's `fr` locale, as the site key
  * suggests, buried the book's actual (Hebrew) title where the admin's
- * default Hebrew locale would never see it — found via TASK-20's data
- * audit, docs/reports/TASK-20.md. This reassigns any Hebrew-script title to
+ * default Hebrew locale would never see it — found by a real data audit.
+ * This reassigns any Hebrew-script title to
  * the `he` locale regardless of which site it came from; the first one
  * found wins per locale, so a book already correctly matched to a real `he`
  * site entry is untouched, and a duplicate Hebrew string on a second site is
@@ -206,7 +206,7 @@ const SITE_PREFERENCE: SiteKey[] = ['he', 'fr', 'en']
  * determinism. parse.mjs has already stripped site-wide chrome (nav icons,
  * "other products" sidebar thumbnails) from these lists, so what's left —
  * when anything is — is that page's own product image. Old-site quality,
- * kept anyway; see docs/reviews/REVIEW-01-verdict.md's "THEN" section.
+ * kept anyway rather than dropped, since a weak real photo still beats none.
  */
 function pickCoverImageUrl(images: Partial<Record<SiteKey, string[]>>): string | null {
   for (const site of SITE_PREFERENCE) {
@@ -257,10 +257,10 @@ type BookInput = {
 }
 
 export function buildBookInput(rawImportKey: string, view: ImportView, rawTitles: Partial<Record<SiteKey, string>>, reviewNote: string | null): BookInput | null {
-  // Emanuel designated the five book-category pages on www.ramhal.com as the
-  // catalogue source of truth in TASK-34. frramhal.com and enramhal.com may
-  // enrich a matched canonical book, but a listing found only on those hosts
-  // is stale catalogue drift and must never create a book of its own.
+  // www.ramhal.com's five book-category pages are the catalogue source of
+  // truth (docs/DECISIONS.md §12). frramhal.com and enramhal.com may enrich
+  // a matched canonical book, but a listing found only on those hosts is
+  // stale catalogue drift and must never create a book of its own.
   if (!view.legacyUrls.some(({ site }) => site === 'he')) return null
 
   const importKey = rawImportKey
@@ -282,7 +282,7 @@ export function buildBookInput(rawImportKey: string, view: ImportView, rawTitles
   if (view.priceZero) reasons.push('zero-price')
 
   // Category says what KIND of work a book is, never its language
-  // (docs/DECISIONS.md §24) — a legacy shelf is evidence for bookLanguage
+  // (docs/DECISIONS.md §13) — a legacy shelf is evidence for bookLanguage
   // above, never for category. The only source of a category is a human
   // reading the title and recognising a siddur or machzor; every other book
   // is left uncategorised.
@@ -416,13 +416,12 @@ async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<s
         category: categoryId,
         prices: input.prices,
         // Required in the field config; defaultValue: 1 applies at runtime,
-        // but the generated type doesn't know that — see docs/DECISIONS.md
-        // §1, shippingUnits' own comment in Books.ts.
+        // but the generated type doesn't know that — see shippingUnits' own
+        // comment in Books.ts.
         shippingUnits: 1,
-        // No publication date exists anywhere in the legacy sites' data — see
-        // docs/reviews/REVIEW-01-findings.md #12. Left unset rather than
-        // stamped with import time, which would make the entire back
-        // catalogue read as newly published.
+        // No publication date exists anywhere in the legacy sites' data.
+        // Left unset rather than stamped with import time, which would make
+        // the entire back catalogue read as newly published.
         legacyUrls: input.legacyUrls.map((url) => ({ url })),
         needsReview: input.reviewReasons.length > 0,
         reviewReasons: input.reviewReasons,

@@ -37,6 +37,3 @@ in `../originals/`; new detail cannot be recovered from the website copies.
 From the repository root, run `node scripts/prepare-book-covers.mjs`. The script
 checks source hashes before using `../preparation.json` and writes these outputs.
 Masks are specific to the recorded files; retrace them if a source changes.
-
-Visual comparison: `docs/reports/TASK-11-preview.html`.
-Handoff report: `docs/reports/TASK-11.md`.

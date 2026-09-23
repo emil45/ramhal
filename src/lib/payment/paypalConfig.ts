@@ -20,10 +20,9 @@ const VARIABLE_NAMES = ['PAYPAL_CLIENT_ID', 'PAYPAL_CLIENT_SECRET', 'PAYPAL_WEBH
  * pattern as googleSignIn.ts — a half-configured PayPal adapter would
  * otherwise fail at the first real request instead of at boot. `PAYPAL_ENV`
  * decides sandbox vs. live independently of `APP_ENV`: `APP_ENV` says which
- * deployment this is (docs/DECISIONS.md §18), not which PayPal credentials a
- * given deployment happens to hold, and this task only ever sets it to
- * `sandbox` (docs/tasks/TASK-26-paypal-adapter.md — live credentials are out
- * of scope here).
+ * deployment this is (docs/DECISIONS.md §5), not which PayPal credentials a
+ * given deployment happens to hold. Live credentials are not yet in use
+ * anywhere; every configured deployment currently sets `sandbox`.
  */
 export function readPayPalConfig(env: Record<string, string | undefined>): PayPalConfig {
   const missing = VARIABLE_NAMES.filter((name) => !env[name])

@@ -8,8 +8,7 @@ const COLORS: Record<PaymentStatus, { bg: string; fg: string }> = {
   paid: { bg: 'var(--theme-success-100)', fg: 'var(--theme-success-600)' },
   failed: { bg: 'var(--theme-error-100)', fg: 'var(--theme-error-600)' },
   // elevation-500 on elevation-100 measures 3.61:1 — below WCAG AA's 4.5:1
-  // for normal text (checked directly; see docs/reports/TASK-32.md).
-  // elevation-600 measures 5.15:1.
+  // for normal text (checked directly). elevation-600 measures 5.15:1.
   cancelled: { bg: 'var(--theme-elevation-100)', fg: 'var(--theme-elevation-600)' },
 }
 

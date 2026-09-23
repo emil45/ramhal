@@ -2,10 +2,9 @@ import type { Payload } from 'payload'
 
 type LocalizedText = { en: string; fr: string; he: string }
 
-// Seed values from docs/tasks/TASK-01-payload-setup.md §4-5 and
-// docs/DECISIONS.md §8 (shipping) / §24 (categories describe a kind of
-// work, never a language — hebrew-books/french-books/english-books were
-// removed for exactly that reason and must not be re-added here).
+// Seed values per docs/DECISIONS.md §7 (shipping) / §13 (categories describe
+// a kind of work, never a language — hebrew-books/french-books/english-books
+// were removed for exactly that reason and must not be re-added here).
 const CATEGORIES: { slug: string; title: LocalizedText }[] = [
   {
     slug: 'siddurim-machzorim',
@@ -19,8 +18,8 @@ const REST_OF_WORLD_COUNTRIES = ['US', 'CA', 'AU', 'ZA', 'BR', 'MX']
 /**
  * Creates the category by slug if it does not already exist. Does nothing
  * otherwise — a category the son has since retitled must survive every
- * later boot untouched (see docs/reviews/REVIEW-01-findings.md #1; every
- * restart used to restore these titles, silently erasing his edits).
+ * later boot untouched (an earlier version restored these titles on every
+ * restart, silently erasing his edits).
  */
 async function upsertCategory(payload: Payload, entry: (typeof CATEGORIES)[number]): Promise<void> {
   const existing = await payload.find({
@@ -41,8 +40,7 @@ async function upsertCategory(payload: Payload, entry: (typeof CATEGORIES)[numbe
 
 /**
  * Writes the default zones only when none exist yet. A zone the son has
- * since edited (or deleted) must survive every later boot untouched — see
- * docs/reviews/REVIEW-01-findings.md #1.
+ * since edited (or deleted) must survive every later boot untouched.
  */
 async function seedShippingSettings(payload: Payload): Promise<void> {
   const existing = await payload.findGlobal({ slug: 'shippingSettings' })
@@ -110,7 +108,7 @@ async function seedSchedule(payload: Payload): Promise<void> {
   })
 }
 
-// Contact details as the legacy sites publish them (docs/PROJECT_CONTEXT.md §12).
+// Contact details as the legacy sites publish them.
 // The two legacy sites list different emails; this is the Hebrew site's, which
 // is the institute's primary one. The son corrects it in the admin.
 const CONTACT_ADDRESS: LocalizedText = {
@@ -144,10 +142,9 @@ async function seedContactDetails(payload: Payload): Promise<void> {
  * one. Every write above is initialise-if-
  * missing, never overwrite-if-present — the previous unconditional-update
  * version restored default category titles, shipping rates, and the
- * timetable on every restart, silently erasing his edits (see
- * docs/reviews/REVIEW-01-findings.md #1). Verified by editing a shipping
- * rate in the admin, restarting, and confirming the edit survives — see
- * docs/reports/TASK-05.md.
+ * timetable on every restart, silently erasing his edits. Verified by
+ * editing a shipping rate in the admin, restarting, and confirming the edit
+ * survives.
  */
 export async function seed(payload: Payload): Promise<void> {
   for (const category of CATEGORIES) {

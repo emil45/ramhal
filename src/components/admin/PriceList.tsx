@@ -14,8 +14,7 @@ export function PriceList({ rowData }: DefaultCellComponentProps) {
     .map((price) => formatPrice(price.amount, price.currency as Currency, 'he'))
 
   // elevation-400 on paper measures 2.53:1 — well below WCAG AA's 4.5:1
-  // (checked directly, not eyeballed; see docs/reports/TASK-32.md).
-  // elevation-700 measures 8.85:1.
+  // (checked directly, not eyeballed). elevation-700 measures 8.85:1.
   if (formatted.length === 0) return <span style={{ color: 'var(--theme-elevation-700)' }}>—</span>
   return <span>{formatted.join(' · ')}</span>
 }

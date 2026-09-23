@@ -6,7 +6,7 @@ import type { CollectionBeforeLoginHook } from 'payload'
 
 /**
  * THE gate on who may ever obtain an admin session — see
- * docs/DECISIONS.md §19. Payload runs beforeLogin inside its own local
+ * docs/DECISIONS.md §10. Payload runs beforeLogin inside its own local
  * login operation (auth/operations/login.js), and payload-oauth2's callback
  * endpoint runs the same collection hook array before issuing a cookie, so
  * this one hook covers password login, the Google callback and REST

@@ -7,8 +7,7 @@ import type { CollectionBeforeChangeHook, CollectionSlug } from 'payload'
  * be real, stored fields — Payload refuses a virtual field as `useAsTitle`
  * unless it is linked to a relationship (confirmed by Payload's own
  * `validateUseAsTitle`, thrown at config-build time when this was first
- * tried as a virtual `afterRead` field; see
- * docs/tasks/TASK-32-admin-facelift.md §1c). So the he -> fr -> en pick is
+ * tried as a virtual `afterRead` field). So the he -> fr -> en pick is
  * computed once here, at save time, not on every read.
  *
  * Reads the document's other locales with one `findByID(locale: 'all')` on

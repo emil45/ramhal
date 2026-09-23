@@ -73,7 +73,7 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
 
   // The category filter only appears once the catalogue actually has a
   // choice to offer — today every category but siddurim-machzorim has been
-  // removed (docs/DECISIONS.md §24), so this list has at most one entry and
+  // removed (docs/DECISIONS.md §13), so this list has at most one entry and
   // the control stays hidden. It returns by itself the moment a second real
   // category is in use, with no code change.
   const categoriesPresent = useMemo(() => {

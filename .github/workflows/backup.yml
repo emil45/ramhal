@@ -1,13 +1,13 @@
 name: nightly-database-backup
 
-# The second of §14's two backup mechanisms — Neon's own instant restore
-# (docs/reports/TASK-27.md §3a) only reaches 6 hours back on the free plan.
-# This is independent of it: a plain pg_dump, stored outside Neon entirely,
-# so a problem with Neon's own infrastructure can't take out both copies at
-# once. Neon's own guide for this pattern targets real AWS S3 with IAM
-# roles; adapted here for Neon Object Storage (already this project's
-# storage layer — docs/DECISIONS.md §14) with static, scoped credentials
-# instead, since there is no separate AWS account to hold an IAM role in.
+# The second of docs/DECISIONS.md §11's two backup mechanisms — Neon's own
+# instant restore only reaches 6 hours back on the free plan. This is
+# independent of it: a plain pg_dump, stored outside Neon entirely, so a
+# problem with Neon's own infrastructure can't take out both copies at once.
+# Neon's own guide for this pattern targets real AWS S3 with IAM roles;
+# adapted here for Neon Object Storage (already this project's media storage)
+# with static, scoped credentials instead, since there is no separate AWS
+# account to hold an IAM role in.
 #
 # Failure here must be visible, not silent: a failed run shows in this
 # repo's Actions tab (and notifies whoever GitHub is configured to notify on

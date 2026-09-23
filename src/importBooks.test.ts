@@ -32,9 +32,9 @@ describe('localizeTitles', () => {
   })
 
   it('reassigns a Hebrew-script title to he even when scraped from the fr/en site', () => {
-    // The book this happened to: TASK-20's data audit found 21 books whose
-    // real Hebrew title was written under fr/en instead, because no
-    // matching he-site entry existed to key it correctly.
+    // A real data audit found books whose real Hebrew title was written
+    // under fr/en instead, because no matching he-site entry existed to
+    // key it correctly.
     expect(localizeTitles({ fr: 'זוהר תניינא חלק א׳' })).toEqual({ he: 'זוהר תניינא חלק א׳' })
   })
 

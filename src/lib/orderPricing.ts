@@ -20,7 +20,7 @@ export type PricingLine = {
 }
 
 /** What was sold, frozen at the moment of sale — never a reference to the
- * book's current price (docs/DECISIONS.md §16). */
+ * book's current price (docs/DECISIONS.md §7). */
 export type OrderLineSnapshot = {
   bookId: number
   title: string

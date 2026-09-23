@@ -15,7 +15,7 @@ function normalizeSearchText(value: string): string {
 
 /**
  * Small in-memory search for the single sample entry. The eventual archive
- * uses the PostgreSQL Hebrew full-text configuration chosen in DECISIONS §14;
+ * uses the PostgreSQL Hebrew full-text configuration chosen in DECISIONS §4;
  * keeping this matcher pure makes the prototype honest without pretending it
  * is the thousands-of-records implementation.
  */

@@ -22,8 +22,8 @@ export function hasAtMostTwoDecimalPlaces(value: number | null | undefined): str
 /**
  * The `validate` a money field actually configures. A bare custom `validate`
  * replaces Payload's own field validator entirely, so `min`/`required` stop
- * being enforced (see docs/reviews/REVIEW-01-findings.md #3) — this composes
- * Payload's default `number` validation with the decimal-places rule above
+ * being enforced — this composes Payload's default `number` validation with
+ * the decimal-places rule above
  * instead of standing in for it.
  */
 export const validateMoneyAmount: NumberFieldValidation = (value, options) => {

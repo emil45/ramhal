@@ -4,11 +4,10 @@ import { assertNotProductionDatabase } from '@/lib/refuseProductionDatabase'
 
 /**
  * `next dev` must be unable to touch the database that serves the public,
- * for the same reason TASK-27 already refuses it for the test suite —
- * reusing that same guard rather than writing a second one
- * (docs/DECISIONS.md §22). Only checked under APP_ENV=development: demo and
- * production are still meant to share the one production database
- * (docs/DECISIONS.md §20).
+ * for the same reason the test suite is already refused this — reusing that
+ * same guard rather than writing a second one. Only checked under
+ * APP_ENV=development: demo and production are still meant to share the one
+ * production database (docs/DECISIONS.md §5).
  */
 export function exitUnlessDevelopmentDatabaseIsSafe(): void {
   if (readAppEnvironment() !== 'development') return

@@ -8,7 +8,7 @@ const VARIABLE_NAMES = ['GOOGLE_CLIENT_ID', 'GOOGLE_CLIENT_SECRET'] as const
 /**
  * Google sign-in for the admin panel — required in every environment,
  * local development included. Users.auth.disableLocalStrategy is
- * unconditional (docs/DECISIONS.md §19/§20), so there is no email+password
+ * unconditional (docs/DECISIONS.md §10), so there is no email+password
  * fallback left for an unset pair to fall back to: a deployment missing
  * either variable would boot with a login screen nobody can use.
  */

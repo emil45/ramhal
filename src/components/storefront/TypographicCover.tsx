@@ -8,9 +8,9 @@ import type { CoverIdentity } from '@/lib/cover'
 const INSTITUTE_MARK = 'מכון רמח״ל'
 
 /**
- * A rendered cover, not an image file — 121 of 128 books have no scanned
- * cover, so this is the catalogue's visual identity, not a fallback
- * (docs/tasks/TASK-06-storefront.md §5). Modelled on a sefer's title page:
+ * A rendered cover, not an image file — most books have no scanned
+ * cover, so this is the catalogue's visual identity, not a fallback.
+ * Modelled on a sefer's title page:
  * the title, centred in the upper part of a double-ruled frame, a short rule
  * and the imprint below.
  */

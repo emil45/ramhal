@@ -10,8 +10,7 @@ import type { Locale } from '@/lib/locale'
  * Always switches to the other locale's home page, not the equivalent
  * page — a book's slug differs per locale (localized field), so there is no
  * cheap, honest way to carry "the same book, other language" across a
- * locale switch without fetching that book's other-locale slug first. See
- * docs/reports/TASK-06.md.
+ * locale switch without fetching that book's other-locale slug first.
  */
 export function LocaleSwitcher({ current }: { current: Locale }) {
   const currentLocale = LOCALE_CONFIG[current]

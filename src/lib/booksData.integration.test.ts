@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest'
 import { getCatalogueBooks } from '@/lib/booksData'
 
 // Runs against the real database, not a fixture — the collision this guards
-// against (docs/tasks/TASK-07-storefront.md §A1) only ever showed up in the
-// real catalogue's actual titles, and a fixture would just assert the
+// against only ever showed up in the real catalogue's actual titles, and a
+// fixture would just assert the
 // uniqueness logic understands its own made-up data. See
 // src/collections/Books.ts's urlSlug field for the UNIQUE constraint this
 // test is a second, independent check on (the database enforces it at write

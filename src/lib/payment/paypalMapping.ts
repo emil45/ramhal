@@ -49,8 +49,8 @@ export function cancelledConfirmation(providerRef: string): PaymentConfirmation 
 
 /**
  * A capture PayPal refused outright (HTTP error, not a COMPLETED/DECLINED
- * capture object) — sandbox negative testing exercises this path
- * (docs/reports/TASK-26.md). No capture id exists to use as an event id, so
+ * capture object) — sandbox negative testing exercises this path. No
+ * capture id exists to use as an event id, so
  * one is synthesised the same deterministic way cancelledConfirmation's is.
  */
 export function declinedConfirmation(providerRef: string): PaymentConfirmation {

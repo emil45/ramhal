@@ -10,7 +10,7 @@ function isHebrewLabel(label: unknown): boolean {
  * Walks a field tree (recursing into arrays, groups, rows, tabs — anything
  * with nested `fields`) and returns one message per data-bearing field, or
  * array, missing a Hebrew label. There is one Hebrew-speaking admin persona
- * (see docs/DECISIONS.md §3), so every label an editor sees must be Hebrew —
+ * (docs/DECISIONS.md §3), so every label an editor sees must be Hebrew —
  * this is the check that fails when someone adds a field without one,
  * instead of relying on a reviewer to notice.
  */

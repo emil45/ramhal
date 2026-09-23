@@ -1,6 +1,6 @@
 /**
- * A missing translation must read as absent, never be backfilled
- * (docs/DECISIONS.md §1/TASK-01 §2) — but a document whose only real content
+ * A missing translation must read as absent, never be backfilled — but a
+ * document whose only real content
  * is in French or English is not "incomplete," it is a book (or article) that
  * was never written in Hebrew. "Required" for a localized field like a title
  * should mean "exists somewhere," not "exists in whichever locale happens to
@@ -13,7 +13,8 @@ export function hasValueInAnyLocale(valuesByLocale: Record<string, unknown> | nu
 }
 
 // he -> fr -> en: Hebrew first because it is the site's default locale
-// (docs/DECISIONS.md §2), then French for the parsha essays and French-only
+// (docs/DECISIONS.md §2), then French for the parsha essays and
+// French-only
 // books, then English.
 export const DISPLAY_LOCALE_PRIORITY = ['he', 'fr', 'en'] as const
 
@@ -23,7 +24,7 @@ export type DisplayTitle = { locale: (typeof DISPLAY_LOCALE_PRIORITY)[number]; t
  * Which locale's value to show when a document's title is missing in the
  * admin's own content locale — for DISPLAY only, e.g. list columns and
  * relationship pickers. Never write this back onto the localized field
- * itself (docs/tasks/TASK-32-admin-facelift.md §1c).
+ * itself.
  */
 export function pickDisplayTitle(titlesByLocale: Record<string, unknown> | null | undefined): DisplayTitle | null {
   for (const locale of DISPLAY_LOCALE_PRIORITY) {

@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest';
 
 import { blocksOf } from './parse.mjs';
 
-// Fixtures for the two bugs described in blocksOf's own comment:
-// docs/reviews/REVIEW-01-findings.md #8 (this one dropped prose around
-// inline markup) and its predecessor (double-counted nested tables).
+// Fixtures for the two bugs described in blocksOf's own comment: one that
+// dropped prose around inline markup, and its predecessor (double-counted
+// nested tables).
 
 describe('blocksOf', () => {
   it('keeps prose on both sides of an inline span, and the span itself, without duplicating either', () => {

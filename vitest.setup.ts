@@ -11,9 +11,9 @@ import { assertNotProductionDatabase } from '@/lib/refuseProductionDatabase'
 loadEnvConfig(process.cwd())
 
 // A test run must never be able to touch the database that serves the
-// public (docs/tasks/TASK-27-database-hardening.md) — not "reads
-// DATABASE_URI like everything else", a *separate*, required variable, so
-// there is no fallback path where a run silently proceeds against whatever
+// public — not "reads DATABASE_URI like everything else", a *separate*,
+// required variable, so there is no fallback path where a run silently
+// proceeds against whatever
 // DATABASE_URI happens to hold. Overriding DATABASE_URI here, once, before
 // any test file's own imports resolve, is what makes every existing
 // getPayload({config}) call in the test suite transparently target it.
@@ -21,7 +21,7 @@ const testDatabaseUri = process.env.TEST_DATABASE_URI
 if (!testDatabaseUri) {
   throw new Error(
     'TEST_DATABASE_URI is not set. Tests never fall back to DATABASE_URI — point TEST_DATABASE_URI at the ' +
-      'long-lived Neon branch named "testing" (docs/reports/TASK-27.md). See .env.example.',
+      'long-lived Neon branch named "testing" (docs/DECISIONS.md §5). See .env.example.',
   )
 }
 assertNotProductionDatabase(

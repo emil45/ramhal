@@ -14,7 +14,7 @@ describe('isLocale', () => {
 })
 
 describe('LOCALE_CONFIG', () => {
-  it('maps each locale to its settled currency (docs/DECISIONS.md §2, §8)', () => {
+  it('maps each locale to its settled currency (docs/DECISIONS.md §2, §7)', () => {
     expect(LOCALE_CONFIG.he.currency).toBe('ILS')
     expect(LOCALE_CONFIG.fr.currency).toBe('EUR')
     expect(LOCALE_CONFIG.en.currency).toBe('USD')

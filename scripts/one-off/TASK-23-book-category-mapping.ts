@@ -1,11 +1,11 @@
 #!/usr/bin/env vite-node
-// RECONSTRUCTION, not the code that ran — see docs/reports/TASK-24.md and
-// AGENTS.md's "one-off scripts are kept, not deleted" convention.
+// RECONSTRUCTION, not the code that ran — see AGENTS.md's "one-off scripts
+// are kept, not deleted" convention.
 //
-// TASK-23 backfilled these through "a temporary Vitest integration test
+// TASK-23 backfilled these through a temporary Vitest integration test
 // hitting the real Neon database through Payload's Local API, run once and
-// deleted" (docs/reports/TASK-23.md). That exact test no longer exists; this
-// rebuilds its effect from what the report states plainly it did: 9 books
+// deleted. That exact test no longer exists; this rebuilds its effect from
+// what is known plainly to have happened: 9 books
 // moved from hebrew-books to siddurim-machzorim, and 11 uncategorized French
 // books given category french-books, bookLanguage 'fr', with the
 // now-resolved language-uncertain review reason dropped. The two lists below

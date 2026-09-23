@@ -13,8 +13,7 @@ type PricedItem = {
 /**
  * The book's price in the given currency, or null when it doesn't carry one.
  * No fallback to another currency — a French visitor sees the book's actual
- * EUR price or none at all, never an ILS price relabelled (see
- * docs/tasks/TASK-06-storefront.md §3b).
+ * EUR price or none at all, never an ILS price relabelled.
  */
 export function selectPrice(item: PricedItem, currency: Currency): number | null {
   const match = item.prices.find((price) => price.currency === currency)

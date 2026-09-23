@@ -27,8 +27,8 @@ CMS-managed media.
 
 Do not put scrape HTML, review galleries, ZIP bundles or CMS-generated thumbnails
 in this folder. The initial scrape evidence remains in the ignored
-`scripts/scrape/out/book-covers/` directory; committed visual reviews live under
-`docs/reports/`. The source archive does not depend on the temporary scrape output.
+`scripts/scrape/out/book-covers/` directory. The source archive does not depend
+on the temporary scrape output.
 
 ## Quality and scope
 

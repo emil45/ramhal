@@ -1,11 +1,11 @@
 import { createHash } from 'node:crypto'
 
 /**
- * What the running application can say about itself, publicly — the fix for
- * the root cause behind TASK-24's finding: three tasks verified "production"
- * against a Neon project connection the live site never actually served,
- * and nobody could cheaply ask the running site which database it was on.
- * See AGENTS.md's verification rule and docs/DECISIONS.md §20/§22.
+ * What the running application can say about itself, publicly — a database
+ * can look right in a database tool and still not be what the live site is
+ * actually serving from, and nobody could cheaply ask the running site
+ * which database it was on. See AGENTS.md's verification rule and
+ * docs/DECISIONS.md §11.
  *
  * `host`, `database` and `user` are only ever handed to an authenticated
  * admin caller (route.ts) — an anonymous caller gets `fingerprint` alone
@@ -28,7 +28,7 @@ export type DatabaseIdentity = {
    * id (e.g. `ep-red-tree-b19ry3lo`), a real, stable, per-branch identifier.
    * Not the Neon project/branch's human-readable name: that needs a
    * NEON_API_KEY and a call to Neon's Management API for a label this
-   * already disambiguates unambiguously — see docs/reports/TASK-27.md. */
+   * already disambiguates unambiguously. */
   host: string
   database: string
   user: string

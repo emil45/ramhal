@@ -19,13 +19,12 @@ function toItemInput(items: { book: number | { id: number }; quantity: number }[
 /**
  * Re-checks purchasability server-side rather than trusting the client —
  * the button that calls this is only ever rendered for a purchasable book,
- * but this is the actual gate (docs/tasks/TASK-06-storefront.md §3b): a
- * book with no price in the viewer's currency, or a real 0.00 (see
- * docs/reviews/REVIEW-01-findings.md), can never be added.
+ * but this is the actual gate: a book with no price in the viewer's
+ * currency, or a real 0.00, can never be added.
  *
  * `quantity` is the number of copies the product page's own selector was
- * set to (docs/tasks/TASK-07-storefront.md §A3 — shipping tiers count
- * items, so buying three copies used to mean three separate clicks). Added
+ * set to — shipping tiers count items, so buying three copies used to mean
+ * three separate clicks. Added
  * to whatever quantity is already in the cart for this book, same as
  * clicking "add to cart" once used to increment by exactly one.
  */

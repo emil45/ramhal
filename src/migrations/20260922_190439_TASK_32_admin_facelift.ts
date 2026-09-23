@@ -7,7 +7,8 @@ import { sql } from '@payloadcms/db-postgres'
 // against information_schema before touching this file) — a pre-existing
 // snapshot/ledger drift unrelated to this task, not a real schema gap. Those
 // statements are removed from both directions below; everything that
-// remains is this task's actual change. See docs/reports/TASK-32.md.
+// remains is the real schema change: displayTitle/displayTitleLocale on
+// every localized-title collection.
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
    ALTER TABLE "books_locales" ALTER COLUMN "title" DROP NOT NULL;

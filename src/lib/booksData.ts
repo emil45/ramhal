@@ -22,10 +22,9 @@ async function payloadClient() {
  * default locale, then whichever locale actually has one. Title is
  * structural: every catalogue card needs a name, so it falls back.
  * Description is real editorial content and never does — see
- * docs/tasks/TASK-06-storefront.md §3a and src/collections/Books.ts's own
- * comment on why description has no fallback. The public URL no longer goes
- * through this fallback at all — see urlSlug's own comment in
- * src/collections/Books.ts and docs/reports/TASK-07.md §A1.
+ * src/collections/Books.ts's own comment on why description has no
+ * fallback. The public URL no longer goes through this fallback at all —
+ * see urlSlug's own comment in src/collections/Books.ts.
  */
 function bestAcrossLocales(byLocale: Partial<Record<Locale, string | null | undefined>>, locale: Locale): string {
   for (const candidate of [locale, DEFAULT_LOCALE, ...LOCALES]) {
@@ -74,8 +73,8 @@ export async function getCatalogueBooks(locale: Locale): Promise<CatalogueBook[]
 /**
  * urlSlug is enforced unique at the database level (src/collections/Books.ts),
  * so two matches here can only mean that constraint was bypassed outside
- * Payload — a real data bug, not a case to resolve by picking one silently
- * (docs/tasks/TASK-07-storefront.md §A1). Throwing is the correct behaviour:
+ * Payload — a real data bug, not a case to resolve by picking one silently.
+ * Throwing is the correct behaviour:
  * AGENTS.md is explicit that a caught failure must be handled or allowed to
  * throw, never swallowed.
  */

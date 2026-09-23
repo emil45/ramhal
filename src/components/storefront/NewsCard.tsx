@@ -33,7 +33,7 @@ export function NewsCard({ intlTag, item }: NewsCardProps) {
         <CardContent className="flex flex-col items-start gap-5">
           {item.body ? <RichText content={item.body} /> : null}
           {hasImage && imageSource && item.image?.width && item.image.height ? (
-            // Flyers often carry the announcement text, so cropping would remove content (TASK-28).
+            // Flyers often carry the announcement text, so cropping would remove content.
             <div className="flex max-h-[70vh] w-full justify-center overflow-hidden bg-paper-deep p-3 md:max-w-lg">
               <Image
                 src={imageSource}

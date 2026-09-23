@@ -7,8 +7,8 @@ import type { Book, Order } from '@/payload-types'
 
 // The tests below run against TEST_DATABASE_URI's database — the long-lived
 // Neon branch named "testing", never the database that serves the public
-// (docs/tasks/TASK-27-database-hardening.md; vitest.setup.ts refuses to run
-// at all if this ever points at production). Everything they create is
+// (vitest.setup.ts refuses to run at all if this ever points at production).
+// Everything they create is
 // tagged with one run id so they can remove exactly their own rows
 // afterwards — including orders, which the application itself never
 // deletes.

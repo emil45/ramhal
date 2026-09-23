@@ -1,6 +1,6 @@
 // Two different facts about an order, never one field: "payment received" and
 // "posted" are independent in the institute's real workflow
-// (docs/DECISIONS.md §16).
+// (docs/DECISIONS.md §7).
 export const PAYMENT_STATUSES = ['pending', 'paid', 'failed', 'cancelled'] as const
 export type PaymentStatus = (typeof PAYMENT_STATUSES)[number]
 

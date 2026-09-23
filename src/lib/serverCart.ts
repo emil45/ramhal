@@ -9,8 +9,7 @@ import type { Book, Cart } from '@/payload-types'
 import type { Locale } from '@/lib/locale'
 
 // httpOnly, server-only session cookie — not localStorage, so checkout and
-// the count-based shipping tiers can both read the cart from the server
-// (docs/tasks/TASK-06-storefront.md §7).
+// the count-based shipping tiers can both read the cart from the server.
 const CART_COOKIE = 'ramhal_cart_session'
 const CART_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 180 // 180 days
 

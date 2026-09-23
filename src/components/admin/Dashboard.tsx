@@ -49,7 +49,7 @@ function QuickAction({ label, href }: { label: string; href: string }) {
  * `templateType: 'default'` view — dashboard included — in one before
  * rendering this component inside it. Wrapping again produced a doubled
  * nav and header, found by actually loading the page, not by reading the
- * types. See docs/tasks/TASK-32-admin-facelift.md §5.
+ * types.
  */
 export async function Dashboard(props: AdminViewServerProps) {
   const { payload } = props

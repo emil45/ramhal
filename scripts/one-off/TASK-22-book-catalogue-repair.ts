@@ -1,22 +1,20 @@
 #!/usr/bin/env vite-node
-// RECONSTRUCTION, not the code that ran — see docs/reports/TASK-24.md and
-// AGENTS.md's "one-off scripts are kept, not deleted" convention.
+// RECONSTRUCTION, not the code that ran — see AGENTS.md's "one-off scripts
+// are kept, not deleted" convention.
 //
 // TASK-22 repaired the book catalogue directly against production through
 // the Neon MCP tools in conversation, one step at a time, each confirmed
 // with Emanuel before running — not through a committed script. This file
 // rebuilds only the part that can be rebuilt exactly: the four duplicate
-// merges, whose surviving/deleted id pairs and rules are stated plainly in
-// docs/reports/TASK-22.md ("28→47, 122→121, 124→123, 128→127 ... any real
-// price the duplicate held in a currency the surviving record lacked was
-// carried over first, and legacy redirect URLs were unioned").
+// merges below (surviving/deleted id pairs) — any real price the duplicate
+// held in a currency the surviving record lacked was carried over first,
+// and legacy redirect URLs were unioned.
 //
-// NOT reconstructed: the 21 books whose real Hebrew title was moved into the
-// `he` locale and whose misfiled `en`/`fr` duplicate rows were removed. That
-// report names a count, not the 21 books themselves, and the current
-// database no longer distinguishes "was always correct" from "fixed by this
-// task" — there is nothing left to reconstruct that pass from. Read
-// docs/reports/TASK-22.md for what it found and why.
+// NOT reconstructed: 21 further books whose real Hebrew title was moved into
+// the `he` locale and whose misfiled `en`/`fr` duplicate rows were removed.
+// The current database no longer distinguishes "was always correct" from
+// "fixed by this task" — there is nothing left to reconstruct that pass
+// from.
 //
 // Never run again. Kept as a record of what executed against production,
 // not as a reusable tool — most of the ids below no longer exist, having
@@ -27,7 +25,7 @@ import config from '../../src/payload.config.ts'
 
 import type { Book } from '../../src/payload-types.ts'
 
-// duplicate → survivor, exactly as docs/reports/TASK-22.md records them.
+// duplicate → survivor, exactly as the original conversation recorded them.
 const DUPLICATE_MERGES: readonly { duplicateId: number; survivorId: number }[] = [
   { duplicateId: 28, survivorId: 47 },
   { duplicateId: 122, survivorId: 121 },

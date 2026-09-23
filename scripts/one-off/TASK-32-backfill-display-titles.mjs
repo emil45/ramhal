@@ -13,7 +13,7 @@
 // Run once per database that already had rows before the migration —
 // verified against the `development` Neon branch while building this task;
 // must also be run against production after this task's migration is
-// applied there (see docs/reports/TASK-32.md).
+// applied there.
 
 const { getPayload } = await import('payload')
 const { default: config } = await import('../../src/payload.config.ts')

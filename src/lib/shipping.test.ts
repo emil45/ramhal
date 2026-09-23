@@ -2,9 +2,8 @@ import { describe, expect, it } from 'vitest'
 
 import { calculateShipping, type ShippingZone } from '@/lib/shipping'
 
-// Seeded from docs/tasks/TASK-01-payload-setup.md §5: Israel ₪30 with free
-// self-pickup, Europe €50, rest of world $86, free shipping above 10 units
-// everywhere.
+// Seeded defaults: Israel ₪30 with free self-pickup, Europe €50, rest of
+// world $86, free shipping above 10 units everywhere.
 const zones: ShippingZone[] = [
   {
     name: 'ישראל',

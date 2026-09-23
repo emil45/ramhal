@@ -66,8 +66,7 @@ const wordCount = (s) => (s ? s.split(/\s+/).filter(Boolean).length : 0);
  * `span` included) over-corrected: for `<p>text <span>x</span> text</p>`,
  * the `<p>` has a `span` descendant, so the whole paragraph was excluded and
  * only the span's text survived — the surrounding prose was silently
- * dropped, not merely double-counted (see
- * docs/reviews/REVIEW-01-findings.md #8). `ownText()` below fixes this by
+ * dropped, not merely double-counted. `ownText()` below fixes this by
  * taking, per element, only the text that is not already owned by a nested
  * block — so a wrapper with no text of its own (bug 2's nested table) still
  * contributes nothing, but a paragraph with inline markup keeps its own

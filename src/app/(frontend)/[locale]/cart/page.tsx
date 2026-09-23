@@ -19,8 +19,8 @@ import { bookPath, cataloguePath, localePath } from '@/lib/routes'
 import { getCartLines } from '@/lib/serverCart'
 import { cn } from '@/lib/utils'
 
-// Reads the session cookie, so it can never be statically generated — see
-// docs/tasks/TASK-06-storefront.md §7 ("Cart is dynamic").
+// Reads the session cookie, so it can never be statically generated — the
+// shop half of the site is always dynamic (docs/DECISIONS.md §5).
 export const dynamic = 'force-dynamic'
 
 export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) {
@@ -77,8 +77,7 @@ export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) 
                     cover={typeof line.book.cover === 'object' ? line.book.cover : null}
                     sizes="112px"
                     // A book can legitimately have no title in the current
-                    // locale (docs/tasks/TASK-32-admin-facelift.md §1) — the
-                    // typeset cover falls back to the same he -> fr -> en
+                    // locale — the typeset cover falls back to the same he -> fr -> en
                     // display title the admin uses, not to blank.
                     title={line.book.title ?? line.book.displayTitle ?? ''}
                   />

@@ -51,8 +51,7 @@ export default buildConfig({
     // (checked its own admin.theme type: 'all' | 'dark' | 'light', where
     // 'all' means "follow the browser," not "default to X"). One
     // predictable theme for one non-technical user beats a panel whose
-    // colours depend on a setting he never touched
-    // (docs/tasks/TASK-32-admin-facelift.md §2).
+    // colours depend on a setting he never touched.
     theme: 'light',
     // Custom admin components are referenced by path from here (src/), not
     // from the working directory Payload would otherwise assume.
@@ -122,7 +121,7 @@ export default buildConfig({
         credentials: { accessKeyId: mediaStorage?.accessKeyId ?? '', secretAccessKey: mediaStorage?.secretAccessKey ?? '' },
       },
     }),
-    // Google sign-in for the admin panel — see docs/DECISIONS.md §19/§20. The
+    // Google sign-in for the admin panel — see docs/DECISIONS.md §10. The
     // package is a single-maintainer auth plugin pinned to an exact version
     // in package.json; an upgrade is a diff to read, not a number to bump.
     // Users.auth.disableLocalStrategy is unconditional: this is the only way
@@ -139,9 +138,9 @@ export default buildConfig({
       useEmailAsIdentity: true,
       // The plugin's own default field, minus the admin form ever showing
       // it — useEmailAsIdentity means it's never read (docs/DECISIONS.md
-      // §19), and an untranslated "Sub" in an otherwise-Hebrew form is
+      // §10), and an untranslated "Sub" in an otherwise-Hebrew form is
       // exactly the kind of thing that confuses the non-technical operator
-      // this admin is built for (docs/reports/TASK-24.md).
+      // this admin is built for.
       subField: {
         name: 'sub',
         type: 'text',
@@ -166,7 +165,7 @@ export default buildConfig({
   ],
   // Hebrew is the root locale; English and French are prefixed. The scheme
   // extends to a fourth language by adding one entry here — see
-  // docs/tasks/TASK-01-payload-setup.md §2.
+  // docs/DECISIONS.md §2.
   localization: {
     locales: [
       { code: 'he', label: 'עברית', rtl: true },
@@ -175,7 +174,7 @@ export default buildConfig({
     ],
     defaultLocale: 'he',
     // Global default is off: a missing prose translation must read as absent,
-    // not backfilled with Hebrew — see docs/tasks/TASK-01-payload-setup.md §2.
+    // not backfilled with Hebrew.
     // Structural reads (e.g. admin list columns) that want a fallback ask for
     // it explicitly per request via Payload's `fallbackLocale` query option.
     fallback: false,

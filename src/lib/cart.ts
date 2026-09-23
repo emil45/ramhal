@@ -28,8 +28,7 @@ export function cartSubtotal(lines: CartLine[], currency: Currency): number {
 /**
  * How many more shipping units would cross this zone's free-shipping
  * threshold — null when the zone has no such threshold, 0 once it's already
- * crossed. Drives the "another N books and shipping is free" nudge
- * (docs/tasks/TASK-06-storefront.md §4, cart).
+ * crossed. Drives the "another N books and shipping is free" nudge.
  */
 export function unitsUntilFreeShipping(zone: Pick<ShippingZone, 'freeAboveUnits'>, currentUnits: number): number | null {
   if (zone.freeAboveUnits === null) return null

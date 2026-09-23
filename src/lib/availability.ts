@@ -8,10 +8,9 @@ type PricedItem = {
 
 /**
  * A book is purchasable exactly when it carries a real, positive price in
- * the given currency. No price in this currency, or a real 0.00 (see
- * docs/reviews/REVIEW-01-findings.md — a real €0.00 existed on the French
- * site for a five-volume set), both mean "visible, not purchasable" —
- * never "hidden" and never "free" (docs/tasks/TASK-06-storefront.md §3b).
+ * the given currency. No price in this currency, or a real 0.00 (a real
+ * €0.00 once existed on the French site for a five-volume set), both mean
+ * "visible, not purchasable" — never "hidden" and never "free".
  */
 export function isPurchasable(item: PricedItem, currency: Currency): boolean {
   const amount = selectPrice(item, currency)
@@ -25,8 +24,8 @@ type CatalogueEntry = PricedItem & {
 
 /**
  * The catalogue's display order: purchasable-in-this-currency books first,
- * then the rest — never hidden, just not leading (docs/tasks/TASK-07-storefront.md
- * §A2: 66 of 128 books have no ILS price, and without an explicit sort they
+ * then the rest — never hidden, just not leading (a real gap: many books have
+ * no ILS price, and without an explicit sort they
  * landed at the top by insertion order, making the Hebrew shop's first five
  * screens dead cards). Within each group, most recently published first; a
  * book with no known publication date sorts after every dated book in its
@@ -54,8 +53,8 @@ export function sortCatalogue<T extends CatalogueEntry>(items: T[], currency: Cu
 /**
  * The front page's "new books" section: purchasable-in-this-currency books
  * that carry a real publication date, most recent first, capped to `limit`
- * (docs/tasks/TASK-07-storefront.md §B — "new books are not a section to
- * curate," per docs/DECISIONS.md §9). A book with no known publication date
+ * — new books are not a section to curate (docs/DECISIONS.md §8). A book
+ * with no known publication date
  * is excluded rather than sorted to the end — this section claims to show
  * what's new, and a date-less book has no basis for that claim, unlike the
  * full catalogue (sortCatalogue), which must still show it somewhere.
