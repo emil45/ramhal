@@ -11,15 +11,17 @@ import { cn } from '@/lib/utils'
 
 import type { Locale } from '@/lib/locale'
 
+export type PressContent = {
+  title: string
+  introduction: string
+  latestLabel: string
+  openLabel: string
+  opensInNewTabLabel: string
+  externalNote: string
+}
+
 type PressCoverageSectionProps = {
-  content: {
-    title: string
-    introduction: string
-    latestLabel: string
-    openLabel: string
-    opensInNewTabLabel: string
-    externalNote: string
-  }
+  content: PressContent
   locale: Locale
 }
 

@@ -11,14 +11,13 @@ export function SourceCitation({ children }: { children: ReactNode }) {
   return <cite className="mt-5 block text-sm font-normal not-italic text-gold-ink">{children}</cite>
 }
 
-export function RamhalArticleLayout({ children, contents, contentsLabel, eyebrow, introduction, quote, quoteSource, title }: {
+export function RamhalArticleLayout({ children, contents, contentsLabel, eyebrow, heroContent, introduction, title }: {
   children: ReactNode
   contents: readonly ContentsItem[]
   contentsLabel: string
   eyebrow: string
+  heroContent?: ReactNode
   introduction: string
-  quote: ReactNode
-  quoteSource: string
   title: string
 }) {
   return (
@@ -31,10 +30,7 @@ export function RamhalArticleLayout({ children, contents, contentsLabel, eyebrow
             <p className="max-w-3xl font-serif text-xl leading-[1.75] text-teal-deep sm:text-2xl">{introduction}</p>
           </div>
 
-          <figure className="mt-9 max-w-5xl border-s-4 border-teal bg-background px-5 py-6 sm:px-8 sm:py-7">
-            <blockquote className="font-serif text-xl leading-[1.8] text-foreground sm:text-2xl sm:leading-[1.8]">{quote}</blockquote>
-            <SourceCitation>{quoteSource}</SourceCitation>
-          </figure>
+          {heroContent}
         </div>
       </header>
 
@@ -57,26 +53,4 @@ export function RamhalArticleLayout({ children, contents, contentsLabel, eyebrow
       </div>
     </article>
   )
-}
-
-export function ArticleSection({ children, first = false, id, kicker, ornament, title }: {
-  children: ReactNode
-  first?: boolean
-  id: string
-  kicker?: string
-  ornament?: string
-  title: string
-}) {
-  return (
-    <section id={id} className={`scroll-mt-8 ${first ? '' : 'mt-12 border-t border-border pt-10'}`}>
-      {ornament ? <p className="mb-2 font-serif text-4xl leading-none text-gold-ink" aria-hidden>{ornament}</p> : null}
-      {kicker ? <p className="mb-2 text-sm font-semibold text-gold-ink">{kicker}</p> : null}
-      <h2 className="type-heading">{title}</h2>
-      {children}
-    </section>
-  )
-}
-
-export function Prose({ children }: { children: ReactNode }) {
-  return <div className="type-prose mt-5 flex flex-col gap-5 text-lg">{children}</div>
 }

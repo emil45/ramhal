@@ -1,29 +1,20 @@
+import { RichText as PayloadRichText } from '@payloadcms/richtext-lexical/react'
+
+import { cn } from '@/lib/utils'
+
 import type { RichTextContent } from '@/lib/richText'
 
-type LexicalTextNode = { text?: string; type: string }
-type LexicalParagraphNode = { children?: LexicalTextNode[]; direction?: 'ltr' | 'rtl' | null; type: string }
-
 /**
- * Minimal Lexical renderer for richText fields — every one imported so far
- * is plain text in single-run paragraphs (see importBooks.ts's
- * toLexicalRichText), so this only needs to render paragraphs and text
- * runs, not marks, links, or blocks. Extend when a real formatted document
- * shows up in the admin, not before.
+ * Renders a Payload richText field through the framework's own Lexical→JSX
+ * converters (paragraphs, bold/italic, links, lists, blockquotes, headings) —
+ * every editor-authored document, not just the plain single-run paragraphs
+ * the original hand-rolled version supported.
  */
-export function RichText({ content }: { content: RichTextContent }) {
-  const children = (content.root.children ?? []) as LexicalParagraphNode[]
-
+export function RichText({ className, content }: { className?: string; content: RichTextContent }) {
   return (
-    <div className="flex flex-col gap-4 text-base leading-relaxed text-foreground">
-      {children.map((node, index) => {
-        const text = (node.children ?? []).map((child) => child.text ?? '').join('')
-        if (!text) return null
-        return (
-          <p key={index} dir={node.direction ?? undefined}>
-            {text}
-          </p>
-        )
-      })}
-    </div>
+    <PayloadRichText
+      data={content}
+      className={cn('flex flex-col gap-4 text-base leading-relaxed text-foreground', className)}
+    />
   )
 }

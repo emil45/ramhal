@@ -159,6 +159,8 @@ const DICTIONARIES = {
       shiurimTitle: 'שיעורים',
       prayersTitle: 'תפילות',
     },
+    gallery: { previousImage: 'לתמונה הקודמת', nextImage: 'לתמונה הבאה' },
+    pages: { tableOfContents: 'בעמוד זה', viewSchedule: 'ללוח השיעורים והתפילות' },
   },
   en: {
     nav: { home: 'Machon Ramhal', catalogue: 'Books', courses: 'Lessons', questions: 'Q&A', ramhal: 'The Ramhal', chriqui: 'Rabbi Chriqui', beitRamhal: 'Beit Ramhal', donate: 'Donate', cart: 'Cart', menu: 'Menu', closeMenu: 'Close', cartLabel: (n: number) => (n === 0 ? 'Shopping cart' : `Shopping cart, ${n} ${n === 1 ? 'item' : 'items'}`) },
@@ -317,6 +319,8 @@ const DICTIONARIES = {
       shiurimTitle: 'Shiurim',
       prayersTitle: 'Prayer times',
     },
+    gallery: { previousImage: 'Previous image', nextImage: 'Next image' },
+    pages: { tableOfContents: 'On this page', viewSchedule: 'View classes and prayer times' },
   },
   fr: {
     nav: { home: 'Institut Ramhal', catalogue: 'Livres', courses: 'Cours', questions: 'Questions–réponses', ramhal: 'Le Ramhal', chriqui: 'Rav Chriqui', beitRamhal: 'Beit Ramhal', donate: 'Faire un don', cart: 'Panier', menu: 'Menu', closeMenu: 'Fermer', cartLabel: (n: number) => (n === 0 ? 'Panier' : `Panier, ${n} ${n === 1 ? 'article' : 'articles'}`) },
@@ -475,6 +479,8 @@ const DICTIONARIES = {
       shiurimTitle: 'Cours',
       prayersTitle: 'Offices',
     },
+    gallery: { previousImage: 'Image précédente', nextImage: 'Image suivante' },
+    pages: { tableOfContents: 'Dans cette page', viewSchedule: 'Voir les cours et les horaires de prière' },
   },
 } as const
 

@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { NewsBand } from '@/components/storefront/NewsBand'
 import { NewsCard } from '@/components/storefront/NewsCard'
 import { SectionHeading } from '@/components/storefront/SectionHeading'
+import { PageImage } from '@/components/storefront/blocks/PageImage'
 import { ProductCard } from '@/components/storefront/ProductCard'
 import { buttonVariants } from '@/components/ui/button'
 import { getDictionary } from '@/app/(frontend)/dictionary'
@@ -14,8 +15,11 @@ import { getCatalogueBooks } from '@/lib/booksData'
 import { getUpcomingEvents } from '@/lib/eventsData'
 import { buildNewsStream } from '@/lib/homeStream'
 import { isLocale, LOCALE_CONFIG } from '@/lib/locale'
+import { getPageBySlug } from '@/lib/pagesData'
 import { cataloguePath, localePath } from '@/lib/routes'
 import { getSchedule } from '@/lib/scheduleData'
+
+import type { Media } from '@/payload-types'
 
 // Same revalidation window as the catalogue and book pages (docs/DECISIONS.md §5).
 export const revalidate = 3600
@@ -29,12 +33,14 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   const dict = getDictionary(locale)
   const { currency, intlTag } = LOCALE_CONFIG[locale]
 
-  const [books, announcements, events, schedule] = await Promise.all([
+  const [books, announcements, events, schedule, beitRamhalPage] = await Promise.all([
     getCatalogueBooks(locale),
     getActiveAnnouncements(locale),
     getUpcomingEvents(locale),
     getSchedule(locale),
+    getPageBySlug('beit-ramhal', locale),
   ])
+  const studyHallImage = beitRamhalPage?.heroImage as Media | null
 
   const newBooks = selectNewBooks(books, currency, BOOK_STRIP_COUNT)
   const newsStream = buildNewsStream(announcements, events, new Date())
@@ -51,31 +57,51 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
 
       {/* 1. Masthead: who the institute is, and the way to its books. */}
       <section className="border-b border-border bg-paper-deep">
-        <div className="page-container flex flex-col items-center gap-6 py-12 text-center md:flex-row md:justify-center md:gap-10 md:py-20 md:text-start">
-          <Image
-            src="/logo.png"
-            alt=""
-            width={362}
-            height={512}
-            sizes="(min-width: 768px) 226px, 181px"
-            className="h-64 w-auto shrink-0 md:h-80"
-            priority
-          />
-          <span aria-hidden className="hidden self-stretch w-px bg-gold/40 md:block" />
-          <div className="flex flex-col items-center gap-5 md:items-start">
-            <p className="flex items-center gap-3 text-sm font-semibold text-gold-ink">
-              <span aria-hidden className="h-0.5 w-8 bg-gold" />
-              {dict.home.since}
-            </p>
-            <h1 className="type-display">{dict.nav.home}</h1>
-            <p className="max-w-xl text-lg leading-relaxed text-foreground md:text-xl">{dict.home.tagline}</p>
-            <div className="mt-2 flex flex-wrap justify-center gap-3 md:justify-start">
-              <Link href={cataloguePath(locale)} className={buttonVariants({ size: 'lg' })}>
-                {dict.home.browseCatalogue}
-              </Link>
-              <Link href={localePath(locale, '/ramhal')} className={buttonVariants({ size: 'lg', variant: 'outline' })}>
-                {dict.nav.ramhal}
-              </Link>
+        <div className="page-container py-10 md:py-16">
+          <div className="flex flex-col gap-8 md:flex-row md:items-center md:gap-10 lg:gap-14">
+            <div className="flex flex-col items-start gap-5 md:w-[42%] md:shrink-0">
+              <p className="flex items-center gap-3 text-sm font-semibold text-gold-ink">
+                <span aria-hidden className="h-0.5 w-8 bg-gold" />
+                {dict.home.since}
+              </p>
+              <h1 className="type-display">{dict.nav.home}</h1>
+              <p className="max-w-xl text-lg leading-relaxed text-foreground md:text-xl">{dict.home.tagline}</p>
+              <div className="mt-2 flex flex-wrap justify-start gap-3">
+                <Link href={cataloguePath(locale)} className={buttonVariants({ size: 'lg' })}>
+                  {dict.home.browseCatalogue}
+                </Link>
+                <Link href={localePath(locale, '/ramhal')} className={buttonVariants({ size: 'lg', variant: 'outline' })}>
+                  {dict.nav.ramhal}
+                </Link>
+              </div>
+            </div>
+
+            <span aria-hidden className="hidden h-64 w-px shrink-0 bg-gold/40 md:block" />
+
+            <div className="relative flex aspect-[4/3] min-w-0 flex-1 flex-col overflow-hidden border border-gold/40 bg-teal-deep md:aspect-[3/2] lg:aspect-video">
+              <div className="relative min-h-0 flex-[3]">
+                {studyHallImage ? (
+                  <PageImage
+                    media={studyHallImage}
+                    alt=""
+                    fill
+                    sizes="(min-width: 1152px) 594px, (min-width: 768px) 50vw, 100vw"
+                    className="object-cover"
+                    priority
+                  />
+                ) : null}
+              </div>
+              <div className="relative min-h-0 flex-1 border-t border-gold/70">
+                <Image
+                  src="/home/books-shelf-original.jpg"
+                  alt=""
+                  fill
+                  sizes="(min-width: 1152px) 594px, (min-width: 768px) 50vw, 100vw"
+                  className="object-cover"
+                  priority
+                />
+              </div>
+              <span aria-hidden className="pointer-events-none absolute inset-2 border border-paper/45" />
             </div>
           </div>
         </div>

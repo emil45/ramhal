@@ -1,15 +1,16 @@
 import { BookOpen, ExternalLink, Globe2, GraduationCap, HeartHandshake } from 'lucide-react'
 import type { Metadata } from 'next'
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
+import { PageImage } from '@/components/storefront/blocks/PageImage'
 import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Badge } from '@/components/ui/badge'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { readPaypalDonationUrl } from '@/lib/donation'
 import { isLocale } from '@/lib/locale'
+import { getDonatePhoto } from '@/lib/siteSettingsData'
 
 const CONTENT = {
   he: {
@@ -96,6 +97,7 @@ export default async function DonatePage({ params }: PageProps<'/[locale]/donate
 
   const content = CONTENT[locale]
   const paypalDonationUrl = readPaypalDonationUrl()
+  const donatePhoto = await getDonatePhoto(locale)
 
   return (
     <article>
@@ -111,20 +113,22 @@ export default async function DonatePage({ params }: PageProps<'/[locale]/donate
             <span aria-hidden className="h-[3px] w-24 bg-gold" />
           </div>
 
-          <figure className="relative border border-gold bg-background p-2 shadow-[0_14px_40px_rgb(0_79_88/0.10)]">
-            <AspectRatio ratio={1600 / 1068} className="overflow-hidden bg-muted">
-              <Image
-                src="/donate/rabbi-chriqui-speaking.webp"
-                alt={content.imageAlt}
-                fill
-                priority
-                sizes="(min-width: 1024px) 54vw, 100vw"
-                className="object-cover"
-              />
-            </AspectRatio>
-            <figcaption className="px-2 pb-1 pt-3 text-sm text-muted-foreground">{content.imageCaption}</figcaption>
-            <span aria-hidden className="absolute end-4 -bottom-1 h-[3px] w-24 bg-gold" />
-          </figure>
+          {donatePhoto ? (
+            <figure className="relative border border-gold bg-background p-2 shadow-[0_14px_40px_rgb(0_79_88/0.10)]">
+              <AspectRatio ratio={1600 / 1068} className="overflow-hidden bg-muted">
+                <PageImage
+                  media={donatePhoto}
+                  alt={content.imageAlt}
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 54vw, 100vw"
+                  className="object-cover"
+                />
+              </AspectRatio>
+              <figcaption className="px-2 pb-1 pt-3 text-sm text-muted-foreground">{content.imageCaption}</figcaption>
+              <span aria-hidden className="absolute end-4 -bottom-1 h-[3px] w-24 bg-gold" />
+            </figure>
+          ) : null}
         </div>
       </section>
 
