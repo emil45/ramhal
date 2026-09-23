@@ -827,3 +827,32 @@ the codebase's own login path does — `payload.update`'s public Local API to at
 record to a throwaway user, then `jose`'s `SignJWT` (already a direct dependency) with the app's
 own `PAYLOAD_SECRET` — and sends it as `Authorization: JWT …`. This exercises Payload's real JWT
 verification, not a stand-in for it.
+
+## 23. TASK-34: `www.ramhal.com` is the catalogue authority
+
+The original migration treated product pages from `ramhal.com`, `frramhal.com` and
+`enramhal.com` as three drifted views of one catalogue. That was deliberately conservative while
+the desired inventory was unknown: unmatched French- and English-host records were imported and
+flagged `absent-from-hebrew` instead of being discarded. It is also why TASK-22 correctly described
+those records as editorial uncertainty rather than corruption at the time.
+
+Emanuel has now resolved the uncertainty: the five book-category pages on **`www.ramhal.com`** —
+three Hebrew pages, one French page and one English page — are the complete catalogue source of
+truth. The other two domains may supply a translation, another currency price or a redirect URL
+for a book that matches a `www.ramhal.com` listing; they may not create a book that is absent from
+those five pages.
+
+Verified against the live legacy pages and the live production database before deletion:
+
+- the five pages contain 62 unique listings (51 Hebrew, 9 French, 2 English);
+- every listing's exact `%2D`-preserving legacy URL maps to exactly one production book;
+- no listing is missing and no listing maps to more than one book;
+- the other 34 of production's 96 books have no `www.ramhal.com` legacy URL, exactly match the
+  existing `absent-from-hebrew` review set, and have no order, cart, series, cover or gallery
+  reference.
+
+Those 34 records were deleted by the guarded, transactional TASK-34 one-off script. The importer
+now refuses any reconciliation candidate without a Hebrew-domain (`site: 'he'`) source entry, so a
+from-scratch import produces the same canonical set instead of recreating the drift. This also
+supersedes §20's duplicate-import exceptions: cross-site-only variants no longer reach the import
+at all, so the special import-key remaps and the punctuation-order caveat are unnecessary.

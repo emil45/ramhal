@@ -9,7 +9,7 @@ function view(overrides: Partial<ImportView> = {}): ImportView {
     categories: {},
     descriptions: {},
     images: {},
-    legacyUrls: [],
+    legacyUrls: [{ site: 'he', url: 'https://www.ramhal.com/example.html' }],
     missingDescriptionIn: [],
     priceImplausible: false,
     priceZero: false,
@@ -48,11 +48,13 @@ describe('localizeTitles', () => {
 })
 
 describe('buildBookInput reviewed overrides', () => {
-  it('assigns a reviewed French title to french-books instead of leaving bookLanguage unknown', () => {
-    // "La voix des justes" — REVIEW-01-findings.md #7's own example of a
-    // Latin-script title script detection cannot place — has since been read
-    // by a human and confirmed French; see REVIEWED_LANGUAGE.
-    const input = buildBookInput('La voix des justes', view(), { fr: 'La voix des justes' }, null)
+  it('keeps a French-shelf book listed on the canonical Hebrew-domain storefront', () => {
+    const input = buildBookInput(
+      'tikoun olam',
+      view({ categories: { he: 'ספרים בצרפתית' } }),
+      { he: 'tikoun olam' },
+      null,
+    )
 
     expect(input?.bookLanguage).toBe('fr')
     expect(input?.categorySlug).toBe('french-books')
@@ -76,18 +78,18 @@ describe('buildBookInput reviewed overrides', () => {
     expect(input?.categorySlug).toBe('hebrew-books')
   })
 
-  it('remaps a known duplicate importKey to its survivor, so a re-import merges into the same book TASK-22 kept', () => {
-    // TASK-22 merged "en:...במבצע" into "he:...(פורמט קטן)" by hand and
-    // deleted the duplicate row; see REVIEWED_DUPLICATE_IMPORT_KEY's own
-    // comment for how this pair was confirmed.
+  it('skips a listing that exists only on a non-canonical legacy storefront', () => {
     const input = buildBookInput(
-      'en:סידור כוונות לימות החול (פורמט קטן) במבצע',
-      view({ categories: { he: 'ספרים בעברית' } }),
-      { en: 'סידור כוונות לימות החול (פורמט קטן) במבצע' },
+      'דרך ה',
+      view({
+        categories: { en: 'Hebrew Books' },
+        legacyUrls: [{ site: 'en', url: 'https://www.enramhal.com/extra.html' }],
+      }),
+      { en: 'דרך ה׳' },
       null,
     )
 
-    expect(input?.importKey).toBe('he:סידור כוונות לימות החול (פורמט קטן)')
+    expect(input).toBeNull()
   })
 })
 

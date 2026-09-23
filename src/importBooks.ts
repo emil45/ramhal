@@ -110,78 +110,18 @@ const LANGUAGE_TO_CATEGORY: Record<SiteKey, string> = {
 // import, so a re-import never resurrects what was deleted from the catalogue.
 const DISCONTINUED_CATEGORY_SLUGS: readonly string[] = ['cd-dvd']
 
-// Reviewed overrides, keyed by importKey: a human decision layered on top of
-// the general derivation rules above, so a from-scratch reimport (e.g. after
-// a database reset) reproduces what a live admin edit already settled,
-// instead of drifting back to a guess every time the reconciliation is
-// regenerated.
-
-// deriveBookLanguage refuses to guess French vs English from a Latin-script
-// title alone (see its own comment, and
-// docs/reviews/REVIEW-01-findings.md #7). These 11 titles were all sourced
-// from frramhal.com — several of their en-site "copies" are the identical
-// French string, not a separate translation, and no other English-site entry
-// for them exists in the reconciliation — and read unambiguously as French
-// once a person looks: French articles/prepositions ("La voix des...", "Les
-// Soixante Dix...", "la kabbale de la réparation"...) for most, and for the
-// two bare transliterations (MAAMAR HA-HOKHMA, Maamar Ha-Gueoula) the absence
-// of any competing English-site entry.
-const REVIEWED_LANGUAGE: Readonly<Partial<Record<string, SiteKey>>> = {
-  'La Voie de D.ieu': 'fr',
-  'MAAMAR HA-HOKHMA': 'fr',
-  'Les Voies de la Direction divine': 'fr',
-  'Lessence de la Torah - Nouveau format': 'fr',
-  'Maamar Ha-Gueoula': 'fr',
-  'La voix des justes': 'fr',
-  'Les Soixante Dix Arrangements Tome1': 'fr',
-  'la kabbale de la reparation': 'fr',
-  'Kalah Pithé Hokhma, ou la Kabbale signifiante': 'fr',
-  'Maamar Ha-Gueoula Le discours de la délivrance': 'fr',
-  '1Les Soixante-dix Arrangements': 'fr',
-}
-
 // The legacy sites never had a Siddurim/Machzorim shelf of their own — every
-// prayer book was filed under the plain Hebrew-books breadcrumb (the
-// reconciliation data shows "ספרים בעברית" on all nine of these).
+// canonical prayer book was filed under the plain Hebrew-books breadcrumb.
 // siddurim-machzorim is a distinction this catalogue draws that the legacy
-// sites didn't, so — like REVIEWED_LANGUAGE — it can only come from a human
-// reading the title, not from the scraped breadcrumb.
+// sites didn't, so it can only come from a human reading the title, not from
+// the scraped breadcrumb.
 const REVIEWED_CATEGORY_SLUG: Readonly<Record<string, string>> = {
   'מחזור כיפור רמחל חדש צבע חום': 'siddurim-machzorim',
   'מחזור כיפור רמחל חדש צבע לבן': 'siddurim-machzorim',
   'מחזור רה לרמחל': 'siddurim-machzorim',
   'סידור כוונות לשבת כריכת עור מהודרת פורמט גדול': 'siddurim-machzorim',
   'סידור שבת פורמט קטן': 'siddurim-machzorim',
-  'סידור חול ורח כוונות הרמחל (פורמט קטן) במבצע': 'siddurim-machzorim',
-  'מחזור רה עם כוונות הרמחל': 'siddurim-machzorim',
-  'מחזור כוונות רה לרמחל': 'siddurim-machzorim',
   'he:סידור כוונות לימות החול (פורמט קטן)': 'siddurim-machzorim',
-}
-
-// TASK-22 found the reconciliation step's own similarity check had already
-// flagged these as probable duplicates (reviewNote: "possible duplicate of
-// ... not auto-merged") and merged them by hand: the duplicate's row was
-// deleted, any price it held in a currency the survivor lacked was carried
-// over, and its legacy URLs were unioned onto the survivor. Mapping the
-// duplicate's importKey to the survivor's here means a from-scratch import
-// reproduces that merge (via upsertBook's existing-importKey branch, which
-// now also unions in prices — see its own comment) instead of recreating the
-// duplicate as its own book. Keyed and valued exactly as reconciliation.json
-// still has them (the duplicate side is gone from the live database, but not
-// from that file, which is how these were confirmed — see docs/reports/TASK-24.md).
-//
-// A fourth pair TASK-22 merged (a DVD box set) is deliberately not here: both
-// its sides are skipped by isRecordedMediaTitle already, so a fresh import
-// never recreates either half — there is nothing left to merge.
-//
-// A fifth pair TASK-22 merged (the two "זוהר רשב"י ח"ב" listings, one a
-// punctuation variant of the other) is ALSO deliberately not here — see
-// docs/DECISIONS.md §20 for why encoding it would produce a book with the
-// wrong title rather than silently doing nothing.
-const REVIEWED_DUPLICATE_IMPORT_KEY: Readonly<Record<string, string>> = {
-  'en:סידור כוונות לימות החול (פורמט קטן) במבצע': 'he:סידור כוונות לימות החול (פורמט קטן)',
-  'fr:דברות רמחל חו בית המקדש': 'he:דברות רמחל חו בית מקדש',
-  'fr:דברות רמחל חה משיח': 'he:דברות רמחל חה - משיח',
 }
 
 const CURRENCY_CODE: Record<string, Currency> = { $: 'USD', '€': 'EUR', '₪': 'ILS', EUR: 'EUR', ILS: 'ILS', USD: 'USD' }
@@ -337,7 +277,13 @@ function isSiteKey(language: BookLanguage): language is SiteKey {
 }
 
 export function buildBookInput(rawImportKey: string, view: ImportView, rawTitles: Partial<Record<SiteKey, string>>, reviewNote: string | null): BookInput | null {
-  const importKey = REVIEWED_DUPLICATE_IMPORT_KEY[rawImportKey] ?? rawImportKey
+  // Emanuel designated the five book-category pages on www.ramhal.com as the
+  // catalogue source of truth in TASK-34. frramhal.com and enramhal.com may
+  // enrich a matched canonical book, but a listing found only on those hosts
+  // is stale catalogue drift and must never create a book of its own.
+  if (!view.legacyUrls.some(({ site }) => site === 'he')) return null
+
+  const importKey = rawImportKey
   const prices = priceRows(view.prices)
   if (prices.length === 0) return null // nothing to import — see the report for how many, if any
 
@@ -346,7 +292,7 @@ export function buildBookInput(rawImportKey: string, view: ImportView, rawTitles
   if (Object.values(rawTitles).some(isRecordedMediaTitle)) return null
 
   const titles = localizeTitles(rawTitles)
-  const bookLanguage = REVIEWED_LANGUAGE[importKey] ?? deriveBookLanguage(view.categories, Object.values(titles))
+  const bookLanguage = deriveBookLanguage(view.categories, Object.values(titles))
 
   const reasons: ReviewReason[] = []
   if (view.missingDescriptionIn.length > 0) reasons.push('missing-description')
