@@ -1,0 +1,13 @@
+{
+  "rules": [
+    {
+      "id": "admin-direct-upload",
+      "allowed": {
+        "origins": ["https://ramhal-theta.vercel.app"],
+        "methods": ["PUT"],
+        "headers": ["Content-Type"]
+      },
+      "maxAgeSeconds": 3600
+    }
+  ]
+}
