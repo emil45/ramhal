@@ -40,6 +40,10 @@
 - The deployed diagnostics endpoint reports `appEnv: demo`, the recorded
   production database fingerprint `2c951382a7f8`, and latest migration
   `20260922_211550_TASK_35_book_bibliographic_metadata`.
+- After the post-data deployment completed, the public book HTML and a visual
+  browser check both showed the subtitle and all structured values in the
+  metadata list, the real cover, and the review beginning with the author
+  profile. The legacy sales sentence occurs zero times in the deployed HTML.
 
 ## What felt wrong
 
@@ -47,15 +51,14 @@
   values instead of throwing, while non-localized fields in the same request
   still saved. TASK-32's production check changed only a price, so it could not
   expose this path. The regression test now changes a localized field directly.
-- The book has a separate shorter catalogue record titled `מחול לצדיקים`.
-  Nothing here proves whether it is the same edition, so this task neither
-  merged nor deleted it.
+- The development audit initially found a separate shorter catalogue record
+  titled `מחול לצדיקים`. Nothing in this task proved its identity, so TASK-35
+  did not merge or delete it. The concurrent canonical-catalogue work in
+  TASK-34 subsequently removed that noncanonical production row; a final
+  production read now returns only id 35 for titles containing `מחול לצדיקים`.
 
 ## What is still open
 
-- Verify the public deployed book HTML after the post-data deployment finishes;
-  the first TASK-35 deployment necessarily rendered before the one-off content
-  update.
 - Bulk extraction of comparable facts from other legacy descriptions remains a
   separate editorial task; this change provides the fields but does not guess at
   the rest of the catalogue.
