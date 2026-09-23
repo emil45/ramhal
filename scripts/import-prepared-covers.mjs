@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Publishes the reviewed cover set from TASK-11. Targets are resolved through
+// Publishes the reviewed, hand-matched cover set. Targets are resolved through
 // the exact legacy product URL recorded by both the asset audit and each book;
 // titles are deliberately not used as identifiers because the legacy
 // catalogue contains near-duplicates and punctuation variants.
@@ -17,11 +17,19 @@ import { fileURLToPath } from 'node:url'
 
 import { getPayload } from 'payload'
 
+import { parseDatabaseIdentity } from '../src/lib/diagnostics.ts'
+
 try {
   process.loadEnvFile('.env')
 } catch {
   // CI or an operator can provide the variables through the process environment.
 }
+
+// This script writes to whichever database DATABASE_URI names — see
+// scripts/import-books.mjs's own comment for why there is no automatic
+// redirect to the testing branch. Printed before any write so an operator
+// can still stop it.
+console.log(`Target database fingerprint: ${parseDatabaseIdentity(process.env.DATABASE_URI ?? '').fingerprint}`)
 
 const { default: config } = await import('../src/payload.config.ts')
 
