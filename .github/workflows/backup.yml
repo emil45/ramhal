@@ -2,12 +2,12 @@ name: nightly-database-backup
 
 # The second of docs/DECISIONS.md §11's two backup mechanisms — Neon's own
 # instant restore only reaches 6 hours back on the free plan. This is
-# independent of it: a plain pg_dump, stored outside Neon entirely, so a
-# problem with Neon's own infrastructure can't take out both copies at once.
-# Neon's own guide for this pattern targets real AWS S3 with IAM roles;
-# adapted here for Neon Object Storage (already this project's media storage)
-# with static, scoped credentials instead, since there is no separate AWS
-# account to hold an IAM role in.
+# independent of it: a plain pg_dump, stored in a Cloudflare R2 bucket
+# (ramhal-backups), so a problem with Neon's own infrastructure can't take out
+# both copies at once, and reading the dumps back never spends Neon's transfer
+# allowance. The credentials are static and scoped to that one bucket: this
+# job's is the only one that can write; everything that reads (the drill, the
+# application's own status check) uses a read-only one.
 #
 # Failure here must be visible, not silent: a failed run shows in this
 # repo's Actions tab (and notifies whoever GitHub is configured to notify on
@@ -27,11 +27,14 @@ jobs:
       # Unpooled on purpose — Neon's own guidance against running pg_dump
       # over a pooled (transaction-mode) connection string.
       DATABASE_URI: ${{ secrets.BACKUP_DATABASE_URI }}
-      RAMHAL_BACKUP_S3_ENDPOINT: ${{ secrets.RAMHAL_BACKUP_S3_ENDPOINT }}
-      RAMHAL_BACKUP_S3_BUCKET: ${{ secrets.RAMHAL_BACKUP_S3_BUCKET }}
-      RAMHAL_BACKUP_S3_REGION: ${{ secrets.RAMHAL_BACKUP_S3_REGION }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.RAMHAL_BACKUP_S3_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.RAMHAL_BACKUP_S3_SECRET_ACCESS_KEY }}
+      BACKUP_ENDPOINT: ${{ secrets.BACKUP_WRITER_S3_ENDPOINT }}
+      BACKUP_BUCKET: ${{ secrets.BACKUP_WRITER_S3_BUCKET }}
+      BACKUP_REGION: ${{ secrets.BACKUP_WRITER_S3_REGION }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.BACKUP_WRITER_S3_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_WRITER_S3_SECRET_ACCESS_KEY }}
+      # R2 does not implement the newer default upload checksums.
+      AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+      AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
       PG_VERSION: '18'
       RETENTION_DAYS: 14
     steps:
@@ -50,23 +53,23 @@ jobs:
           echo "DUMP_NAME=${NAME}" >> "$GITHUB_ENV"
           pg_dump "$DATABASE_URI" | gzip > "$NAME"
 
-      - name: Upload to Neon Object Storage
+      - name: Upload to R2
         run: |
-          aws s3 cp "$DUMP_NAME" "s3://${RAMHAL_BACKUP_S3_BUCKET}/${DUMP_NAME}" \
-            --endpoint-url "$RAMHAL_BACKUP_S3_ENDPOINT" \
-            --region "$RAMHAL_BACKUP_S3_REGION"
+          aws s3 cp "$DUMP_NAME" "s3://${BACKUP_BUCKET}/${DUMP_NAME}" \
+            --endpoint-url "$BACKUP_ENDPOINT" \
+            --region "$BACKUP_REGION"
 
       - name: Remove dumps older than the retention window
         run: |
           THRESHOLD=$(date -u -d "-${RETENTION_DAYS} days" +%Y-%m-%dT%H:%M:%SZ)
           aws s3api list-objects-v2 \
-            --endpoint-url "$RAMHAL_BACKUP_S3_ENDPOINT" \
-            --region "$RAMHAL_BACKUP_S3_REGION" \
-            --bucket "$RAMHAL_BACKUP_S3_BUCKET" \
+            --endpoint-url "$BACKUP_ENDPOINT" \
+            --region "$BACKUP_REGION" \
+            --bucket "$BACKUP_BUCKET" \
             --query "Contents[?LastModified<'${THRESHOLD}'].Key" \
             --output text |
             tr '\t' '\n' |
             while read -r key; do
-              [ -n "$key" ] && aws s3 rm "s3://${RAMHAL_BACKUP_S3_BUCKET}/${key}" \
-                --endpoint-url "$RAMHAL_BACKUP_S3_ENDPOINT" --region "$RAMHAL_BACKUP_S3_REGION"
+              [ -n "$key" ] && aws s3 rm "s3://${BACKUP_BUCKET}/${key}" \
+                --endpoint-url "$BACKUP_ENDPOINT" --region "$BACKUP_REGION"
             done
