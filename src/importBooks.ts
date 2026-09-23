@@ -78,37 +78,26 @@ export type Reconciliation = {
 
 // ---------------------------------------------------------------------------
 
-const CATEGORY_SLUG: Record<string, string> = {
-  'ספרים בעברית': 'hebrew-books',
-  'Hebrew Books': 'hebrew-books',
-  'Livres en hébreu': 'hebrew-books',
-  'ספרים בצרפתית': 'french-books',
-  'French Books': 'french-books',
-  'Livres en français': 'french-books',
-  'ספרים באנגלית': 'english-books',
-  'English Books': 'english-books',
-  'Livres en anglais': 'english-books',
-  'סידורים ומחזורים': 'siddurim-machzorim',
-  'Siddurim and Machzorim': 'siddurim-machzorim',
-  "Sidourim et Ma'hzorim": 'siddurim-machzorim',
-  'CD/DVD': 'cd-dvd',
-}
-
-const CATEGORY_TO_LANGUAGE: Record<string, SiteKey> = {
-  'hebrew-books': 'he',
-  'french-books': 'fr',
-  'english-books': 'en',
-}
-const LANGUAGE_TO_CATEGORY: Record<SiteKey, string> = {
-  he: 'hebrew-books',
-  fr: 'french-books',
-  en: 'english-books',
+// A legacy shelf breadcrumb is evidence of a book's LANGUAGE, never of its
+// category (docs/DECISIONS.md §24) — hebrew-books/french-books/english-books
+// no longer exist as categories to assign. siddurim-machzorim and cd-dvd
+// aren't languages, so they're handled separately below, not through this map.
+const SHELF_LANGUAGE: Record<string, SiteKey> = {
+  'ספרים בעברית': 'he',
+  'Hebrew Books': 'he',
+  'Livres en hébreu': 'he',
+  'ספרים בצרפתית': 'fr',
+  'French Books': 'fr',
+  'Livres en français': 'fr',
+  'ספרים באנגלית': 'en',
+  'English Books': 'en',
+  'Livres en anglais': 'en',
 }
 
 // Shelves the institute no longer sells online. A book filed under one of
 // these — or titled like a recording, see isRecordedMediaTitle — is skipped on
 // import, so a re-import never resurrects what was deleted from the catalogue.
-const DISCONTINUED_CATEGORY_SLUGS: readonly string[] = ['cd-dvd']
+const DISCONTINUED_SHELF_LABELS: readonly string[] = ['CD/DVD']
 
 // The legacy sites never had a Siddurim/Machzorim shelf of their own — every
 // canonical prayer book was filed under the plain Hebrew-books breadcrumb.
@@ -161,23 +150,22 @@ function toLexicalRichText(text: string): NonNullable<Book['description']> {
 }
 
 /**
- * bookLanguage priority: the category, when one of the three sites filed it
- * under a language-specific shelf (hebrew-books/french-books/english-books —
- * siddurim-machzorim and cd-dvd don't imply a language). Falling back to
- * script detection on the title when no category says so — true for most of
- * the catalogue (83 of 167 site-entries have no breadcrumb at all, mainly on
- * the English site, which carries none). Hebrew script is a confident
- * signal (see the reconciliation report: the English and French sites
- * mostly sell Hebrew-titled books) and returns 'he'. Latin script is NOT a
- * confident signal — it cannot distinguish French from English (see
- * docs/reviews/REVIEW-01-findings.md #7, which caught French titles such as
- * "La voix des justes" being filed as English) — so it returns 'unknown'
- * rather than guessing.
+ * bookLanguage priority: the legacy shelf breadcrumb, when one of the three
+ * sites filed it under a language-specific shelf (SHELF_LANGUAGE —
+ * siddurim-machzorim and cd-dvd don't imply a language, so they're not in
+ * that map). Falling back to script detection on the title when no shelf
+ * says so — true for most of the catalogue (83 of 167 site-entries have no
+ * breadcrumb at all, mainly on the English site, which carries none).
+ * Hebrew script is a confident signal (see the reconciliation report: the
+ * English and French sites mostly sell Hebrew-titled books) and returns
+ * 'he'. Latin script is NOT a confident signal — it cannot distinguish
+ * French from English (see docs/reviews/REVIEW-01-findings.md #7, which
+ * caught French titles such as "La voix des justes" being filed as
+ * English) — so it returns 'unknown' rather than guessing.
  */
 function deriveBookLanguage(categories: Partial<Record<SiteKey, string | null>>, titles: string[]): BookLanguage {
   for (const raw of Object.values(categories)) {
-    const slug = raw ? CATEGORY_SLUG[raw] : undefined
-    const language = slug ? CATEGORY_TO_LANGUAGE[slug] : undefined
+    const language = raw ? SHELF_LANGUAGE[raw] : undefined
     if (language) return language
   }
   if (titles.some((t) => HAS_HEBREW.test(t))) return 'he'
@@ -228,12 +216,8 @@ function pickCoverImageUrl(images: Partial<Record<SiteKey, string[]>>): string |
   return null
 }
 
-function categorySlugOf(categories: Partial<Record<SiteKey, string | null>>): string | null {
-  for (const raw of Object.values(categories)) {
-    const slug = raw ? CATEGORY_SLUG[raw] : undefined
-    if (slug) return slug
-  }
-  return null
+function isDiscontinuedShelf(categories: Partial<Record<SiteKey, string | null>>): boolean {
+  return Object.values(categories).some((raw) => raw && DISCONTINUED_SHELF_LABELS.includes(raw))
 }
 
 function priceRows(prices: Partial<Record<SiteKey, Price | null>>): { amount: number; currency: Currency }[] {
@@ -272,10 +256,6 @@ type BookInput = {
   urlSlug: string | undefined
 }
 
-function isSiteKey(language: BookLanguage): language is SiteKey {
-  return language !== 'unknown'
-}
-
 export function buildBookInput(rawImportKey: string, view: ImportView, rawTitles: Partial<Record<SiteKey, string>>, reviewNote: string | null): BookInput | null {
   // Emanuel designated the five book-category pages on www.ramhal.com as the
   // catalogue source of truth in TASK-34. frramhal.com and enramhal.com may
@@ -287,8 +267,7 @@ export function buildBookInput(rawImportKey: string, view: ImportView, rawTitles
   const prices = priceRows(view.prices)
   if (prices.length === 0) return null // nothing to import — see the report for how many, if any
 
-  const shelf = categorySlugOf(view.categories)
-  if (shelf && DISCONTINUED_CATEGORY_SLUGS.includes(shelf)) return null
+  if (isDiscontinuedShelf(view.categories)) return null
   if (Object.values(rawTitles).some(isRecordedMediaTitle)) return null
 
   const titles = localizeTitles(rawTitles)
@@ -302,16 +281,12 @@ export function buildBookInput(rawImportKey: string, view: ImportView, rawTitles
   if (bookLanguage === 'unknown') reasons.push('language-uncertain')
   if (view.priceZero) reasons.push('zero-price')
 
-  // Falls back to the language-named category — hebrew-books, french-books,
-  // english-books — only when bookLanguage is actually known. When it isn't
-  // (Latin script, no breadcrumb), there is no honest category to assign
-  // either: the legacy sites' own categories ARE those three language
-  // shelves, so guessing one would repeat the same mistake. `category` is
-  // not required for exactly this reason — left blank and flagged instead.
-  const categorySlug =
-    REVIEWED_CATEGORY_SLUG[importKey] ??
-    categorySlugOf(view.categories) ??
-    (isSiteKey(bookLanguage) ? LANGUAGE_TO_CATEGORY[bookLanguage] : null)
+  // Category says what KIND of work a book is, never its language
+  // (docs/DECISIONS.md §24) — a legacy shelf is evidence for bookLanguage
+  // above, never for category. The only source of a category is a human
+  // reading the title and recognising a siddur or machzor; every other book
+  // is left uncategorised.
+  const categorySlug = REVIEWED_CATEGORY_SLUG[importKey] ?? null
 
   return {
     importKey,

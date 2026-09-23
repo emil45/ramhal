@@ -301,6 +301,9 @@ export interface Book {
    */
   reviewNote?: string | null;
   bookLanguage: 'he' | 'fr' | 'en' | 'he-fr' | 'aramaic-fr' | 'unknown';
+  /**
+   * סוג החיבור (למשל: סידורים ומחזורים) — לא השפה. שפת הספר נקבעת בשדה ׳שפת החיבור׳ למעלה.
+   */
   category?: (number | null) | Category;
   inStock?: boolean | null;
   slug?: string | null;

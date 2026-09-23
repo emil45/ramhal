@@ -307,16 +307,19 @@ export const Books: CollectionConfig = {
       admin: { position: 'sidebar' },
     },
     {
-      // Not required: a book imported with an uncertain bookLanguage (see
-      // above) has no honest category to fall back to either — the legacy
-      // sites' own category names are exactly hebrew-books/french-books/
-      // english-books, so inventing one would repeat the same guess. Left
-      // blank and flagged (language-uncertain) instead.
+      // What KIND of work this is (a siddur, say) — never its language.
+      // Language lives only in bookLanguage above; see docs/DECISIONS.md
+      // §24 for why the two used to duplicate each other. Not required: the
+      // importer only sets this from a human-reviewed list, so most books
+      // are left uncategorised rather than guessed.
       name: 'category',
       type: 'relationship',
       label: 'קטגוריה',
       relationTo: 'categories',
-      admin: { position: 'sidebar' },
+      admin: {
+        position: 'sidebar',
+        description: 'סוג החיבור (למשל: סידורים ומחזורים) — לא השפה. שפת הספר נקבעת בשדה ׳שפת החיבור׳ למעלה.',
+      },
     },
     {
       name: 'inStock',

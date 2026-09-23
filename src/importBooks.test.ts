@@ -47,8 +47,8 @@ describe('localizeTitles', () => {
   })
 })
 
-describe('buildBookInput reviewed overrides', () => {
-  it('keeps a French-shelf book listed on the canonical Hebrew-domain storefront', () => {
+describe('buildBookInput: a legacy shelf sets language, never a category', () => {
+  it('gives a French-shelf book bookLanguage fr and no category', () => {
     const input = buildBookInput(
       'tikoun olam',
       view({ categories: { he: 'ספרים בצרפתית' } }),
@@ -57,11 +57,18 @@ describe('buildBookInput reviewed overrides', () => {
     )
 
     expect(input?.bookLanguage).toBe('fr')
-    expect(input?.categorySlug).toBe('french-books')
+    expect(input?.categorySlug).toBeNull()
     expect(input?.reviewReasons).not.toContain('language-uncertain')
   })
 
-  it('files a reviewed siddur under siddurim-machzorim despite a plain hebrew-books breadcrumb', () => {
+  it('gives a Hebrew-shelf book bookLanguage he and no category', () => {
+    const input = buildBookInput('מסילת ישרים', view({ categories: { he: 'ספרים בעברית' } }), { he: 'מסילת ישרים' }, null)
+
+    expect(input?.bookLanguage).toBe('he')
+    expect(input?.categorySlug).toBeNull()
+  })
+
+  it('still files a reviewed siddur under siddurim-machzorim despite a plain hebrew-books breadcrumb', () => {
     const input = buildBookInput(
       'סידור שבת פורמט קטן',
       view({ categories: { he: 'ספרים בעברית' } }),
@@ -69,13 +76,14 @@ describe('buildBookInput reviewed overrides', () => {
       null,
     )
 
+    expect(input?.bookLanguage).toBe('he')
     expect(input?.categorySlug).toBe('siddurim-machzorim')
   })
 
-  it('leaves an unreviewed hebrew-books breadcrumb alone', () => {
-    const input = buildBookInput('מסילת ישרים', view({ categories: { he: 'ספרים בעברית' } }), { he: 'מסילת ישרים' }, null)
+  it('still skips a book filed under the discontinued CD/DVD shelf', () => {
+    const input = buildBookInput('שיעור מוקלט', view({ categories: { he: 'CD/DVD' } }), { he: 'שיעור מוקלט' }, null)
 
-    expect(input?.categorySlug).toBe('hebrew-books')
+    expect(input).toBeNull()
   })
 
   it('skips a listing that exists only on a non-canonical legacy storefront', () => {
