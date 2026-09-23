@@ -16,6 +16,7 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const donationLink = { href: donatePath(locale), label: dict.nav.donate }
   const secondaryLinks = [
     { href: coursesPath(locale), label: dict.nav.courses },
+    { href: localePath(locale, '/press'), label: dict.nav.press },
     { href: localePath(locale, '/beit-ramhal'), label: dict.nav.beitRamhal },
     { href: localePath(locale, '/ramhal'), label: dict.nav.ramhal },
     { href: localePath(locale, '/rabbi-chriqui'), label: dict.nav.chriqui },
