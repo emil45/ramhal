@@ -2,14 +2,15 @@ import { Mail, MapPin, Phone } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
-import { getContactDetails } from '@/lib/siteSettingsData'
+import { SocialIcon } from '@/components/storefront/SocialIcon'
+import { getContactDetails, getSocialLinks } from '@/lib/siteSettingsData'
 import { cataloguePath, coursesPath, donatePath, localePath, questionsPath } from '@/lib/routes'
 
 import type { Dictionary } from '@/app/(frontend)/dictionary'
 import type { Locale } from '@/lib/locale'
 
 export async function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
-  const contact = await getContactDetails(locale)
+  const [contact, socialLinks] = await Promise.all([getContactDetails(locale), getSocialLinks(locale)])
   const links = [
     { href: cataloguePath(locale), label: dict.nav.catalogue },
     { href: coursesPath(locale), label: dict.nav.courses },
@@ -45,31 +46,54 @@ export async function Footer({ dict, locale }: { dict: Dictionary; locale: Local
           ))}
         </nav>
 
-        <address className="flex flex-col gap-2 text-sm not-italic">
-          <p className="font-semibold text-foreground">{dict.footer.contactTitle}</p>
-          {contact.address ? (
-            <p className="flex items-start gap-2 text-muted-foreground">
-              <MapPin className="mt-0.5 size-4 shrink-0 text-gold-ink" aria-label={dict.footer.address} />
-              <span>{contact.address}</span>
-            </p>
+        <div className="flex flex-col gap-6">
+          <address className="flex flex-col gap-2 text-sm not-italic">
+            <p className="font-semibold text-foreground">{dict.footer.contactTitle}</p>
+            {contact.address ? (
+              <p className="flex items-start gap-2 text-muted-foreground">
+                <MapPin className="mt-0.5 size-4 shrink-0 text-gold-ink" aria-label={dict.footer.address} />
+                <span>{contact.address}</span>
+              </p>
+            ) : null}
+            {contact.phone ? (
+              <p className="flex items-center gap-2">
+                <Phone className="size-4 shrink-0 text-gold-ink" aria-label={dict.footer.phone} />
+                <a href={`tel:${contact.phone.replace(/[^\d+]/g, '')}`} dir="ltr" className="text-muted-foreground underline-offset-4 hover:text-teal hover:underline">
+                  {contact.phone}
+                </a>
+              </p>
+            ) : null}
+            {contact.email ? (
+              <p className="flex items-center gap-2">
+                <Mail className="size-4 shrink-0 text-gold-ink" aria-label={dict.footer.email} />
+                <a href={`mailto:${contact.email}`} dir="ltr" className="text-muted-foreground underline-offset-4 hover:text-teal hover:underline">
+                  {contact.email}
+                </a>
+              </p>
+            ) : null}
+          </address>
+
+          {socialLinks.length > 0 ? (
+            <nav aria-label={dict.footer.socialTitle} className="flex flex-col gap-2">
+              <p className="text-sm font-semibold text-foreground">{dict.footer.socialTitle}</p>
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
+                {socialLinks.map((link) => (
+                  <a
+                    key={link.platform}
+                    href={link.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    dir="ltr"
+                    className="inline-flex items-center gap-2 text-sm text-muted-foreground underline-offset-4 hover:text-teal hover:underline"
+                  >
+                    <SocialIcon platform={link.platform} className="size-4 shrink-0" />
+                    <span>{dict.footer.socialPlatforms[link.platform]}</span>
+                  </a>
+                ))}
+              </div>
+            </nav>
           ) : null}
-          {contact.phone ? (
-            <p className="flex items-center gap-2">
-              <Phone className="size-4 shrink-0 text-gold-ink" aria-label={dict.footer.phone} />
-              <a href={`tel:${contact.phone.replace(/[^\d+]/g, '')}`} dir="ltr" className="text-muted-foreground underline-offset-4 hover:text-teal hover:underline">
-                {contact.phone}
-              </a>
-            </p>
-          ) : null}
-          {contact.email ? (
-            <p className="flex items-center gap-2">
-              <Mail className="size-4 shrink-0 text-gold-ink" aria-label={dict.footer.email} />
-              <a href={`mailto:${contact.email}`} dir="ltr" className="text-muted-foreground underline-offset-4 hover:text-teal hover:underline">
-                {contact.email}
-              </a>
-            </p>
-          ) : null}
-        </address>
+        </div>
       </div>
       <div className="border-t border-border">
         <p className="page-container py-4 text-center text-xs text-muted-foreground">{dict.footer.rights}</p>

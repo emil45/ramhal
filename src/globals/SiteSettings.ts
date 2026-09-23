@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { CURRENCIES } from '../lib/currency.ts'
+import { SOCIAL_PLATFORMS, validateSocialLinks, validateSocialLinkUrl } from '../lib/socialLinks.ts'
 
 // Contact details, social links, the currency shown per locale.
 export const SiteSettings: GlobalConfig = {
@@ -35,18 +36,28 @@ export const SiteSettings: GlobalConfig = {
       type: 'array',
       label: 'קישורי רשתות חברתיות',
       labels: { singular: 'קישור', plural: 'קישורים' },
+      maxRows: SOCIAL_PLATFORMS.length,
+      validate: validateSocialLinks,
       fields: [
         {
           name: 'platform',
-          type: 'text',
+          type: 'select',
           label: 'פלטפורמה',
           required: true,
+          options: [
+            { label: 'Facebook', value: 'facebook' },
+            { label: 'YouTube', value: 'youtube' },
+          ],
         },
         {
           name: 'url',
           type: 'text',
           label: 'כתובת',
           required: true,
+          validate: validateSocialLinkUrl,
+          admin: {
+            description: 'כתובת מלאה שמתחילה ב־https://',
+          },
         },
       ],
     },

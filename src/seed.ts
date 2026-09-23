@@ -1,5 +1,7 @@
 import type { Payload } from 'payload'
 
+import { DEFAULT_SOCIAL_LINKS } from './lib/socialLinks'
+
 type LocalizedText = { en: string; fr: string; he: string }
 
 // Seed values per docs/DECISIONS.md §7 (shipping) / §13 (categories describe
@@ -136,6 +138,19 @@ async function seedContactDetails(payload: Payload): Promise<void> {
   await payload.updateGlobal({ slug: 'siteSettings', locale: 'fr', data: { contact: { address: CONTACT_ADDRESS.fr } } })
 }
 
+/** Initialises the institute's accounts only when an editor has not already
+ * created any social links. Once the array has content, the admin owns it. */
+async function seedSocialLinks(payload: Payload): Promise<void> {
+  const existing = await payload.findGlobal({ slug: 'siteSettings', locale: 'he' })
+  if (existing.socialLinks && existing.socialLinks.length > 0) return
+
+  await payload.updateGlobal({
+    slug: 'siteSettings',
+    locale: 'he',
+    data: { socialLinks: DEFAULT_SOCIAL_LINKS },
+  })
+}
+
 /**
  * Runs explicitly through `npm run seed` and remains safe to repeat on a
  * database the son has already been editing for months, not just on a fresh
@@ -153,4 +168,5 @@ export async function seed(payload: Payload): Promise<void> {
   await seedShippingSettings(payload)
   await seedSchedule(payload)
   await seedContactDetails(payload)
+  await seedSocialLinks(payload)
 }

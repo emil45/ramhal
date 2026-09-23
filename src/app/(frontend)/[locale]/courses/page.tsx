@@ -18,8 +18,8 @@ import {
 } from '@/lib/fullBookCourses'
 import { isLocale } from '@/lib/locale'
 import { bookPath } from '@/lib/routes'
-
-const CHANNEL_URL = 'https://www.youtube.com/@ramhalInstit/playlists'
+import { getSocialLinks } from '@/lib/siteSettingsData'
+import { socialLinkForPlatform, youtubePlaylistsUrl } from '@/lib/socialLinks'
 
 const CONTENT = {
   he: {
@@ -84,8 +84,9 @@ export default async function CoursesPage({
   if (!isLocale(locale)) notFound()
 
   const content = CONTENT[locale]
-  const books = await getCatalogueBooks(locale)
+  const [books, socialLinks] = await Promise.all([getCatalogueBooks(locale), getSocialLinks(locale)])
   const booksBySlug = new Map(books.map((book) => [book.urlSlug, book]))
+  const youtubeLink = socialLinkForPlatform(socialLinks, 'youtube')
 
   return (
     <article>
@@ -96,17 +97,19 @@ export default async function CoursesPage({
             <p className="max-w-2xl text-xl leading-relaxed sm:text-2xl">
               {content.lead}
             </p>
-            <div className="pt-2">
-              <a
-                href={CHANNEL_URL}
-                target="_blank"
-                rel="noreferrer"
-                className={buttonVariants({ variant: 'outline', size: 'lg' })}
-              >
-                <CirclePlay data-icon="inline-start" aria-hidden />
-                {content.youtubeChannel}
-              </a>
-            </div>
+            {youtubeLink ? (
+              <div className="pt-2">
+                <a
+                  href={youtubePlaylistsUrl(youtubeLink.url)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className={buttonVariants({ variant: 'outline', size: 'lg' })}
+                >
+                  <CirclePlay data-icon="inline-start" aria-hidden />
+                  {content.youtubeChannel}
+                </a>
+              </div>
+            ) : null}
           </div>
         </div>
       </section>

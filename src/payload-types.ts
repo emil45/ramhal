@@ -1336,7 +1336,10 @@ export interface SiteSetting {
   };
   socialLinks?:
     | {
-        platform: string;
+        platform: 'facebook' | 'youtube';
+        /**
+         * כתובת מלאה שמתחילה ב־https://
+         */
         url: string;
         id?: string | null;
       }[]
