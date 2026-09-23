@@ -4,9 +4,7 @@
  * separate, required variable (vitest.setup.ts) is the first guard — a test
  * run never falls back to whatever `DATABASE_URI` happens to hold. This is
  * the second, independent one: even a `TEST_DATABASE_URI` mistakenly
- * pointed at production is refused. `exitUnlessDevelopmentDatabaseIsSafe`
- * reuses this same guard for local development rather than writing a second
- * one — `guidance` is the only thing that differs between the two callers.
+ * pointed at production is refused.
  *
  * The host is not a secret — GET /api/diagnostics publishes a fingerprint
  * derived from it (src/lib/diagnostics.ts) precisely so it can be compared

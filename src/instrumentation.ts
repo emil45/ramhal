@@ -15,10 +15,8 @@ export async function register(): Promise<void> {
   )
   const { exitUnlessAdminAllowlistIsSafe } = await import('./lib/auth/exitUnlessAdminAllowlistIsSafe')
   const { exitUnlessGoogleSignInIsSafe } = await import('./lib/auth/exitUnlessGoogleSignInIsSafe')
-  const { exitUnlessDevelopmentDatabaseIsSafe } = await import('./lib/exitUnlessDevelopmentDatabaseIsSafe')
   exitUnlessBuildMatchesEnvironment()
   exitUnlessPaymentConfigurationIsSafe()
   exitUnlessAdminAllowlistIsSafe()
   exitUnlessGoogleSignInIsSafe()
-  exitUnlessDevelopmentDatabaseIsSafe()
 }

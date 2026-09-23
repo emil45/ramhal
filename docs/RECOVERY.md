@@ -191,9 +191,9 @@ DATABASE_URI="<production connection string>" npx vite-node scripts/one-off/TASK
 Every one-off script since TASK-34 prints or checks the target database's identity before writing
 (hardcoded expected counts, or a fingerprint from `parseDatabaseIdentity`,
 `src/lib/diagnostics.ts`) and aborts on any mismatch — read that output before confirming the
-script actually wrote anything. `npm run import:books` / `import:prepared-covers` follow the same
-rule (`docs/BACKLOG.md` — they print the target fingerprint first): compare it against
-`2c951382a7f8`, production's recorded fingerprint above, before trusting the run.
+script actually wrote anything. `npm run import:books` follows the same rule (it prints the target
+fingerprint first): compare it against `2c951382a7f8`, production's recorded fingerprint above,
+before trusting the run.
 
 ### 3. Clean up afterwards
 
