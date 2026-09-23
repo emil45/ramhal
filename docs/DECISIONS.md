@@ -47,14 +47,18 @@ transaction-mode pooler).
 
 **Content is static, the shop is dynamic.** Catalogue and article pages are generated ahead of time
 and revalidated periodically; cart, checkout, orders and admin render per request. **Vercel**,
-Frankfurt region. **Neon Postgres**, two long-lived branches: `production`
-(`br-delicate-math-b1b1mbw7`, also used by local `.env`) and `testing` (used only by the test
-suite). There is no separate `development` branch — a project's network transfer allowance on Neon
-is shared across every branch in it, so a second long-lived branch was never real isolation, only
-a second thing to drift and a second way to exhaust the same shared quota (as happened 23 September
-2026, see `docs/BACKLOG.md`). Local work runs directly against production; a script that mutates
-data follows the one-off procedure in `docs/RECOVERY.md` regardless of where it's run from.
-`APP_ENV` (`development` | `demo` | `production`, required, no default) says which deployment this
+Frankfurt region. **Neon Postgres** holds production and nothing else. **Only two things ever
+connect to Neon: Vercel's deployed app (its build and its runtime) and the nightly `pg_dump`.**
+Local development, `next build` and the test suite run against a local PostgreSQL 18 restored from
+the latest backup and sanitised of customer data (`npm run db:restore-local`; databases `ramhal` and
+`ramhal_test`). Why: Neon's free plan meters 5 GB of network transfer per month for the whole
+project — every branch, and Object Storage too — and the required `next build` and `npm test` before
+every commit, a `testing` branch, restore drills and covers served from the Neon bucket exhausted it
+on 23 September 2026, blocking the live site along with the local work. Nothing in the repository
+needs Neon to work: `vitest.setup.ts` refuses a `TEST_DATABASE_URI` on `*.neon.tech` always, and the
+Payload config refuses a `DATABASE_URI` there when `APP_ENV=development` unless a one-off script sets
+`ALLOW_PRODUCTION_ONE_OFF=TASK-NN` for its own command (`docs/RECOVERY.md`). A script that mutates
+data still follows that one-off procedure. `APP_ENV` (`development` | `demo` | `production`, required, no default) says which deployment this
 is; `NODE_ENV` only says how the build is optimised — never gate behaviour on `NODE_ENV`. The mock
 payment provider is allowed under `development`/`demo` and refused under `production`. `demo` also
 renders a permanent, undismissable banner, baked in at build time — `APP_ENV` must be set for
@@ -65,7 +69,13 @@ renders a permanent, undismissable banner, baked in at build time — `APP_ENV` 
 **Video stays on YouTube**, never rehosted; a sync job would index channel metadata rather than
 mirror files. **MP3s are meant to be self-hosted** on S3-compatible object storage once that phase
 starts. Neither the sync job nor the audio archive is built yet — this is the intended shape, not a
-completed feature.
+completed feature. **Uploaded media (covers, page images) lives in Cloudflare R2**, bucket
+`ramhal-media`, served from its `r2.dev` address and uploaded directly from the admin browser. R2 is
+used because it has no egress fee and its free tier (10 GB, Standard storage class only —
+Infrequent Access has no free tier) is separate from Neon's transfer allowance. `r2.dev` is
+rate-limited and documented as non-production: a custom domain on the bucket is a go-live blocker
+(`docs/BACKLOG.md`). Local environments set only `S3_PUBLIC_URL`, which shows the bucket's files and
+refuses uploads, so a laptop can never write to production media.
 
 ## 7. Store & payments
 
@@ -110,7 +120,10 @@ the exact production origin); previews cannot authenticate at all right now.
 ## 11. Backups & production verification
 
 Two independent recovery mechanisms: Neon's own point-in-time restore (a few hours of history on the
-free plan) and a nightly `pg_dump` to object storage, kept two weeks (`.github/workflows/backup.yml`).
+free plan) and a nightly `pg_dump` to the private R2 bucket `ramhal-backups`, kept two weeks
+(`.github/workflows/backup.yml`). Only the backup workflow's credential can write there; the
+restore drill, the local restore and the app's own status check read with a separate read-only one.
+The restore drill restores into a throwaway Postgres container, never a Neon branch.
 Procedure for both: `docs/RECOVERY.md`. **A claim about production is established through the live
 URL or through what the running app reports about itself — never through a database tool connection
 alone.** `GET /api/diagnostics` is public but narrow: an anonymous request gets `appEnv`,
@@ -157,3 +170,14 @@ Every image an editor might ever change lives in the Payload Media collection (o
 deployed environments) — one source of truth: the database + bucket. `public/` holds only brand
 furniture that changes with a redesign: logo, favicon, the 40th anniversary emblem — nothing
 editorial. The repo holds no source/original image folders; git history keeps them.
+
+## 17. No service may ever charge money
+
+The owner's rule. Neon's free plan and Vercel Hobby stop at their limits instead of billing: Neon
+suspends compute once the monthly transfer allowance is used (`docs/BACKLOG.md` cites its docs), and
+Vercel Hobby has monthly allotments with no on-demand billing and pauses the account when they are
+exceeded (Vercel docs, "Limits" and "Why has my account or deployment been paused?"). Cloudflare R2
+has **no spending cap** — its budget alerts are email-only — so that one is handled outside the code:
+the owner keeps a $1 budget alert on the Cloudflare account and a low-limit payment card on file.
+No usage monitoring is built. R2 is safe by construction only while nothing depends on Infrequent
+Access, and while the audio archive stays inside 10 GB or is decided separately (`docs/BACKLOG.md`).

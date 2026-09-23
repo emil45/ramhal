@@ -102,6 +102,11 @@ above cleverness, above speed.
   `docs/BACKLOG.md` — they are not meant to accumulate indefinitely.
 - Work happens directly on `main`. No task branches. `main` is pushed to `origin` at the end of
   every task — the remote is the safety net, not a local branch.
+- Required checks run on the local PostgreSQL (`ramhal`, `ramhal_test`), never on Neon: `DATABASE_URI`
+  and `TEST_DATABASE_URI` in `.env` are `localhost`, and the code refuses a Neon host for tests
+  always and for development unless a one-off script sets `ALLOW_PRODUCTION_ONE_OFF=TASK-NN`. Refresh
+  the local data with `npm run db:restore-local`. Neon's transfer allowance is shared by the whole
+  project and its exhaustion takes the live site down (`docs/DECISIONS.md` §5).
 - Nothing is committed that does not build and pass its tests. A commit that fails
   `tsc --noEmit`, `eslint`, `vitest` or `next build` is a commit that should not exist. Verify
   before committing, not after.

@@ -12,17 +12,27 @@ shadcn/ui, React 19. Node 22.x (`.nvmrc` pins the exact development version).
 
 ## Environments
 
-Hosted on **Vercel** (Frankfurt function region). **Neon Postgres** has two long-lived branches:
+Hosted on **Vercel** (Frankfurt function region). **Neon Postgres** holds production only, and
+only Vercel's app and the nightly backup connect to it (`docs/DECISIONS.md` §5). Everything else
+runs on a local PostgreSQL 18 restored from the latest backup:
 
-| Branch | Points at | Used by |
-|---|---|---|
-| `production` | The live site (`APP_ENV=demo` today — see `docs/BACKLOG.md`), Vercel's Production environment, and local `.env` | The public and every developer |
-| `testing` | A separate long-lived fork of `production` | `TEST_DATABASE_URI`, the test suite only |
+| Database | Used by |
+|---|---|
+| `ramhal` (local) | `npm run dev`, `npm run build` — `DATABASE_URI` |
+| `ramhal_test` (local) | the test suite only — `TEST_DATABASE_URI` |
+| Neon `production` | the live site (`APP_ENV=demo` today — see `docs/BACKLOG.md`) |
 
-There is no separate `development` branch (`docs/DECISIONS.md` §5) — Neon's project-wide network
-transfer allowance is shared across every branch in a project, so a second long-lived branch
-bought no real isolation, only a second thing to keep in sync. Local work runs directly against
-`production`; be deliberate about writes made from a local `npm run dev`.
+## Running it
+
+1. Install PostgreSQL 18 (`brew install postgresql@18 && brew services start postgresql@18`, then put
+   `/opt/homebrew/opt/postgresql@18/bin` on your `PATH` — it is keg-only) and create the two
+   databases: `createdb ramhal && createdb ramhal_test`.
+2. `cp .env.example .env` and fill it in. The `BACKUP_S3_*` values are a read-only R2 credential.
+3. `npm install`, then `npm run db:restore-local` — downloads the newest dump, restores both
+   databases and truncates customer and order data. Re-run it any time to refresh.
+4. `npm run db:migrate` if the code is ahead of the dump, then `npm run dev`.
+5. Checks before a commit: `npx tsc --noEmit`, `npm run lint`, `npm test`, `npm run build` — all
+   local, none touch Neon.
 
 Production's database fingerprint is recorded in `docs/RECOVERY.md` — compare `GET
 /api/diagnostics`'s `database.fingerprint` against it to confirm you're looking at the same
@@ -30,10 +40,12 @@ database, rather than trusting a remembered host string (`docs/DECISIONS.md` §1
 
 ## Storage
 
-Book covers and other media go to an S3-compatible bucket (Neon Object Storage today; Cloudflare
-R2 is intended once a larger audio archive exists) when the six `S3_*` variables are set, or to
-the local `media/` folder in development when they are unset. Uploads go directly from the
-authenticated admin browser to the bucket; Payload only ever writes the database record.
+Book covers and other media go to Cloudflare R2 (bucket `ramhal-media`, public `r2.dev` address for
+now) when the six `S3_*` variables are set, or to the local `media/` folder when they are unset.
+Setting only `S3_PUBLIC_URL` is a deliberate read-only mode: local development shows production's
+files and refuses uploads. Uploads go directly from the authenticated admin browser to the bucket
+(CORS policy: `infrastructure/r2/media-bucket-cors.json`); Payload only ever writes the database
+record, and refuses files over 10 MB. Backups are in a separate private bucket, `ramhal-backups`.
 
 ## Images
 
@@ -49,7 +61,7 @@ uploads with no `S3_*` variables set land in `media/` at the repo root, which is
 ## Backups and restore
 
 Two independent mechanisms: Neon's own point-in-time restore (a few hours of history on the free
-plan) and a nightly `pg_dump` to object storage, kept two weeks
+plan) and a nightly `pg_dump` to R2, kept two weeks
 (`.github/workflows/backup.yml`). Full restore procedure, including recovering admin access when
 nobody can sign in at all: `docs/RECOVERY.md`.
 
@@ -140,7 +152,8 @@ Names only — see `.env.example` for what each one does and requires: `DATABASE
 `PAYMENT_PROVIDER`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_WEBHOOK_ID`,
 `PAYPAL_ENV`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `ADMIN_ALLOWED_EMAILS`,
 `PAYPAL_DONATION_URL`, `BACKUP_S3_BUCKET`, `BACKUP_S3_ENDPOINT`, `BACKUP_S3_REGION`,
-`BACKUP_S3_ACCESS_KEY_ID`, `BACKUP_S3_SECRET_ACCESS_KEY`.
+`BACKUP_S3_ACCESS_KEY_ID`, `BACKUP_S3_SECRET_ACCESS_KEY`. One more is set only on the command line of a
+production one-off script, never in `.env`: `ALLOW_PRODUCTION_ONE_OFF=TASK-NN` (`docs/RECOVERY.md`).
 
 ## Deploying
 

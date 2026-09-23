@@ -21,27 +21,24 @@ actionable without reading anything else. Grouped, not ordered by priority withi
   `www.ramhal.com` (or equivalent) goes live: add the domain in Vercel, add it as an authorized
   redirect URI on the `ramhal-admin` OAuth client in the `machon-ramhal` Google Cloud project
   (confirmed not yet tested against a live domain), and update `SERVER_URL`.
-- **Neon's project-wide network transfer allowance is exhausted for the month** (confirmed 23
-  September 2026: `console.neon.tech` reports "Limit reached" for the project, and a direct `psql`
-  connection to any branch — including `production` — is refused with "Your account or project has
-  exceeded the quota"). This blocks every environment sharing the project, not just one branch.
-  Needs either a plan upgrade or waiting for the monthly reset before any deploy, migration, or
-  live verification against Neon can proceed.
-- **Neon network transfer is shared by everything in the project, media included** (Neon docs,
-  "Reduce network transfer costs" and "Neon plans": the allowance is "per project and shared across
-  all products in that project, including Postgres, Object Storage, and Functions"; Object Storage
-  "data transferred out counts toward your public network transfer allowance"). Free plan: 5 GB per
-  project per month, compute suspended once exceeded. Every visitor download of a cover from the
-  Neon bucket spends the same allowance as a database query. Decide before go-live whether the
-  media bucket moves to Cloudflare R2 (already named in `.env.example` as the intended home for
-  the larger archive) and whether the plan is upgraded.
-- **Local checks should not touch Neon.** `next build` prerenders every book page against the live
-  database, and AGENTS.md requires a build before every commit. Proposal, not yet built: restore
-  the nightly `pg_dump` into a local PostgreSQL 18 and point local `DATABASE_URI` and
-  `TEST_DATABASE_URI` at it; only Vercel builds reach Neon. See `docs/reports/TASK-44.md`.
-- **Verify TASK-44 once Neon accepts connections again:** log the JSON byte size of
-  `getCatalogueBooks(locale)` and of one `getCatalogueBookBySlug` result before and after, and
-  count Payload queries during one `next build` before and after.
+- **BLOCKER: serve media from an R2 custom domain.** Media is served from the bucket's `r2.dev`
+  address, which Cloudflare documents as non-production and rate-limits. Fine for the demo; attach
+  a custom domain to `ramhal-media` and set `S3_PUBLIC_URL` to it before launch.
+- **Neon's monthly transfer allowance was exhausted on 23 September 2026** and the live site's
+  `/api/diagnostics` answered HTTP 500 that day. The causes on the repository side are removed
+  (`docs/DECISIONS.md` §5); the allowance itself resets monthly. **BLOCKED (quota): the
+  production-database fingerprint discrepancy is unresolved.** `src/lib/refuseProductionDatabase.ts`
+  names `ep-red-tree-b19ry3lo…`, `docs/RECOVERY.md` records fingerprint `2c951382a7f8`, and the old
+  local `.env` host fingerprinted to `d82df7fce6e7`. The only authority is the live
+  `/api/diagnostics` `database.fingerprint` (`docs/DECISIONS.md` §10–§11). Once it answers, compare
+  it and fix whichever of the three disagrees.
+- **Verify the R2 switch after the first deploy** (`docs/reports/TASK-45.md`, "PENDING"): covers
+  serve from R2, `/api/diagnostics` backup age reads from R2, one authenticated admin upload proves
+  CORS, then delete the retired `RAMHAL_BACKUP_S3_*` GitHub secrets.
+- **The audio archive will not fit R2's 10 GB free tier.** R2 has no spending cap
+  (`docs/DECISIONS.md` §17), so where the MP3s live needs a decision before that phase starts.
+- **Owner actions after the R2 move:** revoke the admin Cloudflare token; delete the Neon `testing`
+  branch; empty the Neon media and backup buckets after a week on R2.
 
 ## Store & payments
 
@@ -109,10 +106,6 @@ actionable without reading anything else. Grouped, not ordered by priority withi
   screen. The same page renders correctly under `next build && next start`. Affects every
   collection with a description/body field (Books, Articles, Pages, Announcements, Events,
   Series). Not caused by, or fixed by, any change since it was found.
-- **The backup reader credential (`ramhal-backups-app-reader`) is branch-wide `storage:read`**,
-  not bucket-scoped — Neon's object-storage credentials scope to a branch, not to one bucket
-  within it, and this is already the narrowest credential Neon's API offers. Recorded as a known
-  limit, not a gap to close with this provider.
 - **Preview deployments cannot authenticate at all.** Google's redirect URI is registered against
   the exact production origin; a preview URL is a different origin. Not worked around by design,
   but worth deciding whether preview deploys need their own OAuth client if they are to be used
@@ -142,8 +135,8 @@ actionable without reading anything else. Grouped, not ordered by priority withi
 - Duplicate-book merge exceptions from the old three-site import (superseded by
   `docs/DECISIONS.md` §12 — the importer now refuses any candidate without a Hebrew-domain source
   entry, so the old per-pair remaps are no longer reachable).
-- "One database, not two" and "development gets its own branch" — done; three branches
-  (`production`/`development`/`testing`) exist and are documented in `docs/DECISIONS.md` §5.
+- "One database, not two" and "development gets its own branch" — superseded: local work uses a
+  local PostgreSQL, Neon holds production only (`docs/DECISIONS.md` §5).
 - Diagnostics endpoint exposing the full connection string — narrowed to an authenticated-only
   field months ago; confirmed still narrow by reading `src/app/(payload)/api/diagnostics/route.ts`.
 - CD/DVD catalogue removal, language-as-category cleanup, canonical `www.ramhal.com` catalogue —

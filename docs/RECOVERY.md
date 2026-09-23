@@ -114,11 +114,11 @@ exactly what Situation B is for.
 
 ## Situation B: it's been longer than that, or Situation A's window has already passed
 
-A separate, independent copy exists outside Neon entirely: a nightly `pg_dump` uploaded to its own
-object storage bucket (`.github/workflows/backup.yml`), kept for two weeks. This is slower and
-more manual than Situation A, but it doesn't depend on Neon's own history at all — a problem with
-Neon's infrastructure, not just this database's history window, can't take out both copies at
-once.
+A separate, independent copy exists outside Neon entirely: a nightly `pg_dump` uploaded to the
+private Cloudflare R2 bucket `ramhal-backups` (`.github/workflows/backup.yml`), kept for two
+weeks. This is slower and more manual than Situation A, but it doesn't depend on Neon's own
+history at all — a problem with Neon's infrastructure, not just this database's history window,
+can't take out both copies at once, and reading it back never spends Neon's transfer allowance.
 
 **Never restore directly into the live database.** Always restore into a brand new, empty branch
 first, and only point the live site at it once you've confirmed it's actually correct — restoring
@@ -127,41 +127,85 @@ gone."
 
 ### 1. Find the dump to restore
 
-The bucket is private (not a public URL) — you need a connection to Neon Object Storage. Ask
-whoever manages the Neon project for read access to the `ramhal-backups` bucket (Neon console →
-the project → **Storage** — the endpoint, region and bucket name are also all visible there), or
-for the dump file itself. Files are named `ramhal-<UTC timestamp>.sql.gz` — pick the most recent
+The bucket is private (not a public URL). The read-only credential is the `BACKUP_S3_*` set in your
+local `.env` (endpoint `https://<account-id>.r2.cloudflarestorage.com`, region `auto`, bucket
+`ramhal-backups`), or ask whoever manages the Cloudflare account. With the AWS CLI:
+`aws s3 ls s3://ramhal-backups --endpoint-url "$BACKUP_S3_ENDPOINT" --region auto`. Files are named `ramhal-<UTC timestamp>.sql.gz` — pick the most recent
 one from before the problem happened. `GET /api/diagnostics` reports how old the *most recent*
 dump is (`backup.ageHours`), which tells you whether last night's dump already contains the
 problem or not.
 
-### 2. Create a fresh, empty branch to restore into
+### 2. Restore into a throwaway database
 
-In the Neon console: the project → **Branches → Create branch**. Give it a clearly temporary name
-(e.g. `restore-check-2026-09-22`) so nobody mistakes it for anything permanent. Get its connection
-string (**Connect** on that branch) — use the **unpooled** one (no `-pooler` in the hostname).
-
-### 3. Restore
-
-On a machine with PostgreSQL's client tools installed (`pg_restore`/`psql` — these are not part of
-this repository or its dependencies; install PostgreSQL itself, or use `apt`/`brew` if available):
+Never into Neon and never into the live database. The restore drill does exactly this in CI and is
+the reference: **Actions → restore-drill → Run workflow** restores the newest dump (or a named
+one) into a disposable `postgres:18` container and counts books and users. To do it by hand, on a
+machine with PostgreSQL 18 client tools, create an empty database and restore with
+`ON_ERROR_STOP` — the dump names the Neon role `neondb_owner` as owner of every object, so create
+that role first (the drill and `npm run db:restore-local` both do):
 
 ```bash
-gunzip -c ramhal-<timestamp>.sql.gz | psql "<the new branch's unpooled connection string>"
+createdb ramhal_restore_check
+psql ramhal_restore_check -c 'CREATE ROLE neondb_owner NOLOGIN'
+set -o pipefail
+gunzip -c ramhal-<timestamp>.sql.gz | psql ramhal_restore_check -v ON_ERROR_STOP=1
 ```
 
-### 4. Confirm it's actually right before trusting it
+### 3. Confirm it's actually right before trusting it
 
-Point a local copy of the app at that branch's connection string (`DATABASE_URI` in a local
-`.env`, temporarily) and start it (`npm run dev`). Sign in to `/admin` with an account you expect
-to exist, and check the books collection has the catalogue you expect. Only once this looks right
-should the branch's connection string ever be considered for promoting to the live `DATABASE_URI`
-— and that promotion is a decision for whoever owns the deployment, not a mechanical step.
+Point a local copy of the app at that database (`DATABASE_URI` in a local `.env`, temporarily) and
+start it (`npm run dev`). Sign in to `/admin` with an account you expect to exist, and check the
+books collection has the catalogue you expect. Only once this looks right should anything be
+loaded into a new Neon database and pointed at by the live `DATABASE_URI` — a decision for whoever
+owns the deployment, not a mechanical step. Drop the throwaway database afterwards.
 
-### 5. Clean up
+## Local databases
 
-Delete the temporary branch once you're done with it (Neon console → the branch → delete), whether
-or not you used it — an unused branch is easy to forget and costs nothing to remove immediately.
+Local development and tests run on PostgreSQL 18 on your own machine (README, "Running it"), never
+on Neon. `npm run db:restore-local` rebuilds both `ramhal` and `ramhal_test` from the newest dump in
+`ramhal-backups`:
+
+- It prints both targets and refuses unless the host is `localhost`/`127.0.0.1`/`::1` and the
+  database is exactly `ramhal` or `ramhal_test` (never `postgres`, `template0`, `template1`) —
+  before dropping anything.
+- The dump is downloaded to a private temporary directory that is deleted on exit, and restored
+  with `psql -v ON_ERROR_STOP=1`.
+- Neon-only pieces are handled explicitly and listed on every run: the owner role
+  `neondb_owner` is created as a `NOLOGIN` role, and Neon-only extensions (`neon`, `neon_utils`,
+  `neon_test_utils`, `pg_session_jwt`) are removed from the restore. The current dump has no
+  extensions at all.
+- After each restore it **truncates every table holding customer or transaction data**: carts,
+  orders, payment events, mock payment sessions, every table with a foreign key into those, and
+  Payload's login sessions (`users_sessions`). Admin users stay. Before truncating it prints how
+  many orders the dump held, how many came from a real payment provider, and how many had a
+  non-example email.
+
+### Overriding the Neon refusal for a one-off script
+
+With `APP_ENV=development`, the Payload config refuses a `DATABASE_URI` on `*.neon.tech`. The one
+exception is a production one-off script (next section) run with
+`ALLOW_PRODUCTION_ONE_OFF=TASK-NN` on that command line only. The value must name a task, so a
+stale export is visibly wrong; never put it in `.env` or a shell profile, and never run a local
+process with `APP_ENV=production` to get around it. The script must still print and check the
+target's fingerprint.
+
+## R2 credentials and rotation
+
+Buckets `ramhal-media` (public via `r2.dev`) and `ramhal-backups` (private), Standard storage class
+only. Three Cloudflare API tokens, each scoped to one bucket; the S3 access key id is the token's id
+and the secret is the SHA-256 of the token's value (Cloudflare's R2 token documentation):
+
+| Token | Permission | Used as |
+|---|---|---|
+| `ramhal-media-rw` | Object Read & Write, `ramhal-media` | Vercel `S3_*` (production only) |
+| `ramhal-backup-rw` | Object Read & Write, `ramhal-backups` | GitHub `BACKUP_WRITER_S3_*` (backup workflow) |
+| `ramhal-backup-ro` | Object Read, `ramhal-backups` | Vercel `BACKUP_S3_*`, GitHub `BACKUP_S3_*` (restore drill), local `.env` |
+
+To rotate one: Cloudflare dashboard → **My Profile → API Tokens** → the token → **Roll**, compute
+the new secret as `sha256(new token value)` in hex, then update every place in its row (`gh secret
+set NAME`, `vercel env update NAME production`, local `.env`). A rolled token's old value stops
+working immediately. The bucket CORS policy is `infrastructure/r2/media-bucket-cors.json`. There is
+no spending cap on R2: see `docs/DECISIONS.md` §17.
 
 ---
 
@@ -185,8 +229,13 @@ string if you already have write access) rather than requesting the value Vercel
 Export `DATABASE_URI` only for the single command, never into `.env` or a shell profile:
 
 ```sh
-DATABASE_URI="<production connection string>" npx vite-node scripts/one-off/TASK-NN-description.ts
+ALLOW_PRODUCTION_ONE_OFF=TASK-NN DATABASE_URI="<production connection string>" \
+  npx vite-node scripts/one-off/TASK-NN-description.ts
 ```
+
+`ALLOW_PRODUCTION_ONE_OFF` is the only thing that lets a `development` process open a Neon
+connection ("Local databases" above); use the real task number. Run it as `APP_ENV=development`,
+never `production`.
 
 Every one-off script since TASK-34 prints or checks the target database's identity before writing
 (hardcoded expected counts, or a fingerprint from `parseDatabaseIdentity`,

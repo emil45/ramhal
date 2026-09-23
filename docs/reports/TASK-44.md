@@ -93,3 +93,22 @@ Consequence: covers served from the Neon bucket spend the same 5 GB as queries. 
   per `next build` before and after; a real `next build` and the `booksData` integration test.
 - Confirm the card query still populates `cover` and `category` when `select` names them.
 - The two open questions above need decisions.
+
+## Deferred checks, run on the local database (TASK-45)
+
+Local PostgreSQL 18 restored from the 23 September nightly dump (62 books). "Before" is
+`d1940a0`'s `booksData.ts` and book page; "after" is `4004d4c`.
+
+| Check | Before | After |
+|---|---|---|
+| `getCatalogueBooks('he')` JSON bytes (62 books) | 128,434 | 40,360 |
+| SQL statements during one `next build` (all of Payload's, from the Postgres log) | 1,476 | 1,068 |
+| One book's result JSON bytes (`דברות-רמחל-חה-משיח`) | 2,223 | 2,223 |
+
+The single-book result is the same size on purpose; the saving is inside the call. Before, each of
+the roughly 333 prerendered book pages read the whole catalogue (128 KB) to return one book.
+
+Cover and category through `select`: both populated. 11 of 62 books have a cover, all 62 have a
+category. A cover carries its full Media document including `url`, built by the storage plugin's
+read hook (here the R2 `r2.dev` address), so trimming did not lose it. `next build`, `tsc`, lint and
+all 363 tests pass locally.
