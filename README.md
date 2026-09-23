@@ -12,13 +12,17 @@ shadcn/ui, React 19. Node 22.x (`.nvmrc` pins the exact development version).
 
 ## Environments
 
-Hosted on **Vercel** (Frankfurt function region). **Neon Postgres** has three long-lived branches:
+Hosted on **Vercel** (Frankfurt function region). **Neon Postgres** has two long-lived branches:
 
 | Branch | Points at | Used by |
 |---|---|---|
-| `production` | The live site (`APP_ENV=demo` today — see `docs/BACKLOG.md`) and Vercel's Production environment | The public |
-| `development` | A copy-on-write fork of `production`, refreshed manually ("Reset from parent" in the Neon console) | Local `.env` |
+| `production` | The live site (`APP_ENV=demo` today — see `docs/BACKLOG.md`), Vercel's Production environment, and local `.env` | The public and every developer |
 | `testing` | A separate long-lived fork of `production` | `TEST_DATABASE_URI`, the test suite only |
+
+There is no separate `development` branch (`docs/DECISIONS.md` §5) — Neon's project-wide network
+transfer allowance is shared across every branch in a project, so a second long-lived branch
+bought no real isolation, only a second thing to keep in sync. Local work runs directly against
+`production`; be deliberate about writes made from a local `npm run dev`.
 
 Production's database fingerprint is recorded in `docs/RECOVERY.md` — compare `GET
 /api/diagnostics`'s `database.fingerprint` against it to confirm you're looking at the same
@@ -30,6 +34,17 @@ Book covers and other media go to an S3-compatible bucket (Neon Object Storage t
 R2 is intended once a larger audio archive exists) when the six `S3_*` variables are set, or to
 the local `media/` folder in development when they are unset. Uploads go directly from the
 authenticated admin browser to the bucket; Payload only ever writes the database record.
+
+## Images
+
+Every image an editor might change lives in the Payload Media collection — the database and the
+bucket are the one source of truth, in every environment (`docs/DECISIONS.md` §16). `public/`
+should hold only brand furniture that changes with a redesign — `logo.png` and `brand/` (the 40th
+anniversary emblem) meet that bar; `home/books-shelf-original.jpg` doesn't (it's an editorial
+photo, not brand furniture) and is a known gap, tracked in `docs/BACKLOG.md`. To change a photo on
+the site — a book cover, a narrative page's figure, the donate page's hero — use `/admin` → Media,
+or the relevant collection/global's own upload field; never add a new file under `public/`. Local
+uploads with no `S3_*` variables set land in `media/` at the repo root, which is gitignored.
 
 ## Backups and restore
 
@@ -111,10 +126,10 @@ npm run build
 
 ## Migration and seed scripts
 
-`npm run import:books` and `npm run import:prepared-covers` write to whichever database
-`DATABASE_URI` names — they print that database's fingerprint before writing anything, and there
-is no automatic guard against it being production. `scripts/scrape/` is separate, one-time legacy
-site scraping tooling (`scripts/scrape/README.md`) whose output these importers consume; it is
+`npm run import:books` writes to whichever database `DATABASE_URI` names — it prints that
+database's fingerprint before writing anything, and there is no automatic guard against it being
+production. `scripts/scrape/` is separate, one-time legacy site scraping tooling
+(`scripts/scrape/README.md`) whose output this importer consumes; it is
 not part of the deployed application.
 
 ## Environment variables

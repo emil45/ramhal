@@ -21,6 +21,12 @@ actionable without reading anything else. Grouped, not ordered by priority withi
   `www.ramhal.com` (or equivalent) goes live: add the domain in Vercel, add it as an authorized
   redirect URI on the `ramhal-admin` OAuth client in the `machon-ramhal` Google Cloud project
   (confirmed not yet tested against a live domain), and update `SERVER_URL`.
+- **Neon's project-wide network transfer allowance is exhausted for the month** (confirmed 23
+  September 2026: `console.neon.tech` reports "Limit reached" for the project, and a direct `psql`
+  connection to any branch — including `production` — is refused with "Your account or project has
+  exceeded the quota"). This blocks every environment sharing the project, not just one branch.
+  Needs either a plan upgrade or waiting for the monthly reset before any deploy, migration, or
+  live verification against Neon can proceed.
 
 ## Store & payments
 
@@ -35,10 +41,10 @@ actionable without reading anything else. Grouped, not ordered by priority withi
 
 ## Admin & editable content
 
-- **Three narrative pages are still hardcoded in code, not Payload:** `/ramhal`, `/rabbi-chriqui`,
-  `/beit-ramhal` (`src/app/(frontend)/[locale]/ramhal` etc.). A working `Pages` collection already
-  exists (`src/collections/Pages.ts`) and is unused for these. The son cannot edit any of this
-  content without a deploy.
+- **The homepage's masthead photo (`public/home/books-shelf-original.jpg`) is not in Media.** It's
+  editorial content (a books-shelf photo), not brand furniture, so it doesn't belong in `public/`
+  per `docs/DECISIONS.md` §16 — out of scope for the TASK-42 image migration, which covered only
+  the three narrative pages and the donate photo.
 - **Courses are curated in code**, including which "complete courses" are shown
   (`src/app/(frontend)/[locale]/courses/page.tsx`) — lesson IDs and completeness are hand-maintained,
   not editor-facing.
@@ -92,9 +98,6 @@ actionable without reading anything else. Grouped, not ordered by priority withi
   not bucket-scoped — Neon's object-storage credentials scope to a branch, not to one bucket
   within it, and this is already the narrowest credential Neon's API offers. Recorded as a known
   limit, not a gap to close with this provider.
-- **The `development` Neon branch will drift from `production` over time.** It is a
-  point-in-time, copy-on-write fork, not a live replica, and nothing resets it on a schedule.
-  `.env.example` documents "Reset from parent" as the manual refresh procedure.
 - **Preview deployments cannot authenticate at all.** Google's redirect URI is registered against
   the exact production origin; a preview URL is a different origin. Not worked around by design,
   but worth deciding whether preview deploys need their own OAuth client if they are to be used

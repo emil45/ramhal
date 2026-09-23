@@ -47,14 +47,18 @@ transaction-mode pooler).
 
 **Content is static, the shop is dynamic.** Catalogue and article pages are generated ahead of time
 and revalidated periodically; cart, checkout, orders and admin render per request. **Vercel**,
-Frankfurt region. **Neon Postgres**, three long-lived branches: `production`
-(`br-delicate-math-b1b1mbw7`), `development` (`br-gentle-term-b11mvbu3`, forked from production),
-`testing` (used only by the test suite). `APP_ENV` (`development` | `demo` | `production`, required,
-no default) says which deployment this is; `NODE_ENV` only says how the build is optimised — never
-gate behaviour on `NODE_ENV`. The mock payment provider is allowed under `development`/`demo` and
-refused under `production`. `demo` also renders a permanent, undismissable banner, baked in at build
-time — `APP_ENV` must be set for `next build`, and the server refuses to start if it differs from
-what it was built for.
+Frankfurt region. **Neon Postgres**, two long-lived branches: `production`
+(`br-delicate-math-b1b1mbw7`, also used by local `.env`) and `testing` (used only by the test
+suite). There is no separate `development` branch — a project's network transfer allowance on Neon
+is shared across every branch in it, so a second long-lived branch was never real isolation, only
+a second thing to drift and a second way to exhaust the same shared quota (as happened 23 September
+2026, see `docs/BACKLOG.md`). Local work runs directly against production; a script that mutates
+data follows the one-off procedure in `docs/RECOVERY.md` regardless of where it's run from.
+`APP_ENV` (`development` | `demo` | `production`, required, no default) says which deployment this
+is; `NODE_ENV` only says how the build is optimised — never gate behaviour on `NODE_ENV`. The mock
+payment provider is allowed under `development`/`demo` and refused under `production`. `demo` also
+renders a permanent, undismissable banner, baked in at build time — `APP_ENV` must be set for
+`next build`, and the server refuses to start if it differs from what it was built for.
 
 ## 6. Media
 
@@ -146,3 +150,10 @@ bundler instead: `scripts/dev-migrate.mjs` + `src/app/(payload)/api/dev-migrate/
 creating migrations, `scripts/migrate.mjs` for applying them. Revisit only by directly testing
 `payload migrate:create` again after a Payload/Next/Node upgrade; if it no longer throws
 `ERR_REQUIRE_ASYNC_MODULE`, the workaround's own code comments name what to check next.
+
+## 16. One home for images
+
+Every image an editor might ever change lives in the Payload Media collection (object storage in
+deployed environments) — one source of truth: the database + bucket. `public/` holds only brand
+furniture that changes with a redesign: logo, favicon, the 40th anniversary emblem — nothing
+editorial. The repo holds no source/original image folders; git history keeps them.
