@@ -163,8 +163,6 @@ export default async function RabbiChriquiPage({ params }: PageProps<'/[locale]/
         </div>
       </section>
 
-      <PressCoverageSection content={content.press} locale={locale} />
-
       <section className="border-y border-border bg-paper-deep">
         <div className="page-container py-14 lg:py-16">
           <div className="mb-8 flex max-w-3xl flex-col items-start gap-3">
@@ -193,6 +191,8 @@ export default async function RabbiChriquiPage({ params }: PageProps<'/[locale]/
           </div>
         </div>
       </section>
+
+      <PressCoverageSection content={content.press} locale={locale} />
     </article>
   )
 }
