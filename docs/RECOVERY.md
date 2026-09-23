@@ -93,8 +93,8 @@ earlier copy of the database back. Try them in this order.
 
 Neon (the database host) keeps enough history to restore the whole database to any point in the
 last several hours by itself, without needing a backup file at all. Check
-`GET /<the live site's URL>/api/diagnostics` first — as of TASK-31 it's public but narrow
-(AGENTS.md's verification rule, docs/DECISIONS.md §22): it reports `database.fingerprint`, a
+`GET /<the live site's URL>/api/diagnostics` first — it's public but narrow
+(AGENTS.md's verification rule, docs/DECISIONS.md §11): it reports `database.fingerprint`, a
 short hash of the connection host, not the host itself. Compare it against **`2c951382a7f8`**,
 recorded here as production's own fingerprint (`ep-red-tree-b19ry3lo-pooler…`) — a match confirms
 the live site is still serving from the branch named **production** below. Sign in to `/admin`
@@ -107,8 +107,8 @@ first if you need the actual host: the response includes it for an authenticated
 
 **How far back this can reach depends on the plan, and is worth checking before relying on it** —
 open the project's **Settings → Postgres → History window** to see the current number, in the
-Neon console; do not assume it is longer than it says. As of writing (docs/reports/TASK-27.md
-§3a), this project is on Neon's free plan, whose history window **cannot exceed 6 hours**, no
+Neon console; do not assume it is longer than it says. As of writing, this project is on Neon's
+free plan, whose history window **cannot exceed 6 hours**, no
 matter how it's configured — a problem noticed the next morning is already outside it. That is
 exactly what Situation B is for.
 
@@ -162,3 +162,41 @@ should the branch's connection string ever be considered for promoting to the li
 
 Delete the temporary branch once you're done with it (Neon console → the branch → delete), whether
 or not you used it — an unused branch is easy to forget and costs nothing to remove immediately.
+
+---
+
+# Running a one-off script against production
+
+`scripts/one-off/` scripts (`docs/BACKLOG.md`'s "Infra" group has the ones outstanding) are
+committed, never-rerun records of a real change made directly against a real database — most often
+production. Each past run improvised how it got a connection string; this is the one procedure to
+follow from now on, so that stops.
+
+### 1. Get a connection string
+
+`DATABASE_URI` in Vercel's **Production** environment is marked Sensitive — its value cannot be
+read back once saved, only overwritten. Do not try to view it. Instead, in the
+[Neon console](https://console.neon.tech), open the project → the **production** branch →
+**Connect**, and create a fresh, narrowly scoped credential (or copy the unpooled connection
+string if you already have write access) rather than requesting the value Vercel holds.
+
+### 2. Run the script with the connection string scoped to that one command
+
+Export `DATABASE_URI` only for the single command, never into `.env` or a shell profile:
+
+```sh
+DATABASE_URI="<production connection string>" npx vite-node scripts/one-off/TASK-NN-description.ts
+```
+
+Every one-off script since TASK-34 prints or checks the target database's identity before writing
+(hardcoded expected counts, or a fingerprint from `parseDatabaseIdentity`,
+`src/lib/diagnostics.ts`) and aborts on any mismatch — read that output before confirming the
+script actually wrote anything. `npm run import:books` / `import:prepared-covers` follow the same
+rule (`docs/BACKLOG.md` — they print the target fingerprint first): compare it against
+`2c951382a7f8`, production's recorded fingerprint above, before trusting the run.
+
+### 3. Clean up afterwards
+
+Clear the connection string from shell history (`history -d`, or start a fresh shell) and from
+your terminal scrollback if it might be shared or logged. Do not leave it in `.env`, a `.env.local`,
+or any file that could be committed.

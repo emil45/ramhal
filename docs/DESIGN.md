@@ -2,7 +2,8 @@
 
 How the storefront looks, and why it stays consistent. The reference is a well-made printed
 sefer, not a product launch: warm paper, one ink, brass rules, serif titles. Palette and
-direction are settled (`docs/PROJECT_CONTEXT.md` §13) — this file records how they are applied.
+direction are settled, sampled from the institute's own 40th-anniversary logo file — this file
+records how they are applied.
 
 Tokens live in `src/app/(frontend)/globals.css`. Components live in `src/components/ui/`
 (shadcn, base-nova style, built on Base UI) and `src/components/storefront/` (ours).
@@ -78,7 +79,7 @@ page's title.
 
 ## The cover system
 
-121 of 128 books have no photograph, so the typeset cover **is** the catalogue's identity.
+Most books have no photograph, so the typeset cover **is** the catalogue's identity.
 Code: `src/lib/cover.ts` (rules, tested), `CoverFrame`, `TypographicCover`, `CoverImage`.
 
 Anatomy, outside in:
@@ -88,7 +89,7 @@ Anatomy, outside in:
 2. **Outer rule**, thick (1cqw), then a **thinner inner rule** (0.4cqw), set in from the edge,
    as on a sefer's title page. **This rule colour is the only thing that says which shelf a
    book is on**: teal (Hebrew), gold (French), deep teal (English), dark gold (siddurim — the
-   one case where the category overrides the language; see docs/DECISIONS.md §24).
+   one case where the category overrides the language; see docs/DECISIONS.md §13).
 3. **Title** in Assistant, balanced, optically centred in the upper two-thirds, size
    stepping down by title length (`coverTitleWidthPercent`), clamped at four lines.
 4. **Short gold rule and the imprint** *מכון רמח״ל* in small type at the foot. The imprint is
@@ -109,7 +110,7 @@ price slot, not a sentence. Hover lifts the cover 4px and underlines the title i
 
 ## Catalogue browsing
 
-The full catalogue is small enough to load once (100 books in the demo) and filter instantly,
+The full catalogue is small enough to load once (~62 books in production) and filter instantly,
 but too long to present as one uninterrupted wall. Search, category, language and sort therefore
 stay client-side, while the visible result is paged at 20 books: four complete rows on desktop,
 ten on mobile. Changing a filter resets to page one; changing page returns the viewport to the
@@ -121,7 +122,7 @@ literal “unknown” value is an editorial flag, not useful storefront copy, an
 
 The category filter only renders when the catalogue's books use at least two distinct categories
 — a dropdown offering one real choice (or none) isn't a filter. It reappears by itself the moment
-a second category is in use; see docs/DECISIONS.md §24.
+a second category is in use; see docs/DECISIONS.md §13.
 
 ## Language navigation
 
