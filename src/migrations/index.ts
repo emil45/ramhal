@@ -9,6 +9,10 @@ import * as migration_20260922_105315_news_images_and_links from './20260922_105
 import * as migration_20260922_130000_money_to_major_units from './20260922_130000_money_to_major_units';
 import * as migration_20260922_190439_TASK_32_admin_facelift from './20260922_190439_TASK_32_admin_facelift';
 import * as migration_20260922_211550_TASK_35_book_bibliographic_metadata from './20260922_211550_TASK_35_book_bibliographic_metadata';
+import * as migration_20260923_122827_add_pages_content_fields from './20260923_122827_add_pages_content_fields';
+import * as migration_20260923_122843_remove_pages_body_field from './20260923_122843_remove_pages_body_field';
+import * as migration_20260923_123213_add_pages_section_heading_concluding_style from './20260923_123213_add_pages_section_heading_concluding_style';
+import * as migration_20260923_123752_add_pages_meta_description from './20260923_123752_add_pages_meta_description';
 
 export const migrations = [
   {
@@ -64,6 +68,26 @@ export const migrations = [
   {
     up: migration_20260922_211550_TASK_35_book_bibliographic_metadata.up,
     down: migration_20260922_211550_TASK_35_book_bibliographic_metadata.down,
-    name: '20260922_211550_TASK_35_book_bibliographic_metadata'
+    name: '20260922_211550_TASK_35_book_bibliographic_metadata',
+  },
+  {
+    up: migration_20260923_122827_add_pages_content_fields.up,
+    down: migration_20260923_122827_add_pages_content_fields.down,
+    name: '20260923_122827_add_pages_content_fields',
+  },
+  {
+    up: migration_20260923_122843_remove_pages_body_field.up,
+    down: migration_20260923_122843_remove_pages_body_field.down,
+    name: '20260923_122843_remove_pages_body_field',
+  },
+  {
+    up: migration_20260923_123213_add_pages_section_heading_concluding_style.up,
+    down: migration_20260923_123213_add_pages_section_heading_concluding_style.down,
+    name: '20260923_123213_add_pages_section_heading_concluding_style',
+  },
+  {
+    up: migration_20260923_123752_add_pages_meta_description.up,
+    down: migration_20260923_123752_add_pages_meta_description.down,
+    name: '20260923_123752_add_pages_meta_description'
   },
 ];

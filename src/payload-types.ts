@@ -503,21 +503,154 @@ export interface Page {
   displayTitle?: string | null;
   displayTitleLocale?: string | null;
   title?: string | null;
-  body?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
+  /**
+   * שורת טקסט קצרה מעל הכותרת הראשית.
+   */
+  eyebrow?: string | null;
+  lead?: string | null;
+  metaDescription?: string | null;
+  heroImage?: (number | null) | Media;
+  /**
+   * שורת כתובת המוצגת ליד סמל מיקום. רלוונטי לעמודים בעלי כתובת פיזית בלבד.
+   */
+  location?: string | null;
+  content?:
+    | (
+        | {
+            style: 'standard' | 'article' | 'video' | 'concluding';
+            heading: string;
+            /**
+             * שורת טקסט קצרה מעל הכותרת. רלוונטי לסגנון "מאמר" ו"וידאו" בלבד.
+             */
+            kicker?: string | null;
+            /**
+             * תו יחיד (כגון אות עברית) המוצג מעל הכותרת. רלוונטי לסגנון "מאמר" בלבד.
+             */
+            ornament?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'sectionHeading';
+          }
+        | {
+            body: {
+              root: {
+                type: string;
+                children: {
+                  type: any;
+                  version: number;
+                  [k: string]: unknown;
+                }[];
+                direction: ('ltr' | 'rtl') | null;
+                format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+                indent: number;
+                version: number;
+              };
+              [k: string]: unknown;
+            };
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'richText';
+          }
+        | {
+            variant: 'hero' | 'boxed' | 'ruled' | 'inline' | 'highlight';
+            /**
+             * שורת טקסט קצרה מעל הציטוט (למשל "במשפט אחד"), במקום ציון מקור.
+             */
+            label?: string | null;
+            quote: string;
+            /**
+             * ריק עבור סגנון "הדגשה" או כשיש תווית עילית במקום.
+             */
+            source?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'quote';
+          }
+        | {
+            layout: 'grid' | 'stacked';
+            items?:
+              | {
+                  /**
+                   * תו יחיד (כגון אות עברית). רלוונטי לפריסת "רשת" בלבד.
+                   */
+                  marker?: string | null;
+                  label: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'labeledList';
+          }
+        | {
+            image: number | Media;
+            caption?: string | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'imageFigure';
+          }
+        | {
+            items?:
+              | {
+                  image: number | Media;
+                  caption: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'gallery';
+          }
+        | {
+            items?:
+              | {
+                  value: string;
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'statGrid';
+          }
+        | {
+            items?:
+              | {
+                  icon: 'landmark' | 'bookOpen' | 'building2';
+                  title: string;
+                  body: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'featureCards';
+          }
+        | {
+            title: string;
+            tags?:
+              | {
+                  label: string;
+                  id?: string | null;
+                }[]
+              | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'tagList';
+          }
+        | {
+            /**
+             * המזהה בכתובת הסרטון, למשל heJLjGQZhsY.
+             */
+            videoId: string;
+            title: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'video';
+          }
+      )[]
+    | null;
   slug: string;
   legacyUrls?:
     | {
@@ -1038,7 +1171,126 @@ export interface PagesSelect<T extends boolean = true> {
   displayTitle?: T;
   displayTitleLocale?: T;
   title?: T;
-  body?: T;
+  eyebrow?: T;
+  lead?: T;
+  metaDescription?: T;
+  heroImage?: T;
+  location?: T;
+  content?:
+    | T
+    | {
+        sectionHeading?:
+          | T
+          | {
+              style?: T;
+              heading?: T;
+              kicker?: T;
+              ornament?: T;
+              id?: T;
+              blockName?: T;
+            };
+        richText?:
+          | T
+          | {
+              body?: T;
+              id?: T;
+              blockName?: T;
+            };
+        quote?:
+          | T
+          | {
+              variant?: T;
+              label?: T;
+              quote?: T;
+              source?: T;
+              id?: T;
+              blockName?: T;
+            };
+        labeledList?:
+          | T
+          | {
+              layout?: T;
+              items?:
+                | T
+                | {
+                    marker?: T;
+                    label?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        imageFigure?:
+          | T
+          | {
+              image?: T;
+              caption?: T;
+              id?: T;
+              blockName?: T;
+            };
+        gallery?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    image?: T;
+                    caption?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        statGrid?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    value?: T;
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        featureCards?:
+          | T
+          | {
+              items?:
+                | T
+                | {
+                    icon?: T;
+                    title?: T;
+                    body?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        tagList?:
+          | T
+          | {
+              title?: T;
+              tags?:
+                | T
+                | {
+                    label?: T;
+                    id?: T;
+                  };
+              id?: T;
+              blockName?: T;
+            };
+        video?:
+          | T
+          | {
+              videoId?: T;
+              title?: T;
+              id?: T;
+              blockName?: T;
+            };
+      };
   slug?: T;
   legacyUrls?:
     | T
@@ -1329,6 +1581,7 @@ export interface ShippingSetting {
  */
 export interface SiteSetting {
   id: number;
+  donatePhoto?: (number | null) | Media;
   contact?: {
     address?: string | null;
     phone?: string | null;
@@ -1413,6 +1666,7 @@ export interface ShippingSettingsSelect<T extends boolean = true> {
  * via the `definition` "siteSettings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
+  donatePhoto?: T;
   contact?:
     | T
     | {

@@ -9,6 +9,12 @@ export const SiteSettings: GlobalConfig = {
   label: 'הגדרות האתר',
   fields: [
     {
+      name: 'donatePhoto',
+      type: 'upload',
+      label: 'תמונת עמוד התרומות',
+      relationTo: 'media',
+    },
+    {
       name: 'contact',
       type: 'group',
       label: 'יצירת קשר',
