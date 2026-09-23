@@ -16,6 +16,7 @@ import { filterCatalogue } from '@/lib/bookSearch'
 import { isCatalogueSort, paginateCatalogue, sortCatalogueView } from '@/lib/catalogueView'
 import { COVER_ASPECT_RATIO } from '@/lib/cover'
 import { LOCALE_CONFIG } from '@/lib/locale'
+import { cn } from '@/lib/utils'
 
 import type { CatalogueBook } from '@/lib/booksData'
 import type { Category } from '@/payload-types'
@@ -28,15 +29,7 @@ const BOOKS_PER_PAGE = 20
 
 const BOOK_LANGUAGES = ['he', 'fr', 'en', 'he-fr', 'aramaic-fr', 'unknown'] as const
 
-export function CatalogueClient({
-  books,
-  categories,
-  locale,
-}: {
-  books: CatalogueBook[]
-  categories: Category[]
-  locale: Locale
-}) {
+export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; locale: Locale }) {
   // Not passed as a prop from the server component: getDictionary returns
   // plain data plus a couple of functions (pluralised phrases), and
   // functions can't cross the server→client boundary as props. dictionary.ts
@@ -78,6 +71,20 @@ export function CatalogueClient({
     [entries],
   )
 
+  // The category filter only appears once the catalogue actually has a
+  // choice to offer — today every category but siddurim-machzorim has been
+  // removed (docs/DECISIONS.md §24), so this list has at most one entry and
+  // the control stays hidden. It returns by itself the moment a second real
+  // category is in use, with no code change.
+  const categoriesPresent = useMemo(() => {
+    const bySlug = new Map<string, Category>()
+    for (const book of books) {
+      if (book.category && !bySlug.has(book.category.slug)) bySlug.set(book.category.slug, book.category)
+    }
+    return [...bySlug.values()].sort((a, b) => (a.title ?? '').localeCompare(b.title ?? '', locale))
+  }, [books, locale])
+  const hasCategoryFilter = categoriesPresent.length >= 2
+
   const hasFilters = query !== '' || categorySlug !== '' || bookLanguage !== '' || sort !== 'default'
 
   const clearFilters = () => {
@@ -96,8 +103,13 @@ export function CatalogueClient({
   return (
     <div className="flex flex-col gap-8">
       <div className="flex flex-col gap-5 rounded-md border border-border bg-paper-deep p-4 sm:p-5">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_repeat(3,minmax(0,1fr))]">
-          <Field>
+        <div
+          className={cn(
+            'grid gap-4 sm:grid-cols-2',
+            hasCategoryFilter ? 'lg:grid-cols-[minmax(0,2fr)_repeat(3,minmax(0,1fr))]' : 'lg:grid-cols-[minmax(0,2fr)_repeat(2,minmax(0,1fr))]',
+          )}
+        >
+          <Field className={hasCategoryFilter ? undefined : 'sm:col-span-2 lg:col-span-1'}>
             <FieldLabel htmlFor="catalogue-search">{dict.catalogue.searchLabel}</FieldLabel>
             <div className="relative">
               <SearchIcon className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
@@ -114,25 +126,27 @@ export function CatalogueClient({
               />
             </div>
           </Field>
-          <Field>
-            <FieldLabel htmlFor="catalogue-category">{dict.catalogue.categoryLabel}</FieldLabel>
-            <NativeSelect
-              id="catalogue-category"
-              value={categorySlug}
-              onChange={(event) => {
-                setCategorySlug(event.target.value)
-                setPage(1)
-              }}
-              className="w-full"
-            >
-              <NativeSelectOption value="">{dict.catalogue.allCategories}</NativeSelectOption>
-              {categories.map((category) => (
-                <NativeSelectOption key={category.id} value={category.slug}>
-                  {category.title}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
-          </Field>
+          {hasCategoryFilter ? (
+            <Field>
+              <FieldLabel htmlFor="catalogue-category">{dict.catalogue.categoryLabel}</FieldLabel>
+              <NativeSelect
+                id="catalogue-category"
+                value={categorySlug}
+                onChange={(event) => {
+                  setCategorySlug(event.target.value)
+                  setPage(1)
+                }}
+                className="w-full"
+              >
+                <NativeSelectOption value="">{dict.catalogue.allCategories}</NativeSelectOption>
+                {categoriesPresent.map((category) => (
+                  <NativeSelectOption key={category.id} value={category.slug}>
+                    {category.title}
+                  </NativeSelectOption>
+                ))}
+              </NativeSelect>
+            </Field>
+          ) : null}
           <Field>
             <FieldLabel htmlFor="catalogue-language">{dict.catalogue.languageLabel}</FieldLabel>
             <NativeSelect

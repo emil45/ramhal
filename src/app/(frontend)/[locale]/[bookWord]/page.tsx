@@ -4,7 +4,7 @@ import { CatalogueClient } from '@/components/storefront/CatalogueClient'
 import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { getDictionary } from '@/app/(frontend)/dictionary'
 import { sortCatalogue } from '@/lib/availability'
-import { getCatalogueBooks, getCategories } from '@/lib/booksData'
+import { getCatalogueBooks } from '@/lib/booksData'
 import { isLocale, LOCALE_CONFIG, LOCALES } from '@/lib/locale'
 import { CATALOGUE_SEGMENT } from '@/lib/routes'
 
@@ -28,7 +28,7 @@ export default async function CataloguePage({ params }: PageProps<'/[locale]/[bo
 
   const dict = getDictionary(locale)
   const { currency } = LOCALE_CONFIG[locale]
-  const [books, categories] = await Promise.all([getCatalogueBooks(locale), getCategories(locale)])
+  const books = await getCatalogueBooks(locale)
   // Purchasable-in-this-currency books lead; nothing is hidden — see
   // sortCatalogue's own comment and docs/tasks/TASK-07-storefront.md §A2.
   const sorted = sortCatalogue(books, currency)
@@ -36,7 +36,7 @@ export default async function CataloguePage({ params }: PageProps<'/[locale]/[bo
   return (
     <div className="page-container py-10">
       <SectionHeading as="h1">{dict.catalogue.title}</SectionHeading>
-      <CatalogueClient books={sorted} categories={categories} locale={locale} />
+      <CatalogueClient books={sorted} locale={locale} />
     </div>
   )
 }

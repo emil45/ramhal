@@ -93,9 +93,3 @@ export async function getCatalogueBookBySlug(locale: Locale, slug: string): Prom
 
   return matches[0] ?? null
 }
-
-export async function getCategories(locale: Locale): Promise<Category[]> {
-  const payload = await payloadClient()
-  const result = await payload.find({ collection: 'categories', locale, limit: 100, sort: 'title' })
-  return result.docs
-}
