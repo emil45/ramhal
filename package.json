@@ -18,8 +18,7 @@
     "db:migrate": "node scripts/migrate.mjs",
     "migrate:create": "node scripts/dev-migrate.mjs create",
     "seed": "node scripts/seed.mjs",
-    "import:books": "vite-node -c vitest.config.ts --options.deps.inline=payload-oauth2 scripts/import-books.mjs",
-    "import:prepared-covers": "vite-node -c vitest.config.ts --options.deps.inline=payload-oauth2 scripts/import-prepared-covers.mjs"
+    "import:books": "vite-node -c vitest.config.ts --options.deps.inline=payload-oauth2 scripts/import-books.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1136.0",

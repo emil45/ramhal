@@ -13,8 +13,8 @@
 // (its `resolve.alias` besides) instead of inventing a second one, and
 // `--options.deps.inline=payload-oauth2` repeats the setting directly —
 // needed because a dynamically-imported config graph (see
-// scripts/import-prepared-covers.mjs) doesn't pick up `test.server.deps`,
-// only vite-node's own server-level `deps.inline` option.
+// scripts/one-off/TASK-42-narrative-page-images.mjs) doesn't pick up
+// `test.server.deps`, only vite-node's own server-level `deps.inline` option.
 import { readFile } from 'node:fs/promises'
 
 import { getPayload } from 'payload'
