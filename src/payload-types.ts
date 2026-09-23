@@ -208,6 +208,26 @@ export interface Book {
    */
   title?: string | null;
   subtitle?: string | null;
+  /**
+   * השם או הקרדיט המדויק שיופיע בעמוד הספר, למשל הרב בצלאל נאור.
+   */
+  creatorCredit?: string | null;
+  /**
+   * עיר ההוצאה לאור, אם היא ידועה.
+   */
+  publicationPlace?: string | null;
+  /**
+   * השאירו ריק כאשר ההוצאה היא מכון רמח״ל בלבד; מלאו כאשר יש שם אחר או הוצאה משותפת.
+   */
+  publisherName?: string | null;
+  /**
+   * למשל 256 עמ׳ בעברית; 3 עמ׳ באנגלית (תקציר).
+   */
+  extent?: string | null;
+  /**
+   * שמות נותני ההסכמות או ההמלצות, כפי שיופיעו בעמוד הספר.
+   */
+  endorsementCredits?: string | null;
   description?: {
     root: {
       type: string;
@@ -895,6 +915,11 @@ export interface BooksSelect<T extends boolean = true> {
   displayTitleLocale?: T;
   title?: T;
   subtitle?: T;
+  creatorCredit?: T;
+  publicationPlace?: T;
+  publisherName?: T;
+  extent?: T;
+  endorsementCredits?: T;
   description?: T;
   cover?: T;
   gallery?:

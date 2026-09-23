@@ -8,6 +8,7 @@ import * as migration_20260922_062811_google_sign_in from './20260922_062811_goo
 import * as migration_20260922_105315_news_images_and_links from './20260922_105315_news_images_and_links';
 import * as migration_20260922_130000_money_to_major_units from './20260922_130000_money_to_major_units';
 import * as migration_20260922_190439_TASK_32_admin_facelift from './20260922_190439_TASK_32_admin_facelift';
+import * as migration_20260922_211550_TASK_35_book_bibliographic_metadata from './20260922_211550_TASK_35_book_bibliographic_metadata';
 
 export const migrations = [
   {
@@ -58,6 +59,11 @@ export const migrations = [
   {
     up: migration_20260922_190439_TASK_32_admin_facelift.up,
     down: migration_20260922_190439_TASK_32_admin_facelift.down,
-    name: '20260922_190439_TASK_32_admin_facelift'
+    name: '20260922_190439_TASK_32_admin_facelift',
+  },
+  {
+    up: migration_20260922_211550_TASK_35_book_bibliographic_metadata.up,
+    down: migration_20260922_211550_TASK_35_book_bibliographic_metadata.down,
+    name: '20260922_211550_TASK_35_book_bibliographic_metadata'
   },
 ];

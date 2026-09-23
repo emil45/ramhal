@@ -112,10 +112,34 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
             ) : null}
             <dt className="text-muted-foreground">{dict.book.language}</dt>
             <dd>{dict.bookLanguageLabel[book.bookLanguage]}</dd>
+            {book.creatorCredit ? (
+              <>
+                <dt className="text-muted-foreground">{dict.book.creatorCredit}</dt>
+                <dd>{book.creatorCredit}</dd>
+              </>
+            ) : null}
             {book.hebrewYear ? (
               <>
                 <dt className="text-muted-foreground">{dict.book.hebrewYear}</dt>
                 <dd>{book.hebrewYear}</dd>
+              </>
+            ) : null}
+            {book.publicationPlace ? (
+              <>
+                <dt className="text-muted-foreground">{dict.book.publicationPlace}</dt>
+                <dd>{book.publicationPlace}</dd>
+              </>
+            ) : null}
+            {book.extent ? (
+              <>
+                <dt className="text-muted-foreground">{dict.book.extent}</dt>
+                <dd>{book.extent}</dd>
+              </>
+            ) : null}
+            {book.endorsementCredits ? (
+              <>
+                <dt className="text-muted-foreground">{dict.book.endorsementCredits}</dt>
+                <dd>{book.endorsementCredits}</dd>
               </>
             ) : null}
             {book.isbn ? (
@@ -127,7 +151,7 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
               </>
             ) : null}
             <dt className="text-muted-foreground">{dict.book.publisher}</dt>
-            <dd>{dict.book.publisherValue}</dd>
+            <dd>{book.publisherName ?? dict.book.publisherValue}</dd>
           </dl>
 
           {book.description ? (

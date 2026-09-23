@@ -21,13 +21,21 @@ export function computeDisplayTitleBeforeChange(collectionSlug: CollectionSlug):
     const titlesByLocale: Record<string, unknown> = {}
 
     if (operation === 'update' && originalDoc?.id !== undefined && originalDoc?.id !== null) {
+      // createLocalReq mutates the request object it receives when applying a
+      // requested locale. Passing the live write request to this `locale:
+      // 'all'` lookup therefore changed req.locale to `all`; Payload's later
+      // localized-field merge then found no matching locale and silently
+      // restored the old values over every localized edit. Keep the current
+      // transaction and context, but isolate those locale mutations on a
+      // shallow request copy.
+      const allLocalesRequest = { ...req }
       const existing = await req.payload.findByID({
         id: originalDoc.id,
         collection: collectionSlug,
         depth: 0,
         locale: 'all',
         overrideAccess: true,
-        req,
+        req: allLocalesRequest,
       })
       Object.assign(titlesByLocale, (existing as { title?: Record<string, unknown> })?.title)
     }

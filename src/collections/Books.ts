@@ -78,6 +78,60 @@ export const Books: CollectionConfig = {
               localized: true,
             },
             {
+              type: 'collapsible',
+              label: 'פרטים ביבליוגרפיים',
+              admin: {
+                initCollapsed: true,
+              },
+              fields: [
+                {
+                  name: 'creatorCredit',
+                  type: 'text',
+                  label: 'מחבר / עורך',
+                  localized: true,
+                  admin: {
+                    description: 'השם או הקרדיט המדויק שיופיע בעמוד הספר, למשל הרב בצלאל נאור.',
+                  },
+                },
+                {
+                  name: 'publicationPlace',
+                  type: 'text',
+                  label: 'מקום הוצאה',
+                  localized: true,
+                  admin: {
+                    description: 'עיר ההוצאה לאור, אם היא ידועה.',
+                  },
+                },
+                {
+                  name: 'publisherName',
+                  type: 'text',
+                  label: 'הוצאה לאור',
+                  localized: true,
+                  admin: {
+                    description: 'השאירו ריק כאשר ההוצאה היא מכון רמח״ל בלבד; מלאו כאשר יש שם אחר או הוצאה משותפת.',
+                  },
+                },
+                {
+                  name: 'extent',
+                  type: 'text',
+                  label: 'היקף הספר',
+                  localized: true,
+                  admin: {
+                    description: 'למשל 256 עמ׳ בעברית; 3 עמ׳ באנגלית (תקציר).',
+                  },
+                },
+                {
+                  name: 'endorsementCredits',
+                  type: 'text',
+                  label: 'הסכמות / המלצות',
+                  localized: true,
+                  admin: {
+                    description: 'שמות נותני ההסכמות או ההמלצות, כפי שיופיעו בעמוד הספר.',
+                  },
+                },
+              ],
+            },
+            {
               name: 'description',
               type: 'richText',
               label: 'תיאור',
