@@ -74,13 +74,14 @@
 - `GET /api/diagnostics` on the live site reports `database.fingerprint: "2c951382a7f8"`, matching
   `docs/RECOVERY.md`, and `appEnv: "demo"` with the demo banner rendering, both as expected for
   this deployment.
-- Not yet reverified live after the data migration: the public `/ספרים`, `/en/books` and
-  `/fr/livres` pages are statically generated with `revalidate = 3600`, and a check immediately
-  after the production script ran still showed the pre-migration cached HTML (stale category
-  filter and category-labelled metadata, though the book count — unaffected by this task — was
-  already current from TASK-34). This will resolve itself within the hour, or immediately on the
-  next deploy; a final push of this task's docs commit should trigger one. A repeat live check
-  after that deploy is worth doing before considering this task's live verification complete.
+- A check immediately after the production data migration still showed the pre-migration cached
+  HTML on the public `/ספרים`, `/en/books` and `/fr/livres` pages (`revalidate = 3600`) — stale
+  category filter and category-labelled metadata, though the book count was already current from
+  TASK-34. This task's final docs commit triggered a redeploy, which replaced the cache: a repeat
+  check afterward confirmed all three locales serve no category filter, the same book count (62),
+  and a siddur's live book page (`/ספר/סידור-כוונות-לשבת-כריכת-עור-מהודרת-פורמט-גדול` on
+  production — a different id/slug than development's own siddur, since the branches have
+  diverged since the fork) still shows "קטגוריה: סידורים ומחזורים".
 
 ## What felt wrong
 
