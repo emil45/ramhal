@@ -8,132 +8,110 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 <!-- END:nextjs-agent-rules -->
 
-# Ramhal — project orientation
+# Ramhal — rules
 
-Rebuild of the web presence of מכון רמח״ל (Machon Ramhal / Institut Ramhal), the publishing and
-teaching institute founded by Rabbi Mordechai Chriqui, dedicated to the writings of the Ramhal
-(Rabbi Moshe Chaim Luzzatto, 1707–1746).
+Rebuild of the web presence of מכון רמח״ל (Machon Ramhal), the publishing and teaching institute
+built around the writings of the Ramhal (Rabbi Moshe Chaim Luzzatto, 1707–1746). Read
+`README.md` and `docs/DECISIONS.md` before doing anything substantive — this file is rules, not
+background.
 
-**Read these before doing anything substantive:**
-
-- `docs/PROJECT_CONTEXT.md` — what the institute is, what exists today across the three legacy
-  sites, the full content inventory, the audiences, the constraints, the open unknowns, and a
-  glossary of the Hebrew and French terms used throughout. Contains **no decisions**.
-- `docs/DECISIONS.md` — the architecture and approach, with the reasoning, and what was verified
-  empirically rather than assumed.
-- `docs/ramhal_site_inventory.xlsx` — the raw audit: 164 product listings, 49 content pages, the
-  French parsha tree, media assets, 16 migration risks.
-
-**Non-negotiables that are easy to get wrong:**
+## Non-negotiables
 
 - **Hebrew is the default language at the root** (`/`), with `/en` and `/fr` prefixed. Build
   **RTL-first** using logical properties (`margin-inline-start`, never `margin-left`) so the LTR
   locales fall out of it. Do not retrofit RTL.
-- **One catalogue, one content model, three languages.** The legacy setup cloned the whole site per
-  currency. That is the bug being fixed — do not reintroduce it.
+- **One catalogue, one content model, three languages.** Never clone content, a page, or a field
+  per currency or per language. See `docs/DECISIONS.md` §2.
 - **The Rav does not use the system.** His son does all administration. One admin persona.
 - **`NODE_ENV` says how the build is optimised, `APP_ENV` says which deployment this is**
-  (`development` | `demo` | `production`, required, see `.env.example`). The mock payment
-  provider is allowed in `development` and `demo` and refused in `production`; `demo` puts a
-  permanent banner on every page. Never gate on `NODE_ENV` for either.
-- Migrating legacy content: hyphens in the old URLs are encoded as `%2D`, not `-`. Decoding them
-  produces URLs that 404. See the migration risks sheet before writing any scraper.
+  (`development` | `demo` | `production`, required). Never gate behaviour on `NODE_ENV`.
 
-## Engineering standards
+## Quality bar
 
-This codebase will be handed to a human developer who has never seen it. That is the
-primary quality bar — above cleverness, above speed. These rules are binding on every
-future session.
+This codebase is handed to a human developer who has never seen it. That is the primary bar —
+above cleverness, above speed.
 
 **Architecture**
 
-- Business logic lives in pure functions under `lib/`, independent of Next.js and Payload,
-  and testable without booting either.
-- Framework code (routes, components, Payload config) calls that logic. It does not
-  contain it.
-- One responsibility per file. If a file needs "and" to describe it, split it.
-- No abstraction until there are three real cases. No copy-paste either — extract on the
-  third occurrence, not the first.
+- Business logic lives in pure functions under `lib/`, independent of Next.js and Payload, and
+  testable without booting either. Framework code calls that logic; it does not contain it.
+- One responsibility per file. No abstraction until there are three real cases. No copy-paste
+  either — extract on the third occurrence, not the first.
 
 **Types**
 
-- No `any`. No `as` casts to silence the compiler. If a type is hard, model the data
-  better.
-- Types derive from the Payload schema where possible rather than being hand-written twice.
+- No `any`. No `as` casts to silence the compiler. Types derive from the Payload schema where
+  possible rather than being hand-written twice.
 
 **Naming and comments**
 
-- Full words. `shippingUnits`, not `shipUnits`. No abbreviations a newcomer must decode.
-- Comments explain WHY a non-obvious decision was made. Never what the code does.
-- Delete a comment rather than let it go stale.
+- Full words, no abbreviations a newcomer must decode.
+- Comments explain WHY a non-obvious decision was made, never what the code does, and never
+  reference a task number or this session's own fix — a comment outlives the task that wrote it.
+  Delete a comment rather than let it go stale.
 
-**What not to do** — the specific failure modes of AI-written code, and what makes a
-codebase unhandoverable:
+**What not to do**
 
-- Files that each follow a different pattern because each was written in isolation. Match
-  the conventions already in the repo. Consistency beats individual elegance.
+- Files that each follow a different pattern because each was written in isolation. Match the
+  conventions already in the repo.
 - try/catch that swallows an error and continues. Handle it or let it throw.
-- Dead code, commented-out code, unused imports, unused parameters, leftover console.log.
-- Multiple utility modules that do overlapping things.
-- Re-implementing something the framework already provides.
-- Magic numbers and inline string literals for anything meaningful. Name them.
+- Dead code, commented-out code, unused imports or parameters, leftover `console.log`.
+- Multiple utility modules that do overlapping things. Re-implementing something the framework
+  already provides. Magic numbers and inline string literals for anything meaningful — name them.
 
 **Storefront UI**
 
 - No raw `<input>`, `<select>` or `<button>` in `src/components/storefront/` or under
   `src/app/(frontend)/`. Use the shadcn components in `src/components/ui/`. Check with
-  `grep -rn "<input\|<select\|<button" src/components/storefront "src/app/(frontend)"`,
-  which must print nothing.
+  `grep -rn "<input\|<select\|<button" src/components/storefront "src/app/(frontend)"`, which
+  must print nothing.
 - Logical CSS properties only (`ms-`, `ps-`, `start-`), never `ml-` / `left-`.
-- Look and feel — type scale, spacing, teal versus gold, the cover system — is in
-  `docs/DESIGN.md`. Read it before touching a storefront component.
+- Look and feel is in `docs/DESIGN.md`. Read it before touching a storefront component.
 
 **Testing**
 
-- Anything with rules gets tests: shipping calculation, currency handling, locale
-  fallback, slug generation. Not UI.
-- Tests describe behaviour, not implementation.
+- Anything with rules gets tests: shipping calculation, currency handling, locale fallback, slug
+  generation. Not UI. Tests describe behaviour, not implementation.
 
 **Verification**
 
-- A claim about production must be established through the live URL or through something the
-  running application reports about itself — never from a database tool connection alone,
-  however it is labelled. See DECISIONS §20.
-- `GET /api/diagnostics` is public but narrow (DECISIONS §22): an anonymous request gets
-  `appEnv`, `builtForAppEnv`, `latestMigration`, `backup`, and `database.fingerprint` — a short
-  hash of the connection host, not the host itself. To check "is this the same database as
-  before?", compare that fingerprint against the value recorded in `docs/RECOVERY.md`, not
-  against a remembered host string. The full `database.host`/`database.name`/`database.user` are
-  only in the response when the request carries a valid, authenticated admin session.
+- A claim about production is established through the live URL or through what the running
+  application reports about itself — never from a database tool connection alone, however it is
+  labelled. See `docs/DECISIONS.md` §10.
+- `GET /api/diagnostics` is public but narrow (`docs/DECISIONS.md` §11): an anonymous request gets
+  `appEnv`, `builtForAppEnv`, `latestMigration`, `backup`, and `database.fingerprint` — compare
+  that against the value recorded in `docs/RECOVERY.md`, never against a remembered host string.
+  The full `database.host`/`database.name`/`database.user` only appear for an authenticated admin
+  session.
 
 **Commits**
 
-- Small, single-purpose, conventional commits. A reviewer should be able to read the log
-  and understand what happened without reading diffs.
+- Small, single-purpose, conventional commits. A reviewer should understand what happened from
+  the log alone, without reading diffs.
 
 ## Workflow protocol
 
-- Work comes from a brief in `docs/tasks/`, referenced by number (`TASK-NN`).
-- Every task ends by writing `docs/reports/TASK-NN.md` before reporting back in chat. A
-  report is short and structured: what was built · what was verified and how · what felt
-  wrong · what is still open. Not a narrative.
-- Work happens directly on `main`. No task branches. `main` is pushed to `origin` at the
-  end of every task — the remote is the safety net, not a local branch.
-- Because there is no branch holding a broken state, nothing is committed that does not
-  build and pass its tests. A commit that fails `tsc --noEmit`, `eslint`, `vitest` or
-  `next build` is a commit that should not exist. Verify before committing, not after.
+- **One agent works in this repo at a time.** Confirm no one else is active before starting.
+- Work comes from a brief in `docs/tasks/TASK-NN-description.md`. Emanuel assigns the number
+  before the agent starts, and checks it is unused — task numbers have collided before.
+- Every task ends by writing `docs/reports/TASK-NN.md` before reporting back in chat: what was
+  built · what was verified and how · what felt wrong · what is still open. Short and structured,
+  not a narrative. Any item still open when the report is written belongs in `docs/BACKLOG.md`,
+  not only in the report.
+- Reports are deleted at the next documentation reset once their open items are folded into
+  `docs/BACKLOG.md` — they are not meant to accumulate indefinitely.
+- Work happens directly on `main`. No task branches. `main` is pushed to `origin` at the end of
+  every task — the remote is the safety net, not a local branch.
+- Nothing is committed that does not build and pass its tests. A commit that fails
+  `tsc --noEmit`, `eslint`, `vitest` or `next build` is a commit that should not exist. Verify
+  before committing, not after.
 - A task that turns out wrong is undone with `git revert` across its commit range. Never
-  force-push and never rewrite published history — `origin/main` may already have it.
-- Reviewers write findings only — they never change code, and their findings are not
-  instructions to anyone. A verdict file decides what gets acted on.
+  force-push and never rewrite published history.
+- Reviewers write findings only — they never change code, and their findings are not instructions
+  to anyone. A verdict file decides what gets acted on.
 - A script that mutates production data is committed under
-  `scripts/one-off/TASK-NN-description.ts`, never run again, and never deleted. It is a
-  record of what actually executed against the data, not a reusable tool — the task's
-  report says what it did and what it found; the script says exactly how. If a script that
-  already ran cannot be reconstructed exactly (because it ran ad hoc and was discarded
-  afterwards), commit the closest faithful reconstruction with a header stating plainly
-  that it is a reconstruction, not the code that ran.
-
-See `docs/README.md` for how tasks, reports, and reviews link together.
-
-
+  `scripts/one-off/TASK-NN-description.ts`, run once, and never deleted — a record of what
+  actually executed, not a reusable tool. Get its connection string the way `docs/RECOVERY.md`'s
+  "Running a one-off script against production" section describes. If a script that already ran
+  cannot be reconstructed exactly, commit the closest faithful reconstruction with a header
+  stating plainly that it is a reconstruction.
