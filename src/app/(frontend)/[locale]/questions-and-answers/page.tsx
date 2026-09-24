@@ -1,18 +1,10 @@
-import { Search } from 'lucide-react'
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
 import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { QuestionEmailActions } from '@/components/storefront/QuestionEmailActions'
-import { Button, buttonVariants } from '@/components/ui/button'
-import { Field, FieldLabel } from '@/components/ui/field'
-import { Input } from '@/components/ui/input'
 import { isLocale } from '@/lib/locale'
-import { matchesQuestionSearch } from '@/lib/questionSearch'
-import { questionsPath } from '@/lib/routes'
 import { getContactDetails } from '@/lib/siteSettingsData'
-import { cn } from '@/lib/utils'
 
 const CONTENT = {
   he: {
@@ -29,14 +21,6 @@ const CONTENT = {
     copyEmailFailed: 'לא הועתק',
     emailUnavailable: 'כתובת הדוא״ל של המכון תופיע כאן לאחר שתוגדר.',
     archiveTitle: 'ארכיון השו״ת',
-    searchLabel: 'חיפוש בשו״ת',
-    searchPlaceholder: 'מילה מן השאלה, התשובה או הנושא…',
-    searchAction: 'חיפוש',
-    clearSearch: 'ניקוי החיפוש',
-    oneResult: 'שאלה אחת',
-    noResultsCount: 'לא נמצאו שאלות',
-    noResultsTitle: 'לא נמצאה תשובה מתאימה',
-    noResultsBody: 'אפשר לנסות מילה אחרת, או לשלוח למכון שאלה חדשה.',
     questionNumber: 'שו״ת א׳',
     topicLabel: 'נושא',
     dateLabel: 'תאריך',
@@ -68,14 +52,6 @@ const CONTENT = {
     copyEmailFailed: 'Copy failed',
     emailUnavailable: 'The institute’s email address will appear here once configured.',
     archiveTitle: 'The Q&A archive',
-    searchLabel: 'Search the Q&A',
-    searchPlaceholder: 'A word from the question, answer or subject…',
-    searchAction: 'Search',
-    clearSearch: 'Clear search',
-    oneResult: 'One question',
-    noResultsCount: 'No questions found',
-    noResultsTitle: 'No matching answer was found',
-    noResultsBody: 'Try another word, or send a new question to the institute.',
     questionNumber: 'Responsum 1',
     topicLabel: 'Subject',
     dateLabel: 'Date',
@@ -107,14 +83,6 @@ const CONTENT = {
     copyEmailFailed: 'Échec de la copie',
     emailUnavailable: 'L’adresse e-mail de l’institut apparaîtra ici une fois configurée.',
     archiveTitle: 'Les questions–réponses',
-    searchLabel: 'Rechercher dans les questions–réponses',
-    searchPlaceholder: 'Un mot de la question, de la réponse ou du sujet…',
-    searchAction: 'Rechercher',
-    clearSearch: 'Effacer la recherche',
-    oneResult: 'Une question',
-    noResultsCount: 'Aucune question trouvée',
-    noResultsTitle: 'Aucune réponse correspondante',
-    noResultsBody: 'Essayez un autre mot ou envoyez une nouvelle question à l’institut.',
     questionNumber: 'Réponse 1',
     topicLabel: 'Sujet',
     dateLabel: 'Date',
@@ -134,10 +102,6 @@ const CONTENT = {
   },
 } as const
 
-function readSearchQuery(value: string | string[] | undefined): string {
-  return typeof value === 'string' ? value : value?.[0] ?? ''
-}
-
 export async function generateMetadata({ params }: PageProps<'/[locale]/questions-and-answers'>): Promise<Metadata> {
   const { locale } = await params
   if (!isLocale(locale)) return {}
@@ -146,17 +110,12 @@ export async function generateMetadata({ params }: PageProps<'/[locale]/question
   return { title: content.metadataTitle, description: content.metadataDescription }
 }
 
-export default async function QuestionsAndAnswersPage({ params, searchParams }: PageProps<'/[locale]/questions-and-answers'>) {
+export default async function QuestionsAndAnswersPage({ params }: PageProps<'/[locale]/questions-and-answers'>) {
   const { locale } = await params
   if (!isLocale(locale)) notFound()
 
   const content = CONTENT[locale]
-  const query = readSearchQuery((await searchParams).q)
   const question = content.question
-  const hasResult = matchesQuestionSearch(
-    [question.topic, question.title, question.body, ...question.answer],
-    query,
-  )
   const contact = await getContactDetails(locale)
 
   return (
@@ -196,73 +155,35 @@ export default async function QuestionsAndAnswersPage({ params, searchParams }: 
           <SectionHeading>{content.archiveTitle}</SectionHeading>
         </div>
 
-        <form action={questionsPath(locale)} role="search" className="mb-10 border-y border-border bg-paper-deep px-4 py-5 sm:px-6">
-          <div className="flex max-w-3xl flex-col gap-4 sm:flex-row sm:items-end">
-            <Field className="flex-1">
-              <FieldLabel htmlFor="question-search">{content.searchLabel}</FieldLabel>
-              <Input
-                id="question-search"
-                name="q"
-                type="search"
-                defaultValue={query}
-                placeholder={content.searchPlaceholder}
-                className="bg-background"
-              />
-            </Field>
-            <div className="flex items-center gap-2">
-              <Button type="submit" className="sm:h-10">
-                <Search aria-hidden className="size-4" />
-                {content.searchAction}
-              </Button>
-              {query ? (
-                <Link href={questionsPath(locale)} className={cn(buttonVariants({ variant: 'ghost' }), 'text-muted-foreground')}>
-                  {content.clearSearch}
-                </Link>
-              ) : null}
-            </div>
-          </div>
-        </form>
+        <article id="question-1" className="scroll-mt-8 border-t border-gold pt-8">
+          <div className="grid gap-8 lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-12">
+            <header className="flex flex-col items-start gap-3">
+              <p className="font-serif text-lg text-gold-ink">{content.questionNumber}</p>
+              <dl className="mt-2 text-sm leading-relaxed">
+                <dt className="text-muted-foreground">{content.topicLabel}</dt>
+                <dd className="font-medium text-teal-deep">{question.topic}</dd>
+                <dt className="mt-4 text-muted-foreground">{content.dateLabel}</dt>
+                <dd>
+                  <time dateTime={question.date}>{question.dateDisplay}</time>
+                </dd>
+              </dl>
+            </header>
 
-        <p className="mb-5 text-sm text-muted-foreground" aria-live="polite">
-          {hasResult ? content.oneResult : content.noResultsCount}
-        </p>
+            <div className="max-w-3xl">
+              <h2 className="type-heading">{question.title}</h2>
+              <p className="mt-5 border-s-[3px] border-teal ps-5 text-lg leading-[1.8]">{question.body}</p>
 
-        {hasResult ? (
-          <article id="question-1" className="scroll-mt-8 border-t border-gold pt-8">
-            <div className="grid gap-8 lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-12">
-              <header className="flex flex-col items-start gap-3">
-                <p className="font-serif text-lg text-gold-ink">{content.questionNumber}</p>
-                <dl className="mt-2 text-sm leading-relaxed">
-                  <dt className="text-muted-foreground">{content.topicLabel}</dt>
-                  <dd className="font-medium text-teal-deep">{question.topic}</dd>
-                  <dt className="mt-4 text-muted-foreground">{content.dateLabel}</dt>
-                  <dd>
-                    <time dateTime={question.date}>{question.dateDisplay}</time>
-                  </dd>
-                </dl>
-              </header>
-
-              <div className="max-w-3xl">
-                <h2 className="type-heading">{question.title}</h2>
-                <p className="mt-5 border-s-[3px] border-teal ps-5 text-lg leading-[1.8]">{question.body}</p>
-
-                <div className="mt-10 border-t border-border pt-8">
-                  <p className="mb-4 text-sm font-semibold text-teal">{content.answerLabel}</p>
-                  <div className="type-prose flex flex-col gap-5 text-lg">
-                    {question.answer.map((paragraph) => (
-                      <p key={paragraph}>{paragraph}</p>
-                    ))}
-                  </div>
+              <div className="mt-10 border-t border-border pt-8">
+                <p className="mb-4 text-sm font-semibold text-teal">{content.answerLabel}</p>
+                <div className="type-prose flex flex-col gap-5 text-lg">
+                  {question.answer.map((paragraph) => (
+                    <p key={paragraph}>{paragraph}</p>
+                  ))}
                 </div>
               </div>
             </div>
-          </article>
-        ) : (
-          <div className="border-t border-gold py-14 text-center">
-            <h2 className="type-heading">{content.noResultsTitle}</h2>
-            <p className="mt-3 text-muted-foreground">{content.noResultsBody}</p>
           </div>
-        )}
+        </article>
       </section>
     </article>
   )
