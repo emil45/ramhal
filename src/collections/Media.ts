@@ -37,6 +37,17 @@ export const Media: CollectionConfig = {
     ],
   },
   fields: [
+    // Declared here rather than left to the storage plugin, which adds it only
+    // when it is disabled or given a prefix option. Every media mode — local
+    // disk, read-only, read-write — must produce the same schema, or a migration
+    // generated in one would drop the column production has.
+    {
+      name: 'prefix',
+      type: 'text',
+      label: 'קידומת',
+      defaultValue: '',
+      admin: { hidden: true, readOnly: true },
+    },
     {
       name: 'alt',
       type: 'text',

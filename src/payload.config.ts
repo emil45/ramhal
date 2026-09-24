@@ -111,10 +111,6 @@ export default buildConfig({
   plugins: [
     s3Storage({
       enabled: mediaStorage !== null,
-      // Adds the plugin's `prefix` column to `media` whether or not a bucket is
-      // configured, so every environment has the same schema and one set of
-      // migrations serves all of them.
-      alwaysInsertFields: true,
       // Vercel functions accept request bodies only up to 4.5 MB. The admin
       // obtains a short-lived signed URL and sends the file straight to storage;
       // public reads likewise go straight to the bucket instead of consuming

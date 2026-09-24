@@ -96,11 +96,6 @@ actionable without reading anything else. Grouped, not ordered by priority withi
 
 ## Infra
 
-- **`npm run migrate:create` is unsafe with a local `.env`.** With only `S3_PUBLIC_URL` set the
-  generated migration and snapshot drop `media.prefix` (the storage plugin's column), and
-  `npm run generate:types` removes `prefix` from `src/payload-types.ts` — production has the
-  column. TASK-46 hand-corrected both. Make the schema tooling independent of `S3_*` (or have it
-  set `alwaysInsertFields` effectively) before the next migration is generated.
 - **Committed one-off scripts predate `SKIP_STOREFRONT_REVALIDATION`.** Their writes to books,
   categories, media, pages and globals do not set it, so re-running one now throws from the
   revalidation hook. They are records, not tools, and were left as they ran; a new one must set the

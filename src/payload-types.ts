@@ -155,6 +155,7 @@ export interface UserAuthOperations {
  */
 export interface Media {
   id: number;
+  prefix?: string | null;
   alt?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -987,6 +988,7 @@ export interface PayloadMigration {
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
+  prefix?: T;
   alt?: T;
   updatedAt?: T;
   createdAt?: T;
