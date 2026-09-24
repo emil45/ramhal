@@ -17,6 +17,12 @@ const davidLibre = David_Libre({
   variable: '--font-serif',
 })
 
+// A page is rebuilt only when an editor saves content, never on a timer:
+// revalidateStorefront (src/collections/hooks/revalidateStorefront.ts) marks
+// every page stale on each save (docs/DECISIONS.md §5). Stated once here for
+// every page under this layout.
+export const revalidate = false
+
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }))
 }

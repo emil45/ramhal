@@ -8,12 +8,6 @@ import { getCatalogueBooks } from '@/lib/booksData'
 import { isLocale, LOCALE_CONFIG, LOCALES } from '@/lib/locale'
 import { CATALOGUE_SEGMENT } from '@/lib/routes'
 
-// Revalidated periodically rather than on every request — content is
-// static, revalidated on publish (docs/DECISIONS.md §5). An afterChange
-// hook that triggers on-demand revalidation immediately on publish is left
-// as future work (docs/BACKLOG.md).
-export const revalidate = 3600
-
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale, bookWord: CATALOGUE_SEGMENT[locale] }))
 }

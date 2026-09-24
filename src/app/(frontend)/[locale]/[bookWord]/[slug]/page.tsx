@@ -17,8 +17,6 @@ import { getContactDetails } from '@/lib/siteSettingsData'
 import { fullBookCourseForBook } from '@/lib/fullBookCourses'
 import { isLocale, LOCALE_CONFIG, LOCALES } from '@/lib/locale'
 
-export const revalidate = 3600
-
 export async function generateStaticParams() {
   const slugs = await getBookUrlSlugs()
   return LOCALES.flatMap((locale) => slugs.map((slug) => ({ locale, bookWord: BOOK_SEGMENT[locale], slug })))

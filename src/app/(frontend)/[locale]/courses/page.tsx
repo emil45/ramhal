@@ -63,8 +63,6 @@ const CONTENT = {
   },
 } as const
 
-export const revalidate = 3600
-
 export async function generateMetadata({
   params,
 }: PageProps<'/[locale]/courses'>): Promise<Metadata> {

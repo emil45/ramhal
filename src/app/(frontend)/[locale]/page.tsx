@@ -21,9 +21,6 @@ import { getSchedule } from '@/lib/scheduleData'
 
 import type { Media } from '@/payload-types'
 
-// Same revalidation window as the catalogue and book pages (docs/DECISIONS.md §5).
-export const revalidate = 3600
-
 const BOOK_STRIP_COUNT = 6
 
 export default async function HomePage({ params }: PageProps<'/[locale]'>) {
