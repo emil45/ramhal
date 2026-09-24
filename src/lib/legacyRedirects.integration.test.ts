@@ -14,17 +14,14 @@ describe('legacy redirects to books', () => {
     const { docs } = await payload.find({ collection: 'books', depth: 0, pagination: false, select: { urlSlug: true } })
     const existing = new Set(docs.map((book) => book.urlSlug))
 
-    const bookWords = Object.values(BOOK_SEGMENT)
+    const bookWord = BOOK_SEGMENT.he
     const missing: string[] = []
     let checked = 0
-    for (const [host, table] of Object.entries(legacyRedirects)) {
-      for (const [source, target] of Object.entries(table)) {
-        const [, first, second, third] = target.split('/')
-        const segments = ['en', 'fr'].includes(first) ? [second, third] : [first, second]
-        if (!bookWords.includes(segments[0])) continue
-        checked += 1
-        if (!existing.has(segments[1])) missing.push(`${host}${source} → ${target}`)
-      }
+    for (const [source, target] of Object.entries(legacyRedirects)) {
+      const [, segment, slug] = target.split('/')
+      if (segment !== bookWord) continue
+      checked += 1
+      if (!existing.has(slug)) missing.push(`${source} → ${target}`)
     }
 
     expect(checked).toBeGreaterThan(0)

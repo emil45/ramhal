@@ -1,30 +1,13 @@
-import type { Locale } from './locale.ts'
+/** The one domain of the legacy website that still points at this app (docs/DECISIONS.md §18). */
+export const LEGACY_HOST = 'ramhal.com'
 
-/**
- * The three domains of the legacy website, each the site of one language. The
- * key is the host without `www.`; the value is the locale that site's visitors
- * are sent to.
- */
-export const LEGACY_HOST_LOCALES = {
-  'ramhal.com': 'he',
-  'enramhal.com': 'en',
-  'frramhal.com': 'fr',
-} as const satisfies Record<string, Locale>
+/** Normalized legacy path → current path. */
+export type LegacyRedirectTable = Record<string, string>
 
-export type LegacyHost = keyof typeof LEGACY_HOST_LOCALES
-
-/** Legacy host → normalized legacy path → current path. */
-export type LegacyRedirectTable = Record<LegacyHost, Record<string, string>>
-
-function isLegacyHost(name: string): name is LegacyHost {
-  return Object.hasOwn(LEGACY_HOST_LOCALES, name)
-}
-
-/** The legacy host a request's `Host` header names, or null for any other host. */
-export function legacyHostOf(hostHeader: string | null): LegacyHost | null {
-  if (!hostHeader) return null
-  const name = hostHeader.toLowerCase().replace(/:\d+$/, '').replace(/^www\./, '')
-  return isLegacyHost(name) ? name : null
+/** Whether a request's `Host` header names the legacy domain, with or without `www.` or a port. */
+export function isLegacyHost(hostHeader: string | null): boolean {
+  if (!hostHeader) return false
+  return hostHeader.toLowerCase().replace(/:\d+$/, '').replace(/^www\./, '') === LEGACY_HOST
 }
 
 /**
@@ -48,9 +31,8 @@ export function normalizeLegacyPath(pathname: string): string | null {
 
 /** Where a request for `pathname` on `host` should be permanently sent, if anywhere. */
 export function findLegacyRedirect(table: LegacyRedirectTable, host: string | null, pathname: string): string | null {
-  const legacyHost = legacyHostOf(host)
-  if (!legacyHost) return null
+  if (!isLegacyHost(host)) return null
   const path = normalizeLegacyPath(pathname)
   if (path === null) return null
-  return Object.hasOwn(table[legacyHost], path) ? table[legacyHost][path] : null
+  return Object.hasOwn(table, path) ? table[path] : null
 }

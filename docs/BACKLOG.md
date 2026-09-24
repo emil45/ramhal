@@ -12,12 +12,11 @@ actionable without reading anything else. Grouped, not ordered by priority withi
 - **`APP_ENV` is still `demo`** on the live site (confirmed via `/api/diagnostics`, 23 September
   2026) — the permanent "no real payment is taken" banner is still showing. Flipping to
   `production` needs a real (non-mock) payment provider configured first.
-- **Point the legacy domains at Vercel at cutover.** The redirect map is built and live in
-  `src/proxy.ts` (`docs/DECISIONS.md` §18) but only acts once `ramhal.com`, `www.ramhal.com`,
-  `enramhal.com`, `www.enramhal.com`, `frramhal.com` and `www.frramhal.com` reach this app: add each
-  domain to the Vercel project and repoint its DNS. Then decide which host is canonical — the
-  redirects keep the visitor on the host they arrived on. Open equivalences and the pages
-  deliberately left 404 are listed in `docs/reports/TASK-48.md`.
+- **Point `ramhal.com` + `www.ramhal.com` at Vercel at cutover.** The redirect map is built and live in
+  `src/proxy.ts` (`docs/DECISIONS.md` §18) but only acts once both hosts reach this app: add them to the
+  Vercel project and repoint their DNS. Then decide which of the two is canonical — the redirects keep the
+  visitor on the host they arrived on. `enramhal.com` and `frramhal.com` are retired and are not pointed
+  anywhere.
 - **No transactional email provider is wired up.** Resend was the intended choice; no `resend`
   dependency or usage exists anywhere in the codebase. Order confirmations are not sent.
 - **The site is still on `ramhal-theta.vercel.app`.** No custom domain is configured. Before

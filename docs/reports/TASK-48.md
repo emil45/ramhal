@@ -1,5 +1,8 @@
 # TASK-48 — Legacy URL redirects
 
+> Superseded in part by TASK-49: `enramhal.com` and `frramhal.com` were dropped, the OPEN items below were
+> decided by the owner, and the coverage numbers are in `docs/reports/TASK-49.md`. Read this report as history.
+
 The uncommitted `src/app/(frontend)/[locale]/page.tsx` change was left alone (the brief's commit-or-leave note was blank).
 
 ## Docs read
@@ -86,18 +89,30 @@ The uncommitted `src/app/(frontend)/[locale]/page.tsx` change was left alone (th
 `tsc` clean; `eslint` 0 errors (50 warnings, unchanged); `npm test` 395 passed; `npm run build` exit 0; storefront `grep` for raw form elements prints nothing.
 `next build && next start`, `curl -H "Host: …"` (status → Location):
 ```
-ramhal.com         /kabbalah-du-arizal-1.html                                     301 -> /%D7%A1%D7%A4%D7%A8/kabbalah-du-arizal 
-ramhal.com         /kabbalah-du-arizal-1.html?depart_id=367044&x=1                301 -> /%D7%A1%D7%A4%D7%A8/kabbalah-du-arizal 
-www.ramhal.com     /kabbalah-du-arizal-1.html/                                    308 -> /kabbalah-du-arizal-1.html 
-enramhal.com       /la-kabbale-de-la-reparation-1-1-1.html                        301 -> /en/book/la-kabbale-de-la-reparation 
-www.frramhal.com   /kabbalah-du-arizal.html                                       301 -> /fr/livre/kabbalah-du-arizal 
-www.frramhal.com   /KABBALAH-DU-ARIZAL.HTML                                       301 -> /fr/livre/kabbalah-du-arizal 
-ramhal.com         /הרמח-ל.html                                                   301 -> /ramhal 
-enramhal.com       /Books-In-Hebrew.HTML                                          301 -> /en/books 
-www.frramhal.com   /Institute-Ramhal.html                                         301 -> /fr/beit-ramhal 
-www.frramhal.com   /                                                              301 -> /fr 
-enramhal.com       /site/index.asp?depart_id=367044                               301 -> /en 
-ramhal.com         /site/detail/detail/detailDetail.asp?detail_id=1&iPageNum=2&se 301 -> /%D7%A1%D7%A4%D7%A8%D7%99%D7%9D 
+ramhal.com         /kabbalah-du-arizal-1.html                                     301 -> /%D7%A1%D7%A4%D7%A8/kabbalah-du-arizal
+ 
+ramhal.com         /kabbalah-du-arizal-1.html?depart_id=367044&x=1                301 -> /%D7%A1%D7%A4%D7%A8/kabbalah-du-arizal
+ 
+www.ramhal.com     /kabbalah-du-arizal-1.html/                                    308 -> /kabbalah-du-arizal-1.html
+ 
+enramhal.com       /la-kabbale-de-la-reparation-1-1-1.html                        301 -> /en/book/la-kabbale-de-la-reparation
+ 
+www.frramhal.com   /kabbalah-du-arizal.html                                       301 -> /fr/livre/kabbalah-du-arizal
+ 
+www.frramhal.com   /KABBALAH-DU-ARIZAL.HTML                                       301 -> /fr/livre/kabbalah-du-arizal
+ 
+ramhal.com         /הרמח-ל.html                                                   301 -> /ramhal
+ 
+enramhal.com       /Books-In-Hebrew.HTML                                          301 -> /en/books
+ 
+www.frramhal.com   /Institute-Ramhal.html                                         301 -> /fr/beit-ramhal
+ 
+www.frramhal.com   /                                                              301 -> /fr
+ 
+enramhal.com       /site/index.asp?depart_id=367044                               301 -> /en
+ 
+ramhal.com         /site/detail/detail/detailDetail.asp?detail_id=1&iPageNum=2&se 301 -> /%D7%A1%D7%A4%D7%A8%D7%99%D7%9D
+ 
 ramhal.com         /פורים.html                                                    404 
 www.frramhal.com   /vayera.html                                                   404 
 enramhal.com       /site/shop/cart.asp?depart_id=367044                           404 

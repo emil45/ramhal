@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server'
 
 import legacyRedirects from '@/lib/legacyRedirects.json'
 import { DEFAULT_LOCALE } from '@/lib/locale'
-import { findLegacyRedirect, LEGACY_HOST_LOCALES, legacyHostOf } from '@/lib/legacyRedirects'
+import { findLegacyRedirect } from '@/lib/legacyRedirects'
 
 import type { NextRequest } from 'next/server'
 
@@ -33,7 +33,7 @@ function hasLocalePrefix(pathname: string): boolean {
  *    security note at the top of src/app/(payload)/api/dev-migrate/route.ts
  *    for why both layers exist.
  *
- * 2. A request on one of the legacy domains for a page of the old site goes
+ * 2. A request on the legacy domain (ramhal.com) for a page of the old site goes
  *    permanently to its equivalent here, when there is one
  *    (src/lib/legacyRedirects.json, docs/DECISIONS.md §18). A legacy URL with
  *    no equivalent falls through and 404s.
@@ -41,8 +41,7 @@ function hasLocalePrefix(pathname: string): boolean {
  * 3. Hebrew-at-the-root locale routing: app/(frontend)/[locale] handles
  *    every locale uniformly, including Hebrew, so an unprefixed request is
  *    rewritten onto /he/... — invisibly to the visitor, who never sees a
- *    /he in the URL. On a legacy domain "unprefixed" means that site's own
- *    language, so a dead French URL shows the French 404.
+ *    /he in the URL.
  */
 export function proxy(request: NextRequest): NextResponse | undefined {
   const { pathname } = request.nextUrl
@@ -64,9 +63,8 @@ export function proxy(request: NextRequest): NextResponse | undefined {
   }
 
   if (!hasLocalePrefix(pathname)) {
-    const legacyHost = legacyHostOf(host)
     const url = request.nextUrl.clone()
-    url.pathname = `/${legacyHost ? LEGACY_HOST_LOCALES[legacyHost] : DEFAULT_LOCALE}${pathname}`
+    url.pathname = `/${DEFAULT_LOCALE}${pathname}`
     return NextResponse.rewrite(url)
   }
 

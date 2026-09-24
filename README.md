@@ -89,11 +89,12 @@ it the hook throws. The reasoning is in `docs/DECISIONS.md` §5 and §8.
 
 ## Legacy URLs
 
-`src/lib/legacyRedirects.json` maps the URLs of the three legacy sites (`ramhal.com`, `enramhal.com`,
-`frramhal.com`) to their equivalents here; `src/proxy.ts` applies it, with a 301, only on those hosts.
+`src/lib/legacyRedirects.json` maps the URLs of the legacy site `ramhal.com` (with or without `www`) to their
+equivalents here; `src/proxy.ts` applies it, with a 301, only on that host. `enramhal.com` and
+`frramhal.com` are retired and never point at this app.
 It is generated: run `npm run redirects:generate` (local database) after a book's `urlSlug` changes,
 after a catalogue import, or after editing `scripts/legacy-redirects/pageEquivalences.mjs`, and commit
-the result. The script prints per-site coverage and every deliberate 404, and refuses duplicates,
+the result. The script prints coverage and every deliberate 404, and refuses duplicates,
 loops and hand-table paths the crawl never saw. Why it is shaped this way: `docs/DECISIONS.md` §18.
 
 ## Public routes

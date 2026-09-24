@@ -1,24 +1,17 @@
 import { describe, expect, it } from 'vitest'
 
 import legacyRedirects from '@/lib/legacyRedirects.json'
-import { findLegacyRedirect, LEGACY_HOST_LOCALES, legacyHostOf, normalizeLegacyPath } from '@/lib/legacyRedirects'
+import { findLegacyRedirect, isLegacyHost, normalizeLegacyPath } from '@/lib/legacyRedirects'
 import { BOOK_SEGMENT, CATALOGUE_SEGMENT } from '@/lib/routes'
 
-import type { LegacyHost } from '@/lib/legacyRedirects'
-import type { Locale } from '@/lib/locale'
-
-const HOSTS: LegacyHost[] = ['ramhal.com', 'enramhal.com', 'frramhal.com']
-
-// What this site serves, per locale prefix: home, catalogue, book, the narrative pages.
-function isCurrentRoute(locale: Locale, target: string): boolean {
-  const prefix = locale === 'he' ? '' : `/${locale}`
-  const rest = target.startsWith(prefix) ? target.slice(prefix.length) : null
-  if (rest === null || (locale === 'he' && /^\/(en|fr)(\/|$)/.test(target))) return false
-  if (rest === '' || rest === '/') return true
-  const fixedPages = ['/ramhal', '/rabbi-chriqui', '/beit-ramhal', '/donate', '/courses', `/${CATALOGUE_SEGMENT[locale]}`]
-  if (fixedPages.includes(rest)) return true
-  const [, segment, slug, ...more] = rest.split('/')
-  return segment === BOOK_SEGMENT[locale] && Boolean(slug) && more.length === 0
+// What this site serves at the root (Hebrew): home, catalogue, book, the narrative pages.
+function isCurrentRoute(target: string): boolean {
+  if (/^\/(en|fr)(\/|$)/.test(target)) return false
+  if (target === '/') return true
+  const fixedPages = ['/ramhal', '/rabbi-chriqui', '/beit-ramhal', '/donate', '/courses', `/${CATALOGUE_SEGMENT.he}`]
+  if (fixedPages.includes(target)) return true
+  const [, segment, slug, ...more] = target.split('/')
+  return segment === BOOK_SEGMENT.he && Boolean(slug) && more.length === 0
 }
 
 describe('normalizeLegacyPath', () => {
@@ -48,54 +41,63 @@ describe('normalizeLegacyPath', () => {
   })
 })
 
-describe('legacyHostOf', () => {
-  it.each(['ramhal.com', 'www.ramhal.com', 'WWW.Ramhal.com:443', 'enramhal.com', 'www.frramhal.com'])('recognises %s', (host) => {
-    expect(legacyHostOf(host)).not.toBeNull()
+describe('isLegacyHost', () => {
+  it.each(['ramhal.com', 'www.ramhal.com', 'WWW.Ramhal.com:443'])('recognises %s', (host) => {
+    expect(isLegacyHost(host)).toBe(true)
   })
 
-  it.each([null, '', 'localhost:3000', 'ramhal-theta.vercel.app', 'notramhal.com', 'ramhal.com.example.org'])(
-    'ignores %s',
-    (host) => {
-      expect(legacyHostOf(host)).toBeNull()
-    },
-  )
+  it.each([
+    null,
+    '',
+    'localhost:3000',
+    'ramhal-theta.vercel.app',
+    'notramhal.com',
+    'ramhal.com.example.org',
+    'enramhal.com',
+    'www.frramhal.com',
+  ])('ignores %s', (host) => {
+    expect(isLegacyHost(host)).toBe(false)
+  })
 })
 
 describe('the committed redirect table', () => {
-  it.each(HOSTS)('sends every %s source to a route this site serves, in that site\'s language', (host) => {
-    for (const [source, target] of Object.entries(legacyRedirects[host])) {
-      expect(isCurrentRoute(LEGACY_HOST_LOCALES[host], target), `${host}${source} → ${target}`).toBe(true)
+  it('sends every source to a route this site serves, in Hebrew', () => {
+    for (const [source, target] of Object.entries(legacyRedirects)) {
+      expect(isCurrentRoute(target), `${source} → ${target}`).toBe(true)
     }
   })
 
-  it.each(HOSTS)('lists %s sources only in normalized form, so each has one spelling', (host) => {
-    for (const source of Object.keys(legacyRedirects[host])) {
+  it('lists sources only in normalized form, so each has one spelling', () => {
+    for (const source of Object.keys(legacyRedirects)) {
       expect(normalizeLegacyPath(source), source).toBe(source)
     }
   })
 
-  it.each(HOSTS)('has no %s redirect to itself or to another redirect', (host) => {
-    const table: Record<string, string> = legacyRedirects[host]
-    for (const [source, target] of Object.entries(table)) {
+  it('has no redirect to itself or to another redirect', () => {
+    for (const [source, target] of Object.entries(legacyRedirects)) {
       expect(target, source).not.toBe(source)
-      expect(Object.hasOwn(table, normalizeLegacyPath(target) ?? target), `${source} → ${target} is a chain`).toBe(false)
+      expect(Object.hasOwn(legacyRedirects, normalizeLegacyPath(target) ?? target), `${source} → ${target} is a chain`).toBe(false)
     }
   })
 
   it('resolves every spelling of a source to the same target', () => {
-    for (const host of HOSTS) {
-      for (const [source, target] of Object.entries(legacyRedirects[host])) {
-        const spellings = [source, encodeURI(source), `${encodeURI(source)}/`, encodeURI(source).replaceAll('-', '%2D'), source.toUpperCase()]
-        for (const spelling of spellings) {
-          expect(findLegacyRedirect(legacyRedirects, `www.${host}`, spelling), `${host}${spelling}`).toBe(target)
-        }
+    for (const [source, target] of Object.entries(legacyRedirects)) {
+      const spellings = [source, encodeURI(source), `${encodeURI(source)}/`, encodeURI(source).replaceAll('-', '%2D'), source.toUpperCase()]
+      for (const spelling of spellings) {
+        expect(findLegacyRedirect(legacyRedirects, 'www.ramhal.com', spelling), spelling).toBe(target)
       }
     }
   })
 
-  it('does not redirect on the current host or on a path it does not list', () => {
-    const [[source]] = Object.entries(legacyRedirects['frramhal.com'])
+  it('does not redirect the pages of the retired domains, the current host or a path it does not list', () => {
+    const [[source]] = Object.entries(legacyRedirects)
     expect(findLegacyRedirect(legacyRedirects, 'ramhal-theta.vercel.app', source)).toBeNull()
-    expect(findLegacyRedirect(legacyRedirects, 'www.frramhal.com', '/vayera.html')).toBeNull()
+    expect(findLegacyRedirect(legacyRedirects, 'www.frramhal.com', source)).toBeNull()
+    expect(findLegacyRedirect(legacyRedirects, 'enramhal.com', source)).toBeNull()
+    expect(findLegacyRedirect(legacyRedirects, 'www.ramhal.com', '/vayera.html')).toBeNull()
+  })
+
+  it.each(['/mp3', '/מכון-רמח-ל', '/צור-קשר', '/CD-DVD.html'])('leaves the dropped page %s to 404', (path) => {
+    expect(findLegacyRedirect(legacyRedirects, 'www.ramhal.com', path)).toBeNull()
   })
 })

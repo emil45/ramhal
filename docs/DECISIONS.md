@@ -202,17 +202,19 @@ Access, and while the audio archive stays inside 10 GB or is decided separately 
 
 ## 18. Legacy URLs: 301 to a real equivalent, otherwise an honest 404
 
-When the three legacy domains (`ramhal.com`, `enramhal.com`, `frramhal.com`, with or without `www`)
-point at this app, `src/proxy.ts` looks the request up in `src/lib/legacyRedirects.json` — legacy host,
-then normalized path (percent-decoded, composed Unicode, lower case, no trailing slash; the query string
+Only `ramhal.com` (apex and `www`) is kept. `enramhal.com` and `frramhal.com` are retired by the owner's
+decision: they will not point at this app, the proxy ignores their hosts, and the site keeps its own `/en`
+and `/fr` versions. When `ramhal.com` points at this app, `src/proxy.ts` looks the request up in
+`src/lib/legacyRedirects.json` — normalized path (percent-decoded, composed Unicode, lower case, no trailing slash; the query string
 is ignored) → current path — and answers 301. The lookup runs only for those hosts, reads no database and
 costs a host check for every other request. The file is generated, never edited:
-`npm run redirects:generate` combines the crawl of the old sites (`scripts/scrape/out`), `Books.legacyUrls`
-(a legacy book page goes to that book's page in the language of the site it came from) and a small
+`npm run redirects:generate` combines the crawl of the old site (`scripts/scrape/out/he.json`), `Books.legacyUrls`
+(a legacy book page goes to that book's page; URLs on the retired domains are skipped) and a small
 hand-written table of pages with a real current equivalent (`scripts/legacy-redirects/pageEquivalences.mjs`,
 decided from what a page says, not its title). Everything else — essays and articles (§14), the shop
-cart, empty template pages, products that are not in the catalogue (§12), and anything whose equivalent
-is undecided — gets a real 404 with the site's not-found page, which links to home and the catalogue.
+cart, empty template pages, products that are not in the catalogue (§12, including the French-only
+product pages), and the pages the owner dropped — the MP3 archive, contact, "about the institute" and the
+CD/DVD listing — gets a real 404 with the site's not-found page, which links to home and the catalogue.
 Never a blanket redirect to the home page: a redirect to something unrelated is a soft 404 to a search
 engine, and it hides which old links were valuable. Re-run the generator after a slug change or a
 catalogue import; a test fails when a redirect names a book that no longer exists.
