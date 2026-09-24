@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server'
 
+import legacyRedirects from '@/lib/legacyRedirects.json'
+import { DEFAULT_LOCALE } from '@/lib/locale'
+import { findLegacyRedirect, LEGACY_HOST_LOCALES, legacyHostOf } from '@/lib/legacyRedirects'
+
 import type { NextRequest } from 'next/server'
 
 /**
@@ -18,7 +22,7 @@ function hasLocalePrefix(pathname: string): boolean {
 }
 
 /**
- * Two unrelated jobs, kept in one function because Next only supports one
+ * Three unrelated jobs, kept in one function because Next only supports one
  * proxy file per project (see node_modules/next/dist/docs/.../proxy.md).
  *
  * 1. Every /api/dev-* route (dev-migrate and dev-generate-types —
@@ -29,10 +33,16 @@ function hasLocalePrefix(pathname: string): boolean {
  *    security note at the top of src/app/(payload)/api/dev-migrate/route.ts
  *    for why both layers exist.
  *
- * 2. Hebrew-at-the-root locale routing: app/(frontend)/[locale] handles
+ * 2. A request on one of the legacy domains for a page of the old site goes
+ *    permanently to its equivalent here, when there is one
+ *    (src/lib/legacyRedirects.json, docs/DECISIONS.md §18). A legacy URL with
+ *    no equivalent falls through and 404s.
+ *
+ * 3. Hebrew-at-the-root locale routing: app/(frontend)/[locale] handles
  *    every locale uniformly, including Hebrew, so an unprefixed request is
  *    rewritten onto /he/... — invisibly to the visitor, who never sees a
- *    /he in the URL.
+ *    /he in the URL. On a legacy domain "unprefixed" means that site's own
+ *    language, so a dead French URL shows the French 404.
  */
 export function proxy(request: NextRequest): NextResponse | undefined {
   const { pathname } = request.nextUrl
@@ -44,9 +54,19 @@ export function proxy(request: NextRequest): NextResponse | undefined {
     return undefined
   }
 
-  if (!hasLocalePrefix(pathname)) {
+  const host = request.headers.get('host')
+  const legacyTarget = findLegacyRedirect(legacyRedirects, host, pathname)
+  if (legacyTarget) {
     const url = request.nextUrl.clone()
-    url.pathname = `/he${pathname}`
+    url.pathname = legacyTarget
+    url.search = ''
+    return NextResponse.redirect(url, 301)
+  }
+
+  if (!hasLocalePrefix(pathname)) {
+    const legacyHost = legacyHostOf(host)
+    const url = request.nextUrl.clone()
+    url.pathname = `/${legacyHost ? LEGACY_HOST_LOCALES[legacyHost] : DEFAULT_LOCALE}${pathname}`
     return NextResponse.rewrite(url)
   }
 
@@ -54,5 +74,7 @@ export function proxy(request: NextRequest): NextResponse | undefined {
 }
 
 export const config = {
-  matcher: ['/api/dev-(.*)', '/((?!admin|api|_next|favicon.ico|media/|.*\\..*).*)'],
+  // Paths with a file extension are static files and skip the proxy — except the
+  // legacy sites' own page addresses, which all end in .html or .asp.
+  matcher: ['/api/dev-(.*)', '/((?!admin|api|_next|favicon.ico|media/|.*\\.(?![hH][tT][mM][lL]$|[aA][sS][pP]$)).*)'],
 }
