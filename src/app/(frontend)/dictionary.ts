@@ -146,6 +146,7 @@ const DICTIONARIES = {
       backToCart: 'חזרה לעגלה',
       backToShop: 'המשך בקניות',
     },
+    notFound: { title: 'העמוד לא נמצא', body: 'העמוד שחיפשתם אינו קיים, או שהועבר. אפשר להמשיך מכאן:', home: 'לעמוד הבית' },
     home: {
       tagline: 'מכון רמח״ל מפרסם ומלמד את כתבי רבנו רמח״ל, בהנהגת הרב מרדכי שריקי.',
       browseCatalogue: 'לקטלוג הספרים',
@@ -306,6 +307,7 @@ const DICTIONARIES = {
       backToCart: 'Back to cart',
       backToShop: 'Keep shopping',
     },
+    notFound: { title: 'Page not found', body: 'The page you were looking for does not exist, or has moved. You can continue from here:', home: 'Home' },
     home: {
       tagline: 'Machon Ramhal publishes and teaches the writings of the Ramhal, under the guidance of Rabbi Mordechai Chriqui.',
       browseCatalogue: 'Browse the catalogue',
@@ -466,6 +468,7 @@ const DICTIONARIES = {
       backToCart: 'Retour au panier',
       backToShop: 'Continuer mes achats',
     },
+    notFound: { title: 'Page introuvable', body: 'La page que vous cherchez n’existe pas ou a été déplacée. Vous pouvez continuer d’ici :', home: 'Accueil' },
     home: {
       tagline: "L'Institut Ramhal publie et enseigne les écrits du Ramhal, sous la direction du Rav Mordekhaï Chriqui.",
       browseCatalogue: 'Voir le catalogue',
