@@ -9,10 +9,10 @@ import { PageImage } from '@/components/storefront/blocks/PageImage'
 import { ProductCard } from '@/components/storefront/ProductCard'
 import { buttonVariants } from '@/components/ui/button'
 import { getDictionary } from '@/app/(frontend)/dictionary'
-import { getActiveAnnouncements } from '@/lib/announcementsData'
+import { getAnnouncements } from '@/lib/announcementsData'
 import { selectFeaturedBooks, selectNewBooks, sortCatalogue } from '@/lib/availability'
 import { getCatalogueBooks } from '@/lib/booksData'
-import { getUpcomingEvents } from '@/lib/eventsData'
+import { getEvents } from '@/lib/eventsData'
 import { buildNewsStream } from '@/lib/homeStream'
 import { isLocale, LOCALE_CONFIG } from '@/lib/locale'
 import { getPageBySlug } from '@/lib/pagesData'
@@ -32,15 +32,15 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
 
   const [books, announcements, events, schedule, beitRamhalPage] = await Promise.all([
     getCatalogueBooks(locale),
-    getActiveAnnouncements(locale),
-    getUpcomingEvents(locale),
+    getAnnouncements(locale),
+    getEvents(locale),
     getSchedule(locale),
     getPageBySlug('beit-ramhal', locale),
   ])
   const studyHallImage = beitRamhalPage?.heroImage as Media | null
 
   const newBooks = selectNewBooks(books, currency, BOOK_STRIP_COUNT)
-  const newsStream = buildNewsStream(announcements, events, new Date())
+  const newsStream = buildNewsStream(announcements, events)
   // "New books" is a claim about dates, so it only appears once books carry
   // one. Until then the strip is plainly a selection from the catalogue.
   const stripBooks = newBooks.length > 0 ? newBooks : selectFeaturedBooks(sortCatalogue(books, currency), currency, BOOK_STRIP_COUNT)

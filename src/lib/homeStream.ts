@@ -52,14 +52,10 @@ function resolveLink(link: NewsLink | null | undefined): NewsItem['link'] {
   return label && url ? { label, url } : null
 }
 
-/** Upcoming dates lead, nearest first; dates that have already begun follow,
- * newest first. `now` is supplied so the ordering stays deterministic. */
-export function buildNewsStream(
-  announcements: StreamAnnouncement[],
-  events: StreamEvent[],
-  now: Date,
-): NewsItem[] {
-  const items: NewsItem[] = [
+/** Announcements first, then events. Each list keeps the order it arrives in —
+ * the queries in announcementsData.ts and eventsData.ts decide it. */
+export function buildNewsStream(announcements: StreamAnnouncement[], events: StreamEvent[]): NewsItem[] {
+  return [
     ...announcements.map((announcement) => ({
       id: String(announcement.id),
       kind: 'announcement' as const,
@@ -81,15 +77,4 @@ export function buildNewsStream(
       location: event.location ?? null,
     })),
   ]
-
-  const nowTimestamp = now.getTime()
-  return items.sort((first, second) => {
-    const firstTimestamp = new Date(first.date).getTime()
-    const secondTimestamp = new Date(second.date).getTime()
-    const firstIsFuture = firstTimestamp > nowTimestamp
-    const secondIsFuture = secondTimestamp > nowTimestamp
-
-    if (firstIsFuture !== secondIsFuture) return firstIsFuture ? -1 : 1
-    return firstIsFuture ? firstTimestamp - secondTimestamp : secondTimestamp - firstTimestamp
-  })
 }

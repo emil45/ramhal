@@ -70,12 +70,12 @@ export async function Dashboard(props: AdminViewServerProps) {
 
         <div style={{ display: 'grid', gap: '2rem', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', marginBottom: '2rem' }}>
           <section>
-            <h2 style={{ marginBottom: '0.75rem' }}>אירועים קרובים</h2>
-            {summary.upcomingEvents.length === 0 ? (
-              <p style={{ color: 'var(--theme-elevation-600)' }}>אין אירועים קרובים.</p>
+            <h2 style={{ marginBottom: '0.75rem' }}>אירועים</h2>
+            {summary.events.length === 0 ? (
+              <p style={{ color: 'var(--theme-elevation-600)' }}>אין אירועים.</p>
             ) : (
               <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {summary.upcomingEvents.map((event) => (
+                {summary.events.map((event) => (
                   <li key={event.id}>
                     <a href={`/admin/collections/events/${event.id}`} style={{ color: 'var(--theme-text)' }}>
                       {event.displayTitle ?? event.title} — {new Date(event.startsAt).toLocaleDateString('he-IL')}
@@ -87,12 +87,12 @@ export async function Dashboard(props: AdminViewServerProps) {
           </section>
 
           <section>
-            <h2 style={{ marginBottom: '0.75rem' }}>הודעות פעילות</h2>
-            {summary.activeAnnouncements.length === 0 ? (
-              <p style={{ color: 'var(--theme-elevation-600)' }}>אין הודעות פעילות.</p>
+            <h2 style={{ marginBottom: '0.75rem' }}>הודעות</h2>
+            {summary.announcements.length === 0 ? (
+              <p style={{ color: 'var(--theme-elevation-600)' }}>אין הודעות.</p>
             ) : (
               <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                {summary.activeAnnouncements.map((announcement) => (
+                {summary.announcements.map((announcement) => (
                   <li key={announcement.id}>
                     <a href={`/admin/collections/announcements/${announcement.id}`} style={{ color: 'var(--theme-text)' }}>
                       {announcement.displayTitle ?? announcement.title}

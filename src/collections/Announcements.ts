@@ -7,9 +7,9 @@ import type { CollectionConfig } from 'payload'
 
 import { validateNewsLinkUrl } from '@/lib/newsLink'
 
-// Anything dated expires itself. A stale "coming soon" notice is the commonest
-// way an institute site announces that nobody is home — public queries must
-// filter on endsAt, not rely on someone remembering to unpublish.
+// Visibility is manual: the storefront shows every announcement that exists,
+// and the son deletes one when it is over (docs/DECISIONS.md §8). startsAt is
+// the date shown with it and the order it is listed in, not a schedule.
 export const Announcements: CollectionConfig = {
   slug: 'announcements',
   labels: {
@@ -19,7 +19,7 @@ export const Announcements: CollectionConfig = {
   admin: {
     group: 'תוכן',
     useAsTitle: 'displayTitle',
-    defaultColumns: ['displayTitle', 'displayTitleLocale', 'startsAt', 'endsAt'],
+    defaultColumns: ['displayTitle', 'displayTitleLocale', 'startsAt'],
   },
   defaultSort: '-startsAt',
   hooks: {
@@ -86,18 +86,9 @@ export const Announcements: CollectionConfig = {
     {
       name: 'startsAt',
       type: 'date',
-      label: 'תאריך התחלה',
+      label: 'תאריך',
       required: true,
       admin: { position: 'sidebar' },
-    },
-    {
-      name: 'endsAt',
-      type: 'date',
-      label: 'תאריך סיום',
-      admin: {
-        position: 'sidebar',
-        description: 'ההודעה תיעלם מהאתר אוטומטית אחרי תאריך זה. השאירו ריק כדי שתישאר ללא הגבלת זמן.',
-      },
     },
   ],
 }

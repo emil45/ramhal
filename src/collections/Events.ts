@@ -19,7 +19,7 @@ export const Events: CollectionConfig = {
   admin: {
     group: 'תוכן',
     useAsTitle: 'displayTitle',
-    defaultColumns: ['displayTitle', 'displayTitleLocale', 'startsAt', 'endsAt', 'location'],
+    defaultColumns: ['displayTitle', 'displayTitleLocale', 'startsAt', 'location'],
   },
   defaultSort: '-startsAt',
   hooks: {
@@ -89,15 +89,6 @@ export const Events: CollectionConfig = {
       label: 'תאריך התחלה',
       required: true,
       admin: { position: 'sidebar' },
-    },
-    {
-      name: 'endsAt',
-      type: 'date',
-      label: 'תאריך סיום',
-      admin: {
-        position: 'sidebar',
-        description: 'האירוע ייעלם מהאתר אוטומטית אחרי תאריך זה. השאירו ריק לאירוע ללא תאריך סיום.',
-      },
     },
     {
       name: 'location',

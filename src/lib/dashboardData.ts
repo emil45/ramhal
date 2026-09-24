@@ -1,6 +1,4 @@
 import { adminListFilterHref } from './adminListFilters.ts'
-import { isAnnouncementActive } from './announcements.ts'
-import { isEventUpcoming } from './events.ts'
 import { FULFILMENT_OUTSTANDING_STATUSES } from './orderStatus.ts'
 
 import type { Payload } from 'payload'
@@ -17,8 +15,8 @@ export type DashboardSummary = {
   booksMissingCover: { count: number; href: string }
   booksMissingPrice: { count: number; href: string }
   booksMissingDescription: { count: number; href: string }
-  upcomingEvents: Pick<Event, 'id' | 'displayTitle' | 'title' | 'startsAt'>[]
-  activeAnnouncements: Pick<Announcement, 'id' | 'displayTitle' | 'title' | 'startsAt'>[]
+  events: Pick<Event, 'id' | 'displayTitle' | 'title' | 'startsAt'>[]
+  announcements: Pick<Announcement, 'id' | 'displayTitle' | 'title' | 'startsAt'>[]
 }
 
 /**
@@ -45,11 +43,9 @@ export async function getDashboardSummary(payload: Payload): Promise<DashboardSu
     // field itself ("Cannot find field for path at undefined"), only on
     // its subfields.
     payload.count({ collection: 'books', where: { 'prices.amount': { equals: 0 } } }),
-    payload.find({ collection: 'events', locale: 'he', limit: 50, sort: 'startsAt', depth: 0 }),
-    payload.find({ collection: 'announcements', locale: 'he', limit: 50, sort: 'startsAt', depth: 0 }),
+    payload.find({ collection: 'events', locale: 'he', pagination: false, sort: 'startsAt', depth: 0 }),
+    payload.find({ collection: 'announcements', locale: 'he', pagination: false, sort: '-startsAt', depth: 0 }),
   ])
-
-  const now = new Date()
 
   return {
     pendingOrderCount: pendingOrderCount.totalDocs,
@@ -68,7 +64,7 @@ export async function getDashboardSummary(payload: Payload): Promise<DashboardSu
       count: missingPrice.totalDocs,
       href: adminListFilterHref(BOOKS_LIST_PATH, [['prices.amount', 'equals', '0']]),
     },
-    upcomingEvents: events.docs.filter((event) => isEventUpcoming(event, now)),
-    activeAnnouncements: announcements.docs.filter((announcement) => isAnnouncementActive(announcement, now)),
+    events: events.docs,
+    announcements: announcements.docs,
   }
 }

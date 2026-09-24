@@ -156,7 +156,6 @@ export interface UserAuthOperations {
 export interface Media {
   id: number;
   alt?: string | null;
-  prefix?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -691,10 +690,6 @@ export interface Announcement {
     url?: string | null;
   };
   startsAt: string;
-  /**
-   * ההודעה תיעלם מהאתר אוטומטית אחרי תאריך זה. השאירו ריק כדי שתישאר ללא הגבלת זמן.
-   */
-  endsAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -728,10 +723,6 @@ export interface Event {
     url?: string | null;
   };
   startsAt: string;
-  /**
-   * האירוע ייעלם מהאתר אוטומטית אחרי תאריך זה. השאירו ריק לאירוע ללא תאריך סיום.
-   */
-  endsAt?: string | null;
   location?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -997,7 +988,6 @@ export interface PayloadMigration {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
-  prefix?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1318,7 +1308,6 @@ export interface AnnouncementsSelect<T extends boolean = true> {
         url?: T;
       };
   startsAt?: T;
-  endsAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1339,7 +1328,6 @@ export interface EventsSelect<T extends boolean = true> {
         url?: T;
       };
   startsAt?: T;
-  endsAt?: T;
   location?: T;
   updatedAt?: T;
   createdAt?: T;
