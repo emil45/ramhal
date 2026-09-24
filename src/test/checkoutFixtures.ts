@@ -2,6 +2,8 @@ import config from '@payload-config'
 import { randomUUID } from 'node:crypto'
 import { getPayload } from 'payload'
 
+import { SKIP_STOREFRONT_REVALIDATION } from '@/collections/hooks/revalidateStorefront'
+
 import type { CheckoutFormValues } from '@/lib/checkoutForm'
 import type { Book, Order } from '@/payload-types'
 
@@ -40,6 +42,7 @@ export async function createTestBook(
       inStock: overrides.inStock ?? true,
       shippingUnits: overrides.shippingUnits ?? 1,
     },
+    context: SKIP_STOREFRONT_REVALIDATION,
   })
 }
 
@@ -86,6 +89,6 @@ export async function cleanUpTestRun(run: TestRun, books: Book[]): Promise<void>
   }
 
   for (const book of books) {
-    await payload.delete({ collection: 'books', id: book.id })
+    await payload.delete({ collection: 'books', id: book.id, context: SKIP_STOREFRONT_REVALIDATION })
   }
 }

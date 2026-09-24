@@ -1,4 +1,5 @@
 import { refuseReadOnlyMediaDelete, refuseReadOnlyMediaUpload } from './hooks/refuseReadOnlyMediaWrites.ts'
+import { revalidateStorefront } from './hooks/revalidateStorefront.ts'
 
 import type { CollectionConfig } from 'payload'
 
@@ -23,6 +24,8 @@ export const Media: CollectionConfig = {
     read: () => true,
   },
   hooks: {
+    afterChange: [revalidateStorefront],
+    afterDelete: [revalidateStorefront],
     beforeChange: [refuseReadOnlyMediaUpload],
     beforeDelete: [refuseReadOnlyMediaDelete],
   },

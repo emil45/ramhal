@@ -2,6 +2,7 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
+import { SKIP_STOREFRONT_REVALIDATION } from '@/collections/hooks/revalidateStorefront'
 import { placeOrder } from '@/lib/placeOrder'
 import { cleanUpTestRun, checkoutFormFor, createTestBook, findOrdersOf, startTestRun } from '@/test/checkoutFixtures'
 
@@ -75,8 +76,9 @@ describe('placeOrder', () => {
       collection: 'books',
       id: soldBook.id,
       data: { prices: [{ currency: 'ILS', amount: 99 }] },
+      context: SKIP_STOREFRONT_REVALIDATION,
     })
-    await payload.delete({ collection: 'books', id: soldBook.id })
+    await payload.delete({ collection: 'books', id: soldBook.id, context: SKIP_STOREFRONT_REVALIDATION })
 
     const order = (await payload.find({ collection: 'orders', where: { 'customer.email': { equals: email } }, depth: 0 })).docs[0]
     expect(order.total).toBe(BOOK_PRICE + ISRAEL_SHIPPING)

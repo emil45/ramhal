@@ -1,5 +1,6 @@
 import { localizedDisplayTitleFields } from './fields/localizedDisplayTitleFields.ts'
 import { computeDisplayTitleBeforeChange } from './hooks/displayTitle.ts'
+import { revalidateStorefront } from './hooks/revalidateStorefront.ts'
 import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
 
 import type { CollectionConfig } from 'payload'
@@ -22,6 +23,8 @@ export const Events: CollectionConfig = {
   },
   defaultSort: '-startsAt',
   hooks: {
+    afterChange: [revalidateStorefront],
+    afterDelete: [revalidateStorefront],
     beforeChange: [computeDisplayTitleBeforeChange('events')],
   },
   fields: [

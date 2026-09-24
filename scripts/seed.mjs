@@ -8,6 +8,7 @@ import { postgresAdapter } from '@payloadcms/db-postgres'
 import { buildConfig, getPayload } from 'payload'
 
 import { Categories } from '../src/collections/Categories.ts'
+import { Media } from '../src/collections/Media.ts'
 import { Schedule } from '../src/globals/Schedule.ts'
 import { ShippingSettings } from '../src/globals/ShippingSettings.ts'
 import { SiteSettings } from '../src/globals/SiteSettings.ts'
@@ -27,7 +28,7 @@ if (!connectionString) {
 const payload = await getPayload({
   config: buildConfig({
     secret: process.env.PAYLOAD_SECRET ?? 'seed-runner',
-    collections: [Categories],
+    collections: [Categories, Media],
     globals: [Schedule, ShippingSettings, SiteSettings],
     localization: {
       locales: [

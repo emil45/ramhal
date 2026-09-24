@@ -3,6 +3,7 @@ import { unlink, writeFile } from 'node:fs/promises'
 import os from 'node:os'
 import path from 'node:path'
 
+import { SKIP_STOREFRONT_REVALIDATION } from './collections/hooks/revalidateStorefront.ts'
 import { getImportBookUrlSlug } from './lib/importBookUrlSlug.ts'
 import { isRecordedMediaTitle } from './lib/recordedMedia.ts'
 
@@ -336,11 +337,17 @@ async function attachCover(payload: Payload, bookId: number | string, locale: Si
   if (!tempPath) return 'fetch-failed'
 
   try {
-    const media = await payload.create({ collection: 'media', locale, data: { alt }, filePath: tempPath })
+    const media = await payload.create({ collection: 'media', locale, data: { alt }, filePath: tempPath, context: SKIP_STOREFRONT_REVALIDATION })
     // Same locale as the book's own creation — required, localized fields
     // (title, slug) validate against whichever locale is in play, and a book
     // absent from Hebrew (see reviewReasons) has no 'he' title to validate.
-    await payload.update({ collection: 'books', id: bookId, locale, data: { cover: media.id } })
+    await payload.update({
+      collection: 'books',
+      id: bookId,
+      locale,
+      data: { cover: media.id },
+      context: SKIP_STOREFRONT_REVALIDATION,
+    })
     return 'attached'
   } finally {
     await unlink(tempPath).catch(() => {})
@@ -428,6 +435,7 @@ async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<s
         reviewNote: input.reviewNote ?? undefined,
         importKey: input.importKey,
       },
+      context: SKIP_STOREFRONT_REVALIDATION,
     })
 
     for (const [locale, title] of Object.entries(input.titles) as [SiteKey, string][]) {
@@ -440,6 +448,7 @@ async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<s
           title,
           description: input.descriptions[locale] ? toLexicalRichText(input.descriptions[locale] as string) : undefined,
         },
+        context: SKIP_STOREFRONT_REVALIDATION,
       })
     }
 
@@ -461,6 +470,7 @@ async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<s
       legacyUrls: [...(existingDoc.legacyUrls ?? []), ...newUrls.map((url) => ({ url }))],
       prices: [...existingDoc.prices, ...newPrices],
     },
+    context: SKIP_STOREFRONT_REVALIDATION,
   })
   return { status: newUrls.length > 0 ? 'urls-added' : 'prices-added' }
 }

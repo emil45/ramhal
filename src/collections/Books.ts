@@ -1,6 +1,7 @@
 import { localizedDisplayTitleFields } from './fields/localizedDisplayTitleFields.ts'
 import { computeDisplayTitleBeforeChange } from './hooks/displayTitle.ts'
 import { generateSlugFromTitle } from './hooks/generateSlugFromTitle.ts'
+import { revalidateStorefront } from './hooks/revalidateStorefront.ts'
 import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
 import { CURRENCIES } from '../lib/currency.ts'
 import { validateMoneyAmount } from '../lib/validateMoneyAmount.ts'
@@ -53,6 +54,8 @@ export const Books: CollectionConfig = {
     },
   },
   hooks: {
+    afterChange: [revalidateStorefront],
+    afterDelete: [revalidateStorefront],
     beforeChange: [computeDisplayTitleBeforeChange('books')],
   },
   fields: [

@@ -1,6 +1,7 @@
 import { localizedDisplayTitleFields } from './fields/localizedDisplayTitleFields.ts'
 import { computeDisplayTitleBeforeChange } from './hooks/displayTitle.ts'
 import { generateSlugFromTitle } from './hooks/generateSlugFromTitle.ts'
+import { revalidateStorefront } from './hooks/revalidateStorefront.ts'
 import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
 
 import type { CollectionConfig } from 'payload'
@@ -19,6 +20,8 @@ export const Categories: CollectionConfig = {
       'קטגוריה מתארת את סוג החיבור (למשל: סידורים ומחזורים) — לא את השפה. שפת הספר נקבעת בשדה ׳שפת החיבור׳ שבכל ספר.',
   },
   hooks: {
+    afterChange: [revalidateStorefront],
+    afterDelete: [revalidateStorefront],
     beforeChange: [computeDisplayTitleBeforeChange('categories')],
   },
   fields: [

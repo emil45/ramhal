@@ -1,9 +1,14 @@
+import { revalidateStorefront } from '../collections/hooks/revalidateStorefront.ts'
+
 import type { GlobalConfig } from 'payload'
 
 // The standing timetable, currently hardcoded into every legacy page.
 export const Schedule: GlobalConfig = {
   slug: 'schedule',
   label: 'לוח זמנים',
+  hooks: {
+    afterChange: [revalidateStorefront],
+  },
   fields: [
     {
       name: 'shiurim',

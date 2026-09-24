@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { revalidateStorefront } from '../collections/hooks/revalidateStorefront.ts'
 import { CURRENCIES } from '../lib/currency.ts'
 import { SOCIAL_PLATFORMS, validateSocialLinks, validateSocialLinkUrl } from '../lib/socialLinks.ts'
 
@@ -7,6 +8,9 @@ import { SOCIAL_PLATFORMS, validateSocialLinks, validateSocialLinkUrl } from '..
 export const SiteSettings: GlobalConfig = {
   slug: 'siteSettings',
   label: 'הגדרות האתר',
+  hooks: {
+    afterChange: [revalidateStorefront],
+  },
   fields: [
     {
       name: 'donatePhoto',

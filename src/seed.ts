@@ -1,6 +1,7 @@
 import type { Payload } from 'payload'
 
-import { DEFAULT_SOCIAL_LINKS } from './lib/socialLinks'
+import { SKIP_STOREFRONT_REVALIDATION } from './collections/hooks/revalidateStorefront.ts'
+import { DEFAULT_SOCIAL_LINKS } from './lib/socialLinks.ts'
 
 type LocalizedText = { en: string; fr: string; he: string }
 
@@ -35,9 +36,10 @@ async function upsertCategory(payload: Payload, entry: (typeof CATEGORIES)[numbe
     collection: 'categories',
     locale: 'he',
     data: { title: entry.title.he, slug: entry.slug },
+    context: SKIP_STOREFRONT_REVALIDATION,
   })
-  await payload.update({ collection: 'categories', id: created.id, locale: 'en', data: { title: entry.title.en } })
-  await payload.update({ collection: 'categories', id: created.id, locale: 'fr', data: { title: entry.title.fr } })
+  await payload.update({ collection: 'categories', id: created.id, locale: 'en', data: { title: entry.title.en }, context: SKIP_STOREFRONT_REVALIDATION })
+  await payload.update({ collection: 'categories', id: created.id, locale: 'fr', data: { title: entry.title.fr }, context: SKIP_STOREFRONT_REVALIDATION })
 }
 
 /**
@@ -107,6 +109,7 @@ async function seedSchedule(payload: Payload): Promise<void> {
         { name: 'ערבית', time: '20:00' },
       ],
     },
+    context: SKIP_STOREFRONT_REVALIDATION,
   })
 }
 
@@ -133,9 +136,14 @@ async function seedContactDetails(payload: Payload): Promise<void> {
     slug: 'siteSettings',
     locale: 'he',
     data: { contact: { address: CONTACT_ADDRESS.he, phone: CONTACT_PHONE, email: CONTACT_EMAIL } },
+    context: SKIP_STOREFRONT_REVALIDATION,
   })
-  await payload.updateGlobal({ slug: 'siteSettings', locale: 'en', data: { contact: { address: CONTACT_ADDRESS.en } } })
-  await payload.updateGlobal({ slug: 'siteSettings', locale: 'fr', data: { contact: { address: CONTACT_ADDRESS.fr } } })
+  await payload.updateGlobal({ slug: 'siteSettings', locale: 'en', data: { contact: { address: CONTACT_ADDRESS.en } },
+    context: SKIP_STOREFRONT_REVALIDATION,
+  })
+  await payload.updateGlobal({ slug: 'siteSettings', locale: 'fr', data: { contact: { address: CONTACT_ADDRESS.fr } },
+    context: SKIP_STOREFRONT_REVALIDATION,
+  })
 }
 
 /** Initialises the institute's accounts only when an editor has not already
@@ -148,6 +156,7 @@ async function seedSocialLinks(payload: Payload): Promise<void> {
     slug: 'siteSettings',
     locale: 'he',
     data: { socialLinks: DEFAULT_SOCIAL_LINKS },
+    context: SKIP_STOREFRONT_REVALIDATION,
   })
 }
 

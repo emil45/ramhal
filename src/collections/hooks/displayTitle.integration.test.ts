@@ -2,6 +2,7 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
+import { SKIP_STOREFRONT_REVALIDATION } from '@/collections/hooks/revalidateStorefront'
 import { cleanUpTestRun, createTestBook, startTestRun } from '@/test/checkoutFixtures'
 
 import type { Book } from '@/payload-types'
@@ -29,6 +30,7 @@ describe('localized display-title hook', () => {
       id: book.id,
       locale: 'he',
       data: { subtitle },
+      context: SKIP_STOREFRONT_REVALIDATION,
     })
 
     const updated = await payload.findByID({

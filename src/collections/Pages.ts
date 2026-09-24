@@ -2,6 +2,7 @@ import { PAGE_CONTENT_BLOCKS } from './blocks/index.ts'
 import { localizedDisplayTitleFields } from './fields/localizedDisplayTitleFields.ts'
 import { computeDisplayTitleBeforeChange } from './hooks/displayTitle.ts'
 import { generateSlugFromTitle } from './hooks/generateSlugFromTitle.ts'
+import { revalidateStorefront } from './hooks/revalidateStorefront.ts'
 import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
 
 import type { CollectionConfig } from 'payload'
@@ -19,6 +20,8 @@ export const Pages: CollectionConfig = {
     defaultColumns: ['displayTitle', 'displayTitleLocale'],
   },
   hooks: {
+    afterChange: [revalidateStorefront],
+    afterDelete: [revalidateStorefront],
     beforeChange: [computeDisplayTitleBeforeChange('pages')],
   },
   fields: [
