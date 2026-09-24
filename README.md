@@ -77,6 +77,16 @@ One interface (`src/lib/payment/paymentProvider.ts`): start a payment, confirm i
 paid. `mock` (demo/development only) and `paypal` (hosted checkout, sandbox credentials today) are
 implemented. No sandbox purchase has been run end to end yet — see `docs/BACKLOG.md`.
 
+## How content reaches the site
+
+Saving in `/admin` is publishing. Every content page is cached until an editor changes something,
+and never refreshed on a timer: any save or delete of content a storefront page renders runs
+`revalidateStorefront` (`src/collections/hooks/revalidateStorefront.ts`), which marks the whole
+storefront stale, and each page rebuilds on its next visit. The site shows exactly what the admin
+contains — an announcement or event stays until it is deleted. A script that writes content outside
+the running app (seed, import, a one-off) passes `context: SKIP_STOREFRONT_REVALIDATION`; without
+it the hook throws. The reasoning is in `docs/DECISIONS.md` §5 and §8.
+
 ## Public routes
 
 `/`, `/en`, `/fr` — home. `/<ספרים|books|livres>` — catalogue. `/<ספר|book|livre>/<slug>` — a

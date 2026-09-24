@@ -62,12 +62,12 @@ actionable without reading anything else. Grouped, not ordered by priority withi
   not editor-facing.
 - **The press archive is curated in code** (redirects to `/rabbi-chriqui#press`). A Payload
   collection would let the son add a press link without a deploy.
-- **The Q&A page is a prototype**, not a real feature: a small in-memory matcher over one sample
-  entry (`src/lib/questionSearch.ts`), not backed by a collection. Needs: a localized collection
-  (publication consent, anonymity, status, topic, stable slug, question, answer, cited works,
-  publication date) and the Postgres Hebrew full-text search already chosen in
-  `docs/DECISIONS.md` §4, replacing the prototype matcher. Add per-question canonical URLs and
-  structured data once the collection exists.
+- **Q&A archive as a Payload collection, with search.** The Q&A page is a static prototype: one
+  sample entry written into `questions-and-answers/page.tsx`, no search. Needs: a localized
+  collection (publication consent, anonymity, status, topic, stable slug, question, answer, cited
+  works, publication date) wired into `revalidateStorefront`, and the Postgres Hebrew full-text
+  search already chosen in `docs/DECISIONS.md` §4 — that is when search earns its place. Add
+  per-question canonical URLs and structured data once the collection exists.
 - **Catalogue data gaps need a fresh count from the live admin dashboard.** The last count
   (69 missing-description, 34 absent-from-hebrew, 11 language-uncertain, 5 zero-price,
   4 price-mismatch, 93 books with no cover) predates the canonical-catalogue cleanup and the
@@ -85,15 +85,21 @@ actionable without reading anything else. Grouped, not ordered by priority withi
   (creator credit, publication place, publisher, extent, endorsement credits) are populated for
   exactly one book (`מחול לצדיקים`, id 35). The rest of the ~62-book catalogue has not been
   reviewed for these fields — an editorial task, not a data guess.
-- **On-demand revalidation on publish is not wired up.** Catalogue and book pages revalidate on a
-  fixed schedule (`docs/DECISIONS.md` §5), not immediately when an editor publishes. An
-  `afterChange` hook that triggers targeted revalidation is a real, scoped follow-up.
 - **New genre categories (קבלה, מוסר, …) are the client's choice, not decided.** The model already
   supports adding categories and the storefront filter reappears with no code change once a second
   real category exists (`docs/DECISIONS.md` §13) — this is purely waiting on the client.
 
 ## Infra
 
+- **`npm run migrate:create` is unsafe with a local `.env`.** With only `S3_PUBLIC_URL` set the
+  generated migration and snapshot drop `media.prefix` (the storage plugin's column), and
+  `npm run generate:types` removes `prefix` from `src/payload-types.ts` — production has the
+  column. TASK-46 hand-corrected both. Make the schema tooling independent of `S3_*` (or have it
+  set `alwaysInsertFields` effectively) before the next migration is generated.
+- **Committed one-off scripts predate `SKIP_STOREFRONT_REVALIDATION`.** Their writes to books,
+  categories, media, pages and globals do not set it, so re-running one now throws from the
+  revalidation hook. They are records, not tools, and were left as they ran; a new one must set the
+  context (`docs/DECISIONS.md` §5).
 - **`upsertBook`'s existing-`importKey` lookup has an unconfirmed bug.** Seen once, on a scratch
   branch: a candidate whose `importKey` matched an existing book exactly (verified via direct SQL
   equality) was not found by the lookup, triggering an attempted `create` that then failed on a

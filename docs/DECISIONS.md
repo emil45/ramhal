@@ -45,9 +45,19 @@ transaction-mode pooler).
 
 ## 5. Hosting & environments
 
-**Content is static, the shop is dynamic.** Catalogue and article pages are generated ahead of time
-and revalidated periodically; cart, checkout, orders and admin render per request. **Vercel**,
-Frankfurt region. **Neon Postgres** holds production and nothing else. **Only two things ever
+**Content is static, the shop is dynamic.** Every content page is generated ahead of time and cached
+until an editor changes something; no page has a revalidation timer, so the database is read only
+after a change, never on a schedule (Neon's 5 GB/month below is shared by everything). Saving or
+deleting anything a storefront page renders — books, categories, media, pages, announcements,
+events, and the schedule and site-settings globals — runs `revalidateStorefront`
+(`src/collections/hooks/revalidateStorefront.ts`), which calls `revalidatePath('/', 'layout')` and so
+marks the whole storefront stale; each page re-renders on its next visit. Whole storefront rather
+than the affected pages: about two hundred pages, rare edits and lazy re-rendering make the extra
+renders free, while a per-page map would silently rot the day someone forgets an entry. Saving is
+publishing — no collection uses drafts. A Payload write made outside a Next request (seed, import,
+one-off scripts, tests) passes `context: SKIP_STOREFRONT_REVALIDATION`; without it the hook throws
+rather than skipping quietly. Only the visitor's own pages — cart, checkout, checkout return, order,
+mock payment — plus admin and the API render per request. **Vercel**, Frankfurt region. **Neon Postgres** holds production and nothing else. **Only two things ever
 connect to Neon: Vercel's deployed app (its build and its runtime) and the nightly `pg_dump`.**
 Local development, `next build` and the test suite run against a local PostgreSQL 18 restored from
 the latest backup and sanitised of customer data (`npm run db:restore-local`; databases `ramhal` and
@@ -91,8 +101,12 @@ free on self-pickup.
 
 ## 8. Homepage content
 
-Anything dated expires itself — an announcement or event past its own end date stops showing
-without anyone having to remember to clear it. A recurring schedule (daily/weekly shiur and prayer
+**Visibility is manual: the site shows what the admin contains; no scheduling or expiry.** An
+announcement or event stays until the son deletes it. Why: it is predictable for the editor — what
+the admin lists is what the visitor sees — and a page whose content depends on the clock cannot be
+cached until something changes (§5). Announcements are listed newest first, events by their date,
+and the home stream shows announcements before events; a date field exists only because the site
+displays it or orders by it. A recurring schedule (daily/weekly shiur and prayer
 times, `ShippingSettings`'s sibling global `schedule`) and a one-off dated event (a hilula, a
 seminar) are modelled as different things, never one type with an optional date — they look alike on
 a page and are nothing alike to edit.
