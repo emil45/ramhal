@@ -32,6 +32,11 @@ actionable without reading anything else. Grouped, not ordered by priority withi
   local `.env` host fingerprinted to `d82df7fce6e7`. The only authority is the live
   `/api/diagnostics` `database.fingerprint` (`docs/DECISIONS.md` §10–§11). Once it answers, compare
   it and fix whichever of the three disagrees.
+- **Verify on-demand revalidation after the first deploy** (`docs/reports/TASK-46.md`, "PENDING"): a
+  content page answers with a Vercel cache HIT; an edited book title shows on the catalogue at the
+  next reload; deleting an announcement removes it from the home page at the next reload; Q&A loads.
+  Deploys fail until Neon's allowance resets (`deploy:build` runs migrations first), and the first
+  successful one also applies `remove_visibility_windows` to production.
 - **Verify the R2 switch after the first deploy** (`docs/reports/TASK-45.md`, "PENDING"): covers
   serve from R2, `/api/diagnostics` backup age reads from R2, one authenticated admin upload proves
   CORS, then delete the retired `RAMHAL_BACKUP_S3_*` GitHub secrets.
