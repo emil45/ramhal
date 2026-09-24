@@ -60,6 +60,12 @@ actionable without reading anything else. Grouped, not ordered by priority withi
 
 ## Admin & editable content
 
+- **Upload the Beit Ramhal and donate photos, then delete `assets/`.** `assets/beit-ramhal/` (10 JPEGs) and
+  `assets/donate/` (1 JPEG) are the only images left in git and are in neither the `ramhal-media` bucket
+  nor any Media row of the newest backup. `scripts/one-off/TASK-42-narrative-page-images.mjs` reads them from
+  there; run it against production (after `npm run db:migrate`) once the live app can reach its database
+  (`/api/diagnostics` answers 500 "error initializing Payload" on 24 September 2026), verify the
+  photos on the live pages, then `git rm -r assets`. Until then they must stay (history has them too).
 - **The homepage's masthead photo (`public/home/books-shelf-original.jpg`) is not in Media.** It's
   editorial content (a books-shelf photo), not brand furniture, so it doesn't belong in `public/`
   per `docs/DECISIONS.md` §16 — out of scope for the TASK-42 image migration, which covered only

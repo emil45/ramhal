@@ -188,6 +188,8 @@ Every image an editor might ever change lives in the Payload Media collection (o
 deployed environments) — one source of truth: the database + bucket. `public/` holds only brand
 furniture that changes with a redesign: logo, favicon, the 40th anniversary emblem — nothing
 editorial. The repo holds no source/original image folders; git history keeps them.
+The old `assets/` source folders (book-cover originals, prepared covers, news) were removed from git.
+(`assets/beit-ramhal` and `assets/donate` remain only until they are uploaded to Media; see `docs/BACKLOG.md`.)
 
 ## 17. No service may ever charge money
 
