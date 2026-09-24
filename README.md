@@ -87,6 +87,15 @@ contains — an announcement or event stays until it is deleted. A script that w
 the running app (seed, import, a one-off) passes `context: SKIP_STOREFRONT_REVALIDATION`; without
 it the hook throws. The reasoning is in `docs/DECISIONS.md` §5 and §8.
 
+## Legacy URLs
+
+`src/lib/legacyRedirects.json` maps the URLs of the three legacy sites (`ramhal.com`, `enramhal.com`,
+`frramhal.com`) to their equivalents here; `src/proxy.ts` applies it, with a 301, only on those hosts.
+It is generated: run `npm run redirects:generate` (local database) after a book's `urlSlug` changes,
+after a catalogue import, or after editing `scripts/legacy-redirects/pageEquivalences.mjs`, and commit
+the result. The script prints per-site coverage and every deliberate 404, and refuses duplicates,
+loops and hand-table paths the crawl never saw. Why it is shaped this way: `docs/DECISIONS.md` §18.
+
 ## Public routes
 
 `/`, `/en`, `/fr` — home. `/<ספרים|books|livres>` — catalogue. `/<ספר|book|livre>/<slug>` — a
