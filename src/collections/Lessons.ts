@@ -1,3 +1,5 @@
+import { revalidateStorefront } from './hooks/revalidateStorefront.ts'
+
 import type { CollectionConfig } from 'payload'
 
 // One shiur. Populated by a sync job in a later task — this defines the shape.
@@ -13,6 +15,10 @@ export const Lessons: CollectionConfig = {
     group: 'תוכן',
     useAsTitle: 'title',
     defaultColumns: ['title', 'series', 'recordedAt', 'language'],
+  },
+  hooks: {
+    afterChange: [revalidateStorefront],
+    afterDelete: [revalidateStorefront],
   },
   fields: [
     {

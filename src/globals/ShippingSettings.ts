@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { revalidateStorefront } from '../collections/hooks/revalidateStorefront.ts'
 import { CURRENCIES } from '../lib/currency.ts'
 import { validateMoneyAmount } from '../lib/validateMoneyAmount.ts'
 
@@ -10,6 +11,9 @@ import { validateMoneyAmount } from '../lib/validateMoneyAmount.ts'
 export const ShippingSettings: GlobalConfig = {
   slug: 'shippingSettings',
   label: 'הגדרות משלוח',
+  hooks: {
+    afterChange: [revalidateStorefront],
+  },
   fields: [
     {
       name: 'zones',

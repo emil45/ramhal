@@ -1,5 +1,6 @@
 import { localizedDisplayTitleFields } from './fields/localizedDisplayTitleFields.ts'
 import { computeDisplayTitleBeforeChange } from './hooks/displayTitle.ts'
+import { revalidateStorefront } from './hooks/revalidateStorefront.ts'
 import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
 
 import type { CollectionConfig } from 'payload'
@@ -17,6 +18,8 @@ export const Series: CollectionConfig = {
     defaultColumns: ['displayTitle', 'displayTitleLocale', 'language', 'relatedBook', 'order'],
   },
   hooks: {
+    afterChange: [revalidateStorefront],
+    afterDelete: [revalidateStorefront],
     beforeChange: [computeDisplayTitleBeforeChange('series')],
   },
   fields: [

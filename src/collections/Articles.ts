@@ -1,5 +1,6 @@
 import { localizedDisplayTitleFields } from './fields/localizedDisplayTitleFields.ts'
 import { computeDisplayTitleBeforeChange } from './hooks/displayTitle.ts'
+import { revalidateStorefront } from './hooks/revalidateStorefront.ts'
 import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
 import { PARSHIYOT } from './parshiyot.ts'
 
@@ -30,6 +31,8 @@ export const Articles: CollectionConfig = {
     defaultColumns: ['displayTitle', 'displayTitleLocale', 'type', 'parsha', 'holiday', 'publishedAt'],
   },
   hooks: {
+    afterChange: [revalidateStorefront],
+    afterDelete: [revalidateStorefront],
     beforeChange: [computeDisplayTitleBeforeChange('articles')],
   },
   fields: [

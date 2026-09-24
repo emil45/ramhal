@@ -48,10 +48,14 @@ transaction-mode pooler).
 **Content is static, the shop is dynamic.** Every content page is generated ahead of time and cached
 until an editor changes something; no page has a revalidation timer, so the database is read only
 after a change, never on a schedule (Neon's 5 GB/month below is shared by everything). Saving or
-deleting anything a storefront page renders — books, categories, media, pages, announcements,
-events, and the schedule and site-settings globals — runs `revalidateStorefront`
+deleting any collection or global except the personal and transactional ones (users, carts, orders,
+payment events, mock payment sessions) runs `revalidateStorefront`
 (`src/collections/hooks/revalidateStorefront.ts`), which calls `revalidatePath('/', 'layout')` and so
-marks the whole storefront stale; each page re-renders on its next visit. Whole storefront rather
+marks the whole storefront stale; each page re-renders on its next visit. It is a deny-list so a new
+collection cannot be forgotten: a test over the Payload config fails for any other one without the
+hook. The call is deferred with Next's `after()` until the request has finished, because Payload runs
+the hook inside the write's transaction — a visitor arriving before the commit would otherwise
+re-render, and keep, the old data. Whole storefront rather
 than the affected pages: about two hundred pages, rare edits and lazy re-rendering make the extra
 renders free, while a per-page map would silently rot the day someone forgets an entry. Saving is
 publishing — no collection uses drafts. A Payload write made outside a Next request (seed, import,
