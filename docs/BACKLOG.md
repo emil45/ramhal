@@ -64,6 +64,19 @@ actionable without reading anything else. Grouped, not ordered by priority withi
 
 ## Admin & editable content
 
+- **An order's page title reads "ID: 2".** `Orders.useAsTitle` is the numeric id; a title such as "הזמנה 2 — דנה כהן"
+  needs a stored title field or a custom document header (`docs/reports/TASK-52.md`).
+- **Orders search placeholder cannot list the customer fields**, so `OrderQuickFilters` carries a hint line. Storing
+  `customerName` and `customerPhone` as top-level columns (with a migration and backfill) would let Payload build it.
+- **Payload's "success" colour is blue**, so the "saved" toast is blue. Retinting the success scale in
+  `admin-theme.css` to green needs twenty stops.
+- **The document header's "last edited / created" dates are still Payload's month-first, 12-hour format.**
+- **Uploaded photos are not resized in the browser.** A 5 MB camera original is stored as is; only the server's sized copies
+  are small. Client-side resizing before the direct-to-R2 upload would fix it.
+- **No live preview pane**, only the "view on site" button; saving is publishing, so the button shows the saved page.
+- **The dashboard still uses inline styles** (`src/components/admin/Dashboard.tsx`); move them to `admin-theme.css`.
+- **Orders opens on "all orders"**, not on "paid, not yet posted". Payload has no per-user default list filter outside
+  the editor's own list preferences.
 - **The homepage hero has no books-shelf photo.** Its lower strip pointed at `public/home/books-shelf-original.jpg`,
   which was never committed, so the strip was removed and the study-hall photo fills the panel. When the
   original is found, upload it to Media (`docs/DECISIONS.md` §16), add a SiteSettings field for it, and
