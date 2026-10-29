@@ -103,7 +103,8 @@ cropping to 2:3 would cut the title. A shelf of mixed real and typeset covers re
 
 A book with more than one picture (`gallery` on the Book) shows a row of small thumbnails under its cover on the
 book page (`BookImageGallery`). The selected one has a teal ring, the rest are dimmed; choosing one swaps what the
-frame shows. No lightbox and no autoplay — it is meant to feel like turning the book over.
+frame shows. Clicking the picture opens it large in a dialog with the same pictures one arrow away. No autoplay —
+it is meant to feel like turning the book over.
 
 ## Cards and rows
 

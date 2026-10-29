@@ -48,6 +48,8 @@ const DICTIONARIES = {
       shippingNote: 'משלוח מחושב לפי מספר הפריטים ויעד המשלוח, ומוצג במלואו בעגלת הקניות.',
       backToCatalogue: 'חזרה לקטלוג',
       imagesLabel: 'תמונות הספר',
+      zoomImage: 'הגדלת התמונה',
+      closeImage: 'סגירה',
       imageOf: (position: number, total: number) => `תמונה ${position} מתוך ${total}`,
     },
     bookCourse: {
@@ -211,6 +213,8 @@ const DICTIONARIES = {
       shippingNote: 'Shipping is calculated by item count and destination, shown in full in the cart.',
       backToCatalogue: 'Back to catalogue',
       imagesLabel: 'Book images',
+      zoomImage: 'Enlarge the picture',
+      closeImage: 'Close',
       imageOf: (position: number, total: number) => `Image ${position} of ${total}`,
     },
     bookCourse: {
@@ -374,6 +378,8 @@ const DICTIONARIES = {
       shippingNote: 'Les frais de port sont calculés selon le nombre d’articles et la destination, indiqués en détail dans le panier.',
       backToCatalogue: 'Retour au catalogue',
       imagesLabel: 'Images du livre',
+      zoomImage: 'Agrandir l’image',
+      closeImage: 'Fermer',
       imageOf: (position: number, total: number) => `Image ${position} sur ${total}`,
     },
     bookCourse: {

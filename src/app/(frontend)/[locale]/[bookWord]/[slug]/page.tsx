@@ -57,8 +57,15 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
         <div className="mx-auto w-56 md:mx-0 md:w-full">
           <BookImageGallery
             book={{ bookLanguage: book.bookLanguage, categorySlug: book.category?.slug }}
+            direction={LOCALE_CONFIG[locale].direction}
             images={images}
-            label={dict.book.imagesLabel}
+            labels={{
+              close: dict.book.closeImage,
+              images: dict.book.imagesLabel,
+              next: dict.gallery.nextImage,
+              previous: dict.gallery.previousImage,
+              zoom: dict.book.zoomImage,
+            }}
             sizes="320px"
             thumbnailLabels={images.map((_, index) => dict.book.imageOf(index + 1, images.length))}
             title={book.displayTitle}
