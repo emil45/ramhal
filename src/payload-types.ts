@@ -1523,26 +1523,23 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  */
 export interface Schedule {
   id: number;
+  /**
+   * בשדה "ימים" כותבים למשל א׳–ה׳. בשדה "שעה" אפשר לכתוב גם טקסט חופשי, למשל "בין מנחה לערבית".
+   */
   shiurim?:
     | {
         title: string;
-        /**
-         * למשל א׳–ה׳.
-         */
         days: string;
-        /**
-         * טקסט חופשי ולא שעון, ולכן גם "בין מנחה לערבית" תקין.
-         */
         time: string;
         id?: string | null;
       }[]
     | null;
+  /**
+   * בשדה "שעה" אפשר לכתוב גם טקסט חופשי, למשל "נץ החמה".
+   */
   prayers?:
     | {
         name: string;
-        /**
-         * טקסט חופשי ולא שעון, ולכן גם "נץ החמה" תקין.
-         */
         time: string;
         id?: string | null;
       }[]
