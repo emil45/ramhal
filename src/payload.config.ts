@@ -30,6 +30,7 @@ import { Pages } from './collections/Pages.ts'
 import { PaymentEvents } from './collections/PaymentEvents.ts'
 import { Series } from './collections/Series.ts'
 import { Users } from './collections/Users.ts'
+import { CoursesPage } from './globals/CoursesPage.ts'
 import { Schedule } from './globals/Schedule.ts'
 import { ShippingSettings } from './globals/ShippingSettings.ts'
 import { SiteSettings } from './globals/SiteSettings.ts'
@@ -72,7 +73,7 @@ const collections: CollectionConfig[] = [
   MockPaymentSessions,
 ].map(hideApiUrl)
 
-const globals: GlobalConfig[] = [Schedule, ShippingSettings, SiteSettings].map(hideApiUrl)
+const globals: GlobalConfig[] = [CoursesPage, Schedule, ShippingSettings, SiteSettings].map(hideApiUrl)
 const databaseUri = requireEnv('DATABASE_URI')
 
 assertDevelopmentDoesNotUseNeon({

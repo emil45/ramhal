@@ -12,9 +12,9 @@ export const Lessons: CollectionConfig = {
     plural: 'שיעורים',
   },
   admin: {
-    // Nothing on the site reads this collection yet, and the sync job that would fill it is not built (docs/DECISIONS.md §6): the course sections are
-    // curated in src/lib/fullBookCourses.ts (docs/BACKLOG.md). Hidden so the
-    // editor is not offered a menu entry that changes nothing.
+    // Nothing on the site reads this collection, and the sync job that would fill
+    // it is not built (docs/DECISIONS.md §6). Hidden so the editor is not offered
+    // a menu entry that changes nothing; the courses are managed in Series.
     hidden: true,
     group: 'תוכן',
     useAsTitle: 'title',

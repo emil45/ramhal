@@ -17,6 +17,7 @@ import { Pages } from './Pages'
 import { PaymentEvents } from './PaymentEvents'
 import { Series } from './Series'
 import { Users } from './Users'
+import { CoursesPage } from '../globals/CoursesPage'
 import { Schedule } from '../globals/Schedule'
 import { ShippingSettings } from '../globals/ShippingSettings'
 import { SiteSettings } from '../globals/SiteSettings'
@@ -43,7 +44,7 @@ const collections: CollectionConfig[] = [
   Users,
 ]
 
-const globals: GlobalConfig[] = [Schedule, ShippingSettings, SiteSettings]
+const globals: GlobalConfig[] = [CoursesPage, Schedule, ShippingSettings, SiteSettings]
 
 describe('every collection has Hebrew admin labels', () => {
   it.each(collections)('$slug', (collection) => {

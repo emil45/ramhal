@@ -86,7 +86,11 @@ export interface Config {
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    books: {
+      lessonSeries: 'series';
+    };
+  };
   collectionsSelect: {
     orders: OrdersSelect<false> | OrdersSelect<true>;
     books: BooksSelect<false> | BooksSelect<true>;
@@ -112,11 +116,13 @@ export interface Config {
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('he' | 'en' | 'fr') | ('he' | 'en' | 'fr')[];
   globals: {
+    coursesPage: CoursesPage;
     schedule: Schedule;
     shippingSettings: ShippingSetting;
     siteSettings: SiteSetting;
   };
   globalsSelect: {
+    coursesPage: CoursesPageSelect<false> | CoursesPageSelect<true>;
     schedule: ScheduleSelect<false> | ScheduleSelect<true>;
     shippingSettings: ShippingSettingsSelect<false> | ShippingSettingsSelect<true>;
     siteSettings: SiteSettingsSelect<false> | SiteSettingsSelect<true>;
@@ -280,9 +286,13 @@ export interface Book {
    */
   isbn?: string | null;
   /**
-   * סדרות שיעורים המבוססות על ספר זה, לקישור מעמוד הספר.
+   * סדרות השיעורים שמוגדרות על הספר הזה. הקישור נקבע בעמוד השיעורים, ומופיע כאן לעיון.
    */
-  relatedSeries?: (number | Series)[] | null;
+  lessonSeries?: {
+    docs?: (number | Series)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   prices: {
     currency: 'ILS' | 'EUR' | 'USD';
     /**
@@ -387,39 +397,33 @@ export interface Media {
   };
 }
 /**
+ * סדרות השיעורים שמופיעות בעמוד השיעורים ובעמוד הספר. גוררים שורה כדי לשנות את הסדר באתר.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "series".
  */
 export interface Series {
   id: number;
+  _order?: string | null;
   displayTitle?: string | null;
   displayTitleLocale?: string | null;
   title?: string | null;
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  relatedBook?: (number | null) | Book;
   /**
-   * מזהה הפלייליסט מכתובת היוטיוב, לא הכתובת המלאה.
+   * הספר שהסדרה מלמדת. בחרו כל מהדורה של הספר (עברית, צרפתית) — בעמוד הספר יופיע תיבת השיעורים, ובעמוד השיעורים יוצג הספר שמתאים לשפת הגולש.
    */
-  youtubePlaylistId?: string | null;
-  language: 'he' | 'fr';
+  relatedBooks?: (number | Book)[] | null;
   /**
-   * קובע את סדר הופעת הסדרות ברשימה. השאירו ריק לסדר ברירת מחדל.
+   * מדביקים את הקישור כפי שהוא מופיע בשורת הכתובת של היוטיוב. הוא נשמר כמזהה בלבד.
    */
-  order?: number | null;
+  youtubePlaylistId: string;
+  /**
+   * הקישור לסרטון הראשון בסדרה. ממנו נלקחת התמונה בכרטיס הסדרה.
+   */
+  firstLessonYoutubeId: string;
+  /**
+   * כמה סרטונים יש בפלייליסט. כשמעלים שיעורים חדשים — מעדכנים כאן.
+   */
+  lessonCount: number;
   updatedAt: string;
   createdAt: string;
 }
@@ -1081,7 +1085,7 @@ export interface BooksSelect<T extends boolean = true> {
   publishedAt?: T;
   hebrewYear?: T;
   isbn?: T;
-  relatedSeries?: T;
+  lessonSeries?: T;
   prices?:
     | T
     | {
@@ -1305,14 +1309,14 @@ export interface PagesSelect<T extends boolean = true> {
  * via the `definition` "series_select".
  */
 export interface SeriesSelect<T extends boolean = true> {
+  _order?: T;
   displayTitle?: T;
   displayTitleLocale?: T;
   title?: T;
-  description?: T;
-  relatedBook?: T;
+  relatedBooks?: T;
   youtubePlaylistId?: T;
-  language?: T;
-  order?: T;
+  firstLessonYoutubeId?: T;
+  lessonCount?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1516,6 +1520,20 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
+ * הכותרת והפתיח בראש עמוד השיעורים. את הסדרות עצמן מנהלים בעמוד ׳שיעורים׳.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "coursesPage".
+ */
+export interface CoursesPage {
+  id: number;
+  title: string;
+  lead?: string | null;
+  metaDescription?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * זמני השיעורים והתפילות שמופיעים באתר.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1623,6 +1641,18 @@ export interface SiteSetting {
     | null;
   updatedAt?: string | null;
   createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "coursesPage_select".
+ */
+export interface CoursesPageSelect<T extends boolean = true> {
+  title?: T;
+  lead?: T;
+  metaDescription?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

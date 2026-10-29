@@ -15,6 +15,9 @@ import * as migration_20260923_123213_add_pages_section_heading_concluding_style
 import * as migration_20260923_123752_add_pages_meta_description from './20260923_123752_add_pages_meta_description';
 import * as migration_20260924_044201_remove_visibility_windows from './20260924_044201_remove_visibility_windows';
 import * as migration_20261029_212922_add_order_contact_fields from './20261029_212922_add_order_contact_fields';
+import * as migration_20261029_220211_remove_unused_series_fields from './20261029_220211_remove_unused_series_fields';
+import * as migration_20261029_220335_lessons_admin from './20261029_220335_lessons_admin';
+import * as migration_20261029_220900_seed_courses from './20261029_220900_seed_courses';
 
 export const migrations = [
   {
@@ -100,6 +103,21 @@ export const migrations = [
   {
     up: migration_20261029_212922_add_order_contact_fields.up,
     down: migration_20261029_212922_add_order_contact_fields.down,
-    name: '20261029_212922_add_order_contact_fields'
+    name: '20261029_212922_add_order_contact_fields',
+  },
+  {
+    up: migration_20261029_220211_remove_unused_series_fields.up,
+    down: migration_20261029_220211_remove_unused_series_fields.down,
+    name: '20261029_220211_remove_unused_series_fields',
+  },
+  {
+    up: migration_20261029_220335_lessons_admin.up,
+    down: migration_20261029_220335_lessons_admin.down,
+    name: '20261029_220335_lessons_admin',
+  },
+  {
+    up: migration_20261029_220900_seed_courses.up,
+    down: migration_20261029_220900_seed_courses.down,
+    name: '20261029_220900_seed_courses',
   },
 ];

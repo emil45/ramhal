@@ -2,24 +2,31 @@ import { localizedDisplayTitleFields } from './fields/localizedDisplayTitleField
 import { computeDisplayTitleBeforeChange } from './hooks/displayTitle.ts'
 import { revalidateStorefront } from './hooks/revalidateStorefront.ts'
 import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
+import {
+  normalisePlaylistReference,
+  normaliseVideoReference,
+  validatePlaylistReference,
+  validateVideoReference,
+} from '../lib/youtubeLinks.ts'
 
 import type { CollectionConfig } from 'payload'
 
-// A course of shiurim on one work.
+// One complete course of lessons on a work. It feeds both the /courses page and
+// the "lessons on this book" box on the book's own page, so a course is entered
+// once. Labelled "שיעורים" because that is what the editor looks for in the menu.
 export const Series: CollectionConfig = {
   slug: 'series',
   labels: {
-    singular: 'סדרה',
-    plural: 'סדרות',
+    singular: 'סדרת שיעורים',
+    plural: 'שיעורים',
   },
+  // Drag-and-drop in the list sets the order the courses appear on the site.
+  orderable: true,
   admin: {
-    // Nothing on the site reads this collection yet: the course sections are
-    // curated in src/lib/fullBookCourses.ts (docs/BACKLOG.md). Hidden so the
-    // editor is not offered a menu entry that changes nothing.
-    hidden: true,
     group: 'תוכן',
+    description: 'סדרות השיעורים שמופיעות בעמוד השיעורים ובעמוד הספר. גוררים שורה כדי לשנות את הסדר באתר.',
     useAsTitle: 'displayTitle',
-    defaultColumns: ['displayTitle', 'displayTitleLocale', 'language', 'relatedBook', 'order'],
+    defaultColumns: ['displayTitle', 'displayTitleLocale', 'relatedBooks', 'lessonCount'],
   },
   hooks: {
     afterChange: [revalidateStorefront],
@@ -29,61 +36,55 @@ export const Series: CollectionConfig = {
   fields: [
     ...localizedDisplayTitleFields(),
     {
-      type: 'tabs',
-      tabs: [
-        {
-          label: 'פרטים',
-          fields: [
-            {
-              name: 'title',
-              type: 'text',
-              label: 'כותרת',
-              required: false, // enforced by validate below, in at least one locale, not this one
-              localized: true,
-              validate: requiredInAtLeastOneLocale('series'),
-            },
-            {
-              name: 'description',
-              type: 'richText',
-              label: 'תיאור',
-              localized: true,
-            },
-            {
-              name: 'relatedBook',
-              type: 'relationship',
-              label: 'ספר קשור',
-              relationTo: 'books',
-            },
-            {
-              name: 'youtubePlaylistId',
-              type: 'text',
-              label: 'מזהה פלייליסט ביוטיוב',
-              admin: {
-                description: 'מזהה הפלייליסט מכתובת היוטיוב, לא הכתובת המלאה.',
-              },
-            },
-          ],
-        },
-      ],
+      name: 'title',
+      type: 'text',
+      label: 'שם הסדרה',
+      required: false, // enforced by validate below, in at least one locale, not this one
+      localized: true,
+      validate: requiredInAtLeastOneLocale('series'),
     },
     {
-      name: 'language',
-      type: 'select',
-      label: 'שפה',
-      required: true,
-      options: [
-        { label: 'עברית', value: 'he' },
-        { label: 'Français', value: 'fr' },
-      ],
-      admin: { position: 'sidebar' },
-    },
-    {
-      name: 'order',
-      type: 'number',
-      label: 'סדר',
+      name: 'relatedBooks',
+      type: 'relationship',
+      label: 'הספר בחנות',
+      relationTo: 'books',
+      hasMany: true,
       admin: {
-        position: 'sidebar',
-        description: 'קובע את סדר הופעת הסדרות ברשימה. השאירו ריק לסדר ברירת מחדל.',
+        description:
+          'הספר שהסדרה מלמדת. בחרו כל מהדורה של הספר (עברית, צרפתית) — בעמוד הספר יופיע תיבת השיעורים, ובעמוד השיעורים יוצג הספר שמתאים לשפת הגולש.',
+      },
+    },
+    {
+      name: 'youtubePlaylistId',
+      type: 'text',
+      label: 'קישור לפלייליסט ביוטיוב',
+      required: true,
+      validate: validatePlaylistReference,
+      hooks: { beforeValidate: [({ value }) => normalisePlaylistReference(value)] },
+      admin: {
+        description: 'מדביקים את הקישור כפי שהוא מופיע בשורת הכתובת של היוטיוב. הוא נשמר כמזהה בלבד.',
+      },
+    },
+    {
+      name: 'firstLessonYoutubeId',
+      type: 'text',
+      label: 'קישור לשיעור הראשון',
+      required: true,
+      validate: validateVideoReference,
+      hooks: { beforeValidate: [({ value }) => normaliseVideoReference(value)] },
+      admin: {
+        description: 'הקישור לסרטון הראשון בסדרה. ממנו נלקחת התמונה בכרטיס הסדרה.',
+      },
+    },
+    {
+      name: 'lessonCount',
+      type: 'number',
+      label: 'מספר השיעורים',
+      required: true,
+      min: 1,
+      admin: {
+        step: 1,
+        description: 'כמה סרטונים יש בפלייליסט. כשמעלים שיעורים חדשים — מעדכנים כאן.',
       },
     },
   ],
