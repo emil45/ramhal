@@ -109,3 +109,9 @@ The content script ran against production once Neon was reachable again: three p
 `siteSettings.donatePhoto`. `assets/` is deleted. The first two attempts failed before writing pages (the
 script's writes lacked the revalidation opt-out; two photos had left `public/`), and the ten Media rows the
 second attempt had already written were deleted before the successful run.
+
+The script's Media rows were created but the original photos' files were missing from the `ramhal-media`
+bucket afterwards (only the first image's files had landed), so each row was repaired in place with
+`payload.update({ filePath, overwriteExistingFiles: true })` and every URL on the Media rows was checked to
+answer 200. The cause of the missing uploads was not established. Pages were served 404 from the static cache
+until the next deploy, because the script's writes skip storefront revalidation.
