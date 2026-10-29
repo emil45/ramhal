@@ -158,6 +158,7 @@ export interface Order {
   orderNumber?: number | null;
   customerName?: string | null;
   customerPhone?: string | null;
+  createdAt: string;
   paymentStatus: 'pending' | 'paid' | 'failed' | 'cancelled';
   fulfilmentStatus?: ('new' | 'packed' | 'posted' | 'collected') | null;
   customer: {
@@ -206,7 +207,6 @@ export interface Order {
   paidAt?: string | null;
   publicToken: string;
   updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -991,6 +991,7 @@ export interface OrdersSelect<T extends boolean = true> {
   orderNumber?: T;
   customerName?: T;
   customerPhone?: T;
+  createdAt?: T;
   paymentStatus?: T;
   fulfilmentStatus?: T;
   customer?:
@@ -1033,7 +1034,6 @@ export interface OrdersSelect<T extends boolean = true> {
   paidAt?: T;
   publicToken?: T;
   updatedAt?: T;
-  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

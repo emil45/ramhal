@@ -1,27 +1,26 @@
+import { isActiveListFilter } from '../../lib/listFilterState.ts'
+
 type ListFilter = { label: string; href: string }
+type SearchParameters = Record<string, string | string[] | undefined>
 
 /** Shared rendering for a row of one-click, pre-filtered list links — see
  * OrderQuickFilters.tsx and BookQuickFilters.tsx, the two Payload actually
- * loads (`beforeListTable` needs a named export per collection). */
-export function QuickFilters({ filters }: { filters: ListFilter[] }) {
+ * loads (`beforeListTable` needs a named export per collection). The link for
+ * the view on screen is marked, so the editor can tell a filtered list from the full one. */
+export function QuickFilters({ filters, hint, searchParams = {} }: { filters: ListFilter[]; hint?: string; searchParams?: SearchParameters }) {
   return (
-    <nav style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginBottom: '1rem' }}>
+    <nav className="quick-filters">
       {filters.map((filter) => (
         <a
           key={filter.href}
           href={filter.href}
-          style={{
-            border: '1px solid var(--theme-elevation-150)',
-            borderRadius: '4px',
-            padding: '0.4rem 0.9rem',
-            textDecoration: 'none',
-            color: 'var(--theme-text)',
-            background: 'var(--theme-elevation-50)',
-          }}
+          className="quick-filters__link"
+          aria-current={isActiveListFilter(filter.href, searchParams) ? 'page' : undefined}
         >
           {filter.label}
         </a>
       ))}
+      {hint && <p className="quick-filters__hint">{hint}</p>}
     </nav>
   )
 }

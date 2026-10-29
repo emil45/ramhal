@@ -43,8 +43,10 @@ export const Orders: CollectionConfig = {
   admin: {
     group: 'חנות',
     useAsTitle: 'id',
-    defaultColumns: ['orderNumber', 'createdAt', 'customerName', 'customerPhone', 'formattedTotal', 'paymentStatus', 'fulfilmentStatus'],
-    listSearchableFields: ['id', 'customer.name', 'customer.email', 'customer.phone'],
+    // Left to right is the order the editor reads a row in: which order, when, whose,
+    // what state it is in, how much. The phone number is for calling, so it is last.
+    defaultColumns: ['orderNumber', 'createdAt', 'customerName', 'paymentStatus', 'fulfilmentStatus', 'formattedTotal', 'customerPhone'],
+    listSearchableFields: ['customer.name', 'customer.phone', 'customer.email', 'id'],
     components: {
       beforeListTable: ['/components/admin/OrderQuickFilters#OrderQuickFilters'],
     },
@@ -88,8 +90,18 @@ export const Orders: CollectionConfig = {
       type: 'text',
       label: 'טלפון',
       virtual: true,
-      admin: { hidden: true },
+      admin: { hidden: true, components: { Cell: '/components/admin/LeftToRightCell#LeftToRightCell' } },
       hooks: { afterRead: [({ data }) => data?.customer?.phone ?? null] },
+    },
+    {
+      // Declared here only to give the list its own date cell: Payload adds
+      // this exact field (a date, indexed, hidden from the form) when a collection
+      // does not, and treats this one as that replacement.
+      name: 'createdAt',
+      type: 'date',
+      label: 'תאריך הזמנה',
+      index: true,
+      admin: { disableBulkEdit: true, hidden: true, components: { Cell: '/components/admin/DateTimeCell#DateTimeCell' } },
     },
     {
       name: 'paymentStatus',

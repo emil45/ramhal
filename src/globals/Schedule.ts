@@ -2,6 +2,8 @@ import { revalidateStorefront } from '../collections/hooks/revalidateStorefront.
 
 import type { GlobalConfig } from 'payload'
 
+const ROW_LABEL_COMPONENT = '/components/admin/ScheduleRowLabel#ScheduleRowLabel'
+
 // The standing timetable, currently hardcoded into every legacy page.
 export const Schedule: GlobalConfig = {
   slug: 'schedule',
@@ -16,6 +18,7 @@ export const Schedule: GlobalConfig = {
       type: 'array',
       label: 'שיעורים',
       labels: { singular: 'שיעור', plural: 'שיעורים' },
+      admin: { components: { RowLabel: ROW_LABEL_COMPONENT } },
       fields: [
         {
           name: 'title',
@@ -50,6 +53,7 @@ export const Schedule: GlobalConfig = {
       type: 'array',
       label: 'תפילות',
       labels: { singular: 'תפילה', plural: 'תפילות' },
+      admin: { components: { RowLabel: ROW_LABEL_COMPONENT } },
       fields: [
         {
           name: 'name',
