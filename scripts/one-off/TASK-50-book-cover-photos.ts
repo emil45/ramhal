@@ -34,7 +34,7 @@ const KNOWN_DATABASES: Record<string, string> = {
 type BookPhotos = { urlSlug: string; files: [string, ...string[]] }
 
 const BOOK_PHOTOS: BookPhotos[] = [
-  { urlSlug: 'אדיר-במרום-הוצאת-מכון-רמחל', files: ['adir-bamarom-front.webp', 'adir-bamarom-angle-1.webp', 'adir-bamarom-angle-2.webp'] },
+  { urlSlug: 'אדיר-במרום-הוצאת-מכון-רמחל', files: ['adir-bamarom-front.webp', 'adir-bamarom-angle.webp'] },
   { urlSlug: 'איגרות-הרמחל', files: ['igrot-ramhal-front.webp', 'igrot-ramhal-angle.webp'] },
   {
     urlSlug: 'מחזור-כיפור-רמחל-חדש-צבע-לבן',

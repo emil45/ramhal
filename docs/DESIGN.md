@@ -101,6 +101,10 @@ the cover on the book page. A **real photograph** sits inside the same frame, `o
 on the same paper — supplied covers range from portrait jackets to wrap-around spreads and
 cropping to 2:3 would cut the title. A shelf of mixed real and typeset covers reads as one system.
 
+A book with more than one picture (`gallery` on the Book) shows a row of small thumbnails under its cover on the
+book page (`BookImageGallery`). The selected one has a teal ring, the rest are dimmed; choosing one swaps what the
+frame shows. No lightbox and no autoplay — it is meant to feel like turning the book over.
+
 ## Cards and rows
 
 A catalogue card is a cover, a two-line title with the height **reserved** even when the title
