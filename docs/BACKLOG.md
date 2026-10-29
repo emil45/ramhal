@@ -60,10 +60,10 @@ actionable without reading anything else. Grouped, not ordered by priority withi
 
 ## Admin & editable content
 
-- **The homepage's masthead photo (`public/home/books-shelf-original.jpg`) is not in Media.** It's
-  editorial content (a books-shelf photo), not brand furniture, so it doesn't belong in `public/`
-  per `docs/DECISIONS.md` §16 — out of scope for the TASK-42 image migration, which covered only
-  the three narrative pages and the donate photo.
+- **The homepage hero has no books-shelf photo.** Its lower strip pointed at `public/home/books-shelf-original.jpg`,
+  which was never committed, so the strip was removed and the study-hall photo fills the panel. When the
+  original is found, upload it to Media (`docs/DECISIONS.md` §16), add a SiteSettings field for it, and
+  restore the strip in `src/app/(frontend)/[locale]/page.tsx`.
 - **Courses are curated in code**, including which "complete courses" are shown
   (`src/app/(frontend)/[locale]/courses/page.tsx`) — lesson IDs and completeness are hand-maintained,
   not editor-facing.
