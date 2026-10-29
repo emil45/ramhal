@@ -384,10 +384,33 @@ textarea {
   display: none;
 }
 
-/* Navigation: group headings measure about 2:1 by default. */
+/* Navigation: group headings measure about 2:1 by default and look like the entries
+   under them, so the menu reads as one flat list. A heading is now a bold brand-colour
+   title with a rule above its group, and its entries sit indented beneath it. */
+.nav-group {
+  margin-bottom: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--theme-elevation-150);
+}
+
+.nav-group:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
 .nav-group__toggle {
-  color: var(--theme-elevation-600);
-  font-weight: 600;
+  color: var(--teal-deep);
+  font-size: 1.0625rem;
+  font-weight: 700;
+  margin-bottom: 0.35rem;
+}
+
+.nav-group__indicator svg .stroke {
+  stroke: var(--teal);
+}
+
+.nav-group .nav__link {
+  padding-inline-start: 0.75rem;
 }
 
 .nav__link {
