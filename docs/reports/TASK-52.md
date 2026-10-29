@@ -16,8 +16,19 @@
   editor framed and sized, forms capped at 64rem, teal primary and create buttons, the language switcher filled teal,
   the lone "edit" tab hidden, schedule rows labelled with what they hold (`scheduleRowLabel.ts`, tested).
 
+## Added after the first review
+- **Menu:** group titles are bold teal with a rule between groups. Series and Lessons (empty, read by nothing — the
+  site's course boxes come from `src/lib/fullBookCourses.ts`) and `Books.relatedSeries` are hidden.
+- **Orders:** titled by customer name; search box says "חיפוש לפי שם הלקוח, טלפון או ID". `contactName` and
+  `contactPhone` are stored copies of the customer group, written by a `beforeChange` hook (`orderContactFields`,
+  tested); migration `20261029_212922_add_order_contact_fields` adds the columns and backfills them. Needs to run on
+  production at deploy (`deploy:build` does).
+- **Media:** a "חסר טקסט חלופי" badge and filter. **Descriptions** under every list and global. **Dates** day-first
+  everywhere via `admin.dateFormat`. **Success colour** green. **Dashboard** styles in the stylesheet, orders-to-post
+  first. Table cells no longer clip the last column on a laptop.
+
 ## Verified
-`tsc --noEmit` clean; `eslint` 0 errors (50 existing warnings, none in changed files); `vitest` 422 passed;
+`tsc --noEmit` clean; `eslint` 0 errors (50 existing warnings, none in changed files); `vitest` 426 passed;
 `next build` ok. Every changed screen (orders list and detail, books list and edit, pages list and edit, schedule,
 dashboard) was opened in a browser on the local database, as a minted local session. Fixture orders and pages used for
 the check were removed afterwards. Badge colour pairs measure 6.8:1 or better; white on the teal buttons 5.8:1.
@@ -27,8 +38,9 @@ the check were removed afterwards. Badge colour pairs measure 6.8:1 or better; w
   document header is already sticky; both were claims I made from a screenshot without checking.
 - Another session started `TASK-51` while this one was planning; it renumbered itself to 53. The brief is TASK-52.
 - `next build` and `vitest` were run on the final tree, not on each of the six commits.
-- The orders search placeholder cannot name customer fields (Payload only reads top-level fields), so a hint line carries
-  that. A real fix is stored top-level `customerName`/`customerPhone` columns and a migration.
+- The backfill SQL in the orders migration ran against a local database with no orders, so it was reviewed, not
+  exercised on rows; it is one `UPDATE` copying two existing columns.
 
 ## Still open
-All of it is in `docs/BACKLOG.md` under "Admin & editable content".
+In `docs/BACKLOG.md` under "Admin & editable content": client-side photo resizing, a live preview pane, a default
+orders filter, and making courses and lessons editable (the Series/Lessons collections are hidden, not deleted).
