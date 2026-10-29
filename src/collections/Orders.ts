@@ -2,6 +2,7 @@ import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
 import { CURRENCIES } from '../lib/currency.ts'
 import { LOCALES } from '../lib/locale.ts'
+import { orderContactFields } from '../lib/orderContact.ts'
 import { FULFILMENT_STATUS_LABELS, FULFILMENT_STATUSES, PAYMENT_STATUS_LABELS, PAYMENT_STATUSES } from '../lib/orderStatus.ts'
 import { formatPrice } from '../lib/price.ts'
 
@@ -34,6 +35,9 @@ const refuseChangingTotal: CollectionBeforeChangeHook = ({ data, operation, orig
   return data
 }
 
+// Keeps the top-level contact fields in step with the customer group.
+const copyCustomerContact: CollectionBeforeChangeHook = ({ data }) => ({ ...data, ...orderContactFields(data.customer) })
+
 export const Orders: CollectionConfig = {
   slug: 'orders',
   labels: {
@@ -42,11 +46,14 @@ export const Orders: CollectionConfig = {
   },
   admin: {
     group: 'חנות',
-    useAsTitle: 'id',
+    description: 'הזמנות מהאתר. הזמנה חדשה מופיעה אחרי התשלום; כאן מסמנים אותה כארוזה, נשלחה או נאספה.',
+    useAsTitle: 'contactName',
     // Left to right is the order the editor reads a row in: which order, when, whose,
     // what state it is in, how much. The phone number is for calling, so it is last.
-    defaultColumns: ['orderNumber', 'createdAt', 'customerName', 'paymentStatus', 'fulfilmentStatus', 'formattedTotal', 'customerPhone'],
-    listSearchableFields: ['customer.name', 'customer.phone', 'customer.email', 'id'],
+    defaultColumns: ['orderNumber', 'createdAt', 'contactName', 'paymentStatus', 'fulfilmentStatus', 'formattedTotal', 'contactPhone'],
+    // The placeholder lists top-level fields only, so name and phone are copied up
+    // (contactName, contactPhone); the email is still searched, just not named.
+    listSearchableFields: ['contactName', 'contactPhone', 'customer.email', 'id'],
     components: {
       beforeListTable: ['/components/admin/OrderQuickFilters#OrderQuickFilters'],
     },
@@ -59,7 +66,7 @@ export const Orders: CollectionConfig = {
     delete: () => false,
   },
   hooks: {
-    beforeChange: [refuseChangingTotal],
+    beforeChange: [refuseChangingTotal, copyCustomerContact],
   },
   fields: [
     {
@@ -75,23 +82,17 @@ export const Orders: CollectionConfig = {
       hooks: { afterRead: [({ data }) => data?.id ?? null] },
     },
     {
-      // A list column cannot reliably reference a nested group field
-      // (`customer.name`) — this mirrors `orderNumber` above to give the
-      // list a flat, always-renderable column instead.
-      name: 'customerName',
+      // See orderContactFields: written from `customer` on every save, never edited.
+      name: 'contactName',
       type: 'text',
       label: 'שם הלקוח',
-      virtual: true,
       admin: { hidden: true },
-      hooks: { afterRead: [({ data }) => data?.customer?.name ?? null] },
     },
     {
-      name: 'customerPhone',
+      name: 'contactPhone',
       type: 'text',
       label: 'טלפון',
-      virtual: true,
       admin: { hidden: true, components: { Cell: '/components/admin/LeftToRightCell#LeftToRightCell' } },
-      hooks: { afterRead: [({ data }) => data?.customer?.phone ?? null] },
     },
     {
       // Declared here only to give the list its own date cell: Payload adds

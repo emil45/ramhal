@@ -150,14 +150,16 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * הזמנות מהאתר. הזמנה חדשה מופיעה אחרי התשלום; כאן מסמנים אותה כארוזה, נשלחה או נאספה.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "orders".
  */
 export interface Order {
   id: number;
   orderNumber?: number | null;
-  customerName?: string | null;
-  customerPhone?: string | null;
+  contactName?: string | null;
+  contactPhone?: string | null;
   createdAt: string;
   paymentStatus: 'pending' | 'paid' | 'failed' | 'cancelled';
   fulfilmentStatus?: ('new' | 'packed' | 'posted' | 'collected') | null;
@@ -209,6 +211,8 @@ export interface Order {
   updatedAt: string;
 }
 /**
+ * כל הספרים בקטלוג. שמירה מפרסמת את השינוי באתר מיד.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "books".
  */
@@ -332,12 +336,17 @@ export interface Book {
   createdAt: string;
 }
 /**
+ * כל התמונות באתר. כדאי למלא טקסט חלופי: הוא עוזר לנגישות ולמציאת האתר בגוגל.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
 export interface Media {
   id: number;
   prefix?: string | null;
+  /**
+   * תיאור קצר של מה שרואים בתמונה, לקוראי מסך ולגוגל.
+   */
   alt?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -433,6 +442,8 @@ export interface Category {
   createdAt: string;
 }
 /**
+ * ההודעות שמופיעות בדף הבית. הודעה נשארת באתר עד שמוחקים אותה.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "announcements".
  */
@@ -466,6 +477,8 @@ export interface Announcement {
   createdAt: string;
 }
 /**
+ * אירועים חד-פעמיים, כמו הילולה או סמינר. אירוע נשאר באתר עד שמוחקים אותו.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "events".
  */
@@ -500,6 +513,8 @@ export interface Event {
   createdAt: string;
 }
 /**
+ * עמודי התוכן של האתר. שמירה מפרסמת את השינוי באתר מיד.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
@@ -690,6 +705,8 @@ export interface Lesson {
   createdAt: string;
 }
 /**
+ * כתבות ומאמרים.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "articles".
  */
@@ -788,6 +805,8 @@ export interface Article {
   createdAt: string;
 }
 /**
+ * יומן טכני של עדכוני תשלום שהתקבלו מספק התשלומים.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "paymentEvents".
  */
@@ -835,6 +854,8 @@ export interface MockPaymentSession {
   createdAt: string;
 }
 /**
+ * מי רשאי להיכנס למערכת. הכניסה היא בחשבון גוגל בלבד.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -989,8 +1010,8 @@ export interface PayloadMigration {
  */
 export interface OrdersSelect<T extends boolean = true> {
   orderNumber?: T;
-  customerName?: T;
-  customerPhone?: T;
+  contactName?: T;
+  contactPhone?: T;
   createdAt?: T;
   paymentStatus?: T;
   fulfilmentStatus?: T;
@@ -1495,6 +1516,8 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
+ * זמני השיעורים והתפילות שמופיעים באתר.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "schedule".
  */
@@ -1528,6 +1551,8 @@ export interface Schedule {
   createdAt?: string | null;
 }
 /**
+ * אזורי המשלוח ומחירו לפי מספר הספרים בהזמנה.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "shippingSettings".
  */
@@ -1566,6 +1591,8 @@ export interface ShippingSetting {
   createdAt?: string | null;
 }
 /**
+ * פרטי הקשר, הרשתות החברתיות והמטבע שמוצג בכל שפה.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "siteSettings".
  */

@@ -32,6 +32,8 @@ import { CoverThumbnail as CoverThumbnail_d182782dca98d2714f9c94f6bbab659e } fro
 import { PriceList as PriceList_0ec60e1a05a1558847842fb1309b91f2 } from '../../../components/admin/PriceList'
 import { StockBadge as StockBadge_b57a770e39aa574ceac797d1df421607 } from '../../../components/admin/StockBadge'
 import { BookQuickFilters as BookQuickFilters_1db31e62030ebd427cc3b59c0f5172ab } from '../../../components/admin/BookQuickFilters'
+import { AltTextCell as AltTextCell_28ba22f1830e9779422f4e121b2408ad } from '../../../components/admin/AltTextCell'
+import { MediaQuickFilters as MediaQuickFilters_5a122666d84e25597a4ecd0cb39ab461 } from '../../../components/admin/MediaQuickFilters'
 import { ScheduleRowLabel as ScheduleRowLabel_ec2830082d67a7af843fceb58281ffd1 } from '../../../components/admin/ScheduleRowLabel'
 import { Icon as Icon_8c7579001d094aae258586b09a2f4a85 } from '../../../components/admin/graphics/Icon'
 import { Logo as Logo_da4f7e8a6c72793056168c73c78f997f } from '../../../components/admin/graphics/Logo'
@@ -76,6 +78,8 @@ export const importMap = {
   "/components/admin/PriceList#PriceList": PriceList_0ec60e1a05a1558847842fb1309b91f2,
   "/components/admin/StockBadge#StockBadge": StockBadge_b57a770e39aa574ceac797d1df421607,
   "/components/admin/BookQuickFilters#BookQuickFilters": BookQuickFilters_1db31e62030ebd427cc3b59c0f5172ab,
+  "/components/admin/AltTextCell#AltTextCell": AltTextCell_28ba22f1830e9779422f4e121b2408ad,
+  "/components/admin/MediaQuickFilters#MediaQuickFilters": MediaQuickFilters_5a122666d84e25597a4ecd0cb39ab461,
   "/components/admin/ScheduleRowLabel#ScheduleRowLabel": ScheduleRowLabel_ec2830082d67a7af843fceb58281ffd1,
   "/components/admin/graphics/Icon#Icon": Icon_8c7579001d094aae258586b09a2f4a85,
   "/components/admin/graphics/Logo#Logo": Logo_da4f7e8a6c72793056168c73c78f997f,

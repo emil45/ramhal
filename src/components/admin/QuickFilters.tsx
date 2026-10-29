@@ -7,7 +7,7 @@ type SearchParameters = Record<string, string | string[] | undefined>
  * OrderQuickFilters.tsx and BookQuickFilters.tsx, the two Payload actually
  * loads (`beforeListTable` needs a named export per collection). The link for
  * the view on screen is marked, so the editor can tell a filtered list from the full one. */
-export function QuickFilters({ filters, hint, searchParams = {} }: { filters: ListFilter[]; hint?: string; searchParams?: SearchParameters }) {
+export function QuickFilters({ filters, searchParams = {} }: { filters: ListFilter[]; searchParams?: SearchParameters }) {
   return (
     <nav className="quick-filters">
       {filters.map((filter) => (
@@ -20,7 +20,6 @@ export function QuickFilters({ filters, hint, searchParams = {} }: { filters: Li
           {filter.label}
         </a>
       ))}
-      {hint && <p className="quick-filters__hint">{hint}</p>}
     </nav>
   )
 }

@@ -11,7 +11,6 @@ type ListFilter = { label: string; href: string }
  * can act on and none he cannot.
  */
 export const ORDER_LIST_FILTERS: ListFilter[] = [
-  { label: 'כל ההזמנות', href: ORDERS_LIST_PATH },
   {
     label: 'שולם, טרם נשלח',
     href: adminListFilterHref(ORDERS_LIST_PATH, [
@@ -20,4 +19,5 @@ export const ORDER_LIST_FILTERS: ListFilter[] = [
     ]),
   },
   { label: 'ממתין לתשלום', href: adminListFilterHref(ORDERS_LIST_PATH, [['paymentStatus', 'equals', 'pending']]) },
+  { label: 'כל ההזמנות', href: ORDERS_LIST_PATH },
 ]
