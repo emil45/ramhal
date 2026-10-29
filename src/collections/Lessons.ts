@@ -44,7 +44,7 @@ export const Lessons: CollectionConfig = {
       type: 'text',
       label: 'מפתח קובץ שמע',
       admin: {
-        description: 'Object-storage key for the audio file, not the file itself.',
+        description: 'מפתח הקובץ באחסון האובייקטים — לא הקובץ עצמו.',
       },
     },
     {
@@ -71,7 +71,7 @@ export const Lessons: CollectionConfig = {
       type: 'date',
       label: 'עדכון אחרון במקור',
       admin: {
-        description: 'Timestamp from the sync source, used to make re-syncing idempotent.',
+        description: 'חותמת הזמן במקור הסנכרון; מונעת עדכון כפול בסנכרון חוזר.',
       },
     },
   ],

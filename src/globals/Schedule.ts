@@ -30,7 +30,7 @@ export const Schedule: GlobalConfig = {
           required: true,
           localized: true,
           admin: {
-            description: 'e.g. א׳–ה׳',
+            description: 'למשל א׳–ה׳.',
           },
         },
         {
@@ -39,7 +39,7 @@ export const Schedule: GlobalConfig = {
           label: 'שעה',
           required: true,
           admin: {
-            description: 'Free text, not a time field — "בין מנחה לערבית" is a valid value.',
+            description: 'טקסט חופשי ולא שעון, ולכן גם "בין מנחה לערבית" תקין.',
           },
         },
       ],
@@ -63,7 +63,7 @@ export const Schedule: GlobalConfig = {
           label: 'שעה',
           required: true,
           admin: {
-            description: 'Free text, not a time field — "נץ החמה" is a valid value.',
+            description: 'טקסט חופשי ולא שעון, ולכן גם "נץ החמה" תקין.',
           },
         },
       ],

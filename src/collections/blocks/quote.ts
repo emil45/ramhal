@@ -24,7 +24,7 @@ export const QuoteBlock: Block = {
     {
       name: 'label',
       type: 'text',
-      label: 'תווית עילית',
+      label: 'שורה מעל הציטוט',
       localized: true,
       admin: {
         description: 'שורת טקסט קצרה מעל הציטוט (למשל "במשפט אחד"), במקום ציון מקור.',
@@ -43,7 +43,7 @@ export const QuoteBlock: Block = {
       label: 'מקור',
       localized: true,
       admin: {
-        description: 'ריק עבור סגנון "הדגשה" או כשיש תווית עילית במקום.',
+        description: 'ריק עבור סגנון "הדגשה" או כשיש שורה מעל הציטוט במקום.',
       },
     },
   ],

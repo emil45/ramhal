@@ -29,7 +29,7 @@ export const ShippingSettings: GlobalConfig = {
           label: 'שם',
           required: true,
           admin: {
-            description: 'e.g. ישראל, אירופה, שאר העולם',
+            description: 'למשל ישראל, אירופה, שאר העולם.',
           },
         },
         {
@@ -39,7 +39,7 @@ export const ShippingSettings: GlobalConfig = {
           hasMany: true,
           required: true,
           admin: {
-            description: 'ISO country codes.',
+            description: 'קודי מדינה בני שתי אותיות (ISO), למשל IL, FR.',
           },
         },
         {
@@ -83,7 +83,7 @@ export const ShippingSettings: GlobalConfig = {
           label: 'משלוח חינם מעל (יחידות)',
           min: 0,
           admin: {
-            description: 'Free shipping at or above this many units. Leave blank for no free tier.',
+            description: 'משלוח חינם החל ממספר היחידות הזה. אם משאירים ריק — אין משלוח חינם.',
           },
         },
         {
@@ -98,7 +98,7 @@ export const ShippingSettings: GlobalConfig = {
           label: 'ברירת מחדל',
           defaultValue: false,
           admin: {
-            description: 'The zone used when a destination matches no other zone. Flag exactly one.',
+            description: 'האזור שחל כשהיעד לא מתאים לאף אזור אחר. יש לסמן אזור אחד בדיוק.',
           },
         },
       ],

@@ -77,7 +77,7 @@ export const SiteSettings: GlobalConfig = {
       label: 'מטבע לפי שפה',
       labels: { singular: 'מטבע', plural: 'מטבעות' },
       admin: {
-        description: 'The currency shown by default for each locale.',
+        description: 'המטבע שמוצג כברירת מחדל בכל שפה.',
       },
       fields: [
         {

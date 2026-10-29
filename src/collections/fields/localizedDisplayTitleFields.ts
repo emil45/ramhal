@@ -20,13 +20,13 @@ export function localizedDisplayTitleFields(): Field[] {
     {
       name: 'displayTitle',
       type: 'text',
-      label: 'כותרת לתצוגה',
+      label: 'כותרת',
       admin: { hidden: true, readOnly: true },
     },
     {
       name: 'displayTitleLocale',
       type: 'text',
-      label: 'שפת הכותרת המוצגת',
+      label: 'שפת הכותרת',
       admin: {
         // Not hidden like displayTitle: it needs to render as a list column
         // (the language badge), just never as a form input.

@@ -37,7 +37,7 @@ export const Pages: CollectionConfig = {
     {
       name: 'eyebrow',
       type: 'text',
-      label: 'תווית עילית',
+      label: 'שורה מעל הכותרת',
       localized: true,
       admin: {
         description: 'שורת טקסט קצרה מעל הכותרת הראשית.',

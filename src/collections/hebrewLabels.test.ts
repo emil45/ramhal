@@ -2,6 +2,7 @@ import type { CollectionConfig, GlobalConfig } from 'payload'
 import { describe, expect, it } from 'vitest'
 
 import { collectMissingHebrewLabels } from '@/lib/collectMissingHebrewLabels'
+import { collectNonHebrewDescriptions } from '@/lib/collectNonHebrewDescriptions'
 
 import { Announcements } from './Announcements'
 import { Articles } from './Articles'
@@ -49,6 +50,7 @@ describe('every collection has Hebrew admin labels', () => {
     expect(isHebrewLabel(collection.labels?.singular)).toBe(true)
     expect(isHebrewLabel(collection.labels?.plural)).toBe(true)
     expect(collectMissingHebrewLabels(collection.fields, collection.slug)).toEqual([])
+    expect(collectNonHebrewDescriptions(collection.fields, collection.slug)).toEqual([])
   })
 })
 
@@ -56,5 +58,6 @@ describe('every global has Hebrew admin labels', () => {
   it.each(globals)('$slug', (global) => {
     expect(isHebrewLabel(global.label)).toBe(true)
     expect(collectMissingHebrewLabels(global.fields, global.slug)).toEqual([])
+    expect(collectNonHebrewDescriptions(global.fields, global.slug)).toEqual([])
   })
 })

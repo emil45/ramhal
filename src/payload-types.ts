@@ -383,14 +383,14 @@ export interface Lesson {
   series: number | Series;
   youtubeId?: string | null;
   /**
-   * Object-storage key for the audio file, not the file itself.
+   * מפתח הקובץ באחסון האובייקטים — לא הקובץ עצמו.
    */
   audioKey?: string | null;
   recordedAt?: string | null;
   language?: ('he' | 'fr') | null;
   durationSeconds?: number | null;
   /**
-   * Timestamp from the sync source, used to make re-syncing idempotent.
+   * חותמת הזמן במקור הסנכרון; מונעת עדכון כפול בסנכרון חוזר.
    */
   sourceUpdatedAt?: string | null;
   updatedAt: string;
@@ -559,7 +559,7 @@ export interface Page {
             label?: string | null;
             quote: string;
             /**
-             * ריק עבור סגנון "הדגשה" או כשיש תווית עילית במקום.
+             * ריק עבור סגנון "הדגשה" או כשיש שורה מעל הציטוט במקום.
              */
             source?: string | null;
             id?: string | null;
@@ -1504,11 +1504,11 @@ export interface Schedule {
     | {
         title: string;
         /**
-         * e.g. א׳–ה׳
+         * למשל א׳–ה׳.
          */
         days: string;
         /**
-         * Free text, not a time field — "בין מנחה לערבית" is a valid value.
+         * טקסט חופשי ולא שעון, ולכן גם "בין מנחה לערבית" תקין.
          */
         time: string;
         id?: string | null;
@@ -1518,7 +1518,7 @@ export interface Schedule {
     | {
         name: string;
         /**
-         * Free text, not a time field — "נץ החמה" is a valid value.
+         * טקסט חופשי ולא שעון, ולכן גם "נץ החמה" תקין.
          */
         time: string;
         id?: string | null;
@@ -1535,11 +1535,11 @@ export interface ShippingSetting {
   id: number;
   zones: {
     /**
-     * e.g. ישראל, אירופה, שאר העולם
+     * למשל ישראל, אירופה, שאר העולם.
      */
     name: string;
     /**
-     * ISO country codes.
+     * קודי מדינה בני שתי אותיות (ISO), למשל IL, FR.
      */
     countries: string[];
     currency: 'ILS' | 'EUR' | 'USD';
@@ -1552,12 +1552,12 @@ export interface ShippingSetting {
       id?: string | null;
     }[];
     /**
-     * Free shipping at or above this many units. Leave blank for no free tier.
+     * משלוח חינם החל ממספר היחידות הזה. אם משאירים ריק — אין משלוח חינם.
      */
     freeAboveUnits?: number | null;
     allowPickup?: boolean | null;
     /**
-     * The zone used when a destination matches no other zone. Flag exactly one.
+     * האזור שחל כשהיעד לא מתאים לאף אזור אחר. יש לסמן אזור אחד בדיוק.
      */
     isDefault?: boolean | null;
     id?: string | null;
@@ -1588,7 +1588,7 @@ export interface SiteSetting {
       }[]
     | null;
   /**
-   * The currency shown by default for each locale.
+   * המטבע שמוצג כברירת מחדל בכל שפה.
    */
   currencyByLocale?:
     | {
