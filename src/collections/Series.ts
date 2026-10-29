@@ -13,6 +13,10 @@ export const Series: CollectionConfig = {
     plural: 'סדרות',
   },
   admin: {
+    // Nothing on the site reads this collection yet: the course sections are
+    // curated in src/lib/fullBookCourses.ts (docs/BACKLOG.md). Hidden so the
+    // editor is not offered a menu entry that changes nothing.
+    hidden: true,
     group: 'תוכן',
     useAsTitle: 'displayTitle',
     defaultColumns: ['displayTitle', 'displayTitleLocale', 'language', 'relatedBook', 'order'],

@@ -202,6 +202,9 @@ export const Books: CollectionConfig = {
               relationTo: 'series',
               hasMany: true,
               admin: {
+                // The book page's lessons box comes from src/lib/fullBookCourses.ts,
+                // not from this field (docs/BACKLOG.md); hidden until it is wired.
+                hidden: true,
                 description: 'סדרות שיעורים המבוססות על ספר זה, לקישור מעמוד הספר.',
               },
             },
