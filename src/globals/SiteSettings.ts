@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { INLINE_ROWS_CLASS_NAME } from '../collections/fields/inlineRows.ts'
 import { revalidateStorefront } from '../collections/hooks/revalidateStorefront.ts'
 import { CURRENCIES } from '../lib/currency.ts'
 import { SOCIAL_PLATFORMS, validateSocialLinks, validateSocialLinkUrl } from '../lib/socialLinks.ts'
@@ -49,6 +50,7 @@ export const SiteSettings: GlobalConfig = {
       labels: { singular: 'קישור', plural: 'קישורים' },
       maxRows: SOCIAL_PLATFORMS.length,
       validate: validateSocialLinks,
+      admin: { className: INLINE_ROWS_CLASS_NAME },
       fields: [
         {
           name: 'platform',
@@ -78,6 +80,7 @@ export const SiteSettings: GlobalConfig = {
       label: 'מטבע לפי שפה',
       labels: { singular: 'מטבע', plural: 'מטבעות' },
       admin: {
+        className: INLINE_ROWS_CLASS_NAME,
         description: 'המטבע שמוצג כברירת מחדל בכל שפה.',
       },
       fields: [

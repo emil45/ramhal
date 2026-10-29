@@ -27,6 +27,10 @@
   everywhere via `admin.dateFormat`. **Success colour** green. **Dashboard** styles in the stylesheet, orders-to-post
   first. Table cells no longer clip the last column on a laptop.
 
+- **Compact rows:** arrays of short values (schedule lessons and prayers, social links, currency per language, shipping
+  tiers) lay each row on one line via `INLINE_ROWS_CLASS_NAME`; the hint is said once above the list instead of under
+  every row; an open row hides its repeated header title. A lesson went from about 290 px to about 130 px.
+
 ## Verified
 `tsc --noEmit` clean; `eslint` 0 errors (50 existing warnings, none in changed files); `vitest` 426 passed;
 `next build` ok. Every changed screen (orders list and detail, books list and edit, pages list and edit, schedule,

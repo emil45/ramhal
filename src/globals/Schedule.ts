@@ -1,3 +1,4 @@
+import { INLINE_ROWS_CLASS_NAME } from '../collections/fields/inlineRows.ts'
 import { revalidateStorefront } from '../collections/hooks/revalidateStorefront.ts'
 
 import type { GlobalConfig } from 'payload'
@@ -18,7 +19,11 @@ export const Schedule: GlobalConfig = {
       type: 'array',
       label: 'שיעורים',
       labels: { singular: 'שיעור', plural: 'שיעורים' },
-      admin: { components: { RowLabel: ROW_LABEL_COMPONENT } },
+      admin: {
+        className: INLINE_ROWS_CLASS_NAME,
+        components: { RowLabel: ROW_LABEL_COMPONENT },
+        description: 'בשדה "ימים" כותבים למשל א׳–ה׳. בשדה "שעה" אפשר לכתוב גם טקסט חופשי, למשל "בין מנחה לערבית".',
+      },
       fields: [
         {
           name: 'title',
@@ -33,18 +38,12 @@ export const Schedule: GlobalConfig = {
           label: 'ימים',
           required: true,
           localized: true,
-          admin: {
-            description: 'למשל א׳–ה׳.',
-          },
         },
         {
           name: 'time',
           type: 'text',
           label: 'שעה',
           required: true,
-          admin: {
-            description: 'טקסט חופשי ולא שעון, ולכן גם "בין מנחה לערבית" תקין.',
-          },
         },
       ],
     },
@@ -53,7 +52,11 @@ export const Schedule: GlobalConfig = {
       type: 'array',
       label: 'תפילות',
       labels: { singular: 'תפילה', plural: 'תפילות' },
-      admin: { components: { RowLabel: ROW_LABEL_COMPONENT } },
+      admin: {
+        className: INLINE_ROWS_CLASS_NAME,
+        components: { RowLabel: ROW_LABEL_COMPONENT },
+        description: 'בשדה "שעה" אפשר לכתוב גם טקסט חופשי, למשל "נץ החמה".',
+      },
       fields: [
         {
           name: 'name',
@@ -67,9 +70,6 @@ export const Schedule: GlobalConfig = {
           type: 'text',
           label: 'שעה',
           required: true,
-          admin: {
-            description: 'טקסט חופשי ולא שעון, ולכן גם "נץ החמה" תקין.',
-          },
         },
       ],
     },

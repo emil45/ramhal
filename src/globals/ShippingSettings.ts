@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { INLINE_ROWS_CLASS_NAME } from '../collections/fields/inlineRows.ts'
 import { revalidateStorefront } from '../collections/hooks/revalidateStorefront.ts'
 import { CURRENCIES } from '../lib/currency.ts'
 import { validateMoneyAmount } from '../lib/validateMoneyAmount.ts'
@@ -55,6 +56,7 @@ export const ShippingSettings: GlobalConfig = {
           type: 'array',
           label: 'מדרגות מחיר',
           labels: { singular: 'מדרגה', plural: 'מדרגות' },
+          admin: { className: INLINE_ROWS_CLASS_NAME },
           required: true,
           minRows: 1,
           fields: [

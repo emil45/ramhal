@@ -553,3 +553,32 @@ textarea {
 .left-to-right-cell {
   white-space: nowrap;
 }
+
+/* An array of short values (a time, a day, a link) as a table: one line per row, the hint once above. */
+.array-field--inline-rows .array-field__fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 0.5rem 1rem;
+  align-items: start;
+}
+
+.array-field--inline-rows .array-field__fields > * {
+  margin: 0;
+}
+
+/* The language of the row is already in the switcher at the top of the page. */
+.array-field--inline-rows .field-label .localized {
+  display: none;
+}
+
+/* An open row already shows its values, so its header title would only repeat them; a collapsed row keeps it. */
+.array-field--inline-rows .collapsible:not(.collapsible--collapsed) .array-field__row-header {
+  visibility: hidden;
+}
+
+/* "Add a row" is the one way to grow a list, so it should not look like an empty placeholder. */
+.array-field__add-row {
+  --color: var(--teal-deep);
+  --hover-color: var(--teal);
+  font-weight: 600;
+}
