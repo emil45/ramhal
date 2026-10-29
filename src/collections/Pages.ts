@@ -17,6 +17,7 @@ export const Pages: CollectionConfig = {
   },
   admin: {
     group: 'תוכן',
+    description: 'עמודי התוכן של האתר. שמירה מפרסמת את השינוי באתר מיד.',
     useAsTitle: 'displayTitle',
     defaultColumns: ['displayTitle', 'displayTitleLocale'],
     preview: (page, { locale }) => pagePreviewPath(page, locale),

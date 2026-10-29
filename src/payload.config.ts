@@ -93,6 +93,9 @@ export default buildConfig({
     // predictable theme for one non-technical user beats a panel whose
     // colours depend on a setting he never touched.
     theme: 'light',
+    // Day first, month by name, 24-hour clock: "29 באוקטובר 2026, 23:06". Payload's
+    // default is month-first with a 12-hour clock, which reads backwards in Hebrew.
+    dateFormat: "d 'ב'MMMM yyyy, HH:mm",
     // Custom admin components are referenced by path from here (src/), not
     // from the working directory Payload would otherwise assume.
     importMap: { baseDir: path.resolve(dirname) },

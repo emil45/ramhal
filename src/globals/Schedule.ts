@@ -8,7 +8,7 @@ const ROW_LABEL_COMPONENT = '/components/admin/ScheduleRowLabel#ScheduleRowLabel
 export const Schedule: GlobalConfig = {
   slug: 'schedule',
   label: 'לוח זמנים',
-  admin: { group: 'תוכן' },
+  admin: { group: 'תוכן', description: 'זמני השיעורים והתפילות שמופיעים באתר.' },
   hooks: {
     afterChange: [revalidateStorefront],
   },

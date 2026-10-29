@@ -21,6 +21,7 @@ export const PaymentEvents: CollectionConfig = {
     useAsTitle: 'providerEventId',
     defaultColumns: ['providerEventId', 'provider', 'order', 'status', 'createdAt'],
     group: 'מערכת',
+    description: 'יומן טכני של עדכוני תשלום שהתקבלו מספק התשלומים.',
   },
   access: {
     read: ({ req: { user } }) => Boolean(user),

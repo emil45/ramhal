@@ -18,6 +18,7 @@ export const Announcements: CollectionConfig = {
   },
   admin: {
     group: 'תוכן',
+    description: 'ההודעות שמופיעות בדף הבית. הודעה נשארת באתר עד שמוחקים אותה.',
     useAsTitle: 'displayTitle',
     defaultColumns: ['displayTitle', 'displayTitleLocale', 'startsAt'],
   },

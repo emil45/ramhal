@@ -17,6 +17,7 @@ export const Users: CollectionConfig = {
   auth: { disableLocalStrategy: { enableFields: true } },
   admin: {
     group: 'מערכת',
+    description: 'מי רשאי להיכנס למערכת. הכניסה היא בחשבון גוגל בלבד.',
     useAsTitle: 'email',
     defaultColumns: ['email', 'role'],
   },

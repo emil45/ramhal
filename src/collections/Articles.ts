@@ -27,6 +27,7 @@ export const Articles: CollectionConfig = {
   },
   admin: {
     group: 'תוכן',
+    description: 'כתבות ומאמרים.',
     useAsTitle: 'displayTitle',
     defaultColumns: ['displayTitle', 'displayTitleLocale', 'type', 'parsha', 'holiday', 'publishedAt'],
   },

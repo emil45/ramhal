@@ -42,6 +42,7 @@ export const Books: CollectionConfig = {
   },
   admin: {
     group: 'חנות',
+    description: 'כל הספרים בקטלוג. שמירה מפרסמת את השינוי באתר מיד.',
     // he -> fr -> en, whichever exists — see localizedDisplayTitleFields.
     // Fixes the list, the relationship picker AND the document header at
     // once, since Payload renders useAsTitle in all three places.

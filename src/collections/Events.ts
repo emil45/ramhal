@@ -18,6 +18,7 @@ export const Events: CollectionConfig = {
   },
   admin: {
     group: 'תוכן',
+    description: 'אירועים חד-פעמיים, כמו הילולה או סמינר. אירוע נשאר באתר עד שמוחקים אותו.',
     useAsTitle: 'displayTitle',
     defaultColumns: ['displayTitle', 'displayTitleLocale', 'startsAt', 'location'],
   },

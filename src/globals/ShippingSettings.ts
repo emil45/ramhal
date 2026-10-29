@@ -11,7 +11,7 @@ import { validateMoneyAmount } from '../lib/validateMoneyAmount.ts'
 export const ShippingSettings: GlobalConfig = {
   slug: 'shippingSettings',
   label: 'הגדרות משלוח',
-  admin: { group: 'הגדרות' },
+  admin: { group: 'הגדרות', description: 'אזורי המשלוח ומחירו לפי מספר הספרים בהזמנה.' },
   hooks: {
     afterChange: [revalidateStorefront],
   },
