@@ -47,7 +47,7 @@ actionable without reading anything else. Grouped, not ordered by priority withi
 - **Owner actions after the R2 move:** revoke the admin Cloudflare token; delete the Neon `testing`
   branch; empty the Neon media and backup buckets after a week on R2.
 
-- **Two book photos still need a book** (`docs/reports/TASK-52.md`): the French "La métaphysique de l'unité chez le
+- **Two book photos still need a book** (`docs/reports/TASK-53.md`): the French "La métaphysique de l'unité chez le
   Ramhal", and a new מחול לצדיקים shot (it already has a cover). Upload them one per process — a script run that
   creates several Media files in one process loses all but the first from R2 (cause not found).
 

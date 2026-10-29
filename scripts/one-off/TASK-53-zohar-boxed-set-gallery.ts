@@ -4,8 +4,8 @@
 // production on 29 October 2026 (with ALLOW_PRODUCTION_ONE_OFF=TASK-51, the number
 // it was started under before another task took it):
 //
-//   ALLOW_PRODUCTION_ONE_OFF=TASK-52 DATABASE_URI="<production>" S3_…="<R2 write credentials>" \
-//     npx vite-node scripts/one-off/TASK-52-zohar-boxed-set-gallery.ts <folder> blue-boxed-set-1.webp
+//   ALLOW_PRODUCTION_ONE_OFF=TASK-53 DATABASE_URI="<production>" S3_…="<R2 write credentials>" \
+//     npx vite-node scripts/one-off/TASK-53-zohar-boxed-set-gallery.ts <folder> blue-boxed-set-1.webp
 //
 // One photo per process because, in the TASK-50 run and again when this script
 // handled both in one process, only the first upload of a process reached the
@@ -35,7 +35,7 @@ function uploadedName(sourceFile: string): string {
 
 async function main() {
   const [folder, sourceFile] = process.argv.slice(2)
-  if (!folder || !sourceFile) throw new Error('usage: TASK-52-zohar-boxed-set-gallery.ts <folder> <WebP file name>')
+  if (!folder || !sourceFile) throw new Error('usage: TASK-53-zohar-boxed-set-gallery.ts <folder> <WebP file name>')
 
   const databaseUri = process.env.DATABASE_URI
   if (!databaseUri) throw new Error('DATABASE_URI is not set')

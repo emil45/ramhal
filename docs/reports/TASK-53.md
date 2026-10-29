@@ -1,4 +1,4 @@
-# TASK-52 — Enlarge a book picture, and the boxed Zohar set's photos
+# TASK-53 — Enlarge a book picture, and the boxed Zohar set's photos
 
 ## Built
 - **Enlarge:** the picture on a book page opens in a dialog (`BookImageGallery`, `src/components/ui/dialog.tsx` from
@@ -6,7 +6,7 @@
   arrows and the arrow keys page through the book's pictures (the keys follow the reading direction), a counter shows
   the position. A book with only the typeset cover has nothing to open. No pinch or zoom beyond the browser's own.
 - **Zohar:** the two blue-boxed-set photos were added to the gallery of book 38 on production
-  (`scripts/one-off/TASK-52-zohar-boxed-set-gallery.ts`, started as TASK-51 and renamed when another task took that
+  (`scripts/one-off/TASK-53-zohar-boxed-set-gallery.ts`, started as TASK-51 and renamed when another task took that
   number; it ran under `ALLOW_PRODUCTION_ONE_OFF=TASK-51`).
 
 ## Verified
