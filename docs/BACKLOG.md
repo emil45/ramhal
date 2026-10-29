@@ -74,10 +74,9 @@ actionable without reading anything else. Grouped, not ordered by priority withi
   which was never committed, so the strip was removed and the study-hall photo fills the panel. When the
   original is found, upload it to Media (`docs/DECISIONS.md` §16), add a SiteSettings field for it, and
   restore the strip in `src/app/(frontend)/[locale]/page.tsx`.
-- **Courses are curated in code**, including which "complete courses" are shown
-  (`src/app/(frontend)/[locale]/courses/page.tsx`, `src/lib/fullBookCourses.ts`) — lesson IDs and completeness are
-  hand-maintained, not editor-facing. The Series and Lessons collections and `Books.relatedSeries` exist, are empty and
-  are read by nothing, so TASK-52 hid them from the admin; wiring the site to them (or deleting them) is the real fix.
+- **Course lesson counts are typed by hand** and go stale as lessons are uploaded. The YouTube Data API
+  (`playlistItems`, with a free key) returns the count and the first video from the playlist link alone; wire it in
+  if the son finds the counts a chore. See `docs/reports/TASK-56.md`.
 - **The press archive is curated in code** (redirects to `/rabbi-chriqui#press`). A Payload
   collection would let the son add a press link without a deploy.
 - **Q&A archive as a Payload collection, with search.** The Q&A page is a static prototype: one
