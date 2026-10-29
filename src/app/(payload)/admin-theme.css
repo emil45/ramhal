@@ -133,3 +133,258 @@
 .login__brand {
   margin-bottom: 0;
 }
+
+/* ---- Readability and ease of use for a non-technical editor ---------------
+   Payload ships a developer's density: 13px text, hints at 2.5:1 contrast,
+   buttons 24px tall. Everything below is sized for one person reading Hebrew
+   all day, not for someone who lives in admin panels. */
+
+/* Payload's whole layout is in rem off a 13px root, so a larger root scales
+   text, buttons and spacing together. Its own phone breakpoint shrinks the
+   root again, so the larger size starts above it. */
+@media (min-width: 769px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+:root {
+  /* Pairs checked for WCAG AA text contrast (4.5:1 or better): each badge
+     colour on its own background, white on --teal, white on --teal-deep. */
+  --admin-positive-background: #dcf0e0;
+  --admin-positive-text: #1b5a2a;
+  --admin-attention-background: #fbe8c4;
+  --admin-attention-text: #744400;
+  --admin-negative-background: #fadad6;
+  --admin-negative-text: #8a1c12;
+  --admin-neutral-background: #e9e9e9;
+  --admin-neutral-text: #454545;
+  --admin-info-background: #d9e8f5;
+  --admin-info-text: #154a73;
+}
+
+/* Field hints and labels. The default hint colour measures 2.5:1. */
+.field-description {
+  color: var(--theme-elevation-600);
+  font-size: 0.9375rem;
+  margin-top: 0.35rem;
+}
+
+.field-label {
+  font-weight: 600;
+  color: var(--theme-elevation-800);
+  padding-bottom: 0.25rem;
+}
+
+/* Form controls: a border that can be seen, and room to click. */
+input:not([type='checkbox'], [type='radio'], [type='file']),
+textarea,
+.react-select .rs__control {
+  border: 1px solid var(--theme-elevation-450);
+  border-radius: 4px;
+}
+
+input:not([type='checkbox'], [type='radio'], [type='file']):focus,
+textarea:focus {
+  border-color: var(--teal);
+  outline: 2px solid color-mix(in oklch, var(--teal), transparent 70%);
+  outline-offset: 0;
+}
+
+/* A hint-length text that grows with what is typed, instead of one line and a resize grip. */
+textarea {
+  field-sizing: content;
+  min-height: 5.5rem;
+}
+
+/* Buttons. Primary is the colour of "what you can do" (docs/DESIGN.md). */
+.btn--style-primary {
+  --bg-color: var(--teal);
+  --color: #fff;
+  --hover-bg: var(--teal-deep);
+  --hover-color: #fff;
+}
+
+.btn--style-primary.btn--disabled {
+  --bg-color: var(--theme-elevation-150);
+  --color: var(--theme-elevation-600);
+  --hover-bg: var(--theme-elevation-150);
+  --hover-color: var(--theme-elevation-600);
+}
+
+.list-create-new-doc__create-new-button.btn--style-pill {
+  --bg-color: var(--teal);
+  --color: #fff;
+  --hover-bg: var(--teal-deep);
+  --hover-color: #fff;
+  --btn-padding-inline-start: 1rem;
+  --btn-padding-inline-end: 1rem;
+  font-weight: 600;
+}
+
+/* "View on the site" — Payload renders only an icon; its tooltip text is the label. */
+.preview-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: auto;
+  height: auto;
+  padding: 0.4rem 0.9rem;
+  white-space: nowrap;
+  border: 1px solid var(--teal);
+  border-radius: 4px;
+  color: var(--teal-deep);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.preview-btn .icon {
+  position: static;
+  transform: none;
+}
+
+.preview-btn::after {
+  content: attr(title);
+}
+
+.preview-btn:hover {
+  background: var(--teal);
+  color: #fff;
+}
+
+/* Lists */
+.table th {
+  color: var(--theme-elevation-700);
+  font-weight: 600;
+}
+
+/* Zebra striping put grey badges on grey rows, where they disappear. */
+.table tbody tr:nth-child(odd) {
+  background: transparent;
+}
+
+.table tbody tr {
+  border-bottom: 1px solid var(--theme-elevation-100);
+}
+
+.table tbody tr:hover {
+  background: var(--theme-elevation-50);
+}
+
+/* The column picker and filter builder are a database tool. The one-click
+   views above each list (QuickFilters) do the editor's filtering. */
+.list-controls__toggle-columns,
+.list-controls__toggle-where,
+.list-controls__toggle-sort,
+.list-controls__toggle-group-by,
+.list-controls__where {
+  display: none;
+}
+
+/* The content-language switcher decides which language an edit lands in, so it must not look like decoration. */
+.localizer-button {
+  background: var(--teal);
+  border-radius: 4px;
+  padding-block: 0.25rem;
+  padding-inline: 0.75rem 0.5rem;
+}
+
+.localizer-button,
+.localizer-button * {
+  color: #fff;
+}
+
+/* Status badges and one-click list views */
+.admin-badge {
+  display: inline-block;
+  border-radius: 4px;
+  padding: 0.15rem 0.6rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.admin-badge--positive {
+  background: var(--admin-positive-background);
+  color: var(--admin-positive-text);
+}
+
+.admin-badge--attention {
+  background: var(--admin-attention-background);
+  color: var(--admin-attention-text);
+}
+
+.admin-badge--negative {
+  background: var(--admin-negative-background);
+  color: var(--admin-negative-text);
+}
+
+.admin-badge--neutral {
+  background: var(--admin-neutral-background);
+  color: var(--admin-neutral-text);
+}
+
+.admin-badge--info {
+  background: var(--admin-info-background);
+  color: var(--admin-info-text);
+}
+
+.quick-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block-end: 1rem;
+}
+
+.quick-filters__hint {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--theme-elevation-600);
+  font-size: 0.9375rem;
+}
+
+.quick-filters__link {
+  border: 1px solid var(--theme-elevation-300);
+  border-radius: 999px;
+  padding: 0.35rem 1rem;
+  background: var(--theme-bg);
+  color: var(--theme-text);
+  text-decoration: none;
+}
+
+.quick-filters__link:hover {
+  border-color: var(--teal);
+}
+
+.quick-filters__link[aria-current='page'] {
+  border-color: var(--teal);
+  background: var(--teal);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* A form this wide is hard to read across, and a one-word value sits in a box a metre long. */
+.document-fields__fields {
+  max-width: 64rem;
+}
+
+/* With the API tab hidden, a lone "edit" tab is a button that does nothing. */
+.doc-tabs:not(:has(.doc-tab ~ .doc-tab)) {
+  display: none;
+}
+
+/* Navigation: group headings measure about 2:1 by default. */
+.nav-group__toggle {
+  color: var(--theme-elevation-600);
+  font-weight: 600;
+}
+
+.nav__link {
+  padding-block: 0.25rem;
+}
+
+/* A phone number such as "+33 6 12 34 56 78" reads backwards inside a right-to-left input. Payload's
+   text field takes no direction option, so the order form's phone input is addressed by its id. */
+#field-customer__phone {
+  direction: ltr;
+}
