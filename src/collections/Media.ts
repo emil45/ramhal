@@ -15,6 +15,12 @@ export const Media: CollectionConfig = {
   },
   admin: {
     group: 'מערכת',
+    description: 'כל התמונות באתר. כדאי למלא טקסט חלופי: הוא עוזר לנגישות ולמציאת האתר בגוגל.',
+    // The prefix column is storage plumbing, not something to read.
+    defaultColumns: ['filename', 'alt', 'updatedAt'],
+    components: {
+      beforeListTable: ['/components/admin/MediaQuickFilters#MediaQuickFilters'],
+    },
   },
   // Payload's default is "signed-in users only", which makes every cover a
   // 403 for an anonymous visitor — and invisible to a developer who is logged
@@ -53,6 +59,10 @@ export const Media: CollectionConfig = {
       type: 'text',
       label: 'טקסט חלופי',
       localized: true,
+      admin: {
+        description: 'תיאור קצר של מה שרואים בתמונה, לקוראי מסך ולגוגל.',
+        components: { Cell: '/components/admin/AltTextCell#AltTextCell' },
+      },
     },
   ],
 }
