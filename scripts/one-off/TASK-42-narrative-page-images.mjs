@@ -10,10 +10,15 @@
 // same as scripts/import-books.mjs and for the same reason:
 // payload.config.ts pulls in payload-oauth2, whose module graph plain
 // `node` cannot load.
+//
+// Run against production on 29 October 2026. The two rabbi-chriqui photos
+// under public/ had by then been deleted, so they were restored from the
+// commit before 3c3b4c4 for the run and removed again afterwards.
 import { fileURLToPath } from 'node:url'
 
 import { getPayload } from 'payload'
 
+import { SKIP_STOREFRONT_REVALIDATION } from '../../src/collections/hooks/revalidateStorefront.ts'
 import { parseDatabaseIdentity } from '../../src/lib/diagnostics.ts'
 
 try {
@@ -193,9 +198,10 @@ async function uploadImages(payload) {
       locale: 'he',
       data: { alt: image.alt.he },
       filePath: fileURLToPath(image.file),
+      context: SKIP_STOREFRONT_REVALIDATION,
     })
-    await payload.update({ collection: 'media', id: doc.id, locale: 'en', data: { alt: image.alt.en } })
-    await payload.update({ collection: 'media', id: doc.id, locale: 'fr', data: { alt: image.alt.fr } })
+    await payload.update({ collection: 'media', id: doc.id, locale: 'en', data: { alt: image.alt.en }, context: SKIP_STOREFRONT_REVALIDATION })
+    await payload.update({ collection: 'media', id: doc.id, locale: 'fr', data: { alt: image.alt.fr }, context: SKIP_STOREFRONT_REVALIDATION })
     media[key] = doc.id
   }
   return media
@@ -944,6 +950,7 @@ async function createPage(payload, slug, byLocale) {
     collection: 'pages',
     locale: 'he',
     data: { slug, title: he.title, eyebrow: he.eyebrow, lead: he.lead, metaDescription: he.metaDescription, location: he.location, heroImage: he.heroImage, content: he.content },
+    context: SKIP_STOREFRONT_REVALIDATION,
   })
   for (const locale of ['en', 'fr']) {
     const localized = byLocale[locale]
@@ -952,6 +959,7 @@ async function createPage(payload, slug, byLocale) {
       id: doc.id,
       locale,
       data: { title: localized.title, eyebrow: localized.eyebrow, lead: localized.lead, metaDescription: localized.metaDescription, location: localized.location, content: localized.content },
+      context: SKIP_STOREFRONT_REVALIDATION,
     })
   }
   return doc.id
@@ -986,7 +994,7 @@ try {
     fr: RAMHAL_CONTENT.fr(),
   })
 
-  await payload.updateGlobal({ slug: 'siteSettings', data: { donatePhoto: media.donatePhoto } })
+  await payload.updateGlobal({ slug: 'siteSettings', data: { donatePhoto: media.donatePhoto }, context: SKIP_STOREFRONT_REVALIDATION })
 
   console.log(JSON.stringify({ environment, mediaCreated: Object.keys(media).length, pages: { rabbiChriquiId, beitRamhalId, ramhalId } }, null, 2))
 } finally {
