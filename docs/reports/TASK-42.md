@@ -102,3 +102,10 @@ refuse starting local dev against production's own database. `docs/DECISIONS.md`
   Vercel's `deploy:build` will attempt the production migration on deploy and may itself fail on
   the same Neon quota until it clears; re-check the deploy and, once it succeeds, run the content
   script and finish visual verification.
+
+## Update, 29 October 2026
+
+The content script ran against production once Neon was reachable again: three pages, 13 Media rows,
+`siteSettings.donatePhoto`. `assets/` is deleted. The first two attempts failed before writing pages (the
+script's writes lacked the revalidation opt-out; two photos had left `public/`), and the ten Media rows the
+second attempt had already written were deleted before the successful run.
