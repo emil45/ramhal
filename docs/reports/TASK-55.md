@@ -6,7 +6,8 @@ one file per process, and reads the object back from the public URL. Run on prod
 (fingerprint `2c951382a7f8`, temporary R2 key revoked each time) for:
 - Kabbalah du Arizal (French, book 18) — scan, 468×700.
 - אור עולם (book 3) — scan, 468×640.
-- שוד מלכים (book 36) — a photo of the book, cut out and set on the paper colour (425×700 source, so small).
+- שוד מלכים (book 36) — first a cut-out of the angled photo, then replaced (`replace`) by the front face flattened
+  with a perspective correction to a straight cover (434×634): the cut-out looked tilted and badly framed in the cover frame.
 All three stored as WebP at their own size, not enlarged.
 
 ## Verified
