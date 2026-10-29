@@ -2,17 +2,17 @@ import { ListVideo, Play } from 'lucide-react'
 
 import { Card, CardContent } from '@/components/ui/card'
 import { buttonVariants } from '@/components/ui/button'
-import { firstLessonUrl, playlistUrl } from '@/lib/fullBookCourses'
+import { playlistUrl, playlistVideoUrl } from '@/lib/youtubeLinks'
 import { cn } from '@/lib/utils'
 
 import type { Dictionary } from '@/app/(frontend)/dictionary'
-import type { FullBookCourse } from '@/lib/fullBookCourses'
+import type { Course } from '@/lib/courses'
 
 export function BookCourseCallout({
   course,
   dict,
 }: {
-  course: FullBookCourse
+  course: Course
   dict: Dictionary
 }) {
   return (
@@ -34,7 +34,7 @@ export function BookCourseCallout({
 
         <div className="flex flex-wrap gap-2">
           <a
-            href={firstLessonUrl(course)}
+            href={playlistVideoUrl(course.firstLessonVideoId, course.playlistId)}
             target="_blank"
             rel="noreferrer"
             className={buttonVariants()}
@@ -43,7 +43,7 @@ export function BookCourseCallout({
             {dict.bookCourse.start}
           </a>
           <a
-            href={playlistUrl(course)}
+            href={playlistUrl(course.playlistId)}
             target="_blank"
             rel="noreferrer"
             className={cn(

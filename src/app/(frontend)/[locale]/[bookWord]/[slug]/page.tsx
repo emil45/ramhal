@@ -15,7 +15,7 @@ import { collectBookImages } from '@/lib/bookImages'
 import { getBookUrlSlugs, getCatalogueBookBySlug } from '@/lib/booksData'
 import { BOOK_SEGMENT, cataloguePath } from '@/lib/routes'
 import { getContactDetails } from '@/lib/siteSettingsData'
-import { fullBookCourseForBook } from '@/lib/fullBookCourses'
+import { getCoursesForBook } from '@/lib/coursesData'
 import { isLocale, LOCALE_CONFIG, LOCALES } from '@/lib/locale'
 
 export async function generateStaticParams() {
@@ -37,10 +37,10 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
   const dict = getDictionary(locale)
   const [book, contact] = await Promise.all([getCatalogueBookBySlug(locale, slug), getContactDetails(locale)])
   if (!book) notFound()
+  const courses = await getCoursesForBook(locale, book.id)
 
   const currency = LOCALE_CONFIG[locale].currency
   const purchasable = isPurchasable(book, currency)
-  const course = fullBookCourseForBook(book.urlSlug)
   const images = collectBookImages(book.cover, book.gallery)
 
   return (
@@ -102,7 +102,9 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
             </Card>
           )}
 
-          {course ? <BookCourseCallout course={course} dict={dict} /> : null}
+          {courses.map((course) => (
+            <BookCourseCallout key={course.id} course={course} dict={dict} />
+          ))}
 
           <Separator />
 

@@ -9,24 +9,16 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { getCatalogueBooks } from '@/lib/booksData'
-import {
-  firstLessonThumbnailUrl,
-  firstLessonUrl,
-  FULL_BOOK_COURSES,
-  playlistUrl,
-  preferredBookSlug,
-} from '@/lib/fullBookCourses'
+import { editionForLocale } from '@/lib/courses'
+import { getCourses, getCoursesPageText } from '@/lib/coursesData'
 import { isLocale } from '@/lib/locale'
 import { bookPath } from '@/lib/routes'
 import { getSocialLinks } from '@/lib/siteSettingsData'
 import { socialLinkForPlatform, youtubePlaylistsUrl } from '@/lib/socialLinks'
+import { playlistUrl, playlistVideoUrl, videoThumbnailUrl } from '@/lib/youtubeLinks'
 
 const CONTENT = {
   he: {
-    metadataDescription:
-      'סדרות שיעורים מלאות בספרי הרמח״ל מפי הרב מרדכי שריקי, מן השיעור הראשון ועד סיום הספר.',
-    title: 'שיעורים מלאים בספרי הרמח״ל',
-    lead: 'הרב מרדכי שריקי מלמד את הספרים מתחילתם ועד סופם.',
     youtubeChannel: 'לערוץ ביוטיוב',
     seriesTitle: 'סדרות השיעורים',
     lessons: (count: number) => `${count} שיעורים`,
@@ -36,10 +28,6 @@ const CONTENT = {
     thumbnailAlt: (title: string) => `השיעור הראשון בסדרת ${title}`,
   },
   en: {
-    metadataDescription:
-      'Complete lesson series on the Ramhal’s books taught by Rabbi Mordechai Chriqui, from the first lesson to the end of each work.',
-    title: 'Complete lessons on the Ramhal’s books',
-    lead: 'Rabbi Mordechai Chriqui teaches each work from beginning to end.',
     youtubeChannel: 'YouTube channel',
     seriesTitle: 'Lesson series',
     lessons: (count: number) => `${count} lessons`,
@@ -49,10 +37,6 @@ const CONTENT = {
     thumbnailAlt: (title: string) => `First lesson in the ${title} series`,
   },
   fr: {
-    metadataDescription:
-      'Séries complètes de cours sur les livres du Ramhal par le Rav Mordekhaï Chriqui, du premier cours jusqu’à la fin de l’ouvrage.',
-    title: 'Étude complète des livres du Ramhal',
-    lead: 'Le Rav Mordekhaï Chriqui enseigne chaque ouvrage du début à la fin.',
     youtubeChannel: 'Chaîne YouTube',
     seriesTitle: 'Séries de cours',
     lessons: (count: number) => `${count} cours`,
@@ -69,10 +53,8 @@ export async function generateMetadata({
   const { locale } = await params
   if (!isLocale(locale)) return {}
 
-  return {
-    title: CONTENT[locale].title,
-    description: CONTENT[locale].metadataDescription,
-  }
+  const pageText = await getCoursesPageText(locale)
+  return { title: pageText.title, description: pageText.metaDescription }
 }
 
 export default async function CoursesPage({
@@ -82,8 +64,13 @@ export default async function CoursesPage({
   if (!isLocale(locale)) notFound()
 
   const content = CONTENT[locale]
-  const [books, socialLinks] = await Promise.all([getCatalogueBooks(locale), getSocialLinks(locale)])
-  const booksBySlug = new Map(books.map((book) => [book.urlSlug, book]))
+  const [pageText, courses, books, socialLinks] = await Promise.all([
+    getCoursesPageText(locale),
+    getCourses(locale),
+    getCatalogueBooks(locale),
+    getSocialLinks(locale),
+  ])
+  const booksById = new Map(books.map((book) => [book.id, book]))
   const youtubeLink = socialLinkForPlatform(socialLinks, 'youtube')
 
   return (
@@ -91,10 +78,12 @@ export default async function CoursesPage({
       <section className="border-b border-border bg-paper-deep">
         <div className="page-container py-12 lg:py-16">
           <div className="flex max-w-3xl flex-col items-start gap-5">
-            <h1 className="type-display">{content.title}</h1>
-            <p className="max-w-2xl text-xl leading-relaxed sm:text-2xl">
-              {content.lead}
-            </p>
+            <h1 className="type-display">{pageText.title}</h1>
+            {pageText.lead ? (
+              <p className="max-w-2xl text-xl leading-relaxed sm:text-2xl">
+                {pageText.lead}
+              </p>
+            ) : null}
             {youtubeLink ? (
               <div className="pt-2">
                 <a
@@ -124,9 +113,11 @@ export default async function CoursesPage({
         </div>
 
         <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-          {FULL_BOOK_COURSES.map((course, courseIndex) => {
-            const bookSlug = preferredBookSlug(course, locale)
-            const book = bookSlug ? booksBySlug.get(bookSlug) : undefined
+          {courses.map((course, courseIndex) => {
+            const book = editionForLocale(
+              course.bookIds.flatMap((bookId) => booksById.get(bookId) ?? []),
+              locale,
+            )
 
             return (
               <Card
@@ -134,10 +125,10 @@ export default async function CoursesPage({
                 className="gap-0 rounded-[2px] border border-border py-0 ring-0"
               >
                 <a
-                  href={firstLessonUrl(course)}
+                  href={playlistVideoUrl(course.firstLessonVideoId, course.playlistId)}
                   target="_blank"
                   rel="noreferrer"
-                  aria-label={`${content.start}: ${course.title[locale]}`}
+                  aria-label={`${content.start}: ${course.title}`}
                   className="group/video block outline-none focus-visible:ring-3 focus-visible:ring-inset focus-visible:ring-ring/50"
                 >
                   <AspectRatio
@@ -145,8 +136,8 @@ export default async function CoursesPage({
                     className="relative overflow-hidden bg-muted"
                   >
                     <Image
-                      src={firstLessonThumbnailUrl(course)}
-                      alt={content.thumbnailAlt(course.title[locale])}
+                      src={videoThumbnailUrl(course.firstLessonVideoId)}
+                      alt={content.thumbnailAlt(course.title)}
                       fill
                       loading={courseIndex === 0 ? 'eager' : 'lazy'}
                       sizes="(min-width: 1280px) 360px, (min-width: 768px) 50vw, 100vw"
@@ -166,7 +157,7 @@ export default async function CoursesPage({
 
                 <CardContent className="flex flex-1 flex-col items-start p-5">
                   <h3 className="type-subheading text-teal-deep">
-                    {course.title[locale]}
+                    {course.title}
                   </h3>
                   <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
                     <ListVideo className="size-4 text-gold-ink" aria-hidden />
@@ -175,7 +166,7 @@ export default async function CoursesPage({
 
                   <div className="mt-5 flex flex-wrap gap-2">
                     <a
-                      href={firstLessonUrl(course)}
+                      href={playlistVideoUrl(course.firstLessonVideoId, course.playlistId)}
                       target="_blank"
                       rel="noreferrer"
                       className={buttonVariants({ size: 'sm' })}
@@ -188,7 +179,7 @@ export default async function CoursesPage({
                       {content.start}
                     </a>
                     <a
-                      href={playlistUrl(course)}
+                      href={playlistUrl(course.playlistId)}
                       target="_blank"
                       rel="noreferrer"
                       className={buttonVariants({
