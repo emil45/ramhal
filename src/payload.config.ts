@@ -5,6 +5,7 @@ import { he } from '@payloadcms/translations/languages/he'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { buildConfig } from 'payload'
+import type { CollectionConfig, GlobalConfig } from 'payload'
 import { OAuth2Plugin } from 'payload-oauth2'
 import sharp from 'sharp'
 
@@ -35,6 +36,7 @@ import { SiteSettings } from './globals/SiteSettings.ts'
 import { getGoogleUserInfo, readGoogleSignInConfig } from './lib/auth/googleSignIn.ts'
 import { readAppEnvironment } from './lib/appEnvironment.ts'
 import { requireEnv } from './lib/env.ts'
+import { hideApiUrl } from './lib/hideApiUrl.ts'
 import { getPublicMediaUrl, readMediaStorageSettings } from './lib/mediaStorage.ts'
 import { assertDevelopmentDoesNotUseNeon, PRODUCTION_ONE_OFF_OVERRIDE } from './lib/refuseProductionDatabase.ts'
 import { readServerUrl } from './lib/serverUrl.ts'
@@ -48,6 +50,29 @@ const mediaStorage = readMediaStorageSettings(process.env)
 const writableMediaStorage = mediaStorage?.access === 'read-write' ? mediaStorage : null
 const googleSignIn = readGoogleSignInConfig(process.env)
 const serverUrl = readServerUrl()
+
+// The order here is the order of the admin navigation: Payload lists the groups
+// in order of first appearance and the entries inside a group in array order.
+// What the editor does every day comes first (orders, then announcements and
+// events), the rarely-touched system collections last.
+const collections: CollectionConfig[] = [
+  Orders,
+  Books,
+  Categories,
+  Announcements,
+  Events,
+  Pages,
+  Series,
+  Lessons,
+  Articles,
+  Media,
+  Users,
+  PaymentEvents,
+  Carts,
+  MockPaymentSessions,
+].map(hideApiUrl)
+
+const globals: GlobalConfig[] = [Schedule, ShippingSettings, SiteSettings].map(hideApiUrl)
 const databaseUri = requireEnv('DATABASE_URI')
 
 assertDevelopmentDoesNotUseNeon({
@@ -88,8 +113,8 @@ export default buildConfig({
     },
   },
   editor: lexicalEditor(),
-  collections: [Users, Media, Books, Categories, Series, Lessons, Articles, Pages, Announcements, Events, Carts, Orders, PaymentEvents, MockPaymentSessions],
-  globals: [Schedule, ShippingSettings, SiteSettings],
+  collections,
+  globals,
   secret: requireEnv('PAYLOAD_SECRET'),
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
@@ -201,5 +226,9 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { he },
     fallbackLanguage: 'he',
+    // Payload's own label for the preview button is "תצוגה מקדימה", which
+    // promises a draft; saving here is publishing (docs/DECISIONS.md §5), so
+    // the button only opens the live page.
+    translations: { he: { version: { preview: 'צפייה בעמוד באתר' } } },
   },
 })

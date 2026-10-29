@@ -6,6 +6,7 @@ import type { GlobalConfig } from 'payload'
 export const Schedule: GlobalConfig = {
   slug: 'schedule',
   label: 'לוח זמנים',
+  admin: { group: 'תוכן' },
   hooks: {
     afterChange: [revalidateStorefront],
   },

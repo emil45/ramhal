@@ -3,6 +3,7 @@ import { computeDisplayTitleBeforeChange } from './hooks/displayTitle.ts'
 import { generateSlugFromTitle } from './hooks/generateSlugFromTitle.ts'
 import { revalidateStorefront } from './hooks/revalidateStorefront.ts'
 import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
+import { bookPreviewPath } from '../lib/adminPreview.ts'
 import { CURRENCIES } from '../lib/currency.ts'
 import { validateMoneyAmount } from '../lib/validateMoneyAmount.ts'
 
@@ -52,6 +53,7 @@ export const Books: CollectionConfig = {
     components: {
       beforeListTable: ['/components/admin/BookQuickFilters#BookQuickFilters'],
     },
+    preview: (book, { locale }) => bookPreviewPath(book, locale),
   },
   hooks: {
     afterChange: [revalidateStorefront],

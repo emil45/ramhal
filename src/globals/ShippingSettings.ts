@@ -11,6 +11,7 @@ import { validateMoneyAmount } from '../lib/validateMoneyAmount.ts'
 export const ShippingSettings: GlobalConfig = {
   slug: 'shippingSettings',
   label: 'הגדרות משלוח',
+  admin: { group: 'הגדרות' },
   hooks: {
     afterChange: [revalidateStorefront],
   },

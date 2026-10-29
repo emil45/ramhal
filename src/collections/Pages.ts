@@ -4,6 +4,7 @@ import { computeDisplayTitleBeforeChange } from './hooks/displayTitle.ts'
 import { generateSlugFromTitle } from './hooks/generateSlugFromTitle.ts'
 import { revalidateStorefront } from './hooks/revalidateStorefront.ts'
 import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
+import { pagePreviewPath } from '../lib/adminPreview.ts'
 
 import type { CollectionConfig } from 'payload'
 
@@ -18,6 +19,7 @@ export const Pages: CollectionConfig = {
     group: 'תוכן',
     useAsTitle: 'displayTitle',
     defaultColumns: ['displayTitle', 'displayTitleLocale'],
+    preview: (page, { locale }) => pagePreviewPath(page, locale),
   },
   hooks: {
     afterChange: [revalidateStorefront],

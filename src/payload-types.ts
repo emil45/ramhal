@@ -67,18 +67,18 @@ export interface Config {
   };
   blocks: {};
   collections: {
-    media: Media;
+    orders: Order;
     books: Book;
     categories: Category;
+    announcements: Announcement;
+    events: Event;
+    pages: Page;
     series: Series;
     lessons: Lesson;
     articles: Article;
-    pages: Page;
-    announcements: Announcement;
-    events: Event;
-    carts: Cart;
-    orders: Order;
+    media: Media;
     paymentEvents: PaymentEvent;
+    carts: Cart;
     mockPaymentSessions: MockPaymentSession;
     users: User;
     'payload-kv': PayloadKv;
@@ -88,18 +88,18 @@ export interface Config {
   };
   collectionsJoins: {};
   collectionsSelect: {
-    media: MediaSelect<false> | MediaSelect<true>;
+    orders: OrdersSelect<false> | OrdersSelect<true>;
     books: BooksSelect<false> | BooksSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    announcements: AnnouncementsSelect<false> | AnnouncementsSelect<true>;
+    events: EventsSelect<false> | EventsSelect<true>;
+    pages: PagesSelect<false> | PagesSelect<true>;
     series: SeriesSelect<false> | SeriesSelect<true>;
     lessons: LessonsSelect<false> | LessonsSelect<true>;
     articles: ArticlesSelect<false> | ArticlesSelect<true>;
-    pages: PagesSelect<false> | PagesSelect<true>;
-    announcements: AnnouncementsSelect<false> | AnnouncementsSelect<true>;
-    events: EventsSelect<false> | EventsSelect<true>;
-    carts: CartsSelect<false> | CartsSelect<true>;
-    orders: OrdersSelect<false> | OrdersSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
     paymentEvents: PaymentEventsSelect<false> | PaymentEventsSelect<true>;
+    carts: CartsSelect<false> | CartsSelect<true>;
     mockPaymentSessions: MockPaymentSessionsSelect<false> | MockPaymentSessionsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -151,49 +151,62 @@ export interface UserAuthOperations {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
+ * via the `definition` "orders".
  */
-export interface Media {
+export interface Order {
   id: number;
-  prefix?: string | null;
-  alt?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    card?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    full?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
+  orderNumber?: number | null;
+  customerName?: string | null;
+  customerPhone?: string | null;
+  paymentStatus: 'pending' | 'paid' | 'failed' | 'cancelled';
+  fulfilmentStatus?: ('new' | 'packed' | 'posted' | 'collected') | null;
+  customer: {
+    name: string;
+    email: string;
+    phone: string;
+    address?: {
+      line1?: string | null;
+      line2?: string | null;
+      city?: string | null;
+      postalCode?: string | null;
     };
   };
+  lines: {
+    book?: (number | null) | Book;
+    title: string;
+    /**
+     * סכום בשקלים/דולרים/יורו — עד שתי ספרות עשרוניות.
+     */
+    unitPrice: number;
+    currency: 'ILS' | 'EUR' | 'USD';
+    quantity: number;
+    shippingUnits: number;
+    id?: string | null;
+  }[];
+  currency: 'ILS' | 'EUR' | 'USD';
+  /**
+   * סכום בשקלים/דולרים/יורו — עד שתי ספרות עשרוניות.
+   */
+  subtotal: number;
+  /**
+   * סכום בשקלים/דולרים/יורו — עד שתי ספרות עשרוניות.
+   */
+  shippingCost: number;
+  /**
+   * סכום בשקלים/דולרים/יורו — עד שתי ספרות עשרוניות.
+   */
+  total: number;
+  formattedTotal?: string | null;
+  shippingZone: string;
+  destinationCountry: string;
+  isPickup?: boolean | null;
+  locale: 'he' | 'en' | 'fr';
+  provider: string;
+  providerRef?: string | null;
+  paidAt?: string | null;
+  publicToken: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -320,6 +333,52 @@ export interface Book {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  prefix?: string | null;
+  alt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    card?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    full?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "series".
  */
 export interface Series {
@@ -375,38 +434,12 @@ export interface Category {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "lessons".
+ * via the `definition` "announcements".
  */
-export interface Lesson {
-  id: number;
-  title: string;
-  series: number | Series;
-  youtubeId?: string | null;
-  /**
-   * מפתח הקובץ באחסון האובייקטים — לא הקובץ עצמו.
-   */
-  audioKey?: string | null;
-  recordedAt?: string | null;
-  language?: ('he' | 'fr') | null;
-  durationSeconds?: number | null;
-  /**
-   * חותמת הזמן במקור הסנכרון; מונעת עדכון כפול בסנכרון חוזר.
-   */
-  sourceUpdatedAt?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "articles".
- */
-export interface Article {
+export interface Announcement {
   id: number;
   displayTitle?: string | null;
   displayTitleLocale?: string | null;
-  /**
-   * רבים ממאמרי הפרשה בצרפתית קיימים רק בצרפתית — אין צורך למלא כותרת בעברית אם הכתבה מעולם לא נכתבה בעברית.
-   */
   title?: string | null;
   body?: {
     root: {
@@ -423,74 +456,46 @@ export interface Article {
     };
     [k: string]: unknown;
   } | null;
-  publishedAt?: string | null;
-  type: 'parsha' | 'holiday' | 'general';
-  parsha?:
-    | (
-        | 'בראשית'
-        | 'נח'
-        | 'לך לך'
-        | 'וירא'
-        | 'חיי שרה'
-        | 'תולדות'
-        | 'ויצא'
-        | 'וישלח'
-        | 'וישב'
-        | 'מקץ'
-        | 'ויגש'
-        | 'ויחי'
-        | 'שמות'
-        | 'וארא'
-        | 'בא'
-        | 'בשלח'
-        | 'יתרו'
-        | 'משפטים'
-        | 'תרומה'
-        | 'תצוה'
-        | 'כי תשא'
-        | 'ויקהל'
-        | 'פקודי'
-        | 'ויקרא'
-        | 'צו'
-        | 'שמיני'
-        | 'תזריע'
-        | 'מצורע'
-        | 'אחרי מות'
-        | 'קדושים'
-        | 'אמור'
-        | 'בהר'
-        | 'בחקתי'
-        | 'במדבר'
-        | 'נשא'
-        | 'בהעלתך'
-        | 'שלח'
-        | 'קרח'
-        | 'חקת'
-        | 'בלק'
-        | 'פינחס'
-        | 'מטות'
-        | 'מסעי'
-        | 'דברים'
-        | 'ואתחנן'
-        | 'עקב'
-        | 'ראה'
-        | 'שופטים'
-        | 'כי תצא'
-        | 'כי תבוא'
-        | 'נצבים'
-        | 'וילך'
-        | 'האזינו'
-        | 'וזאת הברכה'
-      )
-    | null;
-  holiday?:
-    ('ימים נוראים' | 'סוכות' | 'חנוכה' | 'פורים' | 'פסח' | 'שבועות' | 'ט״ו בשבט' | 'י״ז בתמוז ותשעה באב') | null;
-  legacyUrls?:
-    | {
-        url: string;
-        id?: string | null;
-      }[]
-    | null;
+  image?: (number | null) | Media;
+  link?: {
+    label?: string | null;
+    url?: string | null;
+  };
+  startsAt: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events".
+ */
+export interface Event {
+  id: number;
+  displayTitle?: string | null;
+  displayTitleLocale?: string | null;
+  title?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  image?: (number | null) | Media;
+  link?: {
+    label?: string | null;
+    url?: string | null;
+  };
+  startsAt: string;
+  location?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -663,12 +668,38 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "announcements".
+ * via the `definition` "lessons".
  */
-export interface Announcement {
+export interface Lesson {
+  id: number;
+  title: string;
+  series: number | Series;
+  youtubeId?: string | null;
+  /**
+   * מפתח הקובץ באחסון האובייקטים — לא הקובץ עצמו.
+   */
+  audioKey?: string | null;
+  recordedAt?: string | null;
+  language?: ('he' | 'fr') | null;
+  durationSeconds?: number | null;
+  /**
+   * חותמת הזמן במקור הסנכרון; מונעת עדכון כפול בסנכרון חוזר.
+   */
+  sourceUpdatedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articles".
+ */
+export interface Article {
   id: number;
   displayTitle?: string | null;
   displayTitleLocale?: string | null;
+  /**
+   * רבים ממאמרי הפרשה בצרפתית קיימים רק בצרפתית — אין צורך למלא כותרת בעברית אם הכתבה מעולם לא נכתבה בעברית.
+   */
   title?: string | null;
   body?: {
     root: {
@@ -685,46 +716,87 @@ export interface Announcement {
     };
     [k: string]: unknown;
   } | null;
-  image?: (number | null) | Media;
-  link?: {
-    label?: string | null;
-    url?: string | null;
-  };
-  startsAt: string;
+  publishedAt?: string | null;
+  type: 'parsha' | 'holiday' | 'general';
+  parsha?:
+    | (
+        | 'בראשית'
+        | 'נח'
+        | 'לך לך'
+        | 'וירא'
+        | 'חיי שרה'
+        | 'תולדות'
+        | 'ויצא'
+        | 'וישלח'
+        | 'וישב'
+        | 'מקץ'
+        | 'ויגש'
+        | 'ויחי'
+        | 'שמות'
+        | 'וארא'
+        | 'בא'
+        | 'בשלח'
+        | 'יתרו'
+        | 'משפטים'
+        | 'תרומה'
+        | 'תצוה'
+        | 'כי תשא'
+        | 'ויקהל'
+        | 'פקודי'
+        | 'ויקרא'
+        | 'צו'
+        | 'שמיני'
+        | 'תזריע'
+        | 'מצורע'
+        | 'אחרי מות'
+        | 'קדושים'
+        | 'אמור'
+        | 'בהר'
+        | 'בחקתי'
+        | 'במדבר'
+        | 'נשא'
+        | 'בהעלתך'
+        | 'שלח'
+        | 'קרח'
+        | 'חקת'
+        | 'בלק'
+        | 'פינחס'
+        | 'מטות'
+        | 'מסעי'
+        | 'דברים'
+        | 'ואתחנן'
+        | 'עקב'
+        | 'ראה'
+        | 'שופטים'
+        | 'כי תצא'
+        | 'כי תבוא'
+        | 'נצבים'
+        | 'וילך'
+        | 'האזינו'
+        | 'וזאת הברכה'
+      )
+    | null;
+  holiday?:
+    ('ימים נוראים' | 'סוכות' | 'חנוכה' | 'פורים' | 'פסח' | 'שבועות' | 'ט״ו בשבט' | 'י״ז בתמוז ותשעה באב') | null;
+  legacyUrls?:
+    | {
+        url: string;
+        id?: string | null;
+      }[]
+    | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "events".
+ * via the `definition` "paymentEvents".
  */
-export interface Event {
+export interface PaymentEvent {
   id: number;
-  displayTitle?: string | null;
-  displayTitleLocale?: string | null;
-  title?: string | null;
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  image?: (number | null) | Media;
-  link?: {
-    label?: string | null;
-    url?: string | null;
-  };
-  startsAt: string;
-  location?: string | null;
+  providerEventId: string;
+  provider: string;
+  order: number | Order;
+  status: 'paid' | 'failed' | 'cancelled';
   updatedAt: string;
   createdAt: string;
 }
@@ -742,78 +814,6 @@ export interface Cart {
         id?: string | null;
       }[]
     | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "orders".
- */
-export interface Order {
-  id: number;
-  orderNumber?: number | null;
-  customerName?: string | null;
-  customerPhone?: string | null;
-  paymentStatus: 'pending' | 'paid' | 'failed' | 'cancelled';
-  fulfilmentStatus?: ('new' | 'packed' | 'posted' | 'collected') | null;
-  customer: {
-    name: string;
-    email: string;
-    phone: string;
-    address?: {
-      line1?: string | null;
-      line2?: string | null;
-      city?: string | null;
-      postalCode?: string | null;
-    };
-  };
-  lines: {
-    book?: (number | null) | Book;
-    title: string;
-    /**
-     * סכום בשקלים/דולרים/יורו — עד שתי ספרות עשרוניות.
-     */
-    unitPrice: number;
-    currency: 'ILS' | 'EUR' | 'USD';
-    quantity: number;
-    shippingUnits: number;
-    id?: string | null;
-  }[];
-  currency: 'ILS' | 'EUR' | 'USD';
-  /**
-   * סכום בשקלים/דולרים/יורו — עד שתי ספרות עשרוניות.
-   */
-  subtotal: number;
-  /**
-   * סכום בשקלים/דולרים/יורו — עד שתי ספרות עשרוניות.
-   */
-  shippingCost: number;
-  /**
-   * סכום בשקלים/דולרים/יורו — עד שתי ספרות עשרוניות.
-   */
-  total: number;
-  formattedTotal?: string | null;
-  shippingZone: string;
-  destinationCountry: string;
-  isPickup?: boolean | null;
-  locale: 'he' | 'en' | 'fr';
-  provider: string;
-  providerRef?: string | null;
-  paidAt?: string | null;
-  publicToken: string;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "paymentEvents".
- */
-export interface PaymentEvent {
-  id: number;
-  providerEventId: string;
-  provider: string;
-  order: number | Order;
-  status: 'paid' | 'failed' | 'cancelled';
   updatedAt: string;
   createdAt: string;
 }
@@ -886,8 +886,8 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
-        relationTo: 'media';
-        value: number | Media;
+        relationTo: 'orders';
+        value: number | Order;
       } | null)
     | ({
         relationTo: 'books';
@@ -896,6 +896,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'categories';
         value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'announcements';
+        value: number | Announcement;
+      } | null)
+    | ({
+        relationTo: 'events';
+        value: number | Event;
+      } | null)
+    | ({
+        relationTo: 'pages';
+        value: number | Page;
       } | null)
     | ({
         relationTo: 'series';
@@ -910,28 +922,16 @@ export interface PayloadLockedDocument {
         value: number | Article;
       } | null)
     | ({
-        relationTo: 'pages';
-        value: number | Page;
-      } | null)
-    | ({
-        relationTo: 'announcements';
-        value: number | Announcement;
-      } | null)
-    | ({
-        relationTo: 'events';
-        value: number | Event;
-      } | null)
-    | ({
-        relationTo: 'carts';
-        value: number | Cart;
-      } | null)
-    | ({
-        relationTo: 'orders';
-        value: number | Order;
+        relationTo: 'media';
+        value: number | Media;
       } | null)
     | ({
         relationTo: 'paymentEvents';
         value: number | PaymentEvent;
+      } | null)
+    | ({
+        relationTo: 'carts';
+        value: number | Cart;
       } | null)
     | ({
         relationTo: 'mockPaymentSessions';
@@ -985,56 +985,55 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media_select".
+ * via the `definition` "orders_select".
  */
-export interface MediaSelect<T extends boolean = true> {
-  prefix?: T;
-  alt?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
-  sizes?:
+export interface OrdersSelect<T extends boolean = true> {
+  orderNumber?: T;
+  customerName?: T;
+  customerPhone?: T;
+  paymentStatus?: T;
+  fulfilmentStatus?: T;
+  customer?:
     | T
     | {
-        thumbnail?:
+        name?: T;
+        email?: T;
+        phone?: T;
+        address?:
           | T
           | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        card?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        full?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
+              line1?: T;
+              line2?: T;
+              city?: T;
+              postalCode?: T;
             };
       };
+  lines?:
+    | T
+    | {
+        book?: T;
+        title?: T;
+        unitPrice?: T;
+        currency?: T;
+        quantity?: T;
+        shippingUnits?: T;
+        id?: T;
+      };
+  currency?: T;
+  subtotal?: T;
+  shippingCost?: T;
+  total?: T;
+  formattedTotal?: T;
+  shippingZone?: T;
+  destinationCountry?: T;
+  isPickup?: T;
+  locale?: T;
+  provider?: T;
+  providerRef?: T;
+  paidAt?: T;
+  publicToken?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1103,55 +1102,42 @@ export interface CategoriesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "series_select".
+ * via the `definition` "announcements_select".
  */
-export interface SeriesSelect<T extends boolean = true> {
-  displayTitle?: T;
-  displayTitleLocale?: T;
-  title?: T;
-  description?: T;
-  relatedBook?: T;
-  youtubePlaylistId?: T;
-  language?: T;
-  order?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "lessons_select".
- */
-export interface LessonsSelect<T extends boolean = true> {
-  title?: T;
-  series?: T;
-  youtubeId?: T;
-  audioKey?: T;
-  recordedAt?: T;
-  language?: T;
-  durationSeconds?: T;
-  sourceUpdatedAt?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "articles_select".
- */
-export interface ArticlesSelect<T extends boolean = true> {
+export interface AnnouncementsSelect<T extends boolean = true> {
   displayTitle?: T;
   displayTitleLocale?: T;
   title?: T;
   body?: T;
-  publishedAt?: T;
-  type?: T;
-  parsha?: T;
-  holiday?: T;
-  legacyUrls?:
+  image?: T;
+  link?:
     | T
     | {
+        label?: T;
         url?: T;
-        id?: T;
       };
+  startsAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "events_select".
+ */
+export interface EventsSelect<T extends boolean = true> {
+  displayTitle?: T;
+  displayTitleLocale?: T;
+  title?: T;
+  description?: T;
+  image?: T;
+  link?:
+    | T
+    | {
+        label?: T;
+        url?: T;
+      };
+  startsAt?: T;
+  location?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1295,42 +1281,120 @@ export interface PagesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "announcements_select".
+ * via the `definition` "series_select".
  */
-export interface AnnouncementsSelect<T extends boolean = true> {
+export interface SeriesSelect<T extends boolean = true> {
   displayTitle?: T;
   displayTitleLocale?: T;
   title?: T;
-  body?: T;
-  image?: T;
-  link?:
-    | T
-    | {
-        label?: T;
-        url?: T;
-      };
-  startsAt?: T;
+  description?: T;
+  relatedBook?: T;
+  youtubePlaylistId?: T;
+  language?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "events_select".
+ * via the `definition` "lessons_select".
  */
-export interface EventsSelect<T extends boolean = true> {
+export interface LessonsSelect<T extends boolean = true> {
+  title?: T;
+  series?: T;
+  youtubeId?: T;
+  audioKey?: T;
+  recordedAt?: T;
+  language?: T;
+  durationSeconds?: T;
+  sourceUpdatedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "articles_select".
+ */
+export interface ArticlesSelect<T extends boolean = true> {
   displayTitle?: T;
   displayTitleLocale?: T;
   title?: T;
-  description?: T;
-  image?: T;
-  link?:
+  body?: T;
+  publishedAt?: T;
+  type?: T;
+  parsha?: T;
+  holiday?: T;
+  legacyUrls?:
     | T
     | {
-        label?: T;
         url?: T;
+        id?: T;
       };
-  startsAt?: T;
-  location?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media_select".
+ */
+export interface MediaSelect<T extends boolean = true> {
+  prefix?: T;
+  alt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        card?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        full?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "paymentEvents_select".
+ */
+export interface PaymentEventsSelect<T extends boolean = true> {
+  providerEventId?: T;
+  provider?: T;
+  order?: T;
+  status?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -1347,70 +1411,6 @@ export interface CartsSelect<T extends boolean = true> {
         quantity?: T;
         id?: T;
       };
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "orders_select".
- */
-export interface OrdersSelect<T extends boolean = true> {
-  orderNumber?: T;
-  customerName?: T;
-  customerPhone?: T;
-  paymentStatus?: T;
-  fulfilmentStatus?: T;
-  customer?:
-    | T
-    | {
-        name?: T;
-        email?: T;
-        phone?: T;
-        address?:
-          | T
-          | {
-              line1?: T;
-              line2?: T;
-              city?: T;
-              postalCode?: T;
-            };
-      };
-  lines?:
-    | T
-    | {
-        book?: T;
-        title?: T;
-        unitPrice?: T;
-        currency?: T;
-        quantity?: T;
-        shippingUnits?: T;
-        id?: T;
-      };
-  currency?: T;
-  subtotal?: T;
-  shippingCost?: T;
-  total?: T;
-  formattedTotal?: T;
-  shippingZone?: T;
-  destinationCountry?: T;
-  isPickup?: T;
-  locale?: T;
-  provider?: T;
-  providerRef?: T;
-  paidAt?: T;
-  publicToken?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "paymentEvents_select".
- */
-export interface PaymentEventsSelect<T extends boolean = true> {
-  providerEventId?: T;
-  provider?: T;
-  order?: T;
-  status?: T;
   updatedAt?: T;
   createdAt?: T;
 }

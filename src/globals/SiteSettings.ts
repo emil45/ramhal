@@ -8,6 +8,7 @@ import { SOCIAL_PLATFORMS, validateSocialLinks, validateSocialLinkUrl } from '..
 export const SiteSettings: GlobalConfig = {
   slug: 'siteSettings',
   label: 'הגדרות האתר',
+  admin: { group: 'הגדרות' },
   hooks: {
     afterChange: [revalidateStorefront],
   },
