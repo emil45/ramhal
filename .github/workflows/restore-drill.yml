@@ -1,7 +1,7 @@
 name: restore-drill
 
-# Proves the second backup mechanism (.github/workflows/backup.yml,
-# docs/DECISIONS.md §11) actually restores, instead of leaving that as a
+# Proves the dumps in the ramhal-backups bucket (docs/DECISIONS.md §11)
+# actually restore, instead of leaving that as a
 # documented but never-executed hypothesis (docs/RECOVERY.md). It restores into
 # a throwaway postgres:18 service container that lives and dies with this job,
 # so it touches no real database and spends none of Neon's transfer allowance.

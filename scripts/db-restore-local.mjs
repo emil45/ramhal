@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Rebuilds the local databases from the newest nightly backup, sanitised.
+// Rebuilds the local databases from the newest backup, sanitised.
 // `npm run db:restore-local`. Both DATABASE_URI (ramhal, dev and build) and
 // TEST_DATABASE_URI (ramhal_test, vitest) are overwritten — see
 // docs/DECISIONS.md §5 for why local work never touches Neon.

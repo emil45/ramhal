@@ -62,7 +62,7 @@ publishing — no collection uses drafts. A Payload write made outside a Next re
 one-off scripts, tests) passes `context: SKIP_STOREFRONT_REVALIDATION`; without it the hook throws
 rather than skipping quietly. Only the visitor's own pages — cart, checkout, checkout return, order,
 mock payment — plus admin and the API render per request. **Vercel**, Frankfurt region. **Neon Postgres** holds production and nothing else. **Only two things ever
-connect to Neon: Vercel's deployed app (its build and its runtime) and the nightly `pg_dump`.**
+connect to Neon: Vercel's deployed app (its build and its runtime).**
 Local development, `next build` and the test suite run against a local PostgreSQL 18 restored from
 the latest backup and sanitised of customer data (`npm run db:restore-local`; databases `ramhal` and
 `ramhal_test`). Why: Neon's free plan meters 5 GB of network transfer per month for the whole
@@ -137,10 +137,12 @@ the exact production origin); previews cannot authenticate at all right now.
 
 ## 11. Backups & production verification
 
-Two independent recovery mechanisms: Neon's own point-in-time restore (a few hours of history on the
-free plan) and a nightly `pg_dump` to the private R2 bucket `ramhal-backups`, kept two weeks
-(`.github/workflows/backup.yml`). Only the backup workflow's credential can write there; the
-restore drill, the local restore and the app's own status check read with a separate read-only one.
+Recovery is Neon's own point-in-time restore (a few hours of history on the free plan). There was a
+second mechanism, a nightly `pg_dump` to the private R2 bucket `ramhal-backups`; it was removed
+because every run read the whole database over Neon's metered transfer (§5). The dumps already in
+the bucket remain, frozen at the date of the last run: the restore drill, the local restore and the
+app's own status check still read them with a read-only credential, and `backup.ageHours` on
+`/api/diagnostics` grows without bound.
 The restore drill restores into a throwaway Postgres container, never a Neon branch.
 Procedure for both: `docs/RECOVERY.md`. **A claim about production is established through the live
 URL or through what the running app reports about itself — never through a database tool connection

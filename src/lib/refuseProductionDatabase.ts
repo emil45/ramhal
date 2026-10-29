@@ -21,7 +21,7 @@ export function assertNotProductionDatabase(host: string, guidance: string): voi
   }
 }
 
-// Neon is only ever reached by Vercel's deployed app and the nightly backup
+// Neon is only ever reached by Vercel's deployed app
 // (docs/DECISIONS.md §5): its free plan meters network transfer for the whole
 // project, and local work, builds and tests used to exhaust it.
 const NEON_HOST_SUFFIX = '.neon.tech'

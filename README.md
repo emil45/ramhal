@@ -13,7 +13,7 @@ shadcn/ui, React 19. Node 22.x (`.nvmrc` pins the exact development version).
 ## Environments
 
 Hosted on **Vercel** (Frankfurt function region). **Neon Postgres** holds production only, and
-only Vercel's app and the nightly backup connect to it (`docs/DECISIONS.md` §5). Everything else
+only Vercel's app connects to it (`docs/DECISIONS.md` §5). Everything else
 runs on a local PostgreSQL 18 restored from the latest backup:
 
 | Database | Used by |
@@ -60,9 +60,9 @@ uploads with no `S3_*` variables set land in `media/` at the repo root, which is
 
 ## Backups and restore
 
-Two independent mechanisms: Neon's own point-in-time restore (a few hours of history on the free
-plan) and a nightly `pg_dump` to R2, kept two weeks
-(`.github/workflows/backup.yml`). Full restore procedure, including recovering admin access when
+Neon's own point-in-time restore (a few hours of history on the free plan) is the only live
+recovery mechanism; the scheduled `pg_dump` was removed because it spent Neon's metered transfer
+(`docs/DECISIONS.md` §11). The dumps already in R2 stay as they are. Full restore procedure, including recovering admin access when
 nobody can sign in at all: `docs/RECOVERY.md`.
 
 ## Auth

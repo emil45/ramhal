@@ -114,9 +114,9 @@ exactly what Situation B is for.
 
 ## Situation B: it's been longer than that, or Situation A's window has already passed
 
-A separate, independent copy exists outside Neon entirely: a nightly `pg_dump` uploaded to the
-private Cloudflare R2 bucket `ramhal-backups` (`.github/workflows/backup.yml`), kept for two
-weeks. This is slower and more manual than Situation A, but it doesn't depend on Neon's own
+The only copy outside Neon is the last `pg_dump` uploaded to the private Cloudflare R2 bucket
+`ramhal-backups` before the scheduled backup was removed (docs/DECISIONS.md §11). It is frozen at
+that date, so it only helps for a problem that can be fixed with older data. This is slower and more manual than Situation A, but it doesn't depend on Neon's own
 history at all — a problem with Neon's infrastructure, not just this database's history window,
 can't take out both copies at once, and reading it back never spends Neon's transfer allowance.
 
