@@ -47,9 +47,6 @@ actionable without reading anything else. Grouped, not ordered by priority withi
 - **Owner actions after the R2 move:** revoke the admin Cloudflare token; delete the Neon `testing`
   branch; empty the Neon media and backup buckets after a week on R2.
 
-- **The cover of מחזור המלך המשפט (Media 19) is broken on the live site.** Its row names
-  `machzor-hamelech-hamishpat-2026-09-06*.webp`; the objects in R2 are `…2026-09-7*.webp`, so
-  `/api/media/file/…-800x1131.webp` answers 500. Rename the R2 objects or the row.
 - **Four book photos still need a book** (`docs/reports/TASK-50.md`): the blue boxed set (two shots), the
   French "La métaphysique de l'unité chez le Ramhal", and a new מחול לצדיקים shot (it already has a cover).
   Add them with the same script pattern once the owner names the books.

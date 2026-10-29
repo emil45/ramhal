@@ -31,7 +31,5 @@ checked each answers on the public URL. Why the uploads were lost was not establ
 - The processing pipeline is not reproducible from the repo.
 
 ## Still open
-- The existing מחזור המלך המשפט cover (Media 19) is broken on the live site: its row says `…2026-09-06…`, the R2 key is
-  `…2026-09-7…` (`/api/media/file/…-800x1131.webp` answers 500). Found while checking, not caused by this task.
 - Photos held back until the owner says which book they are: 2875 and 2877 (blue boxed set), 2928 (French
   "La métaphysique de l'unité chez le Ramhal"), 2915 (מחול לצדיקים, which already has a cover).
