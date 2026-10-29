@@ -363,6 +363,17 @@ textarea {
   font-weight: 600;
 }
 
+/* The rich-text editor has no frame of its own, so an empty one looks like blank page rather than a field to type in. */
+.rich-text-lexical__wrap {
+  border: 1px solid var(--theme-elevation-450);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.rich-text-lexical .editor-scroller {
+  min-height: 8rem;
+}
+
 /* A form this wide is hard to read across, and a one-word value sits in a box a metre long. */
 .document-fields__fields {
   max-width: 64rem;
