@@ -11,10 +11,11 @@
  * --color-base-0 through --color-base-1000 (confirmed the same way: there
  * is no separate brand/primary colour token in this version). Retinting
  * that one scale, rather than chasing individual component classes, is
- * what actually re-colours the whole panel. The success, error and warning
- * scales derive from their own, separate tokens and are left alone —
+ * what actually re-colours the whole panel. The error and warning scales
+ * derive from their own, separate tokens and are left alone —
  * docs/DESIGN.md keeps an error from ever looking like a brand colour, and
- * the same reasoning applies here.
+ * the same reasoning applies here. Success is the one exception, set below:
+ * Payload's is blue, which reads as information, not as "done".
  *
  * The tint is deliberately light (6-14%): DESIGN.md's own `paper`/`paper-deep`
  * are barely-tinted near-whites (oklch chroma 0.004-0.018) for the same
@@ -163,6 +164,32 @@
   --admin-info-text: #154a73;
 }
 
+/* Payload's "success" colour is blue, so the "saved" message read as information.
+   Success is green here; the ramp runs from near-white (50) to near-black (950) around
+   --admin-success, the same shape as Payload's own. */
+:root {
+  --admin-success: #2e7d32;
+  --color-success-50: color-mix(in oklch, var(--admin-success), white 92%);
+  --color-success-100: color-mix(in oklch, var(--admin-success), white 82%);
+  --color-success-150: color-mix(in oklch, var(--admin-success), white 72%);
+  --color-success-200: color-mix(in oklch, var(--admin-success), white 61%);
+  --color-success-250: color-mix(in oklch, var(--admin-success), white 51%);
+  --color-success-300: color-mix(in oklch, var(--admin-success), white 41%);
+  --color-success-350: color-mix(in oklch, var(--admin-success), white 31%);
+  --color-success-400: color-mix(in oklch, var(--admin-success), white 20%);
+  --color-success-450: color-mix(in oklch, var(--admin-success), white 10%);
+  --color-success-500: var(--admin-success);
+  --color-success-550: color-mix(in oklch, var(--admin-success), black 10%);
+  --color-success-600: color-mix(in oklch, var(--admin-success), black 20%);
+  --color-success-650: color-mix(in oklch, var(--admin-success), black 29%);
+  --color-success-700: color-mix(in oklch, var(--admin-success), black 39%);
+  --color-success-750: color-mix(in oklch, var(--admin-success), black 49%);
+  --color-success-800: color-mix(in oklch, var(--admin-success), black 59%);
+  --color-success-850: color-mix(in oklch, var(--admin-success), black 68%);
+  --color-success-900: color-mix(in oklch, var(--admin-success), black 78%);
+  --color-success-950: color-mix(in oklch, var(--admin-success), black 88%);
+}
+
 /* Field hints and labels. The default hint colour measures 2.5:1. */
 .field-description {
   color: var(--theme-elevation-600);
@@ -258,6 +285,13 @@ textarea {
   font-weight: 600;
 }
 
+/* Payload gives every cell a 150px minimum, which at the larger type pushes a seven-column table
+   past a laptop screen and clips the last column. */
+.table th,
+.table td {
+  min-width: 6rem;
+}
+
 /* Zebra striping put grey badges on grey rows, where they disappear. */
 .table tbody tr:nth-child(odd) {
   background: transparent;
@@ -334,13 +368,6 @@ textarea {
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-block-end: 1rem;
-}
-
-.quick-filters__hint {
-  flex-basis: 100%;
-  margin: 0;
-  color: var(--theme-elevation-600);
-  font-size: 0.9375rem;
 }
 
 .quick-filters__link {
@@ -421,4 +448,108 @@ textarea {
    text field takes no direction option, so the order form's phone input is addressed by its id. */
 #field-customer__phone {
   direction: ltr;
+}
+
+/* Dashboard */
+.dashboard {
+  padding: 2rem;
+}
+
+.dashboard h1 {
+  margin-block-end: 0.25rem;
+}
+
+.dashboard h2 {
+  margin-block-end: 0.75rem;
+}
+
+.dashboard__intro,
+.dashboard__empty {
+  color: var(--theme-elevation-600);
+}
+
+.dashboard__intro {
+  margin-block-end: 1.5rem;
+}
+
+.dashboard__counts {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  margin-block-end: 2rem;
+}
+
+.dashboard__count {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 4px;
+  background: var(--theme-elevation-50);
+  color: var(--theme-text);
+  text-decoration: none;
+}
+
+.dashboard__count:hover {
+  border-color: var(--teal);
+}
+
+.dashboard__count-number {
+  font-size: 2rem;
+  font-weight: 600;
+}
+
+/* A count above zero is a job waiting. */
+.dashboard__count--attention {
+  border-color: var(--admin-attention-text);
+}
+
+.dashboard__count--attention .dashboard__count-number {
+  color: var(--admin-attention-text);
+}
+
+.dashboard__columns {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  margin-block-end: 2rem;
+}
+
+.dashboard__list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dashboard__list a {
+  color: var(--theme-text);
+}
+
+.dashboard__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.dashboard__actions a {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--teal);
+  border-radius: 4px;
+  color: var(--teal-deep);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.dashboard__actions a:hover {
+  background: var(--teal);
+  color: #fff;
+}
+
+/* A phone number broken across two lines is harder to read than a wider column. */
+.left-to-right-cell {
+  white-space: nowrap;
 }

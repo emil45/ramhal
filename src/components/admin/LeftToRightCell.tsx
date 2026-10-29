@@ -4,5 +4,9 @@ import type { DefaultCellComponentProps } from 'payload'
  * Without its own direction the bidirectional algorithm reverses the groups ("+33 6 12 34" reads "34 12 6 33+"). */
 export function LeftToRightCell({ cellData }: DefaultCellComponentProps) {
   if (typeof cellData !== 'string' || !cellData) return null
-  return <bdi dir="ltr">{cellData}</bdi>
+  return (
+    <bdi dir="ltr" className="left-to-right-cell">
+      {cellData}
+    </bdi>
+  )
 }
