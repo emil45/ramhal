@@ -127,3 +127,9 @@
   border-radius: 3px;
   background: #fff;
 }
+
+/* The logo file carries transparent padding of its own, so Payload's default
+   two-line gap under the brand reads as a hole above the title. */
+.login__brand {
+  margin-bottom: 0;
+}
