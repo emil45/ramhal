@@ -47,10 +47,9 @@ actionable without reading anything else. Grouped, not ordered by priority withi
 - **Owner actions after the R2 move:** revoke the admin Cloudflare token; delete the Neon `testing`
   branch; empty the Neon media and backup buckets after a week on R2.
 
-- **Upload the photographed book covers to production** (`docs/reports/TASK-50.md`): run
-  `scripts/one-off/TASK-50-book-cover-photos.ts` as its header describes, then save any item in the admin so the
-  cached storefront refreshes. Four photos wait for the owner to name the book: the blue boxed set, the French
-  "La métaphysique de l'unité chez le Ramhal", and a new מחול לצדיקים shot.
+- **Four book photos still need a book** (`docs/reports/TASK-50.md`): the blue boxed set (two shots), the
+  French "La métaphysique de l'unité chez le Ramhal", and a new מחול לצדיקים shot (it already has a cover).
+  Add them with the same script pattern once the owner names the books.
 
 ## Store & payments
 

@@ -15,7 +15,10 @@
 ## Verified
 `tsc` clean; `eslint` 0 errors; `vitest` 398 passed; `next build` ok. The script ran against the local database
 and the book page was checked in a browser: the cover fills the frame, thumbnails swap it, the selected one is
-ringed. **Not run against production** — needs the owner's credentials.
+ringed. Run against production on 29 October 2026 (database fingerprint `2c951382a7f8`, matching the live
+`/api/diagnostics`): nine books got their cover, five of them a gallery. R2 was written with a temporary
+bucket-scoped key (`ramhal-media-upload-TASK-50-temporary`) that was revoked straight after; the production
+`ramhal-media-rw` key was not touched.
 
 ## Felt wrong
 - Another session committed this task's in-progress files inside `9068c8a` (a homepage fix) while this one was
@@ -23,7 +26,5 @@ ringed. **Not run against production** — needs the owner's credentials.
 - The processing pipeline is not reproducible from the repo.
 
 ## Still open
-- Run the script against production (command in its header), then save anything in the admin so the cached
-  storefront refreshes. Tracked in `docs/BACKLOG.md`.
 - Photos held back until the owner says which book they are: 2875 and 2877 (blue boxed set), 2928 (French
   "La métaphysique de l'unité chez le Ramhal"), 2915 (מחול לצדיקים, which already has a cover).
