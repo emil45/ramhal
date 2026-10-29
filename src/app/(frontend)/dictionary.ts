@@ -47,6 +47,8 @@ const DICTIONARIES = {
       publisherValue: 'מכון רמח״ל',
       shippingNote: 'משלוח מחושב לפי מספר הפריטים ויעד המשלוח, ומוצג במלואו בעגלת הקניות.',
       backToCatalogue: 'חזרה לקטלוג',
+      imagesLabel: 'תמונות הספר',
+      imageOf: (position: number, total: number) => `תמונה ${position} מתוך ${total}`,
     },
     bookCourse: {
       title: 'שיעורים על הספר',
@@ -208,6 +210,8 @@ const DICTIONARIES = {
       publisherValue: 'Machon Ramhal',
       shippingNote: 'Shipping is calculated by item count and destination, shown in full in the cart.',
       backToCatalogue: 'Back to catalogue',
+      imagesLabel: 'Book images',
+      imageOf: (position: number, total: number) => `Image ${position} of ${total}`,
     },
     bookCourse: {
       title: 'Lessons on this book',
@@ -369,6 +373,8 @@ const DICTIONARIES = {
       publisherValue: 'Institut Ramhal',
       shippingNote: 'Les frais de port sont calculés selon le nombre d’articles et la destination, indiqués en détail dans le panier.',
       backToCatalogue: 'Retour au catalogue',
+      imagesLabel: 'Images du livre',
+      imageOf: (position: number, total: number) => `Image ${position} sur ${total}`,
     },
     bookCourse: {
       title: 'Cours sur ce livre',

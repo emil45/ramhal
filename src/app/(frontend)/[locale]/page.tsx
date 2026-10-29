@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -76,7 +75,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
             <span aria-hidden className="hidden h-64 w-px shrink-0 bg-gold/40 md:block" />
 
             <div className="relative flex aspect-[4/3] min-w-0 flex-1 flex-col overflow-hidden border border-gold/40 bg-teal-deep md:aspect-[3/2] lg:aspect-video">
-              <div className="relative min-h-0 flex-[3]">
+              <div className="relative min-h-0 flex-1">
                 {studyHallImage ? (
                   <PageImage
                     media={studyHallImage}
@@ -87,16 +86,6 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                     priority
                   />
                 ) : null}
-              </div>
-              <div className="relative min-h-0 flex-1 border-t border-gold/70">
-                <Image
-                  src="/home/books-shelf-original.jpg"
-                  alt=""
-                  fill
-                  sizes="(min-width: 1152px) 594px, (min-width: 768px) 50vw, 100vw"
-                  className="object-cover"
-                  priority
-                />
               </div>
               <span aria-hidden className="pointer-events-none absolute inset-2 border border-paper/45" />
             </div>

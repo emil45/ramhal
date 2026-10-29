@@ -4,13 +4,14 @@ import { notFound } from 'next/navigation'
 
 import { AddToCartButton } from '@/components/storefront/AddToCartButton'
 import { BookCourseCallout } from '@/components/storefront/BookCourseCallout'
-import { CoverImage } from '@/components/storefront/CoverImage'
+import { BookImageGallery } from '@/components/storefront/BookImageGallery'
 import { PriceTag } from '@/components/storefront/PriceTag'
 import { RichText } from '@/components/storefront/RichText'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { getDictionary } from '@/app/(frontend)/dictionary'
 import { isPurchasable } from '@/lib/availability'
+import { collectBookImages } from '@/lib/bookImages'
 import { getBookUrlSlugs, getCatalogueBookBySlug } from '@/lib/booksData'
 import { BOOK_SEGMENT, cataloguePath } from '@/lib/routes'
 import { getContactDetails } from '@/lib/siteSettingsData'
@@ -40,6 +41,7 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
   const currency = LOCALE_CONFIG[locale].currency
   const purchasable = isPurchasable(book, currency)
   const course = fullBookCourseForBook(book.urlSlug)
+  const images = collectBookImages(book.cover, book.gallery)
 
   return (
     <div className="page-container py-8 md:py-12">
@@ -53,10 +55,12 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
 
       <div className="grid gap-10 md:grid-cols-[minmax(0,20rem)_1fr] md:gap-14">
         <div className="mx-auto w-56 md:mx-0 md:w-full">
-          <CoverImage
+          <BookImageGallery
             book={{ bookLanguage: book.bookLanguage, categorySlug: book.category?.slug }}
-            cover={typeof book.cover === 'object' ? book.cover : null}
+            images={images}
+            label={dict.book.imagesLabel}
             sizes="320px"
+            thumbnailLabels={images.map((_, index) => dict.book.imageOf(index + 1, images.length))}
             title={book.displayTitle}
           />
         </div>
