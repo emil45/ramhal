@@ -173,6 +173,17 @@ export const Books: CollectionConfig = {
               ],
             },
             {
+              name: 'previewPdf',
+              type: 'upload',
+              label: 'קובץ עיון (PDF)',
+              relationTo: 'media',
+              // The picker would otherwise offer every image on the site.
+              filterOptions: { mimeType: { equals: 'application/pdf' } },
+              admin: {
+                description: 'מבחר עמודים מהספר, או הספר כולו, לעיון באתר. עד 10MB. כשהשדה מלא מופיע בעמוד הספר כפתור ״עיון בספר״.',
+              },
+            },
+            {
               name: 'publishedAt',
               type: 'date',
               label: 'תאריך פרסום',

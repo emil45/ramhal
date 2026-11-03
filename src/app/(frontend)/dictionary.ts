@@ -50,6 +50,9 @@ const DICTIONARIES = {
       imagesLabel: 'תמונות הספר',
       zoomImage: 'הגדלת התמונה',
       closeImage: 'סגירה',
+      preview: 'עיון בספר',
+      previewTitle: (title: string) => `עיון בספר: ${title}`,
+      previewOpenInTab: 'פתיחה בחלון נפרד',
       imageOf: (position: number, total: number) => `תמונה ${position} מתוך ${total}`,
     },
     bookCourse: {
@@ -215,6 +218,9 @@ const DICTIONARIES = {
       imagesLabel: 'Book images',
       zoomImage: 'Enlarge the picture',
       closeImage: 'Close',
+      preview: 'Look inside',
+      previewTitle: (title: string) => `Look inside: ${title}`,
+      previewOpenInTab: 'Open in a new tab',
       imageOf: (position: number, total: number) => `Image ${position} of ${total}`,
     },
     bookCourse: {
@@ -380,6 +386,9 @@ const DICTIONARIES = {
       imagesLabel: 'Images du livre',
       zoomImage: 'Agrandir l’image',
       closeImage: 'Fermer',
+      preview: 'Feuilleter',
+      previewTitle: (title: string) => `Feuilleter : ${title}`,
+      previewOpenInTab: 'Ouvrir dans un nouvel onglet',
       imageOf: (position: number, total: number) => `Image ${position} sur ${total}`,
     },
     bookCourse: {

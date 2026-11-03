@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { AddToCartButton } from '@/components/storefront/AddToCartButton'
 import { BookCourseCallout } from '@/components/storefront/BookCourseCallout'
 import { BookImageGallery } from '@/components/storefront/BookImageGallery'
+import { BookPreviewButton } from '@/components/storefront/BookPreviewButton'
 import { PriceTag } from '@/components/storefront/PriceTag'
 import { RichText } from '@/components/storefront/RichText'
 import { Card, CardContent } from '@/components/ui/card'
@@ -12,6 +13,7 @@ import { Separator } from '@/components/ui/separator'
 import { getDictionary } from '@/app/(frontend)/dictionary'
 import { isPurchasable } from '@/lib/availability'
 import { collectBookImages } from '@/lib/bookImages'
+import { bookPreviewUrl } from '@/lib/bookPreview'
 import { getBookUrlSlugs, getCatalogueBookBySlug } from '@/lib/booksData'
 import { BOOK_SEGMENT, cataloguePath } from '@/lib/routes'
 import { getContactDetails } from '@/lib/siteSettingsData'
@@ -42,6 +44,7 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
   const currency = LOCALE_CONFIG[locale].currency
   const purchasable = isPurchasable(book, currency)
   const images = collectBookImages(book.cover, book.gallery)
+  const previewUrl = bookPreviewUrl(book.previewPdf)
 
   return (
     <div className="page-container py-8 md:py-12">
@@ -101,6 +104,13 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
               </CardContent>
             </Card>
           )}
+
+          {previewUrl ? (
+            <BookPreviewButton
+              url={previewUrl}
+              labels={{ close: dict.book.closeImage, openInTab: dict.book.previewOpenInTab, preview: dict.book.preview, title: dict.book.previewTitle(book.displayTitle) }}
+            />
+          ) : null}
 
           {courses.map((course) => (
             <BookCourseCallout key={course.id} course={course} dict={dict} />

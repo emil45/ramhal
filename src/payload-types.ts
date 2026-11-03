@@ -274,6 +274,10 @@ export interface Book {
       }[]
     | null;
   /**
+   * מבחר עמודים מהספר, או הספר כולו, לעיון באתר. עד 10MB. כשהשדה מלא מופיע בעמוד הספר כפתור ״עיון בספר״.
+   */
+  previewPdf?: (number | null) | Media;
+  /**
    * קובע את הופעת הספר תחת "חדש באתר". השאירו ריק אם תאריך הפרסום האמיתי אינו ידוע.
    */
   publishedAt?: string | null;
@@ -1082,6 +1086,7 @@ export interface BooksSelect<T extends boolean = true> {
         image?: T;
         id?: T;
       };
+  previewPdf?: T;
   publishedAt?: T;
   hebrewYear?: T;
   isbn?: T;
