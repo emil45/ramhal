@@ -10,7 +10,7 @@ type BookPreviewButtonProps = {
 }
 
 /**
- * "Look inside": the book's reading copy in a large dialog, in the browser's
+ * A sample of the book: its PDF in a large dialog, in the browser's
  * own PDF viewer. Phones show only the first page of an embedded PDF, so the
  * link under the viewer opens the whole file in its own tab, where every
  * browser pages through it properly.

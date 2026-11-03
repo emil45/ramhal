@@ -1,4 +1,4 @@
-// Sets a PDF as a book's reading copy (the "Look inside" button on its page).
+// Sets a PDF as a book's reading copy (the sample button on its page).
 // One file per process, read back from its public URL afterwards — same
 // environment and run procedure as TASK-57-attach-book-photo.ts.
 //

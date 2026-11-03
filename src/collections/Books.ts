@@ -175,12 +175,12 @@ export const Books: CollectionConfig = {
             {
               name: 'previewPdf',
               type: 'upload',
-              label: 'קובץ עיון (PDF)',
+              label: 'קובץ דוגמא (PDF)',
               relationTo: 'media',
               // The picker would otherwise offer every image on the site.
               filterOptions: { mimeType: { equals: 'application/pdf' } },
               admin: {
-                description: 'מבחר עמודים מהספר, או הספר כולו, לעיון באתר. עד 10MB. כשהשדה מלא מופיע בעמוד הספר כפתור ״עיון בספר״.',
+                description: 'כמה עמודים מהספר (או הספר כולו) לקריאה באתר. עד 10MB. כשהשדה מלא מופיע בעמוד הספר כפתור ״דוגמא מהספר״.',
               },
             },
             {
