@@ -38,6 +38,8 @@ Not loaded into Claude's context; read it when planning.
 - `upsertBook`'s existing-`importKey` lookup had one unconfirmed miss; verify before trusting `import:books` for a full rebuild.
 - Preview deployments cannot sign in (OAuth redirect is registered for the production origin only).
 
+- `npm test` fails one integration test (`src/lib/locale/legacyRedirects.integration.test.ts`): the local database is restored from a September dump, so it lacks books merged in production since. Local data drifts further with every production edit; decide how local gets a fresh sanitised copy without spending Neon's transfer allowance.
+
 ## Client questions
 - Confirm legacy articles and essays stay unmigrated.
 - Is English built out properly or kept minimal? Is the video/audio archive in this phase?
