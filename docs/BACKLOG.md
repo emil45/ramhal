@@ -47,9 +47,12 @@ actionable without reading anything else. Grouped, not ordered by priority withi
 - **Owner actions after the R2 move:** revoke the admin Cloudflare token; delete the Neon `testing`
   branch; empty the Neon media and backup buckets after a week on R2.
 
-- **Two book photos still need a book** (`docs/reports/TASK-53.md`): the French "La métaphysique de l'unité chez le
-  Ramhal", and a new מחול לצדיקים shot (it already has a cover). Upload them one per process — a script run that
-  creates several Media files in one process loses all but the first from R2 (cause not found).
+- **Photos from the second shoot that match no catalogue book** (`docs/reports/TASK-57.md`): the French "La
+  métaphysique de l'unité chez le Ramhal" (IMG_2928, processed copy in `~/Downloads/ramhal-covers-to-assign/`),
+  "L'essence de la Torah" (IMG_2921, 2923), the French "La voie des justes" (2924, 2925), "The Ramchal Letters"
+  (2926, 2927), גילוי היחוד (2940, 2941), קיצור הכוונות עם ביאור איבי האילן (2904–2906) and בדי האילן (2943). Each needs
+  a book in the catalogue, or the owner saying which existing one it is. Upload them one per process — a script run
+  that creates several Media files in one process loses all but the first from R2 (cause not found).
 
 ## Store & payments
 
