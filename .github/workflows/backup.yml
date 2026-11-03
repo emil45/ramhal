@@ -1,0 +1,71 @@
+name: database-backup
+
+# Independent of Neon's own instant restore, which only reaches 6 hours back on the free plan:
+# a plain pg_dump stored in the private R2 bucket `ramhal-backups`, so a problem with Neon itself
+# cannot take out both copies, and reading a dump back never spends Neon's transfer allowance.
+# `npm run db:restore-local` restores the newest dump, so this job is also what keeps local
+# development data fresh. Every second day: the database is ~40 MB, so this costs about 0.6 GB of
+# Neon's 5 GB monthly transfer. The credentials are static and scoped to that one bucket; only this
+# job's can write, everything that reads (restore drill, the app's status check) uses a read-only one.
+#
+# A failure shows in this repo's Actions tab, and GET /api/diagnostics reports the age of the last
+# successful dump (src/lib/platform/diagnostics.ts), so "are backups running" is answerable without
+# knowing to look here.
+on:
+  schedule:
+    - cron: '0 2 */2 * *' # 02:00 UTC on odd days of the month
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    env:
+      # Unpooled on purpose — Neon's own guidance against running pg_dump
+      # over a pooled (transaction-mode) connection string.
+      DATABASE_URI: ${{ secrets.BACKUP_DATABASE_URI }}
+      BACKUP_ENDPOINT: ${{ secrets.BACKUP_WRITER_S3_ENDPOINT }}
+      BACKUP_BUCKET: ${{ secrets.BACKUP_WRITER_S3_BUCKET }}
+      BACKUP_REGION: ${{ secrets.BACKUP_WRITER_S3_REGION }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.BACKUP_WRITER_S3_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.BACKUP_WRITER_S3_SECRET_ACCESS_KEY }}
+      # R2 does not implement the newer default upload checksums.
+      AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+      AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
+      PG_VERSION: '18'
+      RETENTION_DAYS: 14
+    steps:
+      - name: Install the matching PostgreSQL client
+        run: |
+          sudo apt update
+          yes '' | sudo /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh
+          sudo apt install -y postgresql-client-${{ env.PG_VERSION }}
+          echo "/usr/lib/postgresql/${{ env.PG_VERSION }}/bin" >> "$GITHUB_PATH"
+
+      - name: Dump and compress
+        run: |
+          set -o pipefail
+          : "${DATABASE_URI:?BACKUP_DATABASE_URI secret is not set}"
+          NAME="ramhal-$(date -u +'%Y-%m-%dT%H-%M-%SZ').sql.gz"
+          echo "DUMP_NAME=${NAME}" >> "$GITHUB_ENV"
+          pg_dump "$DATABASE_URI" | gzip > "$NAME"
+
+      - name: Upload to R2
+        run: |
+          aws s3 cp "$DUMP_NAME" "s3://${BACKUP_BUCKET}/${DUMP_NAME}" \
+            --endpoint-url "$BACKUP_ENDPOINT" \
+            --region "$BACKUP_REGION"
+
+      - name: Remove dumps older than the retention window
+        run: |
+          THRESHOLD=$(date -u -d "-${RETENTION_DAYS} days" +%Y-%m-%dT%H:%M:%SZ)
+          aws s3api list-objects-v2 \
+            --endpoint-url "$BACKUP_ENDPOINT" \
+            --region "$BACKUP_REGION" \
+            --bucket "$BACKUP_BUCKET" \
+            --query "Contents[?LastModified<'${THRESHOLD}'].Key" \
+            --output text |
+            tr '\t' '\n' |
+            while read -r key; do
+              [ -n "$key" ] && aws s3 rm "s3://${BACKUP_BUCKET}/${key}" \
+                --endpoint-url "$BACKUP_ENDPOINT" --region "$BACKUP_REGION"
+            done
