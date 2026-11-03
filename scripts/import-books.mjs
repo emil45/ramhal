@@ -12,8 +12,7 @@
 // (`test.server.deps.inline`); `-c vitest.config.ts` reuses that same config
 // (its `resolve.alias` besides) instead of inventing a second one, and
 // `--options.deps.inline=payload-oauth2` repeats the setting directly —
-// needed because a dynamically-imported config graph (see
-// scripts/one-off/TASK-42-narrative-page-images.mjs) doesn't pick up
+// needed because a dynamically-imported config graph does not pick up
 // `test.server.deps`, only vite-node's own server-level `deps.inline` option.
 import { readFile } from 'node:fs/promises'
 

@@ -176,8 +176,8 @@ for the local databases. Never restore into Neon without checking the result fir
 **Production fingerprint.** `database.fingerprint` is a hash of the host: pooled
 `ep-red-tree-b19ry3lo-pooler…` is `2c951382a7f8`, the same endpoint unpooled is `5f4bb4452fb2`.
 
-**One-off script against production** (record of a real change; commit it under
-`scripts/one-off/<date>-<what>.ts` and never rerun it):
+**One-off script against production** (commit it under `scripts/one-off/<date>-<what>.ts` with the
+run date in its header, never rerun it; delete old ones, `git log -- scripts/one-off` keeps the record):
 
 1. Get the string with `scripts/ops.sh neon connection-string production --project-id "$NEON_PROJECT_ID"`
    (unpooled). Never put it in `.env` or a shell profile.
