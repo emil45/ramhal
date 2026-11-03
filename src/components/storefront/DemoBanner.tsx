@@ -13,8 +13,8 @@ export function DemoBanner({ dict }: { dict: Dictionary }) {
 
   return (
     <div role="note" className="sticky top-0 z-50 border-b-[3px] border-gold bg-teal-deep text-paper">
-      <p className="page-container flex flex-wrap items-baseline justify-center gap-x-3 gap-y-0.5 py-2 text-center text-sm font-medium sm:text-base">
-        <span className="rounded-[2px] bg-gold px-2 py-px text-xs font-bold tracking-wide text-foreground">{dict.demo.label}</span>
+      <p className="page-container flex flex-wrap items-baseline justify-center gap-x-3 gap-y-0.5 py-2 text-center text-base font-medium">
+        <span className="rounded-[2px] bg-gold px-2 py-px text-sm font-bold text-foreground">{dict.demo.label}</span>
         <span>{dict.demo.banner}</span>
       </p>
     </div>

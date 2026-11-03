@@ -55,7 +55,7 @@
   --paper-deep: oklch(0.955 0.018 85);
   /* Gold darkened along its own hue: #B08D42 is 3:1 on paper, fine for
      rules and ornaments but too faint for small text. */
-  --gold-ink: color-mix(in oklch, var(--gold) 68%, black);
+  --gold-ink: color-mix(in oklch, var(--gold) 55%, black);
 
   --background: var(--paper);
   --foreground: oklch(0.22 0.02 220);
@@ -68,12 +68,12 @@
   --secondary: oklch(0.96 0.006 85);
   --secondary-foreground: var(--teal-deep);
   --muted: oklch(0.96 0.006 85);
-  --muted-foreground: oklch(0.46 0.02 220);
+  --muted-foreground: oklch(0.4 0.02 220);
   --accent: var(--gold);
   --accent-foreground: oklch(0.99 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.9 0.008 85);
-  --input: oklch(0.82 0.01 85);
+  --input: oklch(0.7 0.01 85);
   --ring: var(--teal);
   --radius: 0.25rem;
 }
@@ -108,18 +108,49 @@
     line-height: 1.65;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground text-base;
   }
   html {
     @apply font-sans;
   }
 }
 
-/* Hebrew at 14px separates letter pairs (ד/ר, ה/ח, כ/ב) that read fine in
-   Latin at the same size — one step up below the sm breakpoint. */
-@media (width < 40rem) {
-  :root {
-    --text-sm: 0.9375rem;
+/* The audience reads at arm's length and includes older visitors: running
+   text never drops below 16px, the smallest caption below 14px. Hebrew at
+   small sizes separates letter pairs (ד/ר, ה/ח, כ/ב) that read fine in Latin. */
+:root {
+  --text-xs: 0.875rem;
+  --text-xs--line-height: 1.5;
+  --text-sm: 1rem;
+  --text-sm--line-height: 1.6;
+  --text-base: 1.125rem;
+  --text-base--line-height: 1.7;
+}
+
+@layer base {
+  html {
+    scroll-padding-top: 6rem;
+  }
+  a,
+  button,
+  [role="button"],
+  summary {
+    -webkit-tap-highlight-color: transparent;
+  }
+  :focus-visible {
+    outline: 3px solid var(--teal);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
@@ -154,7 +185,7 @@
 }
 @utility type-subheading {
   font-family: var(--font-serif);
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 500;
   line-height: 1.5;
 }

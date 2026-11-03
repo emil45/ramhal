@@ -40,9 +40,15 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
         {/* Base UI's popups (the mobile nav sheet) place themselves from this,
             not from the document's dir attribute. */}
         <DirectionProvider direction={direction}>
+          <a
+            href="#main-content"
+            className="sr-only z-[60] rounded-md bg-teal px-5 py-3 text-base font-medium text-primary-foreground focus:not-sr-only focus:absolute focus:start-4 focus:top-4"
+          >
+            {dict.nav.skipToContent}
+          </a>
           <DemoBanner dict={dict} />
           <Header dict={dict} locale={locale} />
-          <main className="flex-1">{children}</main>
+          <main id="main-content" className="flex-1">{children}</main>
           <Footer dict={dict} locale={locale} />
         </DirectionProvider>
       </body>

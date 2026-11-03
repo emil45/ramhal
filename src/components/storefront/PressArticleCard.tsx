@@ -29,7 +29,7 @@ export function PressArticleCard({ article, dateLabel, locale, openLabel, opensI
           </Badge>
         </div>
         <CardAction>
-          <time dateTime={article.publishedAt} className="whitespace-nowrap text-xs text-muted-foreground">
+          <time dateTime={article.publishedAt} className="whitespace-nowrap text-sm text-muted-foreground">
             {dateLabel}
           </time>
         </CardAction>

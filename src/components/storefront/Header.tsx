@@ -24,18 +24,18 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
 
   return (
     <header className="border-b border-border bg-card">
-      <div className="page-container flex h-16 items-center gap-3 md:h-20 md:gap-6">
+      <div className="page-container flex h-20 items-center gap-3 md:h-24 md:gap-6">
         <Link href={localePath(locale, '/')} className="flex items-center gap-3">
-          <Image src="/logo.png" alt="" width={362} height={512} className="h-12 w-auto md:h-16" priority />
-          <span className="font-serif text-xl font-bold text-teal-deep md:text-2xl">{dict.nav.home}</span>
+          <Image src="/logo.png" alt="" width={362} height={512} className="h-14 w-auto md:h-[4.5rem]" priority />
+          <span className="whitespace-nowrap font-serif text-xl font-medium text-teal-deep md:text-2xl">{dict.nav.home}</span>
         </Link>
 
         <nav className="ms-auto hidden items-center gap-1 xl:flex">
-          <Link href={cataloguePath(locale)} className={cn(buttonVariants({ size: 'default' }), 'me-2 px-5')}>
+          <Link href={cataloguePath(locale)} className={cn(buttonVariants({ size: 'default' }), 'me-2 px-6 text-base')}>
             {dict.nav.catalogue}
           </Link>
           {secondaryLinks.map((link) => (
-            <Link key={link.href} href={link.href} className={buttonVariants({ variant: 'ghost' })}>
+            <Link key={link.href} href={link.href} className={cn(buttonVariants({ variant: 'ghost' }), 'px-3 text-base')}>
               {link.label}
             </Link>
           ))}
@@ -43,10 +43,10 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
             href={donationLink.href}
             className={cn(
               buttonVariants({ variant: 'outline' }),
-              'ms-2 border-teal bg-paper-deep text-teal-deep hover:bg-teal-deep hover:text-paper',
+              'ms-2 border-teal bg-paper-deep px-4 text-base text-teal-deep hover:bg-teal-deep hover:text-paper',
             )}
           >
-            <HeartHandshake aria-hidden className="size-4" />
+            <HeartHandshake aria-hidden className="size-5" />
             {donationLink.label}
           </Link>
         </nav>
@@ -60,10 +60,10 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
             aria-label={donationLink.label}
             className={cn(
               buttonVariants({ variant: 'outline' }),
-              'size-10 border-teal bg-paper-deep px-0 text-teal-deep hover:bg-teal-deep hover:text-paper sm:w-auto sm:px-3 xl:hidden',
+              'size-12 border-teal bg-paper-deep px-0 text-base text-teal-deep hover:bg-teal-deep hover:text-paper sm:w-auto sm:px-4 xl:hidden',
             )}
           >
-            <HeartHandshake aria-hidden className="size-4" />
+            <HeartHandshake aria-hidden className="size-5" />
             <span className="hidden sm:inline">{donationLink.label}</span>
           </Link>
           <CartLink href={localePath(locale, '/cart')} locale={locale} />

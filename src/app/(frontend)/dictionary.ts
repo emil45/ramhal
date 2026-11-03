@@ -4,7 +4,7 @@ import type { Locale } from '@/lib/locale/locale'
 // dictionary is the right size. No i18n library earns its keep here.
 const DICTIONARIES = {
   he: {
-    nav: { home: 'מכון רמח״ל', catalogue: 'ספרים', courses: 'שיעורים בספרים', questions: 'שו״ת', ramhal: 'הרמח״ל', chriqui: 'הרב שריקי', beitRamhal: 'בית רמח״ל', donate: 'תרומה', cart: 'עגלה', menu: 'תפריט', closeMenu: 'סגירה', cartLabel: (n: number) => (n === 0 ? 'עגלת הקניות' : n === 1 ? 'עגלת הקניות, פריט אחד' : `עגלת הקניות, ${n} פריטים`) },
+    nav: { home: 'מכון רמח״ל', catalogue: 'ספרים', courses: 'שיעורים בספרים', questions: 'שו״ת', ramhal: 'הרמח״ל', chriqui: 'הרב שריקי', beitRamhal: 'בית רמח״ל', donate: 'תרומה', cart: 'עגלה', menu: 'תפריט', closeMenu: 'סגירה', skipToContent: 'דלג לתוכן', cartLabel: (n: number) => (n === 0 ? 'עגלת הקניות' : n === 1 ? 'עגלת הקניות, פריט אחד' : `עגלת הקניות, ${n} פריטים`) },
     catalogue: {
       title: 'קטלוג הספרים',
       searchPlaceholder: 'חיפוש לפי כותרת…',
@@ -173,7 +173,7 @@ const DICTIONARIES = {
     pages: { tableOfContents: 'בעמוד זה', viewSchedule: 'ללוח השיעורים והתפילות' },
   },
   en: {
-    nav: { home: 'Machon Ramhal', catalogue: 'Books', courses: 'Lessons', questions: 'Q&A', ramhal: 'The Ramhal', chriqui: 'Rabbi Chriqui', beitRamhal: 'Beit Ramhal', donate: 'Donate', cart: 'Cart', menu: 'Menu', closeMenu: 'Close', cartLabel: (n: number) => (n === 0 ? 'Shopping cart' : `Shopping cart, ${n} ${n === 1 ? 'item' : 'items'}`) },
+    nav: { home: 'Machon Ramhal', catalogue: 'Books', courses: 'Lessons', questions: 'Q&A', ramhal: 'The Ramhal', chriqui: 'Rabbi Chriqui', beitRamhal: 'Beit Ramhal', donate: 'Donate', cart: 'Cart', menu: 'Menu', closeMenu: 'Close', skipToContent: 'Skip to content', cartLabel: (n: number) => (n === 0 ? 'Shopping cart' : `Shopping cart, ${n} ${n === 1 ? 'item' : 'items'}`) },
     catalogue: {
       title: 'Book Catalogue',
       searchPlaceholder: 'Search by title…',
@@ -343,7 +343,7 @@ const DICTIONARIES = {
     pages: { tableOfContents: 'On this page', viewSchedule: 'View classes and prayer times' },
   },
   fr: {
-    nav: { home: 'Institut Ramhal', catalogue: 'Livres', courses: 'Cours', questions: 'Questions–réponses', ramhal: 'Le Ramhal', chriqui: 'Rav Chriqui', beitRamhal: 'Beit Ramhal', donate: 'Faire un don', cart: 'Panier', menu: 'Menu', closeMenu: 'Fermer', cartLabel: (n: number) => (n === 0 ? 'Panier' : `Panier, ${n} ${n === 1 ? 'article' : 'articles'}`) },
+    nav: { home: 'Institut Ramhal', catalogue: 'Livres', courses: 'Cours', questions: 'Questions–réponses', ramhal: 'Le Ramhal', chriqui: 'Rav Chriqui', beitRamhal: 'Beit Ramhal', donate: 'Faire un don', cart: 'Panier', menu: 'Menu', closeMenu: 'Fermer', skipToContent: 'Aller au contenu', cartLabel: (n: number) => (n === 0 ? 'Panier' : `Panier, ${n} ${n === 1 ? 'article' : 'articles'}`) },
     catalogue: {
       title: 'Catalogue des livres',
       searchPlaceholder: 'Rechercher un titre…',

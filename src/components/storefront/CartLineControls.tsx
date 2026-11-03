@@ -24,7 +24,7 @@ export function CartLineControls({ bookId, colorId, locale, quantity }: { bookId
   const quantityInputId = `cart-quantity-${bookId}-${colorId ?? 'plain'}`
 
   return (
-    <div className="flex items-end gap-3">
+    <div className="flex flex-wrap items-end gap-4">
       <Field orientation="horizontal" className="w-auto items-center">
         <FieldLabel htmlFor={quantityInputId}>{dict.cart.quantity}</FieldLabel>
         <Input
@@ -33,7 +33,7 @@ export function CartLineControls({ bookId, colorId, locale, quantity }: { bookId
           min={1}
           defaultValue={quantity}
           disabled={isPending}
-          className="w-20"
+          className="w-24"
           onBlur={(event) => {
             const next = Math.max(1, Number(event.currentTarget.value) || 1)
             startTransition(async () => {
@@ -54,7 +54,7 @@ export function CartLineControls({ bookId, colorId, locale, quantity }: { bookId
             router.refresh()
           })
         }}
-        className="text-muted-foreground hover:text-destructive"
+        className="text-foreground hover:text-destructive"
       >
         <Trash2 aria-hidden />
         {dict.cart.remove}

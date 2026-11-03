@@ -106,7 +106,7 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
                   <p className="font-medium text-foreground">{dict.book.unavailableTitle}</p>
                   <p className="text-muted-foreground">{dict.book.unavailableBody}</p>
                   {contact.email ? (
-                    <a href={`mailto:${contact.email}`} className="mt-1 w-fit font-medium text-teal underline-offset-4 hover:underline">
+                    <a href={`mailto:${contact.email}`} className="mt-1 inline-flex min-h-12 w-fit items-center font-medium text-teal underline underline-offset-4 hover:text-teal-deep">
                       {dict.book.contactUs}
                     </a>
                   ) : null}
@@ -185,7 +185,7 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
               </>
             ) : null}
 
-            <p className="text-xs leading-relaxed text-muted-foreground">{dict.book.shippingNote}</p>
+            <p className="text-sm leading-relaxed text-muted-foreground">{dict.book.shippingNote}</p>
           </div>
         </div>
       </div>

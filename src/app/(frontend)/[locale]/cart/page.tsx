@@ -126,7 +126,7 @@ export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) 
               <span className="text-muted-foreground">{dict.cart.shippingEstimate}</span>
               <span className="font-medium tabular-nums">{money(shipping.amount, shipping.currency)}</span>
             </div>
-            <p className="text-xs leading-relaxed text-muted-foreground">{dict.cart.shippingEstimateNote}</p>
+            <p className="text-sm leading-relaxed text-muted-foreground">{dict.cart.shippingEstimateNote}</p>
 
             {remainingForFreeShipping !== null && (
               <p className="rounded-sm bg-paper-deep px-3 py-2 font-medium text-teal-deep">

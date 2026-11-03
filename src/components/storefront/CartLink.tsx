@@ -40,9 +40,9 @@ export function CartLink({ href, locale }: { href: string; locale: Locale }) {
       aria-label={dict.nav.cartLabel(count)}
       className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'relative')}
     >
-      <ShoppingBag className="size-5" aria-hidden />
+      <ShoppingBag className="size-6" aria-hidden />
       {count > 0 ? (
-        <Badge className="absolute -top-1 -end-1 h-5 min-w-5 rounded-full bg-gold px-1 font-bold text-foreground">{count}</Badge>
+        <Badge className="absolute -top-0.5 -end-0.5 h-6 min-w-6 rounded-full bg-gold px-1.5 text-sm font-bold text-foreground">{count}</Badge>
       ) : null}
     </Link>
   )

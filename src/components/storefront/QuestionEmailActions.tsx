@@ -45,7 +45,7 @@ export function QuestionEmailActions({
     <div className="flex flex-col items-start gap-4">
       <p className="text-sm leading-relaxed text-muted-foreground">{emailPrompt}</p>
       <div className="flex w-full items-center justify-between gap-3 border-y border-gold/60 py-3">
-        <a href={`mailto:${email}`} dir="ltr" className="font-medium text-teal-deep underline-offset-4 hover:text-teal hover:underline">
+        <a href={`mailto:${email}`} dir="ltr" className="inline-flex min-h-12 items-center font-medium text-teal-deep underline underline-offset-4 hover:text-teal">
           {email}
         </a>
         <Button type="button" variant="ghost" size="sm" onClick={copyEmail} aria-live="polite">

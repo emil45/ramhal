@@ -208,7 +208,7 @@ export default async function CoursesPage({
                         />
                       </span>
                       <span className="min-w-0">
-                        <span className="block text-xs text-muted-foreground">
+                        <span className="block text-sm text-muted-foreground">
                           {content.book}
                         </span>
                         <span className="line-clamp-2 text-sm font-medium text-teal group-hover/book:underline">

@@ -25,7 +25,7 @@ export function MobileNav({ closeLabel, current, links, menuLabel }: MobileNavPr
   return (
     <Sheet>
       <SheetTrigger render={<Button variant="ghost" size="icon" aria-label={menuLabel} />}>
-        <Menu className="size-5" aria-hidden />
+        <Menu className="size-6" aria-hidden />
       </SheetTrigger>
       <SheetContent side="start" closeLabel={closeLabel}>
         <SheetTitle className="type-subheading px-5 pt-5 text-teal-deep">{menuLabel}</SheetTitle>
@@ -34,7 +34,7 @@ export function MobileNav({ closeLabel, current, links, menuLabel }: MobileNavPr
             <SheetClose
               key={link.href}
               nativeButton={false}
-              render={<Link href={link.href} className="rounded-md px-3 py-3 text-lg text-foreground hover:bg-secondary" />}
+              render={<Link href={link.href} className="rounded-md px-3 py-3.5 text-xl text-foreground hover:bg-secondary" />}
             >
               {link.label}
             </SheetClose>
@@ -55,11 +55,11 @@ export function MobileNav({ closeLabel, current, links, menuLabel }: MobileNavPr
                   lang={locale}
                   dir={LOCALE_CONFIG[locale].direction}
                   aria-current={locale === current ? 'page' : undefined}
-                  className="flex items-center gap-3 rounded-md px-3 py-2.5 text-base text-muted-foreground hover:bg-secondary aria-[current=page]:bg-secondary aria-[current=page]:font-semibold aria-[current=page]:text-teal-deep"
+                  className="flex items-center gap-3 rounded-md px-3 py-3 text-lg text-muted-foreground hover:bg-secondary aria-[current=page]:bg-secondary aria-[current=page]:font-semibold aria-[current=page]:text-teal-deep"
                 />
               }
             >
-              <span className="text-lg leading-none" aria-hidden>{LOCALE_CONFIG[locale].flag}</span>
+              <span className="text-xl leading-none" aria-hidden>{LOCALE_CONFIG[locale].flag}</span>
               <span>{LOCALE_CONFIG[locale].label}</span>
             </SheetClose>
           ))}

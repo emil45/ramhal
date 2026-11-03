@@ -25,7 +25,7 @@ export function PriceTag({ book, dict, locale }: { book: PricedItem; dict: Dicti
   }
 
   return (
-    <Badge variant="secondary" className="h-auto rounded-[3px] py-0.5 font-normal whitespace-normal text-muted-foreground">
+    <Badge variant="secondary" className="h-auto rounded-[3px] py-1 text-sm font-normal whitespace-normal text-foreground">
       {dict.book.unavailableTitle}
     </Badge>
   )

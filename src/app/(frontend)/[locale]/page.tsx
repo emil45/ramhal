@@ -113,7 +113,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
         <section className="page-container py-12">
           <SectionHeading
             action={
-              <Link href={cataloguePath(locale)} className="pb-0.5 text-sm font-medium text-teal underline-offset-4 hover:underline">
+              <Link href={cataloguePath(locale)} className="inline-flex min-h-12 items-center px-1 text-base font-medium text-teal underline underline-offset-4 hover:text-teal-deep">
                 {dict.home.viewAllBooks}
               </Link>
             }

@@ -27,8 +27,8 @@ export function AddToCartButton({ bookId, locale }: { bookId: number; locale: Lo
   const colorId = useSelectedColorId()
 
   return (
-    <div className="flex items-end gap-3">
-      <Field className="w-24">
+    <div className="flex flex-wrap items-end gap-4">
+      <Field className="w-28">
         <FieldLabel htmlFor={`quantity-${bookId}`}>{dict.cart.quantity}</FieldLabel>
         <Input
           id={`quantity-${bookId}`}

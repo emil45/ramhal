@@ -14,7 +14,7 @@ export function ProductCard({ book, dict, locale }: { book: CatalogueBook; dict:
   return (
     <Link
       href={bookPath(locale, book.urlSlug)}
-      className="group/cover flex h-full flex-col gap-3 rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+      className="group/cover flex h-full flex-col gap-3 rounded-sm"
     >
       <CoverImage
         book={{ bookLanguage: book.bookLanguage, categorySlug: book.category?.slug }}
@@ -22,14 +22,14 @@ export function ProductCard({ book, dict, locale }: { book: CatalogueBook; dict:
         sizes="(min-width: 1024px) 200px, (min-width: 640px) 30vw, 45vw"
         title={book.displayTitle}
       />
-      <p className="line-clamp-1 min-h-4 text-xs text-muted-foreground">{metadata}</p>
+      <p className="line-clamp-1 min-h-6 text-sm text-muted-foreground">{metadata}</p>
       {/* Two lines are reserved whether the title uses them or not, and the
           price row is pushed to the bottom of a card that stretches to the
           row's height — so every price in a row sits on one baseline. */}
       <h3 className="type-subheading line-clamp-2 min-h-[2lh] text-foreground decoration-gold decoration-2 underline-offset-4 transition-colors group-hover/cover:text-teal group-hover/cover:underline">
         {book.displayTitle}
       </h3>
-      <div className="mt-auto flex min-h-7 items-center text-lg">
+      <div className="mt-auto flex min-h-8 items-center text-xl">
         <PriceTag book={book} dict={dict} locale={locale} />
       </div>
     </Link>
