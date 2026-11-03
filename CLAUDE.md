@@ -54,19 +54,22 @@ The code is handed to a human developer who has never seen it; that bar is above
 
 ## Running it
 
-Local PostgreSQL 18 (`ramhal`, `ramhal_test`); Neon holds production only and only Vercel's app
-connects to it (its free plan meters transfer for the whole project and was exhausted once, taking the
-live site down). `vitest.setup.ts` refuses a Neon `TEST_DATABASE_URI`; Payload's config refuses a Neon
+Local PostgreSQL 18 (`ramhal`, `ramhal_test`); Neon holds production only. Only Vercel's app, the
+backup job and a deliberate production one-off connect to it: Neon's free plan meters transfer for the
+whole project (5 GB a month; the database is ~40 MB) and it was exhausted once by builds and tests
+running against it, which took the live site down. `vitest.setup.ts` refuses a Neon `TEST_DATABASE_URI`; Payload's config refuses a Neon
 `DATABASE_URI` under `APP_ENV=development` unless a one-off sets the override below.
 
 1. `brew install postgresql@18` (keg-only: put `/opt/homebrew/opt/postgresql@18/bin` on `PATH`),
    `createdb ramhal && createdb ramhal_test`.
 2. `cp .env.example .env`, fill it in (`BACKUP_S3_*` is a read-only R2 credential).
-3. `npm ci`, `npm run db:restore-local` (newest dump, truncates customer and order data, re-run to
-   refresh), `npm run db:migrate`, `npm run dev`.
+3. `npm ci`, `npm run db:restore-local` (restores the newest production dump into both databases,
+   truncates customer and order data), `npm run db:migrate`, `npm run dev`.
 
-If `ramhal_test` lags behind `ramhal` (an integration test checks the catalogue), recreate it from the
-dev database: `dropdb ramhal_test && createdb -T ramhal ramhal_test` (no open connections to either).
+Local data is as fresh as the newest dump: the `database-backup` workflow (`.github/workflows/`) dumps
+production every second day, or run it now with `gh workflow run backup.yml`, then re-run
+`npm run db:restore-local`. Run that after any production content change an integration test depends
+on. `npm run check` runs everything a commit needs.
 
 `npm run seed` is repeatable and never overwrites an editor's values. Deploy: `vercel.json` runs
 `npm run deploy:build`, which applies migrations before `next build`.
@@ -169,9 +172,10 @@ the email is in `ADMIN_ALLOWED_EMAILS`. Vercel needs `DATABASE_URI`, `GOOGLE_CLI
 not start. All are Sensitive: overwrite, never read.
 
 **Restoring data.** Neon point-in-time restore (production branch, Branches → Restore) reaches back at
-most 6 hours on the free plan. Older: the frozen `pg_dump` files in the private R2 bucket
-`ramhal-backups` (`ramhal-<UTC timestamp>.sql.gz`; the scheduled backup was removed because it spent
-Neon's transfer). Restore into a throwaway database, never the live one: create role `neondb_owner
+most 6 hours on the free plan. Older: the `pg_dump` files in the private R2 bucket
+`ramhal-backups` (`ramhal-<UTC timestamp>.sql.gz`, every second day, kept 14 days, written by the
+`database-backup` workflow; `/api/diagnostics` reports the newest one's age and the `restore-drill`
+workflow proves it restores). Restore into a throwaway database, never the live one: create role `neondb_owner
 NOLOGIN`, then `gunzip -c dump | psql db -v ON_ERROR_STOP=1`. `npm run db:restore-local` does this
 for the local databases. Never restore into Neon without checking the result first.
 

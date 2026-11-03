@@ -13,6 +13,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "check": "tsc --noEmit && eslint && vitest run && next build",
     "generate:types": "node scripts/dev-generate-types.mjs",
     "generate:importmap": "payload generate:importmap",
     "db:migrate": "node scripts/migrate.mjs",
