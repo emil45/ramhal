@@ -2,9 +2,9 @@
 // One file per process, read back from its public URL afterwards — same
 // environment and run procedure as TASK-57-attach-book-photo.ts.
 //
-//   ALLOW_PRODUCTION_ONE_OFF=TASK-58 DATABASE_URI="<production>" S3_…="<R2 write credentials>" \
+//   ALLOW_PRODUCTION_ONE_OFF=TASK-59 DATABASE_URI="<production>" S3_…="<R2 write credentials>" \
 //     npx vite-node -c vitest.config.ts --options.deps.inline=payload-oauth2 \
-//       scripts/one-off/TASK-58-attach-book-preview-pdf.ts <urlSlug> <pdf file>
+//       scripts/one-off/2026-11-03-attach-book-preview-pdf.ts <urlSlug> <pdf file>
 //
 // A book that already has a reading copy is refused: replace it in the admin.
 import { readFile } from 'node:fs/promises'
@@ -25,7 +25,7 @@ try {
 async function main() {
   const [urlSlug, filePath] = process.argv.slice(2)
   if (!urlSlug || !filePath || path.extname(filePath).toLowerCase() !== '.pdf') {
-    throw new Error('usage: TASK-58-attach-book-preview-pdf.ts <urlSlug> <pdf file>')
+    throw new Error('usage: 2026-11-03-attach-book-preview-pdf.ts <urlSlug> <pdf file>')
   }
 
   const databaseUri = process.env.DATABASE_URI
