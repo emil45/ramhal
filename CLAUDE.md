@@ -130,6 +130,30 @@ Reference: a well-made printed sefer. Warm paper, one ink, brass rules, serif ti
   src/components/storefront "src/app/(frontend)"` must print nothing. Every field has a visible label.
 - The catalogue loads once and filters client-side, paged at 20.
 
+## Platform access
+
+One env file, `.env` (gitignored; template `.env.example`). It holds the app's local config and the
+credentials Claude Code uses for the platforms. Next.js loads it; the platform CLIs do not, so run them
+as `scripts/ops.sh <command>`. `npm run ops:check` tests every credential.
+
+| Platform | Variables | Use |
+|---|---|---|
+| Neon (project `lucky-field-60207292`, org `org-jolly-mouse-94761855`) | `NEON_API_KEY`, `NEON_PROJECT_ID` | `scripts/ops.sh neon … --project-id "$NEON_PROJECT_ID"`: production connection string, branches, restore |
+| Vercel (project `ramhal`) | `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` | `scripts/ops.sh vercel …`: env ls, deployments, logs |
+| Cloudflare account | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | R2 bucket and token administration only |
+| R2 `ramhal-media`, read-write | `R2_MEDIA_WRITE_ACCESS_KEY_ID`, `R2_MEDIA_WRITE_SECRET_ACCESS_KEY` | media one-offs (token `ramhal-claude-media-rw`, one bucket only) |
+| GitHub | `gh` login (keyring) | secrets, workflows, CI |
+
+A media one-off maps the write key onto the names the app reads, on its own command line:
+`S3_BUCKET=ramhal-media S3_ENDPOINT=https://$CLOUDFLARE_ACCOUNT_ID.r2.cloudflarestorage.com
+S3_REGION=auto S3_ACCESS_KEY_ID=$R2_MEDIA_WRITE_ACCESS_KEY_ID S3_SECRET_ACCESS_KEY=$R2_MEDIA_WRITE_SECRET_ACCESS_KEY
+scripts/ops.sh npx vite-node …`. Never name the write key `S3_*` in `.env`: local development would
+then write to production media.
+
+Rules: least privilege, one scoped token per platform, never an all-access one. Roll a token by creating
+the new one first, then revoking the old. Never print, log or commit a credential, and never echo
+`.env`. When a command's output might contain a secret, capture it into a file or variable instead.
+
 ## Production operations
 
 **Locked out of `/admin`.** Google error: check OAuth client `ramhal-admin` in Google Cloud project
@@ -153,12 +177,12 @@ for the local databases. Never restore into Neon without checking the result fir
 **One-off script against production** (record of a real change; commit it under
 `scripts/one-off/<date>-<what>.ts` and never rerun it):
 
-1. `neon auth`, then `neon connection-string production --project-id lucky-field-60207292`
-   (organisation `org-jolly-mouse-94761855`). Never put the string in `.env` or a shell profile.
+1. Get the string with `scripts/ops.sh neon connection-string production --project-id "$NEON_PROJECT_ID"`
+   (unpooled). Never put it in `.env` or a shell profile.
 2. Dry run first, `--apply` second. Print and check the fingerprint before writing.
    ```sh
    ALLOW_PRODUCTION_ONE_OFF=TASK-<n> DATABASE_URI="<string>" APP_ENV=development \
-     npx vite-node -c vitest.config.ts --options.deps.inline=payload-oauth2 scripts/one-off/<file>.ts
+     scripts/ops.sh npx vite-node -c vitest.config.ts --options.deps.inline=payload-oauth2 scripts/one-off/<file>.ts
    ```
    The override value must match `TASK-<number>` (`src/lib/refuseProductionDatabase.ts`). New
    scripts must set `SKIP_STOREFRONT_REVALIDATION`.
