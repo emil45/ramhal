@@ -6,7 +6,7 @@ import { Footer } from '@/components/storefront/Footer'
 import { Header } from '@/components/storefront/Header'
 import { DirectionProvider } from '@/components/ui/direction'
 import { getDictionary } from '@/app/(frontend)/dictionary'
-import { isLocale, LOCALE_CONFIG, LOCALES } from '@/lib/locale'
+import { isLocale, LOCALE_CONFIG, LOCALES } from '@/lib/locale/locale'
 
 import '@/app/(frontend)/globals.css'
 

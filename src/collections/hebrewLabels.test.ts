@@ -1,8 +1,8 @@
 import type { CollectionConfig, GlobalConfig } from 'payload'
 import { describe, expect, it } from 'vitest'
 
-import { collectMissingHebrewLabels } from '@/lib/collectMissingHebrewLabels'
-import { collectNonHebrewDescriptions } from '@/lib/collectNonHebrewDescriptions'
+import { collectMissingHebrewLabels } from '@/lib/admin/collectMissingHebrewLabels'
+import { collectNonHebrewDescriptions } from '@/lib/admin/collectNonHebrewDescriptions'
 
 import { Announcements } from './Announcements'
 import { Articles } from './Articles'

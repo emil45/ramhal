@@ -1,4 +1,4 @@
-import type { NewsItem } from '@/lib/homeStream'
+import type { NewsItem } from '@/lib/content/homeStream'
 
 type NewsBandProps = {
   intlTag: string

@@ -5,7 +5,7 @@ import { RichText } from '@/components/storefront/RichText'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
-import type { NewsItem } from '@/lib/homeStream'
+import type { NewsItem } from '@/lib/content/homeStream'
 
 type NewsCardProps = {
   intlTag: string

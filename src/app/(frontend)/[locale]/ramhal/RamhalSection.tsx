@@ -1,9 +1,9 @@
-import { slugify } from '@/lib/slugify'
+import { slugify } from '@/lib/content/slugify'
 
 import { ArticleBodyBlock } from '@/components/storefront/blocks/ArticleBodyBlock'
 import { RichText } from '@/components/storefront/RichText'
 
-import type { PageSection } from '@/lib/pageSections'
+import type { PageSection } from '@/lib/content/pageSections'
 
 /** One section of the article: a heading in the "article" style, followed
  * by its flowing content — or the closing "concluding" band, which is a

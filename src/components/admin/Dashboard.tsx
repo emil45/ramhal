@@ -1,7 +1,7 @@
 import Link from 'next/link'
 
-import { formatAdminDate } from '../../lib/adminDateTime.ts'
-import { getDashboardSummary } from '../../lib/dashboardData.ts'
+import { formatAdminDate } from '../../lib/admin/adminDateTime.ts'
+import { getDashboardSummary } from '../../lib/admin/dashboardData.ts'
 
 import type { AdminViewServerProps } from 'payload'
 

@@ -1,4 +1,4 @@
-import { isActiveListFilter } from '../../lib/listFilterState.ts'
+import { isActiveListFilter } from '../../lib/admin/listFilterState.ts'
 
 type ListFilter = { label: string; href: string }
 type SearchParameters = Record<string, string | string[] | undefined>

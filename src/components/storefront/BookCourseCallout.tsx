@@ -2,11 +2,11 @@ import { ListVideo, Play } from 'lucide-react'
 
 import { Card, CardContent } from '@/components/ui/card'
 import { buttonVariants } from '@/components/ui/button'
-import { playlistUrl, playlistVideoUrl } from '@/lib/youtubeLinks'
+import { playlistUrl, playlistVideoUrl } from '@/lib/courses/youtubeLinks'
 import { cn } from '@/lib/utils'
 
 import type { Dictionary } from '@/app/(frontend)/dictionary'
-import type { Course } from '@/lib/courses'
+import type { Course } from '@/lib/courses/courses'
 
 export function BookCourseCallout({
   course,

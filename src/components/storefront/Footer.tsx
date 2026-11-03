@@ -3,11 +3,11 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 import { SocialIcon } from '@/components/storefront/SocialIcon'
-import { getContactDetails, getSocialLinks } from '@/lib/siteSettingsData'
-import { cataloguePath, coursesPath, donatePath, localePath, questionsPath } from '@/lib/routes'
+import { getContactDetails, getSocialLinks } from '@/lib/content/siteSettingsData'
+import { cataloguePath, coursesPath, donatePath, localePath, questionsPath } from '@/lib/locale/routes'
 
 import type { Dictionary } from '@/app/(frontend)/dictionary'
-import type { Locale } from '@/lib/locale'
+import type { Locale } from '@/lib/locale/locale'
 
 export async function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const [contact, socialLinks] = await Promise.all([getContactDetails(locale), getSocialLinks(locale)])

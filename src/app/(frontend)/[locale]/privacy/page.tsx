@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 
 import { SectionHeading } from '@/components/storefront/SectionHeading'
-import { isLocale } from '@/lib/locale'
+import { isLocale } from '@/lib/locale/locale'
 
 const CONTENT = {
   he: {

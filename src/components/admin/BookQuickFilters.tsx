@@ -1,5 +1,5 @@
 import { QuickFilters } from './QuickFilters.tsx'
-import { BOOK_LIST_FILTERS } from '../../lib/bookListFilters.ts'
+import { BOOK_LIST_FILTERS } from '../../lib/admin/bookListFilters.ts'
 
 import type { ListViewServerProps } from 'payload'
 

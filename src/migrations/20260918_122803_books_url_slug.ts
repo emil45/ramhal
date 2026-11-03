@@ -1,11 +1,11 @@
 import type { MigrateDownArgs, MigrateUpArgs } from '@payloadcms/db-postgres'
 import { sql } from '@payloadcms/db-postgres'
 
-import { slugify } from '../lib/slugify.ts'
+import { slugify } from '../lib/content/slugify.ts'
 
 // Preference order for picking which locale's title backfills a pre-existing
 // book's canonical urlSlug, when the book carries more than one. Matches
-// src/lib/booksData.ts#bestAcrossLocales's own priority for the default
+// src/lib/books/booksData.ts#bestAcrossLocales's own priority for the default
 // viewer (Hebrew first, the project's default locale) — see
 // CLAUDE.md. There is no record of which locale a given book was
 // originally *created* in (src/importBooks.ts's primaryLocale is not

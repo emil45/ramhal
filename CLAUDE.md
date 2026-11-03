@@ -38,7 +38,9 @@ go-live blockers: `TODO.md`.
 The code is handed to a human developer who has never seen it; that bar is above cleverness and speed.
 
 - Business logic is pure functions under `src/lib/`, independent of Next.js and Payload, testable
-  without booting either. Framework code calls it.
+  without booting either. Framework code calls it. `src/lib/` is grouped by domain (`admin`, `auth`,
+  `books`, `content`, `courses`, `locale`, `payment`, `platform`, `shop`); tests sit beside their
+  subject; a new module goes in the folder whose domain it belongs to, not in `src/lib/` itself.
 - One responsibility per file. No abstraction before three real cases; extract on the third copy.
 - No `any`, no `as` casts to silence the compiler; derive types from the Payload schema.
 - Full words, no abbreviations. Comments explain WHY, never what, and never name a task. Delete a
@@ -101,7 +103,7 @@ this config under Node: `ERR_REQUIRE_ASYNC_MODULE`), read the generated migratio
   (Israel / Europe / rest of world), tiered by item count, free above ten books and on pickup.
 - **Search**: Postgres full-text with a custom Hebrew configuration plus `pg_trgm`.
 - **Legacy URLs**: only `ramhal.com` (apex and `www`) redirects; `enramhal.com` and `frramhal.com` are
-  retired. `src/lib/legacyRedirects.json` is generated — run `npm run redirects:generate` after a
+  retired. `src/lib/locale/legacyRedirects.json` is generated — run `npm run redirects:generate` after a
   slug change, catalogue import or editing `scripts/legacy-redirects/pageEquivalences.mjs`, and commit
   it. Unmatched legacy URLs get an honest 404, never a blanket redirect home.
 - **Auth**: Google sign-in only, gated by `ADMIN_ALLOWED_EMAILS`; no password login. Preview
@@ -122,7 +124,7 @@ Reference: a well-made printed sefer. Warm paper, one ink, brass rules, serif ti
   on Hebrew. On shadcn `CardTitle`/`EmptyTitle`/`FieldLegend` write the utility with a trailing `!`.
 - Layout: `page-container`, `py-12` between sections, 4px scale, radius `0.25rem`. `SectionHeading`
   is the only way to head a section or page.
-- Covers (`src/lib/cover.ts`, `CoverFrame`, `TypographicCover`): one paper tone, 2:3 ratio, the rule
+- Covers (`src/lib/books/cover.ts`, `CoverFrame`, `TypographicCover`): one paper tone, 2:3 ratio, the rule
   colour alone says which shelf (teal Hebrew, gold French, deep teal English, dark gold siddurim).
   Real photographs sit inside the same frame, `object-contain`.
 - **No raw `<input>`, `<select>` or `<button>`** in `src/components/storefront/` or
@@ -184,7 +186,7 @@ for the local databases. Never restore into Neon without checking the result fir
    ALLOW_PRODUCTION_ONE_OFF=TASK-<n> DATABASE_URI="<string>" APP_ENV=development \
      scripts/ops.sh npx vite-node -c vitest.config.ts --options.deps.inline=payload-oauth2 scripts/one-off/<file>.ts
    ```
-   The override value must match `TASK-<number>` (`src/lib/refuseProductionDatabase.ts`). New
+   The override value must match `TASK-<number>` (`src/lib/platform/refuseProductionDatabase.ts`). New
    scripts must set `SKIP_STOREFRONT_REVALIDATION`.
 
 **R2 tokens** (Cloudflare → My Profile → API Tokens → Roll; S3 secret is `sha256(token value)` in

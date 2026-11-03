@@ -3,7 +3,7 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 
 import type { Media, Page } from '@/payload-types'
-import type { Locale } from '@/lib/locale'
+import type { Locale } from '@/lib/locale/locale'
 
 type GalleryBlock = Extract<NonNullable<Page['content']>[number], { blockType: 'gallery' }>
 

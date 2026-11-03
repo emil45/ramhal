@@ -4,7 +4,7 @@ import { getPayload } from 'payload'
 
 import { SKIP_STOREFRONT_REVALIDATION } from '@/collections/hooks/revalidateStorefront'
 
-import type { CheckoutFormValues } from '@/lib/checkoutForm'
+import type { CheckoutFormValues } from '@/lib/shop/checkoutForm'
 import type { Book, Order } from '@/payload-types'
 
 // The tests below run against TEST_DATABASE_URI's database — the long-lived

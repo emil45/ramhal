@@ -2,12 +2,12 @@ import type { GlobalConfig } from 'payload'
 
 import { INLINE_ROWS_CLASS_NAME } from '../collections/fields/inlineRows.ts'
 import { revalidateStorefront } from '../collections/hooks/revalidateStorefront.ts'
-import { CURRENCIES } from '../lib/currency.ts'
-import { validateMoneyAmount } from '../lib/validateMoneyAmount.ts'
+import { CURRENCIES } from '../lib/shop/currency.ts'
+import { validateMoneyAmount } from '../lib/admin/validateMoneyAmount.ts'
 
 // The shipping rules engine, editable by the son. Payload's ecommerce plugin
 // ships no shipping logic at all (verified — see CLAUDE.md), so
-// this is ours. The calculation itself lives in src/lib/shipping.ts as a pure
+// this is ours. The calculation itself lives in src/lib/shop/shipping.ts as a pure
 // function; this global only holds the data it reads.
 export const ShippingSettings: GlobalConfig = {
   slug: 'shippingSettings',

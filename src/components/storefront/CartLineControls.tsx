@@ -9,9 +9,9 @@ import { getDictionary } from '@/app/(frontend)/dictionary'
 import { Button } from '@/components/ui/button'
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { announceCartChange } from '@/lib/cartEvents'
+import { announceCartChange } from '@/lib/shop/cartEvents'
 
-import type { Locale } from '@/lib/locale'
+import type { Locale } from '@/lib/locale/locale'
 
 export function CartLineControls({ bookId, colorId, locale, quantity }: { bookId: number; colorId: string | null; locale: Locale; quantity: number }) {
   // See CatalogueClient's comment: dict holds functions, which can't cross

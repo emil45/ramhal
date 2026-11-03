@@ -3,7 +3,7 @@ import Image from 'next/image'
 import { CoverFrame } from '@/components/storefront/CoverFrame'
 import { TypographicCover } from '@/components/storefront/TypographicCover'
 
-import type { CoverIdentity } from '@/lib/cover'
+import type { CoverIdentity } from '@/lib/books/cover'
 import type { Media } from '@/payload-types'
 
 type CoverImageProps = {

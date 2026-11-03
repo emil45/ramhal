@@ -1,5 +1,5 @@
 import { QuickFilters } from './QuickFilters.tsx'
-import { ORDER_LIST_FILTERS } from '../../lib/orderListFilters.ts'
+import { ORDER_LIST_FILTERS } from '../../lib/admin/orderListFilters.ts'
 
 import type { ListViewServerProps } from 'payload'
 

@@ -1,9 +1,9 @@
 import { AdminBadge } from './AdminBadge.tsx'
-import { FULFILMENT_STATUS_LABELS } from '../../lib/orderStatus.ts'
+import { FULFILMENT_STATUS_LABELS } from '../../lib/shop/orderStatus.ts'
 
 import type { DefaultCellComponentProps } from 'payload'
 import type { BadgeTone } from './AdminBadge.tsx'
-import type { FulfilmentStatus } from '../../lib/orderStatus.ts'
+import type { FulfilmentStatus } from '../../lib/shop/orderStatus.ts'
 
 const TONES: Record<FulfilmentStatus, BadgeTone> = {
   new: 'attention',

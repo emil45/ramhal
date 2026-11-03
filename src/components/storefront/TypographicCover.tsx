@@ -1,7 +1,7 @@
 import { CoverFrame } from '@/components/storefront/CoverFrame'
-import { coverTitleWidthPercent } from '@/lib/cover'
+import { coverTitleWidthPercent } from '@/lib/books/cover'
 
-import type { CoverIdentity } from '@/lib/cover'
+import type { CoverIdentity } from '@/lib/books/cover'
 
 // The imprint printed at the foot of every cover, whatever the book's
 // language — a publisher's mark, not interface text to translate.

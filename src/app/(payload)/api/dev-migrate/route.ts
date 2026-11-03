@@ -4,7 +4,7 @@ import path from 'node:path'
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 
-import { isDevRouteAuthorized } from '@/lib/devRouteAuth'
+import { isDevRouteAuthorized } from '@/lib/admin/devRouteAuth'
 
 /**
  * Dev-only route that writes a new migration file for the schema changes since

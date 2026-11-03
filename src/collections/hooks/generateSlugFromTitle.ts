@@ -1,6 +1,6 @@
 import type { FieldHook } from 'payload'
 
-import { slugify } from '../../lib/slugify.ts'
+import { slugify } from '../../lib/content/slugify.ts'
 
 /**
  * Fills the slug from the title when the editor leaves it blank, without

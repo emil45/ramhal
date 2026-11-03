@@ -9,9 +9,9 @@ import { PageImage } from '@/components/storefront/blocks/PageImage'
 import { VideoView } from '@/components/storefront/blocks/VideoView'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Badge } from '@/components/ui/badge'
-import { isLocale } from '@/lib/locale'
-import { groupPageSections } from '@/lib/pageSections'
-import { getPageBySlug } from '@/lib/pagesData'
+import { isLocale } from '@/lib/locale/locale'
+import { groupPageSections } from '@/lib/content/pageSections'
+import { getPageBySlug } from '@/lib/content/pagesData'
 
 import type { Media } from '@/payload-types'
 

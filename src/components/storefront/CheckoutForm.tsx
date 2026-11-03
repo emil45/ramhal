@@ -13,18 +13,18 @@ import { Field, FieldDescription, FieldError, FieldLabel, FieldLegend, FieldSet 
 import { Input } from '@/components/ui/input'
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
 import { Separator } from '@/components/ui/separator'
-import { orderShippingCost } from '@/lib/orderPricing'
-import { formatPrice, roundMoney } from '@/lib/price'
-import { localePath } from '@/lib/routes'
-import { calculateShipping } from '@/lib/shipping'
+import { orderShippingCost } from '@/lib/shop/orderPricing'
+import { formatPrice, roundMoney } from '@/lib/shop/price'
+import { localePath } from '@/lib/locale/routes'
+import { calculateShipping } from '@/lib/shop/shipping'
 
-import type { Currency } from '@/lib/currency'
+import type { Currency } from '@/lib/shop/currency'
 import type { CheckoutActionState } from '@/app/(frontend)/checkoutActions'
-import type { CheckoutFormField } from '@/lib/checkoutForm'
+import type { CheckoutFormField } from '@/lib/shop/checkoutForm'
 import type { ComponentProps } from 'react'
-import type { Locale } from '@/lib/locale'
-import type { PlaceOrderProblem } from '@/lib/placeOrder'
-import type { ShippingZone } from '@/lib/shipping'
+import type { Locale } from '@/lib/locale/locale'
+import type { PlaceOrderProblem } from '@/lib/shop/placeOrder'
+import type { ShippingZone } from '@/lib/shop/shipping'
 
 type CheckoutFormProps = {
   countries: { code: string; name: string }[]

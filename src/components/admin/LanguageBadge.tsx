@@ -1,5 +1,5 @@
 import { AdminBadge } from './AdminBadge.tsx'
-import { DEFAULT_LOCALE } from '../../lib/locale.ts'
+import { DEFAULT_LOCALE } from '../../lib/locale/locale.ts'
 
 import type { DefaultCellComponentProps } from 'payload'
 

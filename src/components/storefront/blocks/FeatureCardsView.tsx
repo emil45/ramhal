@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { PAGE_ICONS } from '@/lib/pageIcons'
+import { PAGE_ICONS } from '@/lib/content/pageIcons'
 
 import type { Page } from '@/payload-types'
 

@@ -10,8 +10,8 @@ import { randomUUID } from 'node:crypto'
 
 import pg from 'pg'
 
-import { parseDatabaseIdentity } from '../../src/lib/diagnostics.ts'
-import { DEFAULT_SOCIAL_LINKS } from '../../src/lib/socialLinks.ts'
+import { parseDatabaseIdentity } from '../../src/lib/platform/diagnostics.ts'
+import { DEFAULT_SOCIAL_LINKS } from '../../src/lib/content/socialLinks.ts'
 
 const EXPECTED_DATABASES: Record<string, string> = {
   '2c951382a7f8': 'production',

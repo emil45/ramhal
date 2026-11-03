@@ -5,7 +5,7 @@ import type { CollectionConfig } from 'payload'
 
 // Where the files live is decided in payload.config.ts — local disk, an
 // S3-compatible bucket when the S3_* variables are set, or read-only when only
-// S3_PUBLIC_URL is (src/lib/mediaStorage.ts). The collection's shape
+// S3_PUBLIC_URL is (src/lib/platform/mediaStorage.ts). The collection's shape
 // is the same either way.
 export const Media: CollectionConfig = {
   slug: 'media',

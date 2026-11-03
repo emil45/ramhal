@@ -7,7 +7,7 @@ import {
   normaliseVideoReference,
   validatePlaylistReference,
   validateVideoReference,
-} from '../lib/youtubeLinks.ts'
+} from '../lib/courses/youtubeLinks.ts'
 
 import type { CollectionConfig } from 'payload'
 

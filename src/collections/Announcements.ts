@@ -5,7 +5,7 @@ import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLoc
 
 import type { CollectionConfig } from 'payload'
 
-import { validateNewsLinkUrl } from '@/lib/newsLink'
+import { validateNewsLinkUrl } from '@/lib/content/newsLink'
 
 // Visibility is manual: the storefront shows every announcement that exists,
 // and the son deletes one when it is over. startsAt is

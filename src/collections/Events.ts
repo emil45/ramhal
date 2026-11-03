@@ -5,7 +5,7 @@ import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLoc
 
 import type { CollectionConfig } from 'payload'
 
-import { validateNewsLinkUrl } from '@/lib/newsLink'
+import { validateNewsLinkUrl } from '@/lib/content/newsLink'
 
 // One-off events — a hilula, a seminar. Recurring shiurim are NOT events; they
 // live in the schedule global. The two look alike on the page and are

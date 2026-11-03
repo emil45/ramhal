@@ -2,7 +2,7 @@
 
 import { useRowLabel } from '@payloadcms/ui'
 
-import { scheduleRowLabel } from '../../lib/scheduleRowLabel.ts'
+import { scheduleRowLabel } from '../../lib/admin/scheduleRowLabel.ts'
 
 type ScheduleRow = { title?: string; days?: string; time?: string; name?: string }
 

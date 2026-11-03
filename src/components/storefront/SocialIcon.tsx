@@ -1,6 +1,6 @@
 import type { SVGProps } from 'react'
 
-import type { SocialPlatform } from '@/lib/socialLinks'
+import type { SocialPlatform } from '@/lib/content/socialLinks'
 
 export function SocialIcon({ platform, ...properties }: SVGProps<SVGSVGElement> & { platform: SocialPlatform }) {
   if (platform === 'facebook') {

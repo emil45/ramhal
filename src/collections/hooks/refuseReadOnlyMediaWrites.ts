@@ -1,4 +1,4 @@
-import { assertMediaWritable, readMediaStorageSettings } from '../../lib/mediaStorage.ts'
+import { assertMediaWritable, readMediaStorageSettings } from '../../lib/platform/mediaStorage.ts'
 
 import type { CollectionBeforeChangeHook, CollectionBeforeDeleteHook } from 'payload'
 

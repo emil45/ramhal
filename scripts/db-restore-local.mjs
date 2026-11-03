@@ -26,7 +26,7 @@ import {
   findRolesNamedByDump,
   parseRestoreTarget,
   removeNeonOnlyExtensions,
-} from '../src/lib/localRestore.ts'
+} from '../src/lib/platform/localRestore.ts'
 
 process.loadEnvFile('.env')
 

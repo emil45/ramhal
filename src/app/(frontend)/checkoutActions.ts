@@ -2,13 +2,13 @@
 
 import { redirect } from 'next/navigation'
 
-import { parseCheckoutForm } from '@/lib/checkoutForm'
-import { isLocale } from '@/lib/locale'
-import { placeOrder } from '@/lib/placeOrder'
-import { getCartItems } from '@/lib/serverCart'
+import { parseCheckoutForm } from '@/lib/shop/checkoutForm'
+import { isLocale } from '@/lib/locale/locale'
+import { placeOrder } from '@/lib/shop/placeOrder'
+import { getCartItems } from '@/lib/shop/serverCart'
 
-import type { CheckoutFormErrors } from '@/lib/checkoutForm'
-import type { PlaceOrderProblem } from '@/lib/placeOrder'
+import type { CheckoutFormErrors } from '@/lib/shop/checkoutForm'
+import type { PlaceOrderProblem } from '@/lib/shop/placeOrder'
 
 export type CheckoutActionState = {
   fieldErrors?: CheckoutFormErrors

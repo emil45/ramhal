@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Builds src/lib/legacyRedirects.json — where each URL of the legacy site ramhal.com
+// Builds src/lib/locale/legacyRedirects.json — where each URL of the legacy site ramhal.com
 // goes on this site — from:
 //   - the crawl of the legacy site (scripts/scrape/out/he.json),
 //   - Books.legacyUrls in the database DATABASE_URI names (book targets are the
@@ -16,8 +16,8 @@ import { readFile, writeFile } from 'node:fs/promises'
 
 import { getPayload } from 'payload'
 
-import { LEGACY_HOST, normalizeLegacyPath } from '../src/lib/legacyRedirects.ts'
-import { bookPath, cataloguePath, coursesPath, donatePath, localePath } from '../src/lib/routes.ts'
+import { LEGACY_HOST, normalizeLegacyPath } from '../src/lib/locale/legacyRedirects.ts'
+import { bookPath, cataloguePath, coursesPath, donatePath, localePath } from '../src/lib/locale/routes.ts'
 import config from '../src/payload.config.ts'
 import { PAGE_EQUIVALENCES } from './legacy-redirects/pageEquivalences.mjs'
 
@@ -27,7 +27,7 @@ try {
   // CI or an operator can provide the variables through the process environment.
 }
 
-const OUTPUT_FILE = new URL('../src/lib/legacyRedirects.json', import.meta.url)
+const OUTPUT_FILE = new URL('../src/lib/locale/legacyRedirects.json', import.meta.url)
 const LOCALE = 'he'
 
 // Not pages of the crawl, but URLs the crawled pages link to or the scraper paginates:

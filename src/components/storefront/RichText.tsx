@@ -2,7 +2,7 @@ import { RichText as PayloadRichText } from '@payloadcms/richtext-lexical/react'
 
 import { cn } from '@/lib/utils'
 
-import type { RichTextContent } from '@/lib/richText'
+import type { RichTextContent } from '@/lib/content/richText'
 
 /**
  * Renders a Payload richText field through the framework's own Lexical→JSX

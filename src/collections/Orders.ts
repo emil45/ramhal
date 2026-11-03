@@ -1,14 +1,14 @@
 import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 
-import { CURRENCIES } from '../lib/currency.ts'
-import { LOCALES } from '../lib/locale.ts'
-import { orderContactFields } from '../lib/orderContact.ts'
-import { FULFILMENT_STATUS_LABELS, FULFILMENT_STATUSES, PAYMENT_STATUS_LABELS, PAYMENT_STATUSES } from '../lib/orderStatus.ts'
-import { formatPrice } from '../lib/price.ts'
+import { CURRENCIES } from '../lib/shop/currency.ts'
+import { LOCALES } from '../lib/locale/locale.ts'
+import { orderContactFields } from '../lib/shop/orderContact.ts'
+import { FULFILMENT_STATUS_LABELS, FULFILMENT_STATUSES, PAYMENT_STATUS_LABELS, PAYMENT_STATUSES } from '../lib/shop/orderStatus.ts'
+import { formatPrice } from '../lib/shop/price.ts'
 
 /**
  * A sale, as it was at the moment of sale. Written only by the server
- * (src/lib/placeOrder.ts and src/lib/payment/orderPayment.ts) — the son
+ * (src/lib/shop/placeOrder.ts and src/lib/payment/orderPayment.ts) — the son
  * reads orders and moves them through fulfilment; he never creates one or
  * edits what was sold and for how much. Every money field is a major-unit
  * amount (shekels/dollars/euros), and every line snapshots its book instead

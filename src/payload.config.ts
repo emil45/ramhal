@@ -35,12 +35,12 @@ import { Schedule } from './globals/Schedule.ts'
 import { ShippingSettings } from './globals/ShippingSettings.ts'
 import { SiteSettings } from './globals/SiteSettings.ts'
 import { getGoogleUserInfo, readGoogleSignInConfig } from './lib/auth/googleSignIn.ts'
-import { readAppEnvironment } from './lib/appEnvironment.ts'
-import { requireEnv } from './lib/env.ts'
-import { hideApiUrl } from './lib/hideApiUrl.ts'
-import { getPublicMediaUrl, readMediaStorageSettings } from './lib/mediaStorage.ts'
-import { assertDevelopmentDoesNotUseNeon, PRODUCTION_ONE_OFF_OVERRIDE } from './lib/refuseProductionDatabase.ts'
-import { readServerUrl } from './lib/serverUrl.ts'
+import { readAppEnvironment } from './lib/platform/appEnvironment.ts'
+import { requireEnv } from './lib/platform/env.ts'
+import { hideApiUrl } from './lib/admin/hideApiUrl.ts'
+import { getPublicMediaUrl, readMediaStorageSettings } from './lib/platform/mediaStorage.ts'
+import { assertDevelopmentDoesNotUseNeon, PRODUCTION_ONE_OFF_OVERRIDE } from './lib/platform/refuseProductionDatabase.ts'
+import { readServerUrl } from './lib/platform/serverUrl.ts'
 
 // Covers and page images are a few hundred KB; a larger file is almost always
 // an unoptimised original that would slow every page it appears on. Media is the

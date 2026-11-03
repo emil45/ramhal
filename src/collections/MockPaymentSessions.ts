@@ -1,7 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
-import { CURRENCIES } from '../lib/currency.ts'
-import { LOCALES } from '../lib/locale.ts'
+import { CURRENCIES } from '../lib/shop/currency.ts'
+import { LOCALES } from '../lib/locale/locale.ts'
 import { MOCK_PAYMENT_DECISIONS } from '../lib/payment/mockPaymentDecision.ts'
 
 /**

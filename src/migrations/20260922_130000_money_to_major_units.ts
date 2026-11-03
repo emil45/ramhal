@@ -3,7 +3,7 @@ import { sql } from '@payloadcms/db-postgres'
 
 // Every money column switched from an integer count of minor units
 // (agorot/cents) to a decimal major-unit amount (shekels/dollars/euros) — see
-// src/lib/validateMoneyAmount.ts. No column type changes: `numeric` already
+// src/lib/admin/validateMoneyAmount.ts. No column type changes: `numeric` already
 // held either shape, so this only rewrites the values already stored.
 export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`

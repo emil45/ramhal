@@ -8,10 +8,10 @@ import { getCartItemCount } from '@/app/(frontend)/cartActions'
 import { getDictionary } from '@/app/(frontend)/dictionary'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
-import { CART_CHANGED_EVENT } from '@/lib/cartEvents'
+import { CART_CHANGED_EVENT } from '@/lib/shop/cartEvents'
 import { cn } from '@/lib/utils'
 
-import type { Locale } from '@/lib/locale'
+import type { Locale } from '@/lib/locale/locale'
 
 /**
  * The count is fetched in the browser rather than read while rendering the

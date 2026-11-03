@@ -8,10 +8,10 @@ import { useSelectedColorId } from '@/components/storefront/BookColorContext'
 import { Button } from '@/components/ui/button'
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
-import { announceCartChange } from '@/lib/cartEvents'
+import { announceCartChange } from '@/lib/shop/cartEvents'
 import { getDictionary } from '@/app/(frontend)/dictionary'
 
-import type { Locale } from '@/lib/locale'
+import type { Locale } from '@/lib/locale/locale'
 
 export function AddToCartButton({ bookId, locale }: { bookId: number; locale: Locale }) {
   // See CatalogueClient's comment: dict holds functions, which can't cross

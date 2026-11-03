@@ -1,4 +1,4 @@
-import { formatAdminDateTime } from '../../lib/adminDateTime.ts'
+import { formatAdminDateTime } from '../../lib/admin/adminDateTime.ts'
 
 import type { DefaultCellComponentProps } from 'payload'
 

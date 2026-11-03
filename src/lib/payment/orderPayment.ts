@@ -4,7 +4,7 @@ import config from '@payload-config'
 import { commitTransaction, getPayload, initTransaction, killTransaction, ValidationError } from 'payload'
 
 import type { Order } from '@/payload-types'
-import type { PaymentStatus } from '@/lib/orderStatus'
+import type { PaymentStatus } from '@/lib/shop/orderStatus'
 
 export type PaymentEventResult = 'applied' | 'already-processed'
 

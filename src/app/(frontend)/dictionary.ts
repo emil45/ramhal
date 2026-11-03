@@ -1,4 +1,4 @@
-import type { Locale } from '@/lib/locale'
+import type { Locale } from '@/lib/locale/locale'
 
 // Small enough (three locales, one small storefront) that a hand-written
 // dictionary is the right size. No i18n library earns its keep here.

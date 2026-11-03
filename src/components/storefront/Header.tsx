@@ -6,11 +6,11 @@ import { CartLink } from '@/components/storefront/CartLink'
 import { LocaleSwitcher } from '@/components/storefront/LocaleSwitcher'
 import { MobileNav } from '@/components/storefront/MobileNav'
 import { buttonVariants } from '@/components/ui/button'
-import { cataloguePath, coursesPath, donatePath, localePath, questionsPath } from '@/lib/routes'
+import { cataloguePath, coursesPath, donatePath, localePath, questionsPath } from '@/lib/locale/routes'
 import { cn } from '@/lib/utils'
 
 import type { Dictionary } from '@/app/(frontend)/dictionary'
-import type { Locale } from '@/lib/locale'
+import type { Locale } from '@/lib/locale/locale'
 
 export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
   const donationLink = { href: donatePath(locale), label: dict.nav.donate }

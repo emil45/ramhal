@@ -19,7 +19,7 @@ import { readFile } from 'node:fs/promises'
 
 import { getPayload } from 'payload'
 
-import { parseDatabaseIdentity } from '../src/lib/diagnostics.ts'
+import { parseDatabaseIdentity } from '../src/lib/platform/diagnostics.ts'
 import { importBooks } from '../src/importBooks.ts'
 import config from '../src/payload.config.ts'
 

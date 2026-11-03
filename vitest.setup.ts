@@ -1,6 +1,6 @@
 import { loadEnvConfig } from '@next/env'
 
-import { assertNotNeonDatabase, assertNotProductionDatabase } from '@/lib/refuseProductionDatabase'
+import { assertNotNeonDatabase, assertNotProductionDatabase } from '@/lib/platform/refuseProductionDatabase'
 
 // Loads .env the same way Next itself does (this ships with `next`, already
 // a direct dependency — see CLAUDE.md for why Payload's own CLI

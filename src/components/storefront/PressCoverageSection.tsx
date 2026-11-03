@@ -5,11 +5,11 @@ import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { LOCALE_CONFIG } from '@/lib/locale'
-import { PRESS_ARTICLES_NEWEST_FIRST } from '@/lib/pressCoverage'
+import { LOCALE_CONFIG } from '@/lib/locale/locale'
+import { PRESS_ARTICLES_NEWEST_FIRST } from '@/lib/content/pressCoverage'
 import { cn } from '@/lib/utils'
 
-import type { Locale } from '@/lib/locale'
+import type { Locale } from '@/lib/locale/locale'
 
 export type PressContent = {
   title: string

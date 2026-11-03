@@ -1,9 +1,9 @@
 import { AdminBadge } from './AdminBadge.tsx'
-import { PAYMENT_STATUS_LABELS } from '../../lib/orderStatus.ts'
+import { PAYMENT_STATUS_LABELS } from '../../lib/shop/orderStatus.ts'
 
 import type { DefaultCellComponentProps } from 'payload'
 import type { BadgeTone } from './AdminBadge.tsx'
-import type { PaymentStatus } from '../../lib/orderStatus.ts'
+import type { PaymentStatus } from '../../lib/shop/orderStatus.ts'
 
 const TONES: Record<PaymentStatus, BadgeTone> = {
   pending: 'attention',

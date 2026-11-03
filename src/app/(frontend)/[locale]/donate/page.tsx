@@ -8,9 +8,9 @@ import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Badge } from '@/components/ui/badge'
 import { Button, buttonVariants } from '@/components/ui/button'
-import { readPaypalDonationUrl } from '@/lib/donation'
-import { isLocale } from '@/lib/locale'
-import { getDonatePhoto } from '@/lib/siteSettingsData'
+import { readPaypalDonationUrl } from '@/lib/shop/donation'
+import { isLocale } from '@/lib/locale/locale'
+import { getDonatePhoto } from '@/lib/content/siteSettingsData'
 
 const CONTENT = {
   he: {

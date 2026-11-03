@@ -1,7 +1,7 @@
 import { notFound, permanentRedirect } from 'next/navigation'
 
-import { isLocale } from '@/lib/locale'
-import { localePath } from '@/lib/routes'
+import { isLocale } from '@/lib/locale/locale'
+import { localePath } from '@/lib/locale/routes'
 
 export default async function PressPage({ params }: PageProps<'/[locale]/press'>) {
   const { locale } = await params

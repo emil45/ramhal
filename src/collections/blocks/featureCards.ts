@@ -1,4 +1,4 @@
-import { PAGE_ICON_OPTIONS } from '../../lib/pageIcons.ts'
+import { PAGE_ICON_OPTIONS } from '../../lib/content/pageIcons.ts'
 
 import type { Block } from 'payload'
 

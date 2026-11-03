@@ -4,7 +4,7 @@ import config from '@payload-config'
 import { randomUUID } from 'node:crypto'
 import { getPayload } from 'payload'
 
-import { localePath } from '@/lib/routes'
+import { localePath } from '@/lib/locale/routes'
 
 import type { MockPaymentSession } from '@/payload-types'
 import type { MockPaymentDecision } from '@/lib/payment/mockPaymentDecision'

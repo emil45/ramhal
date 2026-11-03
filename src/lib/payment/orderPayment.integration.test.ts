@@ -5,7 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { markOrderPaid, markOrderPaymentUnsuccessful } from '@/lib/payment/orderPayment'
 import { decideMockPayment, MockPaymentProvider } from '@/lib/payment/mockPaymentProvider'
 import { settleOrderPayment } from '@/lib/payment/settleOrderPayment'
-import { placeOrder } from '@/lib/placeOrder'
+import { placeOrder } from '@/lib/shop/placeOrder'
 import {
   checkoutFormFor,
   cleanUpTestRun,

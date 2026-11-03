@@ -19,7 +19,7 @@ import { fileURLToPath } from 'node:url'
 import { getPayload } from 'payload'
 
 import { SKIP_STOREFRONT_REVALIDATION } from '../../src/collections/hooks/revalidateStorefront.ts'
-import { parseDatabaseIdentity } from '../../src/lib/diagnostics.ts'
+import { parseDatabaseIdentity } from '../../src/lib/platform/diagnostics.ts'
 
 try {
   process.loadEnvFile('.env')

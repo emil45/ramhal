@@ -1,7 +1,7 @@
-import { formatPrice } from '../../lib/price.ts'
+import { formatPrice } from '../../lib/shop/price.ts'
 
 import type { DefaultCellComponentProps } from 'payload'
-import type { Currency } from '../../lib/currency.ts'
+import type { Currency } from '../../lib/shop/currency.ts'
 
 type PriceRow = { amount?: number; currency?: string }
 

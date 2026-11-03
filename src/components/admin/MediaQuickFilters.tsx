@@ -1,5 +1,5 @@
 import { QuickFilters } from './QuickFilters.tsx'
-import { MEDIA_LIST_FILTERS } from '../../lib/mediaListFilters.ts'
+import { MEDIA_LIST_FILTERS } from '../../lib/admin/mediaListFilters.ts'
 
 import type { ListViewServerProps } from 'payload'
 

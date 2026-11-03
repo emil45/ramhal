@@ -4,10 +4,10 @@ import os from 'node:os'
 import path from 'node:path'
 
 import { SKIP_STOREFRONT_REVALIDATION } from './collections/hooks/revalidateStorefront.ts'
-import { getImportBookUrlSlug } from './lib/importBookUrlSlug.ts'
-import { isRecordedMediaTitle } from './lib/recordedMedia.ts'
+import { getImportBookUrlSlug } from './lib/books/importBookUrlSlug.ts'
+import { isRecordedMediaTitle } from './lib/courses/recordedMedia.ts'
 
-import type { Currency } from './lib/currency.ts'
+import type { Currency } from './lib/shop/currency.ts'
 import type { Book } from './payload-types.ts'
 import type { Payload } from 'payload'
 

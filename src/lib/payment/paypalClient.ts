@@ -1,6 +1,6 @@
 import 'server-only'
 
-import type { Currency } from '@/lib/currency'
+import type { Currency } from '@/lib/shop/currency'
 import type { PayPalConfig } from '@/lib/payment/paypalConfig'
 
 /**

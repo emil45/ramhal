@@ -2,8 +2,8 @@ import type { GlobalConfig } from 'payload'
 
 import { INLINE_ROWS_CLASS_NAME } from '../collections/fields/inlineRows.ts'
 import { revalidateStorefront } from '../collections/hooks/revalidateStorefront.ts'
-import { CURRENCIES } from '../lib/currency.ts'
-import { SOCIAL_PLATFORMS, validateSocialLinks, validateSocialLinkUrl } from '../lib/socialLinks.ts'
+import { CURRENCIES } from '../lib/shop/currency.ts'
+import { SOCIAL_PLATFORMS, validateSocialLinks, validateSocialLinkUrl } from '../lib/content/socialLinks.ts'
 
 // Contact details, social links, the currency shown per locale.
 export const SiteSettings: GlobalConfig = {

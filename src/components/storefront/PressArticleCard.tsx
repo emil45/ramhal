@@ -5,8 +5,8 @@ import { buttonVariants } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 
-import type { Locale } from '@/lib/locale'
-import type { PressArticle } from '@/lib/pressCoverage'
+import type { Locale } from '@/lib/locale/locale'
+import type { PressArticle } from '@/lib/content/pressCoverage'
 
 type PressArticleCardProps = {
   article: PressArticle

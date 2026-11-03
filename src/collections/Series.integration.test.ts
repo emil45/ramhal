@@ -3,7 +3,7 @@ import { getPayload } from 'payload'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 
 import { SKIP_STOREFRONT_REVALIDATION } from '@/collections/hooks/revalidateStorefront'
-import { getCoursesForBook } from '@/lib/coursesData'
+import { getCoursesForBook } from '@/lib/courses/coursesData'
 import { cleanUpTestRun, createTestBook, startTestRun } from '@/test/checkoutFixtures'
 
 import type { Book, Series } from '@/payload-types'

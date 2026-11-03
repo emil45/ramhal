@@ -1,13 +1,13 @@
 import config from '@payload-config'
 import { getPayload } from 'payload'
 
-import { readAppEnvironment } from '@/lib/appEnvironment'
-import { readBackupReaderConfig } from '@/lib/backupReaderConfig'
-import { getBackupStatus } from '@/lib/backupStatus'
-import { buildDiagnostics, toPublicDiagnostics } from '@/lib/diagnostics'
-import { requireEnv } from '@/lib/env'
+import { readAppEnvironment } from '@/lib/platform/appEnvironment'
+import { readBackupReaderConfig } from '@/lib/platform/backupReaderConfig'
+import { getBackupStatus } from '@/lib/platform/backupStatus'
+import { buildDiagnostics, toPublicDiagnostics } from '@/lib/platform/diagnostics'
+import { requireEnv } from '@/lib/platform/env'
 
-import type { LatestMigration } from '@/lib/diagnostics'
+import type { LatestMigration } from '@/lib/platform/diagnostics'
 
 /**
  * Public, deliberately — see CLAUDE.md's verification rule. Reports which

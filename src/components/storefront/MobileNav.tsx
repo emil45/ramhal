@@ -6,10 +6,10 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { Sheet, SheetClose, SheetContent, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
-import { LOCALE_CONFIG, LOCALES } from '@/lib/locale'
-import { localePath } from '@/lib/routes'
+import { LOCALE_CONFIG, LOCALES } from '@/lib/locale/locale'
+import { localePath } from '@/lib/locale/routes'
 
-import type { Locale } from '@/lib/locale'
+import type { Locale } from '@/lib/locale/locale'
 
 type MobileNavProps = {
   closeLabel: string

@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation'
 
 import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { QuestionEmailActions } from '@/components/storefront/QuestionEmailActions'
-import { isLocale } from '@/lib/locale'
-import { getContactDetails } from '@/lib/siteSettingsData'
+import { isLocale } from '@/lib/locale/locale'
+import { getContactDetails } from '@/lib/content/siteSettingsData'
 
 const CONTENT = {
   he: {

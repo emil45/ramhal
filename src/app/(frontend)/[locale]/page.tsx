@@ -8,15 +8,15 @@ import { PageImage } from '@/components/storefront/blocks/PageImage'
 import { ProductCard } from '@/components/storefront/ProductCard'
 import { buttonVariants } from '@/components/ui/button'
 import { getDictionary } from '@/app/(frontend)/dictionary'
-import { getAnnouncements } from '@/lib/announcementsData'
-import { selectFeaturedBooks, selectNewBooks, sortCatalogue } from '@/lib/availability'
-import { getCatalogueBooks } from '@/lib/booksData'
-import { getEvents } from '@/lib/eventsData'
-import { buildNewsStream } from '@/lib/homeStream'
-import { isLocale, LOCALE_CONFIG } from '@/lib/locale'
-import { getPageBySlug } from '@/lib/pagesData'
-import { cataloguePath, localePath } from '@/lib/routes'
-import { getSchedule } from '@/lib/scheduleData'
+import { getAnnouncements } from '@/lib/content/announcementsData'
+import { selectFeaturedBooks, selectNewBooks, sortCatalogue } from '@/lib/books/availability'
+import { getCatalogueBooks } from '@/lib/books/booksData'
+import { getEvents } from '@/lib/content/eventsData'
+import { buildNewsStream } from '@/lib/content/homeStream'
+import { isLocale, LOCALE_CONFIG } from '@/lib/locale/locale'
+import { getPageBySlug } from '@/lib/content/pagesData'
+import { cataloguePath, localePath } from '@/lib/locale/routes'
+import { getSchedule } from '@/lib/content/scheduleData'
 
 import type { Media } from '@/payload-types'
 
@@ -108,7 +108,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
       ) : null}
 
       {/* 3. A strip of books — "new books" once they carry dates, otherwise a plain selection
-          from the catalogue (src/lib/availability.ts). Never claims more than it knows. */}
+          from the catalogue (src/lib/books/availability.ts). Never claims more than it knows. */}
       {stripBooks.length > 0 ? (
         <section className="page-container py-12">
           <SectionHeading

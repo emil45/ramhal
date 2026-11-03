@@ -3,8 +3,8 @@ import Link from 'next/link'
 import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { buttonVariants } from '@/components/ui/button'
 import { getDictionary } from '@/app/(frontend)/dictionary'
-import { LOCALES } from '@/lib/locale'
-import { cataloguePath, localePath } from '@/lib/routes'
+import { LOCALES } from '@/lib/locale/locale'
+import { cataloguePath, localePath } from '@/lib/locale/routes'
 
 // A not-found page is given no route parameters, and reading the address on the
 // client would leave the server-rendered page empty. So every language is

@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { cn } from 'cn'
 
-import type { CoverIdentity } from '@/lib/cover'
+import type { CoverIdentity } from '@/lib/books/cover'
 import type { Media } from '@/payload-types'
 
 type BookImageGalleryProps = {

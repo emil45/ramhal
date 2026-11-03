@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server'
 
-import legacyRedirects from '@/lib/legacyRedirects.json'
-import { DEFAULT_LOCALE } from '@/lib/locale'
-import { findLegacyRedirect } from '@/lib/legacyRedirects'
+import legacyRedirects from '@/lib/locale/legacyRedirects.json'
+import { DEFAULT_LOCALE } from '@/lib/locale/locale'
+import { findLegacyRedirect } from '@/lib/locale/legacyRedirects'
 
 import type { NextRequest } from 'next/server'
 
@@ -35,7 +35,7 @@ function hasLocalePrefix(pathname: string): boolean {
  *
  * 2. A request on the legacy domain (ramhal.com) for a page of the old site goes
  *    permanently to its equivalent here, when there is one
- *    (src/lib/legacyRedirects.json, CLAUDE.md). A legacy URL with
+ *    (src/lib/locale/legacyRedirects.json). A legacy URL with
  *    no equivalent falls through and 404s.
  *
  * 3. Hebrew-at-the-root locale routing: app/(frontend)/[locale] handles

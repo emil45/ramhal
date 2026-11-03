@@ -1,4 +1,4 @@
-import { readAppEnvironment } from '@/lib/appEnvironment'
+import { readAppEnvironment } from '@/lib/platform/appEnvironment'
 
 import type { Dictionary } from '@/app/(frontend)/dictionary'
 

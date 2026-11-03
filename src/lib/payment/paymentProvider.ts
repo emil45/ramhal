@@ -1,5 +1,5 @@
-import type { Currency } from '@/lib/currency'
-import type { Locale } from '@/lib/locale'
+import type { Currency } from '@/lib/shop/currency'
+import type { Locale } from '@/lib/locale/locale'
 
 /**
  * Everything a payment provider needs to know about an order. A real provider

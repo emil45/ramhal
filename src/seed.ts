@@ -1,7 +1,7 @@
 import type { Payload } from 'payload'
 
 import { SKIP_STOREFRONT_REVALIDATION } from './collections/hooks/revalidateStorefront.ts'
-import { DEFAULT_SOCIAL_LINKS } from './lib/socialLinks.ts'
+import { DEFAULT_SOCIAL_LINKS } from './lib/content/socialLinks.ts'
 
 type LocalizedText = { en: string; fr: string; he: string }
 

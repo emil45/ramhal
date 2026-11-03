@@ -1,6 +1,6 @@
-import { roundMoney } from '@/lib/price'
+import { roundMoney } from '@/lib/shop/price'
 
-import type { Currency } from '@/lib/currency'
+import type { Currency } from '@/lib/shop/currency'
 import type { PaymentConfirmation } from '@/lib/payment/paymentProvider'
 
 /**
@@ -14,7 +14,7 @@ export function toPayPalAmount(currency: Currency, amount: number): { currency_c
   return { currency_code: currency, value: roundMoney(amount).toFixed(2) }
 }
 
-/** `he-IL` → `he_IL`: Intl's BCP-47 tag (src/lib/locale.ts) with PayPal's
+/** `he-IL` → `he_IL`: Intl's BCP-47 tag (src/lib/locale/locale.ts) with PayPal's
  * underscore separator. */
 export function toPayPalLocale(intlTag: string): string {
   return intlTag.replace('-', '_')

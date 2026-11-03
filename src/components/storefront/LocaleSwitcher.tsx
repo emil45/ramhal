@@ -1,10 +1,10 @@
 import { Check, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
 
-import { LOCALE_CONFIG, LOCALES } from '@/lib/locale'
-import { localePath } from '@/lib/routes'
+import { LOCALE_CONFIG, LOCALES } from '@/lib/locale/locale'
+import { localePath } from '@/lib/locale/routes'
 
-import type { Locale } from '@/lib/locale'
+import type { Locale } from '@/lib/locale/locale'
 
 /**
  * Always switches to the other locale's home page, not the equivalent

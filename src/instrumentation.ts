@@ -9,7 +9,7 @@ export async function register(): Promise<void> {
   // CI, where the mock is legitimately configured; nothing is served then.
   if (process.env.NEXT_PHASE === 'phase-production-build') return
 
-  const { exitUnlessBuildMatchesEnvironment } = await import('./lib/exitUnlessBuildMatchesEnvironment')
+  const { exitUnlessBuildMatchesEnvironment } = await import('./lib/platform/exitUnlessBuildMatchesEnvironment')
   const { exitUnlessPaymentConfigurationIsSafe } = await import(
     './lib/payment/exitUnlessPaymentConfigurationIsSafe'
   )

@@ -3,10 +3,10 @@
 import config from '@payload-config'
 import { getPayload } from 'payload'
 
-import { isPurchasable } from '@/lib/availability'
-import { chooseColor, isSameCartLine } from '@/lib/bookColors'
-import { isLocale, LOCALE_CONFIG } from '@/lib/locale'
-import { getCartItemCount as readCartItemCount, getOrCreateCart } from '@/lib/serverCart'
+import { isPurchasable } from '@/lib/books/availability'
+import { chooseColor, isSameCartLine } from '@/lib/books/bookColors'
+import { isLocale, LOCALE_CONFIG } from '@/lib/locale/locale'
+import { getCartItemCount as readCartItemCount, getOrCreateCart } from '@/lib/shop/serverCart'
 
 type ActionResult = { error?: 'invalid-color' | 'invalid-locale' | 'invalid-quantity' | 'not-found' | 'not-purchasable'; ok: boolean }
 

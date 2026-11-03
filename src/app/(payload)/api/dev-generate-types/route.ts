@@ -4,7 +4,7 @@ import { pathToFileURL } from 'node:url'
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 
-import { isDevRouteAuthorized } from '@/lib/devRouteAuth'
+import { isDevRouteAuthorized } from '@/lib/admin/devRouteAuth'
 
 import type { SanitizedConfig } from 'payload'
 

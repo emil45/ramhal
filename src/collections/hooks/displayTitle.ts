@@ -1,4 +1,4 @@
-import { pickDisplayTitle } from '../../lib/localizedField.ts'
+import { pickDisplayTitle } from '../../lib/locale/localizedField.ts'
 
 import type { CollectionBeforeChangeHook, CollectionSlug } from 'payload'
 

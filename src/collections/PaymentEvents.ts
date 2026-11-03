@@ -1,6 +1,6 @@
 import type { CollectionConfig } from 'payload'
 
-import { PAYMENT_STATUSES } from '../lib/orderStatus.ts'
+import { PAYMENT_STATUSES } from '../lib/shop/orderStatus.ts'
 
 /**
  * One row per confirmation a payment provider has told us about. The UNIQUE

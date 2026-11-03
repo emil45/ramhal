@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { LOCALE_CONFIG } from '@/lib/locale'
+import { LOCALE_CONFIG } from '@/lib/locale/locale'
 import { captureOrder, getAccessToken, getOrder, PayPalApiError, createOrder as sendCreateOrder } from '@/lib/payment/paypalClient'
 import { cancelledConfirmation, confirmationFromCapture, declinedConfirmation, toPayPalAmount, toPayPalLocale } from '@/lib/payment/paypalMapping'
 

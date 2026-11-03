@@ -3,7 +3,7 @@ import type { Block } from 'payload'
 // Marks the start of a titled section within a page's content. Everything
 // after it, up to the next sectionHeading block, belongs to that section —
 // grouping is by position, not nesting, so editors reorder content the same
-// way for every block type (src/lib/pageSections.ts does the grouping).
+// way for every block type (src/lib/content/pageSections.ts does the grouping).
 export const SectionHeadingBlock: Block = {
   slug: 'sectionHeading',
   labels: { singular: 'כותרת פרק', plural: 'כותרות פרק' },

@@ -5,10 +5,10 @@ import { RamhalArticleLayout } from './RamhalArticleLayout'
 import { RamhalSection } from './RamhalSection'
 import { getDictionary } from '@/app/(frontend)/dictionary'
 import { ArticleBodyBlock } from '@/components/storefront/blocks/ArticleBodyBlock'
-import { isLocale } from '@/lib/locale'
-import { groupPageSections } from '@/lib/pageSections'
-import { getPageBySlug } from '@/lib/pagesData'
-import { buildTableOfContents } from '@/lib/tableOfContents'
+import { isLocale } from '@/lib/locale/locale'
+import { groupPageSections } from '@/lib/content/pageSections'
+import { getPageBySlug } from '@/lib/content/pagesData'
+import { buildTableOfContents } from '@/lib/content/tableOfContents'
 
 export async function generateMetadata({ params }: PageProps<'/[locale]/ramhal'>): Promise<Metadata> {
   const { locale } = await params

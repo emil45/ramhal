@@ -1,7 +1,7 @@
 import { AspectRatio } from '@/components/ui/aspect-ratio'
-import { COVER_ASPECT_RATIO, coverRuleColour } from '@/lib/cover'
+import { COVER_ASPECT_RATIO, coverRuleColour } from '@/lib/books/cover'
 
-import type { CoverIdentity } from '@/lib/cover'
+import type { CoverIdentity } from '@/lib/books/cover'
 import type { CSSProperties, ReactNode } from 'react'
 
 /**

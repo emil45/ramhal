@@ -1,10 +1,10 @@
 import { Badge } from '@/components/ui/badge'
-import { isPurchasable } from '@/lib/availability'
-import { LOCALE_CONFIG } from '@/lib/locale'
-import { formatPrice, selectPrice } from '@/lib/price'
+import { isPurchasable } from '@/lib/books/availability'
+import { LOCALE_CONFIG } from '@/lib/locale/locale'
+import { formatPrice, selectPrice } from '@/lib/shop/price'
 
 import type { Dictionary } from '@/app/(frontend)/dictionary'
-import type { Locale } from '@/lib/locale'
+import type { Locale } from '@/lib/locale/locale'
 
 type PricedItem = { prices: { amount: number; currency: string }[] }
 

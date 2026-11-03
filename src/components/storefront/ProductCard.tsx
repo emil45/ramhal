@@ -2,11 +2,11 @@ import Link from 'next/link'
 
 import { CoverImage } from '@/components/storefront/CoverImage'
 import { PriceTag } from '@/components/storefront/PriceTag'
-import { bookPath } from '@/lib/routes'
+import { bookPath } from '@/lib/locale/routes'
 
 import type { Dictionary } from '@/app/(frontend)/dictionary'
-import type { CatalogueBook } from '@/lib/booksData'
-import type { Locale } from '@/lib/locale'
+import type { CatalogueBook } from '@/lib/books/booksData'
+import type { Locale } from '@/lib/locale/locale'
 
 export function ProductCard({ book, dict, locale }: { book: CatalogueBook; dict: Dictionary; locale: Locale }) {
   const metadata = book.category?.title ?? (book.bookLanguage === 'unknown' ? null : dict.bookLanguageLabel[book.bookLanguage])

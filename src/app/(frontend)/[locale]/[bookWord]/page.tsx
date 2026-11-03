@@ -3,10 +3,10 @@ import { notFound } from 'next/navigation'
 import { CatalogueClient } from '@/components/storefront/CatalogueClient'
 import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { getDictionary } from '@/app/(frontend)/dictionary'
-import { sortCatalogue } from '@/lib/availability'
-import { getCatalogueBooks } from '@/lib/booksData'
-import { isLocale, LOCALE_CONFIG, LOCALES } from '@/lib/locale'
-import { CATALOGUE_SEGMENT } from '@/lib/routes'
+import { sortCatalogue } from '@/lib/books/availability'
+import { getCatalogueBooks } from '@/lib/books/booksData'
+import { isLocale, LOCALE_CONFIG, LOCALES } from '@/lib/locale/locale'
+import { CATALOGUE_SEGMENT } from '@/lib/locale/routes'
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale, bookWord: CATALOGUE_SEGMENT[locale] }))

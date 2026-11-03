@@ -1,7 +1,7 @@
-import { readAppEnvironment } from '@/lib/appEnvironment'
-import { requireEnv } from '@/lib/env'
+import { readAppEnvironment } from '@/lib/platform/appEnvironment'
+import { requireEnv } from '@/lib/platform/env'
 
-import type { AppEnvironment } from '@/lib/appEnvironment'
+import type { AppEnvironment } from '@/lib/platform/appEnvironment'
 
 export const MOCK_PAYMENT_PROVIDER_NAME = 'mock'
 

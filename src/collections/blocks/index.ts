@@ -11,7 +11,7 @@ import { VideoBlock } from './video.ts'
 
 // Every block a Pages document's `content` field can contain. A sectionHeading
 // block starts a new titled section; every block after it, up to the next
-// sectionHeading, belongs to that section (src/lib/pageSections.ts groups
+// sectionHeading, belongs to that section (src/lib/content/pageSections.ts groups
 // them for rendering) — nothing here nests blocks inside blocks.
 export const PAGE_CONTENT_BLOCKS = [
   SectionHeadingBlock,

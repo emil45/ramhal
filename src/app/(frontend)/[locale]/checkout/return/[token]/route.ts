@@ -1,9 +1,9 @@
 import { notFound, redirect } from 'next/navigation'
 
-import { isLocale } from '@/lib/locale'
+import { isLocale } from '@/lib/locale/locale'
 import { settleOrderPayment } from '@/lib/payment/settleOrderPayment'
-import { localePath } from '@/lib/routes'
-import { clearCart } from '@/lib/serverCart'
+import { localePath } from '@/lib/locale/routes'
+import { clearCart } from '@/lib/shop/serverCart'
 
 /**
  * Where the payment provider sends the customer's browser back to. Being

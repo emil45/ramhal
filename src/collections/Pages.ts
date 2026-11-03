@@ -4,7 +4,7 @@ import { computeDisplayTitleBeforeChange } from './hooks/displayTitle.ts'
 import { generateSlugFromTitle } from './hooks/generateSlugFromTitle.ts'
 import { revalidateStorefront } from './hooks/revalidateStorefront.ts'
 import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
-import { pagePreviewPath } from '../lib/adminPreview.ts'
+import { pagePreviewPath } from '../lib/admin/adminPreview.ts'
 
 import type { CollectionConfig } from 'payload'
 

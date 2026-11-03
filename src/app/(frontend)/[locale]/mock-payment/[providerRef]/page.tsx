@@ -5,10 +5,10 @@ import { MockPaymentChoices } from '@/components/storefront/MockPaymentChoices'
 import { MockPaymentNotice } from '@/components/storefront/MockPaymentNotice'
 import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { Card, CardContent } from '@/components/ui/card'
-import { isLocale } from '@/lib/locale'
+import { isLocale } from '@/lib/locale/locale'
 import { isMockPaymentProviderConfigured } from '@/lib/payment/getPaymentProvider'
 import { findMockPaymentSession } from '@/lib/payment/mockPaymentProvider'
-import { formatPrice } from '@/lib/price'
+import { formatPrice } from '@/lib/shop/price'
 
 // Reads live payment state — never cacheable.
 export const dynamic = 'force-dynamic'

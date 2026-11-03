@@ -1,4 +1,4 @@
-import { hasValueInAnyLocale } from '../../lib/localizedField.ts'
+import { hasValueInAnyLocale } from '../../lib/locale/localizedField.ts'
 
 import type { CollectionSlug, TextFieldSingleValidation } from 'payload'
 
