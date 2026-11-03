@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { useState, useTransition } from 'react'
 
 import { addToCart } from '@/app/(frontend)/cartActions'
+import { useSelectedColorId } from '@/components/storefront/BookColorContext'
 import { Button } from '@/components/ui/button'
 import { Field, FieldLabel } from '@/components/ui/field'
 import { Input } from '@/components/ui/input'
@@ -23,6 +24,7 @@ export function AddToCartButton({ bookId, locale }: { bookId: number; locale: Lo
   // Shipping tiers count items, so buying several copies at once should be
   // one action, not N clicks.
   const [quantity, setQuantity] = useState(1)
+  const colorId = useSelectedColorId()
 
   return (
     <div className="flex items-end gap-3">
@@ -43,7 +45,7 @@ export function AddToCartButton({ bookId, locale }: { bookId: number; locale: Lo
         disabled={isPending}
         onClick={() => {
           startTransition(async () => {
-            const result = await addToCart(bookId, locale, quantity)
+            const result = await addToCart(bookId, locale, quantity, colorId)
             if (result.ok) {
               setAdded(true)
               announceCartChange()

@@ -19,6 +19,7 @@ import * as migration_20261029_220211_remove_unused_series_fields from './202610
 import * as migration_20261029_220335_lessons_admin from './20261029_220335_lessons_admin';
 import * as migration_20261029_220900_seed_courses from './20261029_220900_seed_courses';
 import * as migration_20261103_182815_preview_pdf from './20261103_182815_preview_pdf';
+import * as migration_20261103_183652_book_colors from './20261103_183652_book_colors';
 
 export const migrations = [
   {
@@ -124,6 +125,11 @@ export const migrations = [
   {
     up: migration_20261103_182815_preview_pdf.up,
     down: migration_20261103_182815_preview_pdf.down,
-    name: '20261103_182815_preview_pdf'
+    name: '20261103_182815_preview_pdf',
+  },
+  {
+    up: migration_20261103_183652_book_colors.up,
+    down: migration_20261103_183652_book_colors.down,
+    name: '20261103_183652_book_colors'
   },
 ];

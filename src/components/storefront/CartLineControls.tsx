@@ -13,20 +13,22 @@ import { announceCartChange } from '@/lib/cartEvents'
 
 import type { Locale } from '@/lib/locale'
 
-export function CartLineControls({ bookId, locale, quantity }: { bookId: number; locale: Locale; quantity: number }) {
+export function CartLineControls({ bookId, colorId, locale, quantity }: { bookId: number; colorId: string | null; locale: Locale; quantity: number }) {
   // See CatalogueClient's comment: dict holds functions, which can't cross
   // the server→client prop boundary, so it's computed here instead of
   // passed down.
   const dict = getDictionary(locale)
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
+  const line = { bookId, colorId }
+  const quantityInputId = `cart-quantity-${bookId}-${colorId ?? 'plain'}`
 
   return (
     <div className="flex items-end gap-3">
       <Field orientation="horizontal" className="w-auto items-center">
-        <FieldLabel htmlFor={`cart-quantity-${bookId}`}>{dict.cart.quantity}</FieldLabel>
+        <FieldLabel htmlFor={quantityInputId}>{dict.cart.quantity}</FieldLabel>
         <Input
-          id={`cart-quantity-${bookId}`}
+          id={quantityInputId}
           type="number"
           min={1}
           defaultValue={quantity}
@@ -35,7 +37,7 @@ export function CartLineControls({ bookId, locale, quantity }: { bookId: number;
           onBlur={(event) => {
             const next = Math.max(1, Number(event.currentTarget.value) || 1)
             startTransition(async () => {
-              await updateCartQuantity(bookId, next)
+              await updateCartQuantity(line, next)
               announceCartChange()
               router.refresh()
             })
@@ -47,7 +49,7 @@ export function CartLineControls({ bookId, locale, quantity }: { bookId: number;
         disabled={isPending}
         onClick={() => {
           startTransition(async () => {
-            await removeFromCart(bookId)
+            await removeFromCart(line)
             announceCartChange()
             router.refresh()
           })

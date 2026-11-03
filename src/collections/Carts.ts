@@ -46,6 +46,15 @@ export const Carts: CollectionConfig = {
           required: true,
         },
         {
+          // The `id` of the row in the book's `colors` list. A book's colours
+          // are edited in place, so the id — not the name — is what keeps a
+          // cart line pointing at the colour the visitor picked.
+          name: 'colorId',
+          type: 'text',
+          label: 'מזהה צבע',
+          admin: { hidden: true },
+        },
+        {
           name: 'quantity',
           type: 'number',
           label: 'כמות',

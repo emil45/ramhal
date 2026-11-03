@@ -25,7 +25,7 @@ export function startTestRun(): TestRun {
 /** A throwaway book the test owns, so no real catalogue price is touched. */
 export async function createTestBook(
   run: TestRun,
-  overrides: { title?: string; prices?: Book['prices']; inStock?: boolean; shippingUnits?: number } = {},
+  overrides: { title?: string; prices?: Book['prices']; inStock?: boolean; shippingUnits?: number; colors?: Book['colors'] } = {},
 ): Promise<Book> {
   const payload = await getPayload({ config })
   return payload.create({
@@ -41,6 +41,7 @@ export async function createTestBook(
       prices: overrides.prices ?? [{ currency: 'ILS', amount: 55 }],
       inStock: overrides.inStock ?? true,
       shippingUnits: overrides.shippingUnits ?? 1,
+      colors: overrides.colors,
     },
     context: SKIP_STOREFRONT_REVALIDATION,
   })

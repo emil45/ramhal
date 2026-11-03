@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import Image from 'next/image'
 import { useState } from 'react'
 
+import { useSelectedColorId } from '@/components/storefront/BookColorContext'
 import { CoverImage } from '@/components/storefront/CoverImage'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
@@ -16,6 +17,8 @@ type BookImageGalleryProps = {
   book: CoverIdentity
   /** Cover first, then the gallery — see collectBookImages. */
   images: Media[]
+  /** Pictures of each colour the book comes in, by colour id; shown instead of `images` while that colour is chosen. */
+  colorImages?: Record<string, { images: Media[]; thumbnailLabels: string[] }>
   /** Text for assistive technology and tooltips, already in the page's language: functions cannot cross from the server page into this component. */
   labels: {
     close: string
@@ -39,7 +42,16 @@ type BookImageGalleryProps = {
  * slideshow. A book with one picture renders the same, without the thumbnails;
  * one with none shows the typeset cover and nothing to open.
  */
-export function BookImageGallery({ book, direction, images, labels, sizes, thumbnailLabels, title }: BookImageGalleryProps) {
+export function BookImageGallery({ colorImages, images, thumbnailLabels, ...rest }: BookImageGalleryProps) {
+  const selectedColorId = useSelectedColorId()
+  const ofColor = selectedColorId ? colorImages?.[selectedColorId] : undefined
+  const shown = ofColor && ofColor.images.length > 0 ? ofColor : { images, thumbnailLabels }
+
+  // Keyed by colour so choosing another one starts again at its first picture.
+  return <ImageGalleryView key={selectedColorId} {...shown} {...rest} />
+}
+
+function ImageGalleryView({ book, direction, images, labels, sizes, thumbnailLabels, title }: Omit<BookImageGalleryProps, 'colorImages'>) {
   const [selectedIndex, setSelectedIndex] = useState(0)
   const selected = images[selectedIndex] ?? null
   const hasSeveralImages = images.length > 1

@@ -6,6 +6,7 @@ import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLoc
 import { bookPreviewPath } from '../lib/adminPreview.ts'
 import { CURRENCIES } from '../lib/currency.ts'
 import { validateMoneyAmount } from '../lib/validateMoneyAmount.ts'
+import { validateSwatch } from '../lib/validateSwatch.ts'
 
 import type { CollectionConfig } from 'payload'
 
@@ -169,6 +170,50 @@ export const Books: CollectionConfig = {
                   label: 'תמונה',
                   relationTo: 'media',
                   required: true,
+                },
+              ],
+            },
+            {
+              name: 'colors',
+              type: 'array',
+              label: 'צבעים',
+              labels: { singular: 'צבע', plural: 'צבעים' },
+              admin: {
+                description: 'לספר שיוצא בכמה צבעי כריכה (למשל הגדה חומה ולבנה). אותו מחיר לכולם; הלקוח בוחר צבע בעמוד הספר, והצבע נרשם בהזמנה. השאירו ריק לספר בצבע אחד.',
+                components: { RowLabel: '/components/admin/ColorRowLabel#ColorRowLabel' },
+              },
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'name',
+                      type: 'text',
+                      label: 'שם הצבע',
+                      required: true,
+                      localized: true,
+                      admin: { description: 'למשל: חום. מלאו בכל שפה.' },
+                    },
+                    {
+                      name: 'swatch',
+                      type: 'text',
+                      label: 'גוון',
+                      required: true,
+                      validate: validateSwatch,
+                      admin: {
+                        description: 'הגוון שמוצג ללקוח ליד שם הצבע.',
+                        components: { Field: '/components/admin/SwatchField#SwatchField' },
+                      },
+                    },
+                  ],
+                },
+                {
+                  name: 'images',
+                  type: 'array',
+                  label: 'תמונות בצבע הזה',
+                  labels: { singular: 'תמונה', plural: 'תמונות' },
+                  admin: { description: 'התמונה הראשונה היא העטיפה שמוצגת כשהצבע נבחר. ללא תמונות יוצגו תמונות הספר הרגילות.' },
+                  fields: [{ name: 'image', type: 'upload', label: 'תמונה', relationTo: 'media', required: true }],
                 },
               ],
             },

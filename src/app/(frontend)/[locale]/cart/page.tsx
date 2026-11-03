@@ -10,6 +10,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Separator } from '@/components/ui/separator'
 import { getDictionary } from '@/app/(frontend)/dictionary'
+import { collectBookImages } from '@/lib/bookImages'
 import { cartSubtotal, cartUnits, unitsUntilFreeShipping } from '@/lib/cart'
 import { calculateShipping } from '@/lib/shipping'
 import { getShippingZones } from '@/lib/shippingData'
@@ -66,15 +67,17 @@ export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) 
         <ul className="flex flex-col">
           {lines.map((line) => {
             const lineAmount = selectPrice(line.book, currency)
+            // The chosen colour's own picture, else the book's cover.
+            const cover = collectBookImages(null, line.color?.images)[0] ?? collectBookImages(line.book.cover, [])[0] ?? null
             return (
-              <li key={line.book.id} className="flex gap-5 border-b border-border py-6 first:pt-0">
+              <li key={`${line.book.id}-${line.color?.id ?? 'plain'}`} className="flex gap-5 border-b border-border py-6 first:pt-0">
                 <div className="w-24 shrink-0 sm:w-28">
                   <CoverImage
                     book={{
                       bookLanguage: line.book.bookLanguage,
                       categorySlug: typeof line.book.category === 'object' ? line.book.category?.slug : null,
                     }}
-                    cover={typeof line.book.cover === 'object' ? line.book.cover : null}
+                    cover={cover}
                     sizes="112px"
                     // A book can legitimately have no title in the current
                     // locale — the typeset cover falls back to the same he -> fr -> en
@@ -91,13 +94,18 @@ export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) 
                       {lineAmount !== null ? money(lineAmount * line.quantity) : '—'}
                     </span>
                   </div>
+                  {line.color ? (
+                    <span className="text-sm text-muted-foreground">
+                      {dict.book.colorLabel}: {line.color.name}
+                    </span>
+                  ) : null}
                   {lineAmount !== null && line.quantity > 1 ? (
                     <span className="text-sm text-muted-foreground tabular-nums">
                       {money(lineAmount)} × {line.quantity}
                     </span>
                   ) : null}
                   <div className="mt-auto pt-2">
-                    <CartLineControls bookId={line.book.id} locale={locale} quantity={line.quantity} />
+                    <CartLineControls bookId={line.book.id} colorId={line.color?.id ?? null} locale={locale} quantity={line.quantity} />
                   </div>
                 </div>
               </li>

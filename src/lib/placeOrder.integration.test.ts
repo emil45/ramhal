@@ -26,7 +26,7 @@ afterAll(async () => {
   await cleanUpTestRun(run, books)
 })
 
-const cartOf = (quantity: number) => [{ bookId: book.id, quantity }]
+const cartOf = (quantity: number) => [{ bookId: book.id, colorId: null, quantity }]
 
 describe('placeOrder', () => {
   it('rejects a client total that does not match the database, and creates no order', async () => {
@@ -71,7 +71,7 @@ describe('placeOrder', () => {
     const email = `snapshot-${run.email}`
     const form = checkoutFormFor(run, BOOK_PRICE + ISRAEL_SHIPPING, { email })
 
-    await placeOrder({ cart: [{ bookId: soldBook.id, quantity: 1 }], form, locale: 'he' })
+    await placeOrder({ cart: [{ bookId: soldBook.id, colorId: null, quantity: 1 }], form, locale: 'he' })
     await payload.update({
       collection: 'books',
       id: soldBook.id,
@@ -93,7 +93,7 @@ describe('placeOrder', () => {
     books.push(soldOut)
 
     const result = await placeOrder({
-      cart: [{ bookId: soldOut.id, quantity: 1 }],
+      cart: [{ bookId: soldOut.id, colorId: null, quantity: 1 }],
       form: checkoutFormFor(run, BOOK_PRICE + ISRAEL_SHIPPING),
       locale: 'he',
     })
@@ -106,11 +106,48 @@ describe('placeOrder', () => {
     books.push(eurOnly)
 
     const result = await placeOrder({
-      cart: [{ bookId: eurOnly.id, quantity: 1 }],
+      cart: [{ bookId: eurOnly.id, colorId: null, quantity: 1 }],
       form: checkoutFormFor(run, 18 + ISRAEL_SHIPPING),
       locale: 'he',
     })
 
     expect(result).toEqual({ ok: false, problem: { kind: 'book-not-purchasable', bookTitle: eurOnly.title } })
+  })
+
+  it('sells a book under the title and colour the customer chose', async () => {
+    const coloured = await createTestBook(run, {
+      title: `ספר בצבעים ${run.id}`,
+      colors: [
+        { name: 'חום', swatch: '#5a2d1b' },
+        { name: 'לבן', swatch: '#f4f1ea' },
+      ],
+    })
+    books.push(coloured)
+    const [, white] = coloured.colors ?? []
+    const email = `colour-${run.email}`
+
+    const result = await placeOrder({
+      cart: [{ bookId: coloured.id, colorId: white.id ?? null, quantity: 1 }],
+      form: checkoutFormFor(run, BOOK_PRICE + ISRAEL_SHIPPING, { email }),
+      locale: 'he',
+    })
+
+    expect(result).toMatchObject({ ok: true })
+    const payload = await getPayload({ config })
+    const order = (await payload.find({ collection: 'orders', where: { 'customer.email': { equals: email } }, depth: 0 })).docs[0]
+    expect(order.lines).toMatchObject([{ title: `${coloured.title} — לבן`, unitPrice: BOOK_PRICE }])
+  })
+
+  it('fails naming the book when its colour is no longer offered', async () => {
+    const coloured = await createTestBook(run, { title: `ספר בלי הצבע ${run.id}`, colors: [{ name: 'חום', swatch: '#5a2d1b' }] })
+    books.push(coloured)
+
+    const result = await placeOrder({
+      cart: [{ bookId: coloured.id, colorId: 'removed-colour', quantity: 1 }],
+      form: checkoutFormFor(run, BOOK_PRICE + ISRAEL_SHIPPING),
+      locale: 'he',
+    })
+
+    expect(result).toEqual({ ok: false, problem: { kind: 'book-color-unavailable', bookTitle: coloured.title } })
   })
 })

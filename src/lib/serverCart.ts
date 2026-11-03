@@ -5,6 +5,9 @@ import { randomUUID } from 'node:crypto'
 import { cookies } from 'next/headers'
 import { getPayload } from 'payload'
 
+import { findBookColor } from '@/lib/bookColors'
+
+import type { BookColor } from '@/lib/bookColors'
 import type { Book, Cart } from '@/payload-types'
 import type { Locale } from '@/lib/locale'
 
@@ -15,6 +18,8 @@ const CART_COOKIE_MAX_AGE_SECONDS = 60 * 60 * 24 * 180 // 180 days
 
 export type CartLine = {
   book: Book
+  /** Null for a book sold in one colour, and for a colour the book no longer offers. */
+  color: BookColor | null
   quantity: number
 }
 
@@ -73,15 +78,16 @@ export async function getCartLines(locale: Locale): Promise<CartLine[]> {
 
   return (cart.items ?? [])
     .filter((item): item is typeof item & { book: Book } => typeof item.book === 'object' && item.book !== null)
-    .map((item) => ({ book: item.book, quantity: item.quantity }))
+    .map((item) => ({ book: item.book, color: findBookColor(item.book.colors, item.colorId), quantity: item.quantity }))
 }
 
 export type CartItem = {
   bookId: number
+  colorId: string | null
   quantity: number
 }
 
-/** The cart as plain book ids and quantities, for checkout: it re-reads
+/** The cart as plain book ids, colour ids and quantities, for checkout: it re-reads
  * every book from the database itself rather than trusting a book document
  * loaded for display. */
 export async function getCartItems(): Promise<CartItem[]> {
@@ -93,7 +99,7 @@ export async function getCartItems(): Promise<CartItem[]> {
 
   return (cart.items ?? []).flatMap((item) => {
     const bookId = typeof item.book === 'object' ? item.book?.id : item.book
-    return bookId === undefined || bookId === null ? [] : [{ bookId, quantity: item.quantity }]
+    return bookId === undefined || bookId === null ? [] : [{ bookId, colorId: item.colorId ?? null, quantity: item.quantity }]
   })
 }
 

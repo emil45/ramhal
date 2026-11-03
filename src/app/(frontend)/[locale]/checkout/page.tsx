@@ -7,6 +7,7 @@ import { MockPaymentNotice } from '@/components/storefront/MockPaymentNotice'
 import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { buttonVariants } from '@/components/ui/button'
 import { Empty, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
+import { titleWithColor } from '@/lib/bookColors'
 import { cartSubtotal, cartUnits } from '@/lib/cart'
 import { countriesServedInCurrency } from '@/lib/orderPricing'
 import { isLocale, LOCALE_CONFIG } from '@/lib/locale'
@@ -65,7 +66,8 @@ export default async function CheckoutPage({ params }: PageProps<'/[locale]/chec
             // this becomes the order's own permanent snapshot of what was
             // sold, so it falls back to the same
             // he -> fr -> en display title the admin uses, never to blank.
-            title: line.book.title ?? line.book.displayTitle ?? '',
+            title: titleWithColor(line.book.title ?? line.book.displayTitle ?? '', line.color),
+            colorId: line.color?.id ?? null,
             quantity: line.quantity,
             unitPrice: selectPrice(line.book, currency) ?? 0,
           }))}

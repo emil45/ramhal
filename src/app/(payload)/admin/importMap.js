@@ -29,6 +29,8 @@ import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997e
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { CoverThumbnail as CoverThumbnail_d182782dca98d2714f9c94f6bbab659e } from '../../../components/admin/CoverThumbnail'
+import { SwatchField as SwatchField_4a5f4a1e2a32af2381d291c2ea792a16 } from '../../../components/admin/SwatchField'
+import { ColorRowLabel as ColorRowLabel_4673ac1f44b6ffdfedd94c386f83b8c1 } from '../../../components/admin/ColorRowLabel'
 import { PriceList as PriceList_0ec60e1a05a1558847842fb1309b91f2 } from '../../../components/admin/PriceList'
 import { StockBadge as StockBadge_b57a770e39aa574ceac797d1df421607 } from '../../../components/admin/StockBadge'
 import { BookQuickFilters as BookQuickFilters_1db31e62030ebd427cc3b59c0f5172ab } from '../../../components/admin/BookQuickFilters'
@@ -75,6 +77,8 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "/components/admin/CoverThumbnail#CoverThumbnail": CoverThumbnail_d182782dca98d2714f9c94f6bbab659e,
+  "/components/admin/SwatchField#SwatchField": SwatchField_4a5f4a1e2a32af2381d291c2ea792a16,
+  "/components/admin/ColorRowLabel#ColorRowLabel": ColorRowLabel_4673ac1f44b6ffdfedd94c386f83b8c1,
   "/components/admin/PriceList#PriceList": PriceList_0ec60e1a05a1558847842fb1309b91f2,
   "/components/admin/StockBadge#StockBadge": StockBadge_b57a770e39aa574ceac797d1df421607,
   "/components/admin/BookQuickFilters#BookQuickFilters": BookQuickFilters_1db31e62030ebd427cc3b59c0f5172ab,

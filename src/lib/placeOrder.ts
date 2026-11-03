@@ -4,6 +4,7 @@ import config from '@payload-config'
 import { randomUUID } from 'node:crypto'
 import { getPayload } from 'payload'
 
+import { chooseColor, titleWithColor } from '@/lib/bookColors'
 import { getPaymentProvider } from '@/lib/payment/getPaymentProvider'
 import { priceOrder } from '@/lib/orderPricing'
 import { DEFAULT_LOCALE, LOCALE_CONFIG, LOCALES } from '@/lib/locale'
@@ -49,15 +50,21 @@ export async function placeOrder(input: {
     getShippingZones(),
   ])
 
-  const lines: PricingLine[] = cart.flatMap((item) => {
+  const lines: PricingLine[] = []
+  for (const item of cart) {
     const book = books.docs.find((candidate) => candidate.id === item.bookId)
-    if (!book) return []
+    if (!book) continue
     // The query's own fallbackLocale chain above already guarantees a title
     // in practice; book.displayTitle is the same guarantee the type system
     // can express, since a
     // title's requiredness is now data-driven rather than schema-enforced.
-    return [{ book: { ...book, title: book.title ?? book.displayTitle ?? '' }, quantity: item.quantity }]
-  })
+    const title = book.title ?? book.displayTitle ?? ''
+    // The colour is checked against the book as it is now: it may have been
+    // removed since the visitor put it in the cart.
+    const colorChoice = chooseColor(book.colors, item.colorId)
+    if (!colorChoice.ok) return { ok: false, problem: { kind: 'book-color-unavailable', bookTitle: title } }
+    lines.push({ book: { ...book, title: titleWithColor(title, colorChoice.color) }, quantity: item.quantity })
+  }
 
   const priced = priceOrder({
     currency: LOCALE_CONFIG[locale].currency,

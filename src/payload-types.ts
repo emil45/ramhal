@@ -274,7 +274,32 @@ export interface Book {
       }[]
     | null;
   /**
-   * מבחר עמודים מהספר, או הספר כולו, לעיון באתר. עד 10MB. כשהשדה מלא מופיע בעמוד הספר כפתור ״עיון בספר״.
+   * לספר שיוצא בכמה צבעי כריכה (למשל הגדה חומה ולבנה). אותו מחיר לכולם; הלקוח בוחר צבע בעמוד הספר, והצבע נרשם בהזמנה. השאירו ריק לספר בצבע אחד.
+   */
+  colors?:
+    | {
+        /**
+         * למשל: חום. מלאו בכל שפה.
+         */
+        name: string;
+        /**
+         * הגוון שמוצג ללקוח ליד שם הצבע.
+         */
+        swatch: string;
+        /**
+         * התמונה הראשונה היא העטיפה שמוצגת כשהצבע נבחר. ללא תמונות יוצגו תמונות הספר הרגילות.
+         */
+        images?:
+          | {
+              image: number | Media;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * כמה עמודים מהספר (או הספר כולו) לקריאה באתר. עד 10MB. כשהשדה מלא מופיע בעמוד הספר כפתור ״דוגמא מהספר״.
    */
   previewPdf?: (number | null) | Media;
   /**
@@ -837,6 +862,7 @@ export interface Cart {
   items?:
     | {
         book: number | Book;
+        colorId?: string | null;
         quantity: number;
         id?: string | null;
       }[]
@@ -1084,6 +1110,19 @@ export interface BooksSelect<T extends boolean = true> {
     | T
     | {
         image?: T;
+        id?: T;
+      };
+  colors?:
+    | T
+    | {
+        name?: T;
+        swatch?: T;
+        images?:
+          | T
+          | {
+              image?: T;
+              id?: T;
+            };
         id?: T;
       };
   previewPdf?: T;
@@ -1438,6 +1477,7 @@ export interface CartsSelect<T extends boolean = true> {
     | T
     | {
         book?: T;
+        colorId?: T;
         quantity?: T;
         id?: T;
       };

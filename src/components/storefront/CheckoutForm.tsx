@@ -30,7 +30,7 @@ type CheckoutFormProps = {
   countries: { code: string; name: string }[]
   currency: Currency
   defaultCountry: string | undefined
-  lines: { bookId: number; title: string; quantity: number; unitPrice: number }[]
+  lines: { bookId: number; colorId: string | null; title: string; quantity: number; unitPrice: number }[]
   locale: Locale
   subtotal: number
   units: number
@@ -134,7 +134,7 @@ export function CheckoutForm({ countries, currency, defaultCountry, lines, local
         <CardContent className="flex flex-col gap-4">
           <ul className="flex flex-col gap-2 text-sm">
             {lines.map((line) => (
-              <li key={line.bookId} className="flex justify-between gap-3">
+              <li key={`${line.bookId}-${line.colorId ?? 'plain'}`} className="flex justify-between gap-3">
                 <span>
                   {line.title} <span className="text-muted-foreground">× {line.quantity}</span>
                 </span>
@@ -203,6 +203,8 @@ function problemMessage(problem: PlaceOrderProblem, dict: ReturnType<typeof getD
       return problems.bookNotPurchasable(problem.bookTitle)
     case 'book-out-of-stock':
       return problems.bookOutOfStock(problem.bookTitle)
+    case 'book-color-unavailable':
+      return problems.bookColorUnavailable(problem.bookTitle)
     case 'destination-not-served':
       return problems.destinationNotServed
     case 'pickup-not-available':

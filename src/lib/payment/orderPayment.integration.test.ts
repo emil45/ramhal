@@ -37,7 +37,7 @@ afterAll(async () => {
 
 /** Places a fresh pending order for this run and returns it. */
 async function placePendingOrder(): Promise<Order> {
-  await placeOrder({ cart: [{ bookId: book.id, quantity: 1 }], form: checkoutFormFor(run, ISRAEL_TOTAL), locale: 'he' })
+  await placeOrder({ cart: [{ bookId: book.id, colorId: null, quantity: 1 }], form: checkoutFormFor(run, ISRAEL_TOTAL), locale: 'he' })
   const orders = await findOrdersOf(run)
   placedOrders += 1
   expect(orders).toHaveLength(placedOrders)

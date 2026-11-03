@@ -47,6 +47,7 @@ export type CheckoutProblem =
   | { kind: 'empty-cart' }
   | { kind: 'book-not-purchasable'; bookTitle: string }
   | { kind: 'book-out-of-stock'; bookTitle: string }
+  | { kind: 'book-color-unavailable'; bookTitle: string }
   | { kind: 'destination-not-served' }
   | { kind: 'pickup-not-available' }
 
