@@ -6,8 +6,13 @@
 // Dry run by default: prints what would go and changes nothing. `--apply` deletes. Refuses to run
 // at all if any order came from a payment provider other than the mock one.
 //
-//   ALLOW_PRODUCTION_ONE_OFF=TASK-58 DATABASE_URI="<production>" \
-//     npx vite-node scripts/one-off/TASK-58-remove-mock-orders.ts [--apply]
+//   ALLOW_PRODUCTION_ONE_OFF=TASK-58 DATABASE_URI="<production>" npx vite-node -c vitest.config.ts \
+//     --options.deps.inline=payload-oauth2 scripts/one-off/TASK-58-remove-mock-orders.ts [--apply]
+//
+// Run against production on 3 November 2026 with the unpooled connection string from
+// `neon connection-string production`; its fingerprint (5f4bb4452fb2) differs from the one in
+// docs/RECOVERY.md only because that one is the pooled host of the same endpoint. Deleted 15
+// orders, 15 payment events, 15 mock payment sessions and 1 cart.
 import { getPayload } from 'payload'
 
 import config from '../../src/payload.config.ts'

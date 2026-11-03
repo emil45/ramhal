@@ -162,3 +162,8 @@ actionable without reading anything else. Grouped, not ordered by priority withi
   field months ago; confirmed still narrow by reading `src/app/(payload)/api/diagnostics/route.ts`.
 - CD/DVD catalogue removal, language-as-category cleanup, canonical `www.ramhal.com` catalogue —
   all done and verified against the live site.
+
+- **`docs/RECOVERY.md` one-off procedure is stale.** Its `npx vite-node <script>` command fails with
+  `ERR_MODULE_NOT_FOUND` for `payload-oauth2`; it needs `-c vitest.config.ts --options.deps.inline=payload-oauth2`.
+  It should also record the unpooled production fingerprint (`5f4bb4452fb2`) next to the pooled one
+  (`2c951382a7f8`) and say `neon connection-string production --project-id <id>` gets the string.
