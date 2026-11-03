@@ -24,10 +24,10 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
 
   return (
     <header className="border-b border-border bg-card">
-      <div className="page-container flex h-20 items-center gap-3 md:h-24 md:gap-6">
+      <div className="page-container flex h-16 items-center gap-3 md:h-20 md:gap-6">
         <Link href={localePath(locale, '/')} className="flex items-center gap-3">
-          <Image src="/logo.png" alt="" width={362} height={512} className="h-14 w-auto md:h-[4.5rem]" priority />
-          <span className="whitespace-nowrap font-serif text-xl font-medium text-teal-deep md:text-3xl">{dict.nav.home}</span>
+          <Image src="/logo.png" alt="" width={362} height={512} className="h-12 w-auto md:h-14" priority />
+          <span className="whitespace-nowrap font-serif text-xl font-medium text-teal-deep md:text-2xl">{dict.nav.home}</span>
         </Link>
 
         <div className="ms-auto flex items-center gap-2">
@@ -58,7 +58,7 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
       </div>
 
       <nav aria-label={dict.nav.menu} className="hidden border-t border-border xl:block">
-        <div className="page-container flex h-16 items-center gap-2">
+        <div className="page-container flex h-14 items-center gap-1">
           <Link href={cataloguePath(locale)} className={cn(buttonVariants({ size: 'default' }), 'me-3 px-6 text-base')}>
             {dict.nav.catalogue}
           </Link>
