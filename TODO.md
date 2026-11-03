@@ -9,7 +9,7 @@ Not loaded into Claude's context; read it when planning.
 - No transactional email: Resend was intended, nothing wired; order confirmations are not sent.
 - Media is served from R2 `r2.dev` (rate-limited, non-production): attach a custom domain to `ramhal-media` and set `S3_PUBLIC_URL`.
 - After the next deploy: check on-demand revalidation (content page is a cache HIT, edited book title and deleted announcement show at next reload) and R2 (covers serve, `/api/diagnostics` backup age, one admin upload proves CORS, then delete retired `RAMHAL_BACKUP_S3_*` GitHub secrets).
-- Owner: revoke the admin Cloudflare token, delete the Neon `testing` branch, empty the Neon media and backup buckets.
+- Owner: delete the old broad Cloudflare token `ramhal` (My Profile → API Tokens; it can create tokens and nothing uses it any more), keep `Cloudflare Agent Token` only if you know what it is for, delete the Neon `testing` branch, empty the Neon media and backup buckets.
 - The audio archive will not fit R2's 10 GB free tier; decide where MP3s live before that phase.
 
 ## Store

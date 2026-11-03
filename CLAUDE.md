@@ -139,8 +139,8 @@ as `scripts/ops.sh <command>`. `npm run ops:check` tests every credential.
 | Platform | Variables | Use |
 |---|---|---|
 | Neon (project `lucky-field-60207292`, org `org-jolly-mouse-94761855`) | `NEON_API_KEY`, `NEON_PROJECT_ID` | `scripts/ops.sh neon … --project-id "$NEON_PROJECT_ID"`: production connection string, branches, restore |
-| Vercel (project `ramhal`) | `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` | `scripts/ops.sh vercel …`: env ls, deployments, logs |
-| Cloudflare account | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | R2 bucket and token administration only |
+| Vercel (project `ramhal`) | `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID` | `scripts/ops.sh vercel …`: env ls, deployments, logs. Token `ramhal-claude-code`, scoped to the `ramhal` project, expires 4 Nov 2027 |
+| Cloudflare account | `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` | R2 bucket administration only (token `ramhal-claude-r2-admin`, permission Workers R2 Storage Write; it cannot create tokens) |
 | R2 `ramhal-media`, read-write | `R2_MEDIA_WRITE_ACCESS_KEY_ID`, `R2_MEDIA_WRITE_SECRET_ACCESS_KEY` | media one-offs (token `ramhal-claude-media-rw`, one bucket only) |
 | GitHub | `gh` login (keyring) | secrets, workflows, CI |
 
