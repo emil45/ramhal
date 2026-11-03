@@ -12,8 +12,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 
 Website, catalogue and admin for מכון רמח״ל (Machon Ramhal), the institute that publishes and teaches
 the Ramhal (Rabbi Moshe Chaim Luzzatto, 1707–1746). Next.js 16 + Payload 3 + PostgreSQL, one app, one
-repo. A book page presents a *work* (text, sources, the כתר מרדכי commentary), not a SKU. Open work and
-go-live blockers: `TODO.md`.
+repo. A book page presents a *work* (text, sources, the כתר מרדכי commentary), not a SKU.
 
 ## Non-negotiables
 
