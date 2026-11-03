@@ -13,6 +13,11 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+  {
+    // Payload generates every migration with `{ payload, req }` parameters, used or not.
+    files: ["src/migrations/*.ts"],
+    rules: { "@typescript-eslint/no-unused-vars": "off" },
+  },
 ]);
 
 export default eslintConfig;
