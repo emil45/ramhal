@@ -65,6 +65,9 @@ live site down). `vitest.setup.ts` refuses a Neon `TEST_DATABASE_URI`; Payload's
 3. `npm ci`, `npm run db:restore-local` (newest dump, truncates customer and order data, re-run to
    refresh), `npm run db:migrate`, `npm run dev`.
 
+If `ramhal_test` lags behind `ramhal` (an integration test checks the catalogue), recreate it from the
+dev database: `dropdb ramhal_test && createdb -T ramhal ramhal_test` (no open connections to either).
+
 `npm run seed` is repeatable and never overwrites an editor's values. Deploy: `vercel.json` runs
 `npm run deploy:build`, which applies migrations before `next build`.
 
