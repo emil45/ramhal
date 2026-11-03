@@ -17,7 +17,6 @@ Not loaded into Claude's context; read it when planning.
 - Donations record nothing (outbound PayPal link only).
 
 ## Admin and content
-- Run on production once a Neon string and a temporary R2 write key exist (each script's header has the command): `scripts/one-off/TASK-57-attach-book-photos.sh ~/Downloads/ramhal-book-photos` (65 photos, 34 books), `2026-11-03-attach-book-preview-pdf.ts` (Haggadah sample, `~/Downloads/hagadah-shel-pesach-ramhal-preview.pdf`), then `2026-11-03-haggadah-colors.ts` (dry run first). Photos first, since the colours script finds the Haggadah's pictures by file name.
 - Colours (`Books.colors`) are built but the admin swatch picker (`SwatchField`) has only been type-checked and built, not clicked through in `/admin`. The two white/brown Yom Kippur machzor books (19, 20) are still separate books; merge them into one book with two colours if the client wants.
 - The sample PDF opens in the browser's own viewer; a nicer in-page reader needs a `GET` rule in `infrastructure/r2/media-bucket-cors.json` (it allows only `PUT`).
 - Photos from the second shoot matching no catalogue book: French "La métaphysique de l'unité chez le Ramhal" (IMG_2928), "L'essence de la Torah" (2921, 2923), French "La voie des justes" (2924, 2925), "The Ramchal Letters" (2926, 2927), גילוי היחוד (2940, 2941), קיצור הכוונות עם ביאור איבי האילן (2904–2906), בדי האילן (2943). Each needs a book or the owner saying which one. Upload one per process (several Media creates in one process lose all but the first from R2, cause unknown).
