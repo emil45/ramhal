@@ -14,7 +14,7 @@ export function RichText({ className, content }: { className?: string; content: 
   return (
     <PayloadRichText
       data={content}
-      className={cn('flex flex-col gap-4 text-base leading-relaxed text-foreground', className)}
+      className={cn('flex flex-col gap-4 text-base leading-relaxed text-foreground [&_ol]:list-decimal [&_ol]:ps-6 [&_ul]:list-disc [&_ul]:ps-6', className)}
     />
   )
 }

@@ -20,6 +20,7 @@ import * as migration_20261029_220335_lessons_admin from './20261029_220335_less
 import * as migration_20261029_220900_seed_courses from './20261029_220900_seed_courses';
 import * as migration_20261103_182815_preview_pdf from './20261103_182815_preview_pdf';
 import * as migration_20261103_183652_book_colors from './20261103_183652_book_colors';
+import * as migration_20261103_190029_color_name_not_localized from './20261103_190029_color_name_not_localized';
 
 export const migrations = [
   {
@@ -130,6 +131,11 @@ export const migrations = [
   {
     up: migration_20261103_183652_book_colors.up,
     down: migration_20261103_183652_book_colors.down,
-    name: '20261103_183652_book_colors'
+    name: '20261103_183652_book_colors',
+  },
+  {
+    up: migration_20261103_190029_color_name_not_localized.up,
+    down: migration_20261103_190029_color_name_not_localized.down,
+    name: '20261103_190029_color_name_not_localized'
   },
 ];

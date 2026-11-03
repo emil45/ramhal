@@ -191,8 +191,10 @@ export const Books: CollectionConfig = {
                       type: 'text',
                       label: 'שם הצבע',
                       required: true,
-                      localized: true,
-                      admin: { description: 'למשל: חום. מלאו בכל שפה.' },
+                      // Not localized: a Payload write in a language the book has no
+                      // text in saves nothing for an array row, so a per-language name
+                      // would be blank on every page of a Hebrew-only book.
+                      admin: { description: 'למשל: חום. אותו שם מוצג בכל השפות.' },
                     },
                     {
                       name: 'swatch',

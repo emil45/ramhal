@@ -1,6 +1,6 @@
-// Removes the sentence pointing at the old flipbook ("לצפייה של חלק מההגדה: <link>")
-// from the Haggadah's Hebrew description: the sample button replaces it. Dry run
-// prints the new text; `--apply` writes it.
+// Rewrites the Ramhal Haggadah's Hebrew description: the old text was one run-on
+// line of asterisks ending in a link to the retired flipbook (the sample button
+// replaces it). Dry run prints the new text; `--apply` writes it.
 //
 //   ALLOW_PRODUCTION_ONE_OFF=TASK-61 DATABASE_URI="<production>" APP_ENV=development \
 //     npx vite-node -c vitest.config.ts --options.deps.inline=payload-oauth2 \
@@ -11,6 +11,8 @@ import config from '../../src/payload.config.ts'
 import { SKIP_STOREFRONT_REVALIDATION } from '../../src/collections/hooks/revalidateStorefront.ts'
 import { parseDatabaseIdentity } from '../../src/lib/diagnostics.ts'
 
+import type { Book } from '../../src/payload-types.ts'
+
 try {
   process.loadEnvFile('.env')
 } catch {
@@ -18,19 +20,57 @@ try {
 }
 
 const URL_SLUG = 'הגדה-של-פסח-לרמחל'
-const FLIPBOOK_SENTENCE = /\s*לצפייה של חלק מההגדה:\s*https:\/\/online\.fliphtml5\.com\/sncyb\/wizw\/?/
 
-function removeSentence(node: unknown): number {
-  if (typeof node !== 'object' || node === null) return 0
-  let removed = 0
-  if ('text' in node && typeof node.text === 'string' && FLIPBOOK_SENTENCE.test(node.text)) {
-    node.text = node.text.replace(FLIPBOOK_SENTENCE, '')
-    removed += 1
-  }
-  if ('children' in node && Array.isArray(node.children)) {
-    for (const child of node.children) removed += removeSentence(child)
-  }
-  return removed
+const INTRODUCTION =
+  'הגדה של פסח המלקטת מכל כתבי הרמח״ל את סוד יציאת מצרים והשלמת בריאת העולם, עם ביאור כתר מרדכי מאת הרה״ג הרב מרדכי שריקי שליט״א. מהדורה ראשונה, תשפ״ו.'
+const CONTENTS_HEADING = 'בהגדה:'
+const CONTENTS = [
+  'ביאור כתר מרדכי על ההגדה',
+  'כוונות ליל הסדר',
+  'תפילות מתוך כתבי היד של הרמח״ל',
+  'פירוש הרמח״ל על שיר השירים',
+  'שיר מיוחד לסיום הסדר',
+]
+
+function text(value: string) {
+  return { type: 'text', version: 1, text: value, format: 0, style: '', mode: 'normal', detail: 0 }
+}
+
+function paragraph(value: string) {
+  return { type: 'paragraph', version: 1, children: [text(value)], direction: 'rtl', format: '', indent: 0, textFormat: 0, textStyle: '' }
+}
+
+const description: NonNullable<Book['description']> = {
+  root: {
+    type: 'root',
+    version: 1,
+    children: [
+      paragraph(INTRODUCTION),
+      paragraph(CONTENTS_HEADING),
+      {
+        type: 'list',
+        version: 1,
+        listType: 'bullet',
+        start: 1,
+        tag: 'ul',
+        direction: 'rtl',
+        format: '',
+        indent: 0,
+        children: CONTENTS.map((item, index) => ({
+          type: 'listitem',
+          version: 1,
+          value: index + 1,
+          children: [text(item)],
+          direction: 'rtl',
+          format: '',
+          indent: 0,
+        })),
+      },
+    ],
+    direction: 'rtl',
+    format: '',
+    indent: 0,
+  },
 }
 
 async function main() {
@@ -43,18 +83,14 @@ async function main() {
   const { docs } = await payload.find({ collection: 'books', where: { urlSlug: { equals: URL_SLUG } }, locale: 'he', fallbackLocale: false, depth: 0, limit: 2 })
   if (docs.length !== 1) throw new Error(`expected exactly one book with urlSlug "${URL_SLUG}", found ${docs.length}`)
   const [book] = docs
-  if (!book.description) throw new Error('the book has no Hebrew description')
-
-  const removed = removeSentence(book.description.root)
-  if (removed !== 1) throw new Error(`expected the sentence once, found it ${removed} times`)
-  console.log(JSON.stringify(book.description.root))
+  console.log('before:', JSON.stringify(book.description))
   if (!apply) {
     console.log('Dry run — pass --apply to write.')
     return
   }
 
-  await payload.update({ collection: 'books', id: book.id, locale: 'he', data: { description: book.description }, context: SKIP_STOREFRONT_REVALIDATION })
-  console.log(`done   ${URL_SLUG} description updated`)
+  await payload.update({ collection: 'books', id: book.id, locale: 'he', data: { description }, context: SKIP_STOREFRONT_REVALIDATION })
+  console.log(`done   ${URL_SLUG} description rewritten`)
 }
 
 main()
