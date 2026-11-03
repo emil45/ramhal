@@ -63,7 +63,7 @@ export default async function CheckoutPage({ params }: PageProps<'/[locale]/chec
             bookId: line.book.id,
             // A book can legitimately have no title in the current locale —
             // this becomes the order's own permanent snapshot of what was
-            // sold (docs/DECISIONS.md §7), so it falls back to the same
+            // sold, so it falls back to the same
             // he -> fr -> en display title the admin uses, never to blank.
             title: line.book.title ?? line.book.displayTitle ?? '',
             quantity: line.quantity,

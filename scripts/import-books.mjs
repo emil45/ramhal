@@ -6,7 +6,7 @@
 // Run through vite-node (npm run import:books), not plain node: loading
 // src/payload.config.ts pulls in payload-oauth2, whose compiled output
 // re-exports sibling modules without a `.js` extension — Node's own ESM
-// resolver refuses that, the same class of bug docs/DECISIONS.md §15
+// resolver refuses that, the same class of bug CLAUDE.md
 // documents for Payload's own CLI. vitest.config.ts already tells Vite to
 // inline and resolve the package itself instead of externalising it to Node
 // (`test.server.deps.inline`); `-c vitest.config.ts` reuses that same config

@@ -162,7 +162,7 @@ export default buildConfig({
         credentials: { accessKeyId: writableMediaStorage?.accessKeyId ?? '', secretAccessKey: writableMediaStorage?.secretAccessKey ?? '' },
       },
     }),
-    // Google sign-in for the admin panel — see docs/DECISIONS.md §10. The
+    // Google sign-in for the admin panel — see CLAUDE.md. The
     // package is a single-maintainer auth plugin pinned to an exact version
     // in package.json; an upgrade is a diff to read, not a number to bump.
     // Users.auth.disableLocalStrategy is unconditional: this is the only way
@@ -178,8 +178,7 @@ export default buildConfig({
       scopes: ['openid', 'https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile'],
       useEmailAsIdentity: true,
       // The plugin's own default field, minus the admin form ever showing
-      // it — useEmailAsIdentity means it's never read (docs/DECISIONS.md
-      // §10), and an untranslated "Sub" in an otherwise-Hebrew form is
+      // it — useEmailAsIdentity means it's never read, and an untranslated "Sub" in an otherwise-Hebrew form is
       // exactly the kind of thing that confuses the non-technical operator
       // this admin is built for.
       subField: {
@@ -206,7 +205,7 @@ export default buildConfig({
   ],
   // Hebrew is the root locale; English and French are prefixed. The scheme
   // extends to a fourth language by adding one entry here — see
-  // docs/DECISIONS.md §2.
+  // CLAUDE.md.
   localization: {
     locales: [
       { code: 'he', label: 'עברית', rtl: true },
@@ -231,7 +230,7 @@ export default buildConfig({
     supportedLanguages: { he },
     fallbackLanguage: 'he',
     // Payload's own label for the preview button is "תצוגה מקדימה", which
-    // promises a draft; saving here is publishing (docs/DECISIONS.md §5), so
+    // promises a draft; saving here is publishing, so
     // the button only opens the live page.
     translations: { he: { version: { preview: 'צפייה בעמוד באתר' } } },
   },

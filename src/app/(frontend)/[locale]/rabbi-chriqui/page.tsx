@@ -15,7 +15,7 @@ import { getPageBySlug } from '@/lib/pagesData'
 
 import type { Media } from '@/payload-types'
 
-// The press archive is curated separately (docs/BACKLOG.md) — not part of
+// The press archive is curated separately — not part of
 // this page's editable content yet.
 const PRESS_CONTENT: Record<string, PressContent> = {
   he: {

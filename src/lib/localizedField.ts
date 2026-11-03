@@ -13,7 +13,7 @@ export function hasValueInAnyLocale(valuesByLocale: Record<string, unknown> | nu
 }
 
 // he -> fr -> en: Hebrew first because it is the site's default locale
-// (docs/DECISIONS.md §2), then French for the parsha essays and
+//, then French for the parsha essays and
 // French-only
 // books, then English.
 export const DISPLAY_LOCALE_PRIORITY = ['he', 'fr', 'en'] as const

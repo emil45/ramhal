@@ -9,7 +9,7 @@ import { validateNewsLinkUrl } from '@/lib/newsLink'
 
 // One-off events — a hilula, a seminar. Recurring shiurim are NOT events; they
 // live in the schedule global. The two look alike on the page and are
-// nothing alike in the admin (docs/DECISIONS.md §8).
+// nothing alike in the admin.
 export const Events: CollectionConfig = {
   slug: 'events',
   labels: {

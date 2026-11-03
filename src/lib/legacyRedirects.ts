@@ -1,4 +1,4 @@
-/** The one domain of the legacy website that still points at this app (docs/DECISIONS.md §18). */
+/** The one domain of the legacy website that still points at this app. */
 export const LEGACY_HOST = 'ramhal.com'
 
 /** Normalized legacy path → current path. */

@@ -8,7 +8,7 @@ import type { NextRequest } from 'next/server'
 
 /**
  * Prefixed locales only — Hebrew is the default and carries no URL prefix
- * (docs/DECISIONS.md §2). Adding a fourth locale means adding it here; no
+ *. Adding a fourth locale means adding it here; no
  * other routing change is required.
  */
 const PREFIXED_LOCALES = ['en', 'fr']
@@ -35,7 +35,7 @@ function hasLocalePrefix(pathname: string): boolean {
  *
  * 2. A request on the legacy domain (ramhal.com) for a page of the old site goes
  *    permanently to its equivalent here, when there is one
- *    (src/lib/legacyRedirects.json, docs/DECISIONS.md §18). A legacy URL with
+ *    (src/lib/legacyRedirects.json, CLAUDE.md). A legacy URL with
  *    no equivalent falls through and 404s.
  *
  * 3. Hebrew-at-the-root locale routing: app/(frontend)/[locale] handles

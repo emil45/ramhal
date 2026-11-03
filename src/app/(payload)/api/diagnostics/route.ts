@@ -10,14 +10,14 @@ import { requireEnv } from '@/lib/env'
 import type { LatestMigration } from '@/lib/diagnostics'
 
 /**
- * Public, deliberately — see AGENTS.md's verification rule. Reports which
+ * Public, deliberately — see CLAUDE.md's verification rule. Reports which
  * APP_ENV this deployment is running as, a fingerprint of the database it's
  * talking to, and the most recent applied migration, to anyone. The
  * database's actual host, name and connecting user — together, most of a
  * connection string — are only included for a request carrying a valid
  * admin session: `allowOnlyListedAdmins` is the only way to ever obtain one
- * (docs/DECISIONS.md §10), so any authenticated user here is an admin.
- * See docs/DECISIONS.md §11.
+ *, so any authenticated user here is an admin.
+ * See CLAUDE.md.
  *
  * `payload_migrations` is Payload's own internal table, not a registered
  * collection, so reading it needs the adapter's raw pool, the same way

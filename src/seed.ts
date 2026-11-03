@@ -5,9 +5,9 @@ import { DEFAULT_SOCIAL_LINKS } from './lib/socialLinks.ts'
 
 type LocalizedText = { en: string; fr: string; he: string }
 
-// Seed values per docs/DECISIONS.md §7 (shipping) / §13 (categories describe
-// a kind of work, never a language — hebrew-books/french-books/english-books
-// were removed for exactly that reason and must not be re-added here).
+// Seed values. Categories describe a kind of work, never a language:
+// hebrew-books/french-books/english-books were removed for exactly that
+// reason and must not be re-added here.
 const CATEGORIES: { slug: string; title: LocalizedText }[] = [
   {
     slug: 'siddurim-machzorim',

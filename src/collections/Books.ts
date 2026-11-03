@@ -33,7 +33,7 @@ const REVIEW_REASONS = [
   { label: 'מחיר אפס', value: 'zero-price' },
 ]
 
-// Each book is a work, not a SKU — see docs/DECISIONS.md §1.
+// Each book is a work, not a SKU — see CLAUDE.md.
 export const Books: CollectionConfig = {
   slug: 'books',
   labels: {
@@ -320,7 +320,7 @@ export const Books: CollectionConfig = {
     },
     {
       // The language the book is WRITTEN in — not the locale it is described in.
-      // See docs/DECISIONS.md §3.
+      // See CLAUDE.md.
       name: 'bookLanguage',
       type: 'select',
       label: 'שפת החיבור',
@@ -330,8 +330,8 @@ export const Books: CollectionConfig = {
     },
     {
       // What KIND of work this is (a siddur, say) — never its language.
-      // Language lives only in bookLanguage above; see docs/DECISIONS.md
-      // §13 for why the two used to duplicate each other. Not required: the
+      // Language lives only in bookLanguage above; the two used to duplicate
+      // each other. Not required: the
       // importer only sets this from a human-reviewed list, so most books
       // are left uncategorised rather than guessed.
       name: 'category',

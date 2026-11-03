@@ -137,7 +137,7 @@ export const getBookUrlSlugs = cache(async (): Promise<string[]> => {
  * (src/collections/Books.ts), so `limit: 2` exists only to notice a second
  * match: that can only mean the constraint was bypassed outside Payload — a
  * real data bug, not a case to resolve by picking one silently. Throwing is
- * the correct behaviour: AGENTS.md is explicit that a caught failure must be
+ * the correct behaviour: CLAUDE.md is explicit that a caught failure must be
  * handled or allowed to throw, never swallowed.
  */
 export const getCatalogueBookBySlug = cache(

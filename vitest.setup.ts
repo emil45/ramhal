@@ -3,7 +3,7 @@ import { loadEnvConfig } from '@next/env'
 import { assertNotNeonDatabase, assertNotProductionDatabase } from '@/lib/refuseProductionDatabase'
 
 // Loads .env the same way Next itself does (this ships with `next`, already
-// a direct dependency — see docs/DECISIONS.md §15 for why Payload's own CLI
+// a direct dependency — see CLAUDE.md for why Payload's own CLI
 // can't be relied on to do this outside Next's bundler). Needed so the
 // handful of tests that touch the real database (src/lib/*.integration.test.ts)
 // see DATABASE_URI and PAYLOAD_SECRET without every test file loading them
@@ -21,7 +21,7 @@ const testDatabaseUri = process.env.TEST_DATABASE_URI
 if (!testDatabaseUri) {
   throw new Error(
     'TEST_DATABASE_URI is not set. Tests never fall back to DATABASE_URI — point TEST_DATABASE_URI at the ' +
-      'local ramhal_test database (docs/DECISIONS.md §5). See .env.example.',
+      'local ramhal_test database. See .env.example.',
   )
 }
 const testDatabaseHost = new URL(testDatabaseUri).hostname

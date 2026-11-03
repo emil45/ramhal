@@ -13,7 +13,7 @@ export const Lessons: CollectionConfig = {
   },
   admin: {
     // Nothing on the site reads this collection, and the sync job that would fill
-    // it is not built (docs/DECISIONS.md §6). Hidden so the editor is not offered
+    // it is not built. Hidden so the editor is not offered
     // a menu entry that changes nothing; the courses are managed in Series.
     hidden: true,
     group: 'תוכן',

@@ -5,7 +5,7 @@
 // and on a host. `npm run db:migrate`.
 //
 // Why it is a script and not `payload migrate`: Payload's own CLI cannot load
-// this project's config under Node (see docs/DECISIONS.md §15). This script
+// this project's config under Node. This script
 // sidesteps that by not loading the project's config at all. Migrations are
 // self-contained SQL, so all it needs is a database adapter and Payload's own
 // migrations table — a config with no collections. Node strips the TypeScript
@@ -66,7 +66,7 @@ try {
     throw new Error(
       'This database was built by an older dev setup that pushed its schema directly (payload_migrations has a batch -1 "dev" row).\n' +
         'Its schema was not made by the committed migrations, so they cannot be trusted to apply cleanly.\n' +
-        'Point DATABASE_URI at an empty database instead — see the README.',
+        'Point DATABASE_URI at an empty database instead — see CLAUDE.md.',
     )
   }
 

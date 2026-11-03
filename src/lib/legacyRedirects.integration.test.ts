@@ -7,7 +7,7 @@ import { BOOK_SEGMENT } from '@/lib/routes'
 
 // A book redirect names a slug; a slug changed or a book deleted since the table
 // was generated would turn a 301 into a 404. This is the check to re-run after
-// either (README, "Legacy URLs"): the fix is `npm run redirects:generate`.
+// either (CLAUDE.md, "Legacy URLs"): the fix is `npm run redirects:generate`.
 describe('legacy redirects to books', () => {
   it('only name books that exist', async () => {
     const payload = await getPayload({ config })

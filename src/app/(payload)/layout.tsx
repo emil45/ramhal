@@ -8,7 +8,7 @@ import type React from 'react'
 import './admin-theme.css'
 import { importMap } from './admin/importMap.js'
 
-// Same interface font as the storefront (docs/DESIGN.md), self-hosted the
+// Same interface font as the storefront, self-hosted the
 // same way — loaded here rather than assuming the frontend route group's
 // font is available, since Next.js does not share fonts across route
 // groups. Read by admin-theme.css as --font-body.

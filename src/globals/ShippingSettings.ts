@@ -6,7 +6,7 @@ import { CURRENCIES } from '../lib/currency.ts'
 import { validateMoneyAmount } from '../lib/validateMoneyAmount.ts'
 
 // The shipping rules engine, editable by the son. Payload's ecommerce plugin
-// ships no shipping logic at all (verified — see docs/DECISIONS.md §4), so
+// ships no shipping logic at all (verified — see CLAUDE.md), so
 // this is ours. The calculation itself lives in src/lib/shipping.ts as a pure
 // function; this global only holds the data it reads.
 export const ShippingSettings: GlobalConfig = {

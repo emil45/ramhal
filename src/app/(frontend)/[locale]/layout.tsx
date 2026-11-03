@@ -19,7 +19,7 @@ const davidLibre = David_Libre({
 
 // A page is rebuilt only when an editor saves content, never on a timer:
 // revalidateStorefront (src/collections/hooks/revalidateStorefront.ts) marks
-// every page stale on each save (docs/DECISIONS.md §5). Stated once here for
+// every page stale on each save. Stated once here for
 // every page under this layout.
 export const revalidate = false
 

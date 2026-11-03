@@ -15,7 +15,7 @@ function isWrittenInHebrew(text: string): boolean {
 /**
  * Walks a field tree (arrays, groups, rows, tabs and the fields inside every
  * block) and returns one message per hint that is not written in Hebrew. The
- * only editor is Hebrew-speaking (docs/DECISIONS.md §3); a developer's note
+ * only editor is Hebrew-speaking; a developer's note
  * left in a field's `admin.description` shows up on his form as English text
  * inside a right-to-left page, which is both unreadable to him and rendered
  * out of order by the bidirectional algorithm.

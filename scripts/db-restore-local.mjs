@@ -2,7 +2,7 @@
 // Rebuilds the local databases from the newest backup, sanitised.
 // `npm run db:restore-local`. Both DATABASE_URI (ramhal, dev and build) and
 // TEST_DATABASE_URI (ramhal_test, vitest) are overwritten — see
-// docs/DECISIONS.md §5 for why local work never touches Neon.
+// CLAUDE.md for why local work never touches Neon.
 //
 // The backup lives in Cloudflare R2 and is read with the read-only BACKUP_S3_*
 // credentials from .env. The dump is downloaded into a private temporary
@@ -38,7 +38,7 @@ function requireEnv(name) {
 
 function psql(connectionString, args, { input } = {}) {
   const result = spawnSync('psql', [connectionString, '-v', 'ON_ERROR_STOP=1', '-X', ...args], { encoding: 'utf8', input })
-  if (result.error) throw new Error(`Could not run psql (${result.error.message}). Install PostgreSQL 18; see README.`)
+  if (result.error) throw new Error(`Could not run psql (${result.error.message}). Install PostgreSQL 18; see CLAUDE.md.`)
   if (result.status !== 0) throw new Error(`psql failed:\n${result.stderr}`)
   return result.stdout
 }

@@ -2,7 +2,7 @@
 // Initialises the few records a new Ramhal database needs. This intentionally
 // builds the smallest Payload config that can run src/seed.ts: loading the full
 // application config outside Next currently hits the Payload/Next CLI bugs
-// recorded in docs/DECISIONS.md §15, while seeding from the application's
+// recorded in CLAUDE.md, while seeding from the application's
 // onInit hook would repeat on every cold Vercel function instance.
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { buildConfig, getPayload } from 'payload'

@@ -20,7 +20,7 @@ import { getCartLines } from '@/lib/serverCart'
 import { cn } from '@/lib/utils'
 
 // Reads the session cookie, so it can never be statically generated — the
-// shop half of the site is always dynamic (docs/DECISIONS.md §5).
+// shop half of the site is always dynamic.
 export const dynamic = 'force-dynamic'
 
 export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) {

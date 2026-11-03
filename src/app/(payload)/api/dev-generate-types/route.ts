@@ -34,7 +34,7 @@ import type { SanitizedConfig } from 'payload'
  * correctly.
  *
  * Delete this route once payloadcms/payload fixes the underlying loader bug
- * (see docs/DECISIONS.md §15) or exports generateTypes publicly.
+ * or exports generateTypes publicly.
  */
 
 type GenerateTypesModule = {

@@ -4,8 +4,8 @@ import { createHash } from 'node:crypto'
  * What the running application can say about itself, publicly — a database
  * can look right in a database tool and still not be what the live site is
  * actually serving from, and nobody could cheaply ask the running site
- * which database it was on. See AGENTS.md's verification rule and
- * docs/DECISIONS.md §11.
+ * which database it was on. See CLAUDE.md's verification rule and
+ * CLAUDE.md.
  *
  * `host`, `database` and `user` are only ever handed to an authenticated
  * admin caller (route.ts) — an anonymous caller gets `fingerprint` alone
@@ -18,7 +18,7 @@ const FINGERPRINT_LENGTH = 12
 
 /** A short, stable value derived from the connection host — enough to
  * answer "is this the same database as last time?" by comparing it against
- * a recorded value (docs/RECOVERY.md), without exposing the host itself. */
+ * a recorded value, without exposing the host itself. */
 export function computeDatabaseFingerprint(host: string): string {
   return createHash('sha256').update(host).digest('hex').slice(0, FINGERPRINT_LENGTH)
 }

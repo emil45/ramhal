@@ -8,7 +8,7 @@ import type { CollectionConfig } from 'payload'
 import { validateNewsLinkUrl } from '@/lib/newsLink'
 
 // Visibility is manual: the storefront shows every announcement that exists,
-// and the son deletes one when it is over (docs/DECISIONS.md §8). startsAt is
+// and the son deletes one when it is over. startsAt is
 // the date shown with it and the order it is listed in, not a schedule.
 export const Announcements: CollectionConfig = {
   slug: 'announcements',

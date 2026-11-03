@@ -80,7 +80,7 @@ export type Reconciliation = {
 // ---------------------------------------------------------------------------
 
 // A legacy shelf breadcrumb is evidence of a book's LANGUAGE, never of its
-// category (docs/DECISIONS.md §13) — hebrew-books/french-books/english-books
+// category — hebrew-books/french-books/english-books
 // no longer exist as categories to assign. siddurim-machzorim and cd-dvd
 // aren't languages, so they're handled separately below, not through this map.
 const SHELF_LANGUAGE: Record<string, SiteKey> = {
@@ -259,7 +259,7 @@ type BookInput = {
 
 export function buildBookInput(rawImportKey: string, view: ImportView, rawTitles: Partial<Record<SiteKey, string>>, reviewNote: string | null): BookInput | null {
   // www.ramhal.com's five book-category pages are the catalogue source of
-  // truth (docs/DECISIONS.md §12). frramhal.com and enramhal.com may enrich
+  // truth. frramhal.com and enramhal.com may enrich
   // a matched canonical book, but a listing found only on those hosts is
   // stale catalogue drift and must never create a book of its own.
   if (!view.legacyUrls.some(({ site }) => site === 'he')) return null
@@ -283,7 +283,7 @@ export function buildBookInput(rawImportKey: string, view: ImportView, rawTitles
   if (view.priceZero) reasons.push('zero-price')
 
   // Category says what KIND of work a book is, never its language
-  // (docs/DECISIONS.md §13) — a legacy shelf is evidence for bookLanguage
+  // — a legacy shelf is evidence for bookLanguage
   // above, never for category. The only source of a category is a human
   // reading the title and recognising a siddur or machzor; every other book
   // is left uncategorised.
@@ -396,7 +396,7 @@ async function upsertBook(payload: Payload, input: BookInput, categoryIds: Map<s
 
   if (existing.docs.length === 0) {
     const categoryId = input.categorySlug ? categoryIds.get(input.categorySlug) : undefined
-    // Hebrew is this project's default locale (see AGENTS.md) — used only as
+    // Hebrew is this project's default locale (see CLAUDE.md) — used only as
     // the last-resort fallback below, which candidate.sites in practice
     // never leaves empty.
     const primaryLocale: SiteKey = (Object.keys(input.titles)[0] as SiteKey | undefined) ?? 'he'

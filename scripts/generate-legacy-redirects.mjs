@@ -6,7 +6,7 @@
 //     book's current urlSlug; URLs of the retired enramhal.com and frramhal.com are skipped),
 //   - the hand-written table of non-book equivalents (scripts/legacy-redirects/).
 // Output is sorted, so a diff shows exactly which redirects changed. Run it after a
-// slug change or a catalogue import (README, "Legacy URLs"). It refuses duplicate
+// slug change or a catalogue import (CLAUDE.md, "Legacy URLs"). It refuses duplicate
 // sources, a legacy URL claimed by two books, hand-table paths that were never
 // crawled, and targets that would loop or chain.
 //

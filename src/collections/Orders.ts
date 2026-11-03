@@ -12,7 +12,7 @@ import { formatPrice } from '../lib/price.ts'
  * reads orders and moves them through fulfilment; he never creates one or
  * edits what was sold and for how much. Every money field is a major-unit
  * amount (shekels/dollars/euros), and every line snapshots its book instead
- * of pointing at it (docs/DECISIONS.md §7).
+ * of pointing at it.
  */
 
 // Nobody edits these through the admin or the REST API. The server's Local

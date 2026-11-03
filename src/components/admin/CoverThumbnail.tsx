@@ -11,7 +11,7 @@ function thumbnailUrl(media: PopulatedMedia): string | null {
 }
 
 /** A small cover image in the books list, instead of a bare filename link —
- * most books have a typeset cover (docs/DESIGN.md), so this is what makes the
+ * most books have a typeset cover, so this is what makes the
  * list recognisable at a glance.
  *
  * The list view queries at depth 0 (Payload hardcodes this for list

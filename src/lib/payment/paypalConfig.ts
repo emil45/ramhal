@@ -20,7 +20,7 @@ const VARIABLE_NAMES = ['PAYPAL_CLIENT_ID', 'PAYPAL_CLIENT_SECRET', 'PAYPAL_WEBH
  * pattern as googleSignIn.ts — a half-configured PayPal adapter would
  * otherwise fail at the first real request instead of at boot. `PAYPAL_ENV`
  * decides sandbox vs. live independently of `APP_ENV`: `APP_ENV` says which
- * deployment this is (docs/DECISIONS.md §5), not which PayPal credentials a
+ * deployment this is, not which PayPal credentials a
  * given deployment happens to hold. Live credentials are not yet in use
  * anywhere; every configured deployment currently sets `sandbox`.
  */

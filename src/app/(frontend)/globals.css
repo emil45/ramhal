@@ -43,7 +43,7 @@
 
 :root {
   /* Brand — sampled from the institute's own logo. See
-     docs/tasks/TASK-06-storefront.md §6: settled, not to be reinterpreted. */
+     CLAUDE.md: settled, not to be reinterpreted. */
   --teal: #00707c;
   --teal-deep: #004f58;
   --gold: #b08d42;
@@ -127,7 +127,7 @@
   @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
 }
 
-/* Type scale — docs/DESIGN.md. Serif for anything a reader would call a
+/* Type scale — CLAUDE.md. Serif for anything a reader would call a
    title; sans for everything that is interface or running text. */
 @utility type-display {
   font-family: var(--font-serif);

@@ -3,7 +3,7 @@
 // Paths are as crawled, decoded. Every path is checked against the crawl by
 // generate-legacy-redirects.mjs, so a typo fails the run.
 //
-// Left out on purpose, so they get a real 404 (docs/DECISIONS.md §18):
+// Left out on purpose, so they get a real 404:
 //   - essays and articles (§14), the shop cart, and pages whose body is empty;
 //   - the institute description (/מכון-רמח-ל), contact (/צור-קשר), the mp3 archive (/mp3) and
 //     the CD/DVD listing (/CD-DVD.html): the owner decided none of them is carried over.

@@ -53,7 +53,7 @@ export function sortCatalogue<T extends CatalogueEntry>(items: T[], currency: Cu
 /**
  * The front page's "new books" section: purchasable-in-this-currency books
  * that carry a real publication date, most recent first, capped to `limit`
- * — new books are not a section to curate (docs/DECISIONS.md §8). A book
+ * — new books are not a section to curate. A book
  * with no known publication date
  * is excluded rather than sorted to the end — this section claims to show
  * what's new, and a date-less book has no basis for that claim, unlike the

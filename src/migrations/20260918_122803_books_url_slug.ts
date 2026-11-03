@@ -7,7 +7,7 @@ import { slugify } from '../lib/slugify.ts'
 // book's canonical urlSlug, when the book carries more than one. Matches
 // src/lib/booksData.ts#bestAcrossLocales's own priority for the default
 // viewer (Hebrew first, the project's default locale) — see
-// docs/DECISIONS.md §2. There is no record of which locale a given book was
+// CLAUDE.md. There is no record of which locale a given book was
 // originally *created* in (src/importBooks.ts's primaryLocale is not
 // persisted), so this is the closest honest substitute, not a re-derivation
 // of the original import order.

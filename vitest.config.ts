@@ -20,8 +20,7 @@ export default defineConfig({
         // payload-oauth2's compiled output re-exports sibling modules
         // without a `.js` extension (e.g. `from "./default-get-token"`),
         // which Node's own ESM resolver refuses. Next's bundler tolerates
-        // it (docs/DECISIONS.md §15 covers this exact class of bug for
-        // Payload's own CLI), and inlining it here makes Vite resolve it
+        // it, and inlining it here makes Vite resolve it
         // too, instead of handing it to Node as an external module.
         inline: ['payload-oauth2'],
       },

@@ -79,8 +79,7 @@ export async function createOrder(
       application_context: {
         brand_name: 'מכון רמח״ל',
         locale: params.locale,
-        // Both approve and cancel land on the same URL (docs/DECISIONS.md
-        // §7): confirmPayment asks PayPal what happened rather than
+        // Both approve and cancel land on the same URL: confirmPayment asks PayPal what happened rather than
         // trusting which link was clicked.
         return_url: params.returnUrl,
         cancel_url: params.returnUrl,

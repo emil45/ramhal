@@ -28,7 +28,7 @@ import { isDevRouteAuthorized } from '@/lib/devRouteAuth'
  *
  * Delete this route and scripts/dev-migrate.mjs once payloadcms/payload
  * fixes either cause and `payload migrate:create` / `payload migrate` work
- * directly — see docs/DECISIONS.md for the full record.
+ * directly — see CLAUDE.md for the full record.
  *
  * SECURITY: this runs real schema migrations against whatever database
  * DATABASE_URI points at, and route handlers ship in the production build —
