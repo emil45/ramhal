@@ -4,6 +4,7 @@ import { after } from 'next/server.js'
 import { getPayload } from 'payload'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
+import { CURRENCIES } from '@/lib/shop/currency'
 import { revalidateStorefront, SKIP_STOREFRONT_REVALIDATION } from './revalidateStorefront'
 import { startTestRun } from '@/test/checkoutFixtures'
 
@@ -155,7 +156,21 @@ describe('saving and deleting storefront content', () => {
 
     await payload.updateGlobal({ slug: 'schedule', data: {} })
     await payload.updateGlobal({ slug: 'siteSettings', data: {} })
-    await payload.updateGlobal({ slug: 'shippingSettings', data: {} })
+
+    // Shipping refuses a save while any tier lacks a currency, and a database
+    // restored from production has tiers priced in only one until the editor
+    // fills in the rest.
+    const shipping = await payload.findGlobal({ slug: 'shippingSettings' })
+    const zones = shipping.zones.map((zone) => ({
+      ...zone,
+      tiers: zone.tiers.map((tier) => ({
+        ...tier,
+        amounts: CURRENCIES.map(
+          (currency) => tier.amounts.find((candidate) => candidate.currency === currency) ?? { currency, amount: 0 },
+        ),
+      })),
+    }))
+    await payload.updateGlobal({ slug: 'shippingSettings', data: { zones } })
 
     expect(revalidatePath).toHaveBeenCalledTimes(3)
   })
