@@ -1611,7 +1611,7 @@ export interface Schedule {
   createdAt?: string | null;
 }
 /**
- * אזורי המשלוח ומחירו לפי מספר הספרים בהזמנה.
+ * אזורי המשלוח ומחירו לפי מספר הספרים בהזמנה. המדינה נבחרת על ידי הלקוח בתשלום, והמטבע נקבע לפי שפת האתר שבה הוא גולש — לכן לכל מדרגה יש סכום בכל שלושת המטבעות.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "shippingSettings".
@@ -1627,13 +1627,16 @@ export interface ShippingSetting {
      * קודי מדינה בני שתי אותיות (ISO), למשל IL, FR.
      */
     countries: string[];
-    currency: 'ILS' | 'EUR' | 'USD';
     tiers: {
       minUnits: number;
       /**
-       * סכום בשקלים/דולרים/יורו (למשל 30 או 30.50) — עד שתי ספרות עשרוניות.
+       * סכום אחד בכל מטבע (שקלים, יורו, דולרים), למשל 30 או 30.50 — עד שתי ספרות עשרוניות.
        */
-      amount: number;
+      amounts: {
+        currency: 'ILS' | 'EUR' | 'USD';
+        amount: number;
+        id?: string | null;
+      }[];
       id?: string | null;
     }[];
     /**
@@ -1733,12 +1736,17 @@ export interface ShippingSettingsSelect<T extends boolean = true> {
     | {
         name?: T;
         countries?: T;
-        currency?: T;
         tiers?:
           | T
           | {
               minUnits?: T;
-              amount?: T;
+              amounts?:
+                | T
+                | {
+                    currency?: T;
+                    amount?: T;
+                    id?: T;
+                  };
               id?: T;
             };
         freeAboveUnits?: T;

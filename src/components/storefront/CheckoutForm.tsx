@@ -48,7 +48,7 @@ export function CheckoutForm({ countries, currency, defaultCountry, lines, local
   const [countryCode, setCountryCode] = useState(defaultCountry ?? '')
   const [isPickup, setIsPickup] = useState(false)
 
-  const quote = calculateShipping(zones, { countryCode, units })
+  const quote = calculateShipping(zones, { countryCode, units, currency })
   const pickupAllowed = quote.allowPickup
   const pickupChosen = isPickup && pickupAllowed
   const shippingCost = orderShippingCost(quote, pickupChosen)

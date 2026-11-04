@@ -54,10 +54,10 @@ export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) 
 
   const units = cartUnits(lines)
   const subtotal = cartSubtotal(lines, currency)
-  const shipping = calculateShipping(zones, { countryCode: estimatedShippingCountry, units })
+  const shipping = calculateShipping(zones, { countryCode: estimatedShippingCountry, units, currency })
   const zone = zones.find((z) => z.name === shipping.zoneName) ?? null
   const remainingForFreeShipping = zone ? unitsUntilFreeShipping(zone, units) : null
-  const money = (amount: number, amountCurrency = currency) => formatPrice(amount, amountCurrency, locale)
+  const money = (amount: number) => formatPrice(amount, currency, locale)
 
   return (
     <div className="page-container py-10">
@@ -124,7 +124,7 @@ export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) 
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">{dict.cart.shippingEstimate}</span>
-              <span className="font-medium tabular-nums">{money(shipping.amount, shipping.currency)}</span>
+              <span className="font-medium tabular-nums">{money(shipping.amount)}</span>
             </div>
             <p className="text-sm leading-relaxed text-muted-foreground">{dict.cart.shippingEstimateNote}</p>
 

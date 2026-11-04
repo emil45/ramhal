@@ -4,6 +4,7 @@ import { INLINE_ROWS_CLASS_NAME } from '../collections/fields/inlineRows.ts'
 import { revalidateStorefront } from '../collections/hooks/revalidateStorefront.ts'
 import { CURRENCIES } from '../lib/shop/currency.ts'
 import { validateMoneyAmount } from '../lib/admin/validateMoneyAmount.ts'
+import { validateShippingAmounts } from '../lib/admin/validateShippingAmounts.ts'
 
 // The shipping rules engine, editable by the son. Payload's ecommerce plugin
 // ships no shipping logic at all (verified — see CLAUDE.md), so
@@ -12,7 +13,11 @@ import { validateMoneyAmount } from '../lib/admin/validateMoneyAmount.ts'
 export const ShippingSettings: GlobalConfig = {
   slug: 'shippingSettings',
   label: 'הגדרות משלוח',
-  admin: { group: 'הגדרות', description: 'אזורי המשלוח ומחירו לפי מספר הספרים בהזמנה.' },
+  admin: {
+    group: 'הגדרות',
+    description:
+      'אזורי המשלוח ומחירו לפי מספר הספרים בהזמנה. המדינה נבחרת על ידי הלקוח בתשלום, והמטבע נקבע לפי שפת האתר שבה הוא גולש — לכן לכל מדרגה יש סכום בכל שלושת המטבעות.',
+  },
   hooks: {
     afterChange: [revalidateStorefront],
   },
@@ -45,18 +50,10 @@ export const ShippingSettings: GlobalConfig = {
           },
         },
         {
-          name: 'currency',
-          type: 'select',
-          label: 'מטבע',
-          required: true,
-          options: CURRENCIES.map((currency) => ({ label: currency, value: currency })),
-        },
-        {
           name: 'tiers',
           type: 'array',
           label: 'מדרגות מחיר',
           labels: { singular: 'מדרגה', plural: 'מדרגות' },
-          admin: { className: INLINE_ROWS_CLASS_NAME },
           required: true,
           minRows: 1,
           fields: [
@@ -68,15 +65,39 @@ export const ShippingSettings: GlobalConfig = {
               min: 0,
             },
             {
-              name: 'amount',
-              type: 'number',
-              label: 'סכום',
-              required: true,
-              min: 0,
-              validate: validateMoneyAmount,
+              name: 'amounts',
+              type: 'array',
+              label: 'סכום משלוח לפי מטבע',
+              labels: { singular: 'סכום', plural: 'סכומים' },
               admin: {
-                description: 'סכום בשקלים/דולרים/יורו (למשל 30 או 30.50) — עד שתי ספרות עשרוניות.',
+                className: INLINE_ROWS_CLASS_NAME,
+                description: 'סכום אחד בכל מטבע (שקלים, יורו, דולרים), למשל 30 או 30.50 — עד שתי ספרות עשרוניות.',
               },
+              required: true,
+              defaultValue: CURRENCIES.map((currency) => ({ currency })),
+              validate: validateShippingAmounts,
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'currency',
+                      type: 'select',
+                      label: 'מטבע',
+                      required: true,
+                      options: CURRENCIES.map((currency) => ({ label: currency, value: currency })),
+                    },
+                    {
+                      name: 'amount',
+                      type: 'number',
+                      label: 'סכום',
+                      required: true,
+                      min: 0,
+                      validate: validateMoneyAmount,
+                    },
+                  ],
+                },
+              ],
             },
           ],
         },

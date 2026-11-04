@@ -5,12 +5,17 @@ import { countriesServedInCurrency, priceOrder } from '@/lib/shop/orderPricing'
 import type { PricingBook } from '@/lib/shop/orderPricing'
 import type { ShippingZone } from '@/lib/shop/shipping'
 
+const amounts = (ils: number, eur: number, usd: number): ShippingZone['tiers'][number]['amounts'] => [
+  { currency: 'ILS', amount: ils },
+  { currency: 'EUR', amount: eur },
+  { currency: 'USD', amount: usd },
+]
+
 const zones: ShippingZone[] = [
   {
     name: 'ישראל',
     countries: ['IL'],
-    currency: 'ILS',
-    tiers: [{ minUnits: 0, amount: 30 }],
+    tiers: [{ minUnits: 0, amounts: amounts(30, 8, 9) }],
     freeAboveUnits: 10,
     allowPickup: true,
     isDefault: false,
@@ -18,8 +23,7 @@ const zones: ShippingZone[] = [
   {
     name: 'אירופה',
     countries: ['FR', 'BE'],
-    currency: 'EUR',
-    tiers: [{ minUnits: 0, amount: 50 }],
+    tiers: [{ minUnits: 0, amounts: amounts(190, 50, 55) }],
     freeAboveUnits: 10,
     allowPickup: false,
     isDefault: false,
@@ -27,8 +31,7 @@ const zones: ShippingZone[] = [
   {
     name: 'שאר העולם',
     countries: ['US'],
-    currency: 'USD',
-    tiers: [{ minUnits: 0, amount: 86 }],
+    tiers: [{ minUnits: 0, amounts: amounts(310, 80, 86) }],
     freeAboveUnits: 10,
     allowPickup: false,
     isDefault: true,
@@ -95,8 +98,30 @@ describe('priceOrder', () => {
     expect(result).toEqual({ ok: false, problem: { kind: 'pickup-not-available' } })
   })
 
-  it('refuses a destination whose zone is priced in another currency', () => {
-    const result = priceOrder({ ...israelDelivery, destinationCountry: 'FR', lines: [{ book: book(), quantity: 1 }] })
+  it('ships a French reader\'s order to Israel, charging the Israeli rate in euros', () => {
+    const result = priceOrder({
+      currency: 'EUR',
+      destinationCountry: 'IL',
+      isPickup: false,
+      lines: [{ book: book(), quantity: 1 }],
+      zones,
+    })
+
+    expect(result).toMatchObject({ ok: true, order: { currency: 'EUR', subtotal: 18, shippingCost: 8, total: 26, shippingZone: 'ישראל' } })
+  })
+
+  it('refuses a destination whose zone has no shipping amount in the order currency', () => {
+    const shekelOnlyZones: ShippingZone[] = [
+      { ...zones[0], tiers: [{ minUnits: 0, amounts: [{ currency: 'ILS', amount: 30 }] }] },
+    ]
+
+    const result = priceOrder({
+      currency: 'EUR',
+      destinationCountry: 'IL',
+      isPickup: false,
+      lines: [{ book: book(), quantity: 1 }],
+      zones: shekelOnlyZones,
+    })
 
     expect(result).toEqual({ ok: false, problem: { kind: 'destination-not-served' } })
   })
@@ -143,8 +168,18 @@ describe('priceOrder', () => {
 })
 
 describe('countriesServedInCurrency', () => {
-  it('lists only the countries of zones priced in that currency', () => {
-    expect(countriesServedInCurrency(zones, 'EUR')).toEqual(['FR', 'BE'])
-    expect(countriesServedInCurrency(zones, 'ILS')).toEqual(['IL'])
+  it('lists every country of the zones that quote shipping in that currency, whatever the zone', () => {
+    expect(countriesServedInCurrency(zones, 'EUR')).toEqual(['IL', 'FR', 'BE', 'US'])
+    expect(countriesServedInCurrency(zones, 'ILS')).toEqual(['IL', 'FR', 'BE', 'US'])
+  })
+
+  it('leaves out a zone that quotes only other currencies', () => {
+    const mixedZones: ShippingZone[] = [
+      zones[0],
+      { ...zones[1], tiers: [{ minUnits: 0, amounts: [{ currency: 'EUR', amount: 50 }] }] },
+    ]
+
+    expect(countriesServedInCurrency(mixedZones, 'EUR')).toEqual(['IL', 'FR', 'BE'])
+    expect(countriesServedInCurrency(mixedZones, 'USD')).toEqual(['IL'])
   })
 })

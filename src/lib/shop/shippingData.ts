@@ -12,7 +12,6 @@ export async function getShippingZones(): Promise<ShippingZone[]> {
   return settings.zones.map((zone) => ({
     name: zone.name,
     countries: zone.countries,
-    currency: zone.currency,
     tiers: zone.tiers,
     freeAboveUnits: zone.freeAboveUnits ?? null,
     allowPickup: zone.allowPickup ?? false,

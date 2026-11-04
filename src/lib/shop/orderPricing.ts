@@ -1,7 +1,7 @@
 import { cartUnits } from '@/lib/shop/cart'
 import { isPurchasable } from '@/lib/books/availability'
 import { roundMoney, selectPrice } from '@/lib/shop/price'
-import { calculateShipping } from '@/lib/shop/shipping'
+import { calculateShipping, zoneServesCurrency } from '@/lib/shop/shipping'
 
 import type { Currency } from '@/lib/shop/currency'
 import type { ShippingQuote, ShippingZone } from '@/lib/shop/shipping'
@@ -54,15 +54,16 @@ export type CheckoutProblem =
 export type PricingResult = { ok: true; order: PricedOrder } | { ok: false; problem: CheckoutProblem }
 
 /**
- * Countries a customer paying in this currency can ship to. An order has one
- * currency, and shipping is charged in the destination zone's currency — so a
- * zone priced in another currency cannot be added to this order's subtotal.
- * Only countries the zones list explicitly are offered: the son controls who
- * the shop ships to by editing the zones, and a zone's `isDefault` fallback
- * is for the cart's estimate, not an open invitation to every country.
+ * Countries a customer paying in this currency can ship to: every country of
+ * every zone that quotes shipping in it. The currency follows the site
+ * language and the destination is the customer's own choice, so a French
+ * reader in Israel pays in euros for Israeli shipping. Only countries the
+ * zones list explicitly are offered: the son controls who the shop ships to by
+ * editing the zones, and a zone's `isDefault` fallback is for the cart's
+ * estimate, not an open invitation to every country.
  */
 export function countriesServedInCurrency(zones: ShippingZone[], currency: Currency): string[] {
-  return zones.filter((zone) => zone.currency === currency).flatMap((zone) => zone.countries)
+  return zones.filter((zone) => zoneServesCurrency(zone, currency)).flatMap((zone) => zone.countries)
 }
 
 /** Self-pickup is free; the checkout page and the server both price shipping
@@ -101,7 +102,7 @@ export function priceOrder(input: {
     return { ok: false, problem: { kind: 'destination-not-served' } }
   }
 
-  const quote = calculateShipping(zones, { countryCode: destinationCountry, units: cartUnits(lines) })
+  const quote = calculateShipping(zones, { countryCode: destinationCountry, units: cartUnits(lines), currency })
   if (isPickup && !quote.allowPickup) return { ok: false, problem: { kind: 'pickup-not-available' } }
 
   const snapshots = lines.map(({ book, quantity }): OrderLineSnapshot => {

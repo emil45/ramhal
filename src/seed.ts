@@ -44,7 +44,9 @@ async function upsertCategory(payload: Payload, entry: (typeof CATEGORIES)[numbe
 
 /**
  * Writes the default zones only when none exist yet. A zone the son has
- * since edited (or deleted) must survive every later boot untouched.
+ * since edited (or deleted) must survive every later boot untouched. The
+ * amounts outside each zone's home currency are placeholders for local and
+ * demo databases; the real rates are the son's to set in the admin.
  */
 async function seedShippingSettings(payload: Payload): Promise<void> {
   const existing = await payload.findGlobal({ slug: 'shippingSettings' })
@@ -57,8 +59,7 @@ async function seedShippingSettings(payload: Payload): Promise<void> {
         {
           name: 'ישראל',
           countries: ['IL'],
-          currency: 'ILS',
-          tiers: [{ minUnits: 0, amount: 30 }],
+          tiers: [{ minUnits: 0, amounts: [{ currency: 'ILS', amount: 30 }, { currency: 'EUR', amount: 8 }, { currency: 'USD', amount: 9 }] }],
           freeAboveUnits: 10,
           allowPickup: true,
           isDefault: false,
@@ -66,8 +67,7 @@ async function seedShippingSettings(payload: Payload): Promise<void> {
         {
           name: 'אירופה',
           countries: EUROPE_COUNTRIES,
-          currency: 'EUR',
-          tiers: [{ minUnits: 0, amount: 50 }],
+          tiers: [{ minUnits: 0, amounts: [{ currency: 'ILS', amount: 190 }, { currency: 'EUR', amount: 50 }, { currency: 'USD', amount: 55 }] }],
           freeAboveUnits: 10,
           allowPickup: false,
           isDefault: false,
@@ -75,14 +75,14 @@ async function seedShippingSettings(payload: Payload): Promise<void> {
         {
           name: 'שאר העולם',
           countries: REST_OF_WORLD_COUNTRIES,
-          currency: 'USD',
-          tiers: [{ minUnits: 0, amount: 86 }],
+          tiers: [{ minUnits: 0, amounts: [{ currency: 'ILS', amount: 310 }, { currency: 'EUR', amount: 80 }, { currency: 'USD', amount: 86 }] }],
           freeAboveUnits: 10,
           allowPickup: false,
           isDefault: true,
         },
       ],
     },
+    context: SKIP_STOREFRONT_REVALIDATION,
   })
 }
 
