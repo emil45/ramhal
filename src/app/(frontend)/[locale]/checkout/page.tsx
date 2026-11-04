@@ -1,3 +1,4 @@
+import { headers } from 'next/headers'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -9,6 +10,7 @@ import { buttonVariants } from '@/components/ui/button'
 import { Empty, EmptyHeader, EmptyTitle } from '@/components/ui/empty'
 import { titleWithColor } from '@/lib/books/bookColors'
 import { cartSubtotal, cartUnits } from '@/lib/shop/cart'
+import { defaultDestinationCountry } from '@/lib/shop/defaultDestination'
 import { countriesServedInCurrency } from '@/lib/shop/orderPricing'
 import { isLocale, LOCALE_CONFIG } from '@/lib/locale/locale'
 import { isMockPaymentProviderConfigured } from '@/lib/payment/getPaymentProvider'
@@ -16,6 +18,10 @@ import { selectPrice } from '@/lib/shop/price'
 import { localePath } from '@/lib/locale/routes'
 import { getCartLines } from '@/lib/shop/serverCart'
 import { getShippingZones } from '@/lib/shop/shippingData'
+
+// Set by Vercel's edge from the visitor's IP; absent locally and on a preview
+// without it, in which case the language's country is used.
+const VISITOR_COUNTRY_HEADER = 'x-vercel-ip-country'
 
 // Reads the session cookie, so it can never be statically generated.
 export const dynamic = 'force-dynamic'
@@ -27,7 +33,7 @@ export default async function CheckoutPage({ params }: PageProps<'/[locale]/chec
   const dict = getDictionary(locale)
   const { currency, estimatedShippingCountry, intlTag } = LOCALE_CONFIG[locale]
 
-  const [lines, zones] = await Promise.all([getCartLines(locale), getShippingZones()])
+  const [lines, zones, requestHeaders] = await Promise.all([getCartLines(locale), getShippingZones(), headers()])
 
   if (lines.length === 0) {
     return (
@@ -59,7 +65,11 @@ export default async function CheckoutPage({ params }: PageProps<'/[locale]/chec
         <CheckoutForm
           countries={countries}
           currency={currency}
-          defaultCountry={countries.some((country) => country.code === estimatedShippingCountry) ? estimatedShippingCountry : countries[0]?.code}
+          defaultCountry={defaultDestinationCountry({
+            servedCountries: countries.map((country) => country.code),
+            visitorCountry: requestHeaders.get(VISITOR_COUNTRY_HEADER),
+            languageCountry: estimatedShippingCountry,
+          })}
           lines={lines.map((line) => ({
             bookId: line.book.id,
             // A book can legitimately have no title in the current locale —
