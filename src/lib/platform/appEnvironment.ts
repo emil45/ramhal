@@ -26,16 +26,16 @@ export function readAppEnvironment(): AppEnvironment {
 }
 
 /**
- * Pages are prerendered, so `APP_ENV` — and with it the demo banner — is
- * baked into the HTML at build time. A build made for one environment and
- * started as another would serve the wrong banner state to every visitor, so
- * that combination refuses to start instead.
+ * Pages are prerendered, so anything that depends on `APP_ENV` is baked
+ * into the HTML at build time. A build made for one environment and started as
+ * another would serve the wrong content to every visitor, so that combination
+ * refuses to start instead.
  */
 export function assertBuiltForRunningEnvironment(builtFor: string | undefined, running: AppEnvironment): void {
   if (builtFor !== running) {
     throw new Error(
       `Refusing to start: this build was made with APP_ENV "${builtFor ?? 'unset'}" but is running with APP_ENV "${running}". ` +
-        'Prerendered pages carry the environment they were built for, including the demo banner. ' +
+        'Prerendered pages carry the environment they were built for, including what depends on it. ' +
         'Run `next build` again with the APP_ENV you intend to run.',
     )
   }

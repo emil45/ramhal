@@ -1,7 +1,6 @@
 import { Assistant, David_Libre } from 'next/font/google'
 import { notFound } from 'next/navigation'
 
-import { DemoBanner } from '@/components/storefront/DemoBanner'
 import { Footer } from '@/components/storefront/Footer'
 import { Header } from '@/components/storefront/Header'
 import { DirectionProvider } from '@/components/ui/direction'
@@ -46,7 +45,6 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
           >
             {dict.nav.skipToContent}
           </a>
-          <DemoBanner dict={dict} />
           <Header dict={dict} locale={locale} />
           <main id="main-content" className="flex-1">{children}</main>
           <Footer dict={dict} locale={locale} />

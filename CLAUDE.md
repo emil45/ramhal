@@ -23,7 +23,7 @@ repo. A book page presents a *work* (text, sources, the כתר מרדכי commen
   label an editor sees must be Hebrew.
 - **`APP_ENV`** (`development` | `demo` | `production`, required) says which deployment this is;
   **`NODE_ENV`** only says how the build is optimised. Never gate behaviour on `NODE_ENV`. `demo`
-  shows a permanent banner. `APP_ENV` must be set for `next build`; the server refuses to start under
+  is the deployment that uses the mock payment provider, whose screens carry their own notice. `APP_ENV` must be set for `next build`; the server refuses to start under
   a different one. The mock payment provider is refused under `production`.
 - **Claims about production come from the live URL** or from `GET /api/diagnostics` (public, narrow:
   `appEnv`, `builtForAppEnv`, `latestMigration`, `backup`, `database.fingerprint`) — never from a

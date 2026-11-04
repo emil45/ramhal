@@ -85,7 +85,6 @@ const DICTIONARIES = {
       unknown: 'לא ידוע',
     },
     footer: { rights: 'מכון רמח״ל · כל הזכויות שמורות', contactTitle: 'יצירת קשר', exploreTitle: 'באתר', socialTitle: 'עקבו אחרינו', socialPlatforms: { facebook: 'Facebook', youtube: 'YouTube' }, address: 'כתובת', phone: 'טלפון', email: 'דוא״ל' },
-    demo: { label: 'הדגמה', banner: 'אתר הדגמה — לא מתבצע כאן תשלום אמיתי. אף כרטיס לא יחויב ולא יועבר כסף.' },
     checkout: {
       title: 'תשלום',
       contactHeading: 'פרטי הלקוח',
@@ -255,7 +254,6 @@ const DICTIONARIES = {
       unknown: 'Unknown',
     },
     footer: { rights: 'Machon Ramhal · All rights reserved', contactTitle: 'Contact', exploreTitle: 'Explore', socialTitle: 'Follow us', socialPlatforms: { facebook: 'Facebook', youtube: 'YouTube' }, address: 'Address', phone: 'Phone', email: 'Email' },
-    demo: { label: 'Demo', banner: 'Demonstration site — no real payment is taken here. No card is charged and no money moves.' },
     checkout: {
       title: 'Checkout',
       contactHeading: 'Your details',
@@ -425,7 +423,6 @@ const DICTIONARIES = {
       unknown: 'Inconnue',
     },
     footer: { rights: 'Institut Ramhal · Tous droits réservés', contactTitle: 'Contact', exploreTitle: 'Parcourir', socialTitle: 'Suivez-nous', socialPlatforms: { facebook: 'Facebook', youtube: 'YouTube' }, address: 'Adresse', phone: 'Téléphone', email: 'Courriel' },
-    demo: { label: 'Démo', banner: 'Site de démonstration — aucun paiement réel n’est effectué. Aucune carte n’est débitée et aucun argent n’est transféré.' },
     checkout: {
       title: 'Paiement',
       contactHeading: 'Vos coordonnées',
