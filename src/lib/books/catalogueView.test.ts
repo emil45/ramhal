@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { paginateCatalogue, sortCatalogueView } from '@/lib/books/catalogueView'
+import { defaultBookLanguage, paginateCatalogue, sortCatalogueView } from '@/lib/books/catalogueView'
 
 const book = (title: string, amount?: number) => ({
   prices: amount === undefined ? [] : [{ amount, currency: 'ILS' }],
@@ -62,5 +62,18 @@ describe('paginateCatalogue', () => {
 
   it('rejects an invalid page size', () => {
     expect(() => paginateCatalogue(entries, 1, 0)).toThrow('positive integer')
+  })
+})
+
+describe('defaultBookLanguage', () => {
+  const books = [{ bookLanguage: 'he' }, { bookLanguage: 'fr' }]
+
+  it('opens on the site’s own language when it has books', () => {
+    expect(defaultBookLanguage('he', books)).toBe('he')
+    expect(defaultBookLanguage('fr', books)).toBe('fr')
+  })
+
+  it('opens on every language when the site’s own language has no books', () => {
+    expect(defaultBookLanguage('en', books)).toBe('')
   })
 })

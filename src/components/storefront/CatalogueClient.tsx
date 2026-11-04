@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input'
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { filterCatalogue } from '@/lib/books/bookSearch'
-import { isCatalogueSort, paginateCatalogue, sortCatalogueView } from '@/lib/books/catalogueView'
+import { defaultBookLanguage, isCatalogueSort, paginateCatalogue, sortCatalogueView } from '@/lib/books/catalogueView'
 import { COVER_ASPECT_RATIO } from '@/lib/books/cover'
 import { LOCALE_CONFIG } from '@/lib/locale/locale'
 import { cn } from '@/lib/utils'
@@ -37,7 +37,8 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
   const dict = getDictionary(locale)
   const [query, setQuery] = useState('')
   const [categorySlug, setCategorySlug] = useState('')
-  const [bookLanguage, setBookLanguage] = useState('')
+  const defaultLanguage = defaultBookLanguage(locale, books)
+  const [bookLanguage, setBookLanguage] = useState(defaultLanguage)
   const [sort, setSort] = useState<CatalogueSort>('default')
   const [page, setPage] = useState(1)
   const resultsStartRef = useRef<HTMLDivElement>(null)
@@ -85,12 +86,12 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
   }, [books, locale])
   const hasCategoryFilter = categoriesPresent.length >= 2
 
-  const hasFilters = query !== '' || categorySlug !== '' || bookLanguage !== '' || sort !== 'default'
+  const hasFilters = query !== '' || categorySlug !== '' || bookLanguage !== defaultLanguage || sort !== 'default'
 
   const clearFilters = () => {
     setQuery('')
     setCategorySlug('')
-    setBookLanguage('')
+    setBookLanguage(defaultLanguage)
     setSort('default')
     setPage(1)
   }

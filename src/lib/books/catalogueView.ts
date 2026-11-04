@@ -72,3 +72,13 @@ export function paginateCatalogue<T>(items: T[], requestedPage: number, pageSize
     totalPages,
   }
 }
+
+/**
+ * The book language the catalogue opens on: the site's own language, so the
+ * Hebrew site opens on Hebrew books and the others one choice away. A site
+ * whose language has no books yet opens on every language rather than on an
+ * empty shelf. An empty string means "all languages", as in the filter.
+ */
+export function defaultBookLanguage(locale: Locale, entries: readonly { bookLanguage: string }[]): string {
+  return entries.some((entry) => entry.bookLanguage === locale) ? locale : ''
+}
