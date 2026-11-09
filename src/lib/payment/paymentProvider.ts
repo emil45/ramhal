@@ -13,6 +13,9 @@ export type PaymentRequest = {
   total: number
   /** Language to present the provider's payment page in. */
   locale: Locale
+  /** Who is paying, for providers whose payment page needs the payer up
+   * front (Grow's does); PayPal and the mock collect it themselves. */
+  payer: { name: string; email: string; phone: string }
   /** Where the customer's browser lands after the provider's page. Landing
    * here is NOT proof of payment — only `confirmPayment` is. */
   returnUrl: string

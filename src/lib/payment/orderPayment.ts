@@ -4,6 +4,7 @@ import config from '@payload-config'
 import { commitTransaction, getPayload, initTransaction, killTransaction, ValidationError } from 'payload'
 
 import type { Order } from '@/payload-types'
+import type { PaymentConfirmation } from '@/lib/payment/paymentProvider'
 import type { PaymentStatus } from '@/lib/shop/orderStatus'
 
 export type PaymentEventResult = 'applied' | 'already-processed'
@@ -19,6 +20,16 @@ export async function findOrderByProviderRef(providerRef: string): Promise<Order
     limit: 1,
   })
   return result.docs[0] ?? null
+}
+
+/** Moves the order according to what the provider itself just told us. A
+ * `pending` answer changes nothing: the provider has no final word yet. */
+export async function applyPaymentConfirmation(orderId: number, confirmation: PaymentConfirmation): Promise<void> {
+  if (confirmation.status === 'paid') {
+    await markOrderPaid(orderId, confirmation.providerEventId)
+  } else if (confirmation.status !== 'pending') {
+    await markOrderPaymentUnsuccessful(orderId, confirmation.providerEventId, confirmation.status)
+  }
 }
 
 type ProviderVerdict = Exclude<PaymentStatus, 'pending'>

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 
 import { register } from '@/instrumentation'
-import { assertProviderAllowedInEnvironment, readPaymentProviderName } from '@/lib/payment/paymentConfiguration'
+import { assertProviderAllowedInEnvironment, parsePaymentProviderNames, readPaymentProviderNames } from '@/lib/payment/paymentConfiguration'
 
 afterEach(() => {
   vi.unstubAllEnvs()
@@ -22,18 +22,36 @@ describe('assertProviderAllowedInEnvironment', () => {
   })
 })
 
-describe('readPaymentProviderName', () => {
+describe('parsePaymentProviderNames', () => {
+  it('reads a comma-separated list, ignoring spaces', () => {
+    expect(parsePaymentProviderNames('grow, paypal')).toEqual(['grow', 'paypal'])
+  })
+
+  it('rejects a name no adapter exists for, listing the known ones', () => {
+    expect(() => parsePaymentProviderNames('paypal,stripe')).toThrow(/"stripe".*Known: mock, paypal, grow/)
+  })
+
+  it('rejects an empty list', () => {
+    expect(() => parsePaymentProviderNames(' , ')).toThrow(/names no payment provider/)
+  })
+
+  it('rejects the mock alongside a real provider, which would send real customers to a page that takes no money', () => {
+    expect(() => parsePaymentProviderNames('mock,paypal')).toThrow(/cannot be combined/)
+  })
+})
+
+describe('readPaymentProviderNames', () => {
   it('fails when no provider is configured', () => {
     vi.stubEnv('PAYMENT_PROVIDER', '')
 
-    expect(() => readPaymentProviderName()).toThrow(/PAYMENT_PROVIDER/)
+    expect(() => readPaymentProviderNames()).toThrow(/PAYMENT_PROVIDER/)
   })
 
   it('refuses to hand out the mock when APP_ENV is production', () => {
     vi.stubEnv('PAYMENT_PROVIDER', 'mock')
     vi.stubEnv('APP_ENV', 'production')
 
-    expect(() => readPaymentProviderName()).toThrow(/Refusing to start/)
+    expect(() => readPaymentProviderNames()).toThrow(/Refusing to start/)
   })
 
   it('hands out the mock in a deployed demo, which is NODE_ENV=production but APP_ENV=demo', () => {
@@ -41,14 +59,14 @@ describe('readPaymentProviderName', () => {
     vi.stubEnv('NODE_ENV', 'production')
     vi.stubEnv('APP_ENV', 'demo')
 
-    expect(readPaymentProviderName()).toBe('mock')
+    expect(readPaymentProviderNames()).toEqual(['mock'])
   })
 
   it('refuses to start when APP_ENV is missing, rather than assuming it is safe', () => {
     vi.stubEnv('PAYMENT_PROVIDER', 'mock')
     vi.stubEnv('APP_ENV', '')
 
-    expect(() => readPaymentProviderName()).toThrow(/APP_ENV/)
+    expect(() => readPaymentProviderNames()).toThrow(/APP_ENV/)
   })
 })
 

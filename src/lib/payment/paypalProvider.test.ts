@@ -30,6 +30,8 @@ const CONFIG: PayPalConfig = {
   webhookId: 'webhook-id',
 }
 
+const PAYER = { name: 'לקוח בדיקה', email: 'buyer@example.com', phone: '0501234567' }
+
 function orderWithLinks(id: string, links: { href: string; rel: string }[]): PayPalOrder {
   return { id, links, status: 'CREATED' }
 }
@@ -44,7 +46,7 @@ describe('PayPalProvider.createPayment', () => {
     createOrder.mockResolvedValue(orderWithLinks('ORDER-1', [{ rel: 'approve', href: 'https://paypal.example/approve' }]))
     const provider = new PayPalProvider(CONFIG)
 
-    await provider.createPayment({ orderNumber: 1, currency: 'EUR', total: 30.5, locale: 'fr', returnUrl: 'https://site.example/return' })
+    await provider.createPayment({ orderNumber: 1, currency: 'EUR', total: 30.5, locale: 'fr', returnUrl: 'https://site.example/return', payer: PAYER })
 
     expect(createOrder).toHaveBeenCalledWith(
       CONFIG,
@@ -62,7 +64,7 @@ describe('PayPalProvider.createPayment', () => {
     )
     const provider = new PayPalProvider(CONFIG)
 
-    const result = await provider.createPayment({ orderNumber: 2, currency: 'ILS', total: 55, locale: 'he', returnUrl: 'https://site.example/return' })
+    const result = await provider.createPayment({ orderNumber: 2, currency: 'ILS', total: 55, locale: 'he', returnUrl: 'https://site.example/return', payer: PAYER })
 
     expect(result).toEqual({ providerRef: 'ORDER-2', redirectUrl: 'https://paypal.example/approve/ORDER-2' })
   })
@@ -71,7 +73,7 @@ describe('PayPalProvider.createPayment', () => {
     createOrder.mockResolvedValue(orderWithLinks('ORDER-3', [{ rel: 'approve', href: 'https://paypal.example/approve' }]))
     const provider = new PayPalProvider(CONFIG)
 
-    await provider.createPayment({ orderNumber: 3, currency: 'USD', total: 10, locale: 'en', returnUrl: 'https://site.example/return' })
+    await provider.createPayment({ orderNumber: 3, currency: 'USD', total: 10, locale: 'en', returnUrl: 'https://site.example/return', payer: PAYER })
 
     expect(createOrder).toHaveBeenCalledWith(
       CONFIG,

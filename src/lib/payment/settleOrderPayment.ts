@@ -4,7 +4,7 @@ import config from '@payload-config'
 import { getPayload } from 'payload'
 
 import { getPaymentProvider } from '@/lib/payment/getPaymentProvider'
-import { markOrderPaid, markOrderPaymentUnsuccessful } from '@/lib/payment/orderPayment'
+import { applyPaymentConfirmation } from '@/lib/payment/orderPayment'
 
 import type { Order } from '@/payload-types'
 
@@ -21,13 +21,11 @@ export async function settleOrderPayment(publicToken: string): Promise<Order | n
   if (!order) return null
   if (order.paymentStatus === 'paid' || !order.providerRef) return order
 
-  const confirmation = await getPaymentProvider().confirmPayment(order.providerRef)
-
-  if (confirmation.status === 'paid') {
-    await markOrderPaid(order.id, confirmation.providerEventId)
-  } else if (confirmation.status !== 'pending') {
-    await markOrderPaymentUnsuccessful(order.id, confirmation.providerEventId, confirmation.status)
-  }
+  // The provider that took this order's payment, not whichever the site
+  // would choose for it today: the choice depends on configuration that can
+  // change after the order exists.
+  const confirmation = await getPaymentProvider(order.provider).confirmPayment(order.providerRef)
+  await applyPaymentConfirmation(order.id, confirmation)
 
   return payload.findByID({ collection: 'orders', id: order.id, depth: 0 })
 }

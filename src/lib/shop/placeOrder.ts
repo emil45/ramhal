@@ -5,7 +5,9 @@ import { randomUUID } from 'node:crypto'
 import { getPayload } from 'payload'
 
 import { chooseColor, titleWithColor } from '@/lib/books/bookColors'
+import { choosePaymentProviderName } from '@/lib/payment/choosePaymentProvider'
 import { getPaymentProvider } from '@/lib/payment/getPaymentProvider'
+import { readPaymentProviderNames } from '@/lib/payment/paymentConfiguration'
 import { priceOrder } from '@/lib/shop/orderPricing'
 import { DEFAULT_LOCALE, LOCALE_CONFIG, LOCALES } from '@/lib/locale/locale'
 import { localePath } from '@/lib/locale/routes'
@@ -78,7 +80,14 @@ export async function placeOrder(input: {
 
   if (order.total !== form.expectedTotal) return { ok: false, problem: { kind: 'total-changed' } }
 
-  const provider = getPaymentProvider()
+  const payer = { name: form.name, email: form.email, phone: form.phone }
+  const provider = getPaymentProvider(
+    choosePaymentProviderName(readPaymentProviderNames(), {
+      currency: order.currency,
+      destinationCountry: order.destinationCountry,
+      payer,
+    }),
+  )
   const publicToken = randomUUID()
 
   const created = await payload.create({
@@ -117,6 +126,7 @@ export async function placeOrder(input: {
     currency: order.currency,
     total: order.total,
     locale,
+    payer,
     returnUrl: localePath(locale, `/${RETURN_PATH_SEGMENT}/${publicToken}`),
   })
 
