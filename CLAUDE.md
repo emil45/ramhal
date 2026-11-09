@@ -104,7 +104,9 @@ this config under Node: `ERR_REQUIRE_ASYNC_MODULE`), read the generated migratio
   an image. Video stays on YouTube.
 - **Prices and totals are computed server-side**; an order snapshots the price paid. Payment status
   and fulfilment status are separate. Payments sit behind `src/lib/payment/paymentProvider.ts`
-  (`mock`, `paypal`); `confirmPayment` asks the gateway, never trusts a return URL. Shipping is zoned
+  (`mock`, `paypal`, `grow`); `confirmPayment` asks the gateway, never trusts a return URL. Each order picks its provider
+  (`choosePaymentProvider.ts`): Grow, through Make (`docs/grow-make-scenarios.md`), for shekel orders to Israel from an
+  Israeli mobile; PayPal for the rest. Shipping is zoned
   (Israel / Europe / rest of world), tiered by item count, free above ten books and on pickup.
 - **Search**: Postgres full-text with a custom Hebrew configuration plus `pg_trgm`.
 - **Legacy URLs**: only `ramhal.com` (apex and `www`) redirects; `enramhal.com` and `frramhal.com` are
