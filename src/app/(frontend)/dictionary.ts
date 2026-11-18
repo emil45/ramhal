@@ -192,7 +192,6 @@ const DICTIONARIES = {
       viewAnnouncement: 'לצפייה במודעה המלאה',
       visitTitle: 'נפגשים בבית המדרש',
       visitIntroduction: 'זמני השיעורים והתפילות בבית רמח״ל.',
-      catalogueEyebrow: 'ספרים מבית המדרש',
       coursesEyebrow: 'בית המדרש, בכל מקום',
       aboutInstitute: 'על המכון',
 
@@ -400,7 +399,6 @@ const DICTIONARIES = {
       viewAnnouncement: 'View the full announcement',
       visitTitle: 'Join us at the beit midrash',
       visitIntroduction: 'Lesson and prayer times at Beit Ramhal.',
-      catalogueEyebrow: 'Books from the beit midrash',
       coursesEyebrow: 'The beit midrash, wherever you are',
       aboutInstitute: 'About the institute',
 
@@ -608,7 +606,6 @@ const DICTIONARIES = {
       viewAnnouncement: 'Voir l’annonce complète',
       visitTitle: 'Retrouvons-nous au beit hamidrach',
       visitIntroduction: 'Les horaires des cours et des prières à Beit Ramhal.',
-      catalogueEyebrow: 'Les livres du beit hamidrach',
       coursesEyebrow: 'Le beit hamidrach, partout avec vous',
       aboutInstitute: 'À propos de l’institut',
 

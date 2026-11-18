@@ -3,7 +3,6 @@
 import { SearchIcon, SearchXIcon } from 'lucide-react'
 import { useDeferredValue, useMemo, useRef, useState } from 'react'
 
-import { CoverImage } from '@/components/storefront/CoverImage'
 import { ProductCard } from '@/components/storefront/ProductCard'
 import { getDictionary } from '@/app/(frontend)/dictionary'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
@@ -34,7 +33,6 @@ import type { CatalogueShelf, CatalogueSort } from '@/lib/books/catalogueView'
 const GRID_CLASS = 'grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3 sm:gap-x-7 lg:grid-cols-4 lg:gap-x-9'
 const SKELETON_CARD_COUNT = 8
 const BOOKS_PER_PAGE = 20
-const CATALOGUE_ARTWORK_COUNT = 3
 
 const BOOK_LANGUAGES = ['he', 'fr', 'en', 'he-fr', 'aramaic-fr', 'unknown'] as const
 
@@ -149,40 +147,19 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
     requestAnimationFrame(() => resultsStartRef.current?.scrollIntoView({ block: 'start' }))
   }
 
-  const artworkBooks = shelfBooks
-    .filter((book) => (!defaultLanguage || book.bookLanguage === defaultLanguage) && book.cover && typeof book.cover === 'object')
-    .slice(0, CATALOGUE_ARTWORK_COUNT)
-
   return (
     <div className="flex flex-col">
-      <section className="catalogue-heading">
-        <div className="page-container">
-          <div className="catalogue-heading-inner">
-            <div className="flex max-w-2xl flex-col gap-4">
-              <p className="eyebrow">{dict.home.catalogueEyebrow}</p>
-              <h1 className="type-display">{dict.catalogue.title}</h1>
-              <p className="max-w-xl text-lg text-muted-foreground">{dict.catalogue.intro}</p>
-            </div>
-            {artworkBooks.length > 0 ? (
-              <div className="catalogue-heading-art" aria-hidden>
-                {artworkBooks.map((book) => (
-                  <div key={book.id}>
-                    <CoverImage
-                      book={{ bookLanguage: book.bookLanguage, categorySlug: book.category?.slug }}
-                      cover={typeof book.cover === 'object' ? book.cover : null}
-                      sizes="112px"
-                      title={book.displayTitle}
-                    />
-                  </div>
-                ))}
-              </div>
-            ) : null}
+      <header className="border-b border-border bg-paper-quiet">
+        <div className="page-container grid items-end gap-5 py-6 sm:py-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-8">
+          <div className="flex max-w-2xl flex-col gap-2">
+            <h1 className="type-title">{dict.catalogue.title}</h1>
+            <p className="max-w-xl text-base text-pretty text-muted-foreground">{dict.catalogue.intro}</p>
           </div>
           {shelves.length > 1 ? (
             <div
               role="group"
               aria-label={dict.catalogue.shelvesLabel}
-              className="-mb-px grid grid-cols-2 gap-2 sm:flex"
+              className="grid grid-cols-2 gap-2 sm:flex"
             >
               {shelves.map((option) => {
                 const selected = option === shelf
@@ -207,11 +184,9 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
                 )
               })}
             </div>
-          ) : (
-            <div className="h-2" />
-          )}
+          ) : null}
         </div>
-      </section>
+      </header>
 
       <div className="page-container flex flex-col gap-10 py-8 md:py-10">
         <div className="catalogue-toolbar flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
