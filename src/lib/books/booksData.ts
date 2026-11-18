@@ -25,13 +25,23 @@ const CARD_FIELDS_SELECT = {
   publishedAt: true,
   cover: true,
   category: true,
+  creatorCredit: true,
+  fromInstitute: true,
+  markedNew: true,
+  colors: { id: true },
 } as const
 
-type CardBookFields = Pick<Book, 'id' | 'urlSlug' | 'bookLanguage' | 'prices' | 'publishedAt' | 'cover' | 'category'>
+type CardBookFields = Pick<
+  Book,
+  'id' | 'urlSlug' | 'bookLanguage' | 'prices' | 'publishedAt' | 'cover' | 'category' | 'creatorCredit' | 'fromInstitute' | 'markedNew'
+>
 
 type DisplayFields = { category: Category | null; displayTitle: string }
 
-export type CatalogueBook = Omit<CardBookFields, 'category'> & DisplayFields
+/** A book that comes in colours cannot be added from a card: the colour is chosen on its own page. */
+type CardOnlyFields = { hasColors: boolean }
+
+export type CatalogueBook = Omit<CardBookFields, 'category'> & DisplayFields & CardOnlyFields
 
 /** The whole book, for its own page. */
 export type CatalogueBookDetail = Omit<Book, 'category'> & DisplayFields
@@ -92,6 +102,13 @@ function displayFields(
   }
 }
 
+type CardBookDocument = Omit<CardBookFields, 'category'> & Pick<Book, 'category' | 'colors'>
+
+/** A card-sized document as cards read it: display title resolved, colours reduced to whether there are any. */
+function toCatalogueBook({ colors, ...book }: CardBookDocument, titles: Map<number, TitlesByLocale>, locale: Locale): CatalogueBook {
+  return { ...book, ...displayFields(book, titles, locale), hasColors: (colors ?? []).length > 0 }
+}
+
 /**
  * Every book, card-sized. Wrapped in React's `cache()` so the several
  * components of one render that ask for the list pay for it once.
@@ -111,8 +128,43 @@ export const getCatalogueBooks = cache(async (locale: Locale): Promise<Catalogue
     titlesByLocale(),
   ])
 
-  return content.docs.map((book) => ({ ...book, ...displayFields(book, titles, locale) }))
+  return content.docs.map((book) => toCatalogueBook(book, titles, locale))
 })
+
+const RELATED_CANDIDATE_COUNT = 12
+
+/**
+ * Books from the same shelf and in the same language as `book`, card-sized,
+ * for the "more from this shelf" row on its page. A bounded query, not the
+ * whole catalogue: a book page reads only what it shows.
+ */
+export const getRelatedBooks = cache(
+  async (locale: Locale, book: Pick<Book, 'id' | 'bookLanguage' | 'fromInstitute'>): Promise<CatalogueBook[]> => {
+    const payload = await payloadClient()
+    const where: Where = {
+      and: [
+        { id: { not_equals: book.id } },
+        { bookLanguage: { equals: book.bookLanguage } },
+        book.fromInstitute === false ? { fromInstitute: { equals: false } } : { fromInstitute: { not_equals: false } },
+      ],
+    }
+
+    const [content, titles] = await Promise.all([
+      payload.find({
+        collection: 'books',
+        locale,
+        fallbackLocale: false,
+        depth: 1,
+        limit: RELATED_CANDIDATE_COUNT,
+        select: CARD_FIELDS_SELECT,
+        where,
+      }),
+      titlesByLocale(where),
+    ])
+
+    return content.docs.map((related) => toCatalogueBook(related, titles, locale))
+  },
+)
 
 /**
  * urlSlug is not localized — one column, identical in every locale — so
@@ -140,25 +192,23 @@ export const getBookUrlSlugs = cache(async (): Promise<string[]> => {
  * the correct behaviour: CLAUDE.md is explicit that a caught failure must be
  * handled or allowed to throw, never swallowed.
  */
-export const getCatalogueBookBySlug = cache(
-  async (locale: Locale, slug: string): Promise<CatalogueBookDetail | null> => {
-    const payload = await payloadClient()
-    const where: Where = { urlSlug: { equals: slug } }
+export const getCatalogueBookBySlug = cache(async (locale: Locale, slug: string): Promise<CatalogueBookDetail | null> => {
+  const payload = await payloadClient()
+  const where: Where = { urlSlug: { equals: slug } }
 
-    const [content, titles] = await Promise.all([
-      payload.find({ collection: 'books', locale, fallbackLocale: false, depth: 1, limit: 2, where }),
-      titlesByLocale(where),
-    ])
+  const [content, titles] = await Promise.all([
+    payload.find({ collection: 'books', locale, fallbackLocale: false, depth: 1, limit: 2, where }),
+    titlesByLocale(where),
+  ])
 
-    if (content.docs.length > 1) {
-      throw new Error(
-        `Data integrity: ${content.docs.length} books share the canonical URL slug "${slug}" ` +
-          `(ids ${content.docs.map((book) => book.id).join(', ')}). urlSlug is supposed to be unique across the ` +
-          'whole catalogue — see src/collections/Books.ts.',
-      )
-    }
+  if (content.docs.length > 1) {
+    throw new Error(
+      `Data integrity: ${content.docs.length} books share the canonical URL slug "${slug}" ` +
+        `(ids ${content.docs.map((book) => book.id).join(', ')}). urlSlug is supposed to be unique across the ` +
+        'whole catalogue — see src/collections/Books.ts.',
+    )
+  }
 
-    const [book] = content.docs
-    return book ? { ...book, ...displayFields(book, titles, locale) } : null
-  },
-)
+  const [book] = content.docs
+  return book ? { ...book, ...displayFields(book, titles, locale) } : null
+})

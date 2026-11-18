@@ -1,8 +1,6 @@
 import { notFound } from 'next/navigation'
 
 import { CatalogueClient } from '@/components/storefront/CatalogueClient'
-import { SectionHeading } from '@/components/storefront/SectionHeading'
-import { getDictionary } from '@/app/(frontend)/dictionary'
 import { sortCatalogue } from '@/lib/books/availability'
 import { getCatalogueBooks } from '@/lib/books/booksData'
 import { isLocale, LOCALE_CONFIG, LOCALES } from '@/lib/locale/locale'
@@ -20,17 +18,11 @@ export default async function CataloguePage({ params }: PageProps<'/[locale]/[bo
   const bookWord = decodeURIComponent(rawParams.bookWord)
   if (!isLocale(locale) || bookWord !== CATALOGUE_SEGMENT[locale]) notFound()
 
-  const dict = getDictionary(locale)
   const { currency } = LOCALE_CONFIG[locale]
   const books = await getCatalogueBooks(locale)
   // Purchasable-in-this-currency books lead; nothing is hidden — see
   // sortCatalogue's own comment.
   const sorted = sortCatalogue(books, currency)
 
-  return (
-    <div className="page-container py-10">
-      <SectionHeading as="h1">{dict.catalogue.title}</SectionHeading>
-      <CatalogueClient books={sorted} locale={locale} />
-    </div>
-  )
+  return <CatalogueClient books={sorted} locale={locale} />
 }
