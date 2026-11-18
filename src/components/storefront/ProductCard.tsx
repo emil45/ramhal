@@ -16,8 +16,8 @@ import type { CatalogueBook } from '@/lib/books/booksData'
 import type { Locale } from '@/lib/locale/locale'
 
 /**
- * A book on the shelf: the cover large, the title, who wrote it, the price
- * and a way to buy it. The whole card opens the book; the button above it
+ * A book on the shelf: the cover large, the title, the price and a way to
+ * buy it. The whole card opens the book; the button above it
  * buys without leaving the catalogue — except for a book that comes in
  * colours, whose colour is chosen on its own page.
  */
@@ -47,7 +47,6 @@ export function ProductCard({ book, dict, locale }: { book: CatalogueBook; dict:
             {book.displayTitle}
           </Link>
         </h3>
-        <p className="mt-1 line-clamp-1 text-sm text-muted-foreground">{book.creatorCredit}</p>
         {/* Grid rows stretch every card to the tallest, so pushing price and
             button to the bottom lines them up across the row. */}
         <div className="mt-auto flex flex-col gap-3 pt-3">

@@ -25,7 +25,6 @@ const CARD_FIELDS_SELECT = {
   publishedAt: true,
   cover: true,
   category: true,
-  creatorCredit: true,
   fromInstitute: true,
   markedNew: true,
   colors: { id: true },
@@ -33,7 +32,7 @@ const CARD_FIELDS_SELECT = {
 
 type CardBookFields = Pick<
   Book,
-  'id' | 'urlSlug' | 'bookLanguage' | 'prices' | 'publishedAt' | 'cover' | 'category' | 'creatorCredit' | 'fromInstitute' | 'markedNew'
+  'id' | 'urlSlug' | 'bookLanguage' | 'prices' | 'publishedAt' | 'cover' | 'category' | 'fromInstitute' | 'markedNew'
 >
 
 type DisplayFields = { category: Category | null; displayTitle: string }

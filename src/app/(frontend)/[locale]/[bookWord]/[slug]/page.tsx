@@ -108,14 +108,13 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
               thumbnailLabels={images.map((_, index) => imageOf(index + 1, images.length))}
               title={book.displayTitle}
             />
-            <BookBadges dict={dict} isNew={book.markedNew === true} percentOff={sale?.percentOff ?? null} />
+            <BookBadges dict={dict} isNew={book.markedNew === true} percentOff={sale?.percentOff ?? null} size="page" />
           </div>
 
           <div className="flex max-w-2xl flex-col gap-8">
             <div className="flex flex-col gap-3">
               <h1 className="type-title">{book.displayTitle}</h1>
               {book.subtitle ? <p className="font-serif text-xl text-foreground">{book.subtitle}</p> : null}
-              {book.creatorCredit ? <p className="text-lg text-muted-foreground">{book.creatorCredit}</p> : null}
             </div>
 
             {purchasable ? (
