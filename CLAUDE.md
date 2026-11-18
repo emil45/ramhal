@@ -203,11 +203,14 @@ run date in its header, never rerun it; delete old ones, `git log -- scripts/one
    (unpooled). Never put it in `.env` or a shell profile.
 2. Dry run first, `--apply` second. Print and check the fingerprint before writing.
    ```sh
-   ALLOW_PRODUCTION_ONE_OFF=TASK-<n> DATABASE_URI="<string>" APP_ENV=development \
-     scripts/ops.sh npx vite-node -c vitest.config.ts --options.deps.inline=payload-oauth2 scripts/one-off/<file>.ts
+   scripts/ops.sh env ALLOW_PRODUCTION_ONE_OFF=TASK-<n> DATABASE_URI="<string>" APP_ENV=development \
+     npx vite-node -c vitest.config.ts --options.deps.inline=payload-oauth2 scripts/one-off/<file>.ts
    ```
-   The override value must match `TASK-<number>` (`src/lib/platform/refuseProductionDatabase.ts`). New
-   scripts must set `SKIP_STOREFRONT_REVALIDATION`.
+   `ops.sh` loads `.env` after the shell's own variables, so the production `DATABASE_URI` must be set
+   by `env` after it, or the local one silently wins. The override value must match `TASK-<number>`
+   (`src/lib/platform/refuseProductionDatabase.ts`). New scripts must set
+   `SKIP_STOREFRONT_REVALIDATION`, which also means the live pages stay stale until a deployment or an
+   editor's save in `/admin` marks them stale.
 
 **R2 tokens** (Cloudflare → My Profile → API Tokens → Roll; S3 secret is `sha256(token value)` in
 hex): `ramhal-media-rw` → Vercel `S3_*`; `ramhal-backup-rw` → GitHub `BACKUP_WRITER_S3_*`;
