@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { isPurchasable, selectFeaturedBooks, selectNewBooks, sortCatalogue } from '@/lib/books/availability'
+import { isPurchasable, selectCatalogueStrip, selectFeaturedBooks, sortCatalogue } from '@/lib/books/availability'
 
 describe('isPurchasable', () => {
   it('is purchasable when a real, positive price exists in the currency', () => {
@@ -75,28 +75,53 @@ describe('sortCatalogue', () => {
   })
 })
 
-describe('selectNewBooks', () => {
-  const marked = (title: string, publishedAt: string | null = null, amount = 5000) => ({
+describe('selectCatalogueStrip', () => {
+  const book = (title: string, extra: Record<string, unknown> = {}) => ({
     displayTitle: title,
-    prices: [{ amount, currency: 'ILS' }],
-    publishedAt,
-    markedNew: true,
+    prices: [{ amount: 5000, currency: 'ILS' }],
+    bookLanguage: 'he',
+    ...extra,
   })
-  const unmarked = (title: string, publishedAt: string | null = null) => ({ ...marked(title, publishedAt), markedNew: false })
+  const titles = (books: { displayTitle: string }[]) => books.map((b) => b.displayTitle)
 
-  it('includes only books an editor marked new, whatever their publication date', () => {
-    const result = selectNewBooks([unmarked('לא מסומן', '2024-01-01'), marked('מסומן ללא תאריך')], 'ILS', 6)
-    expect(result.map((b) => b.displayTitle)).toEqual(['מסומן ללא תאריך'])
+  it('leads with books marked new, then books marked for the homepage, then the rest', () => {
+    const result = selectCatalogueStrip(
+      [book('רגיל'), book('מוצג', { featuredOnHomepage: true }), book('חדש', { markedNew: true })],
+      'he',
+      'ILS',
+      6,
+    )
+    expect(titles(result)).toEqual(['חדש', 'מוצג', 'רגיל'])
   })
 
-  it('excludes marked books not purchasable in this currency', () => {
-    const result = selectNewBooks([marked('לא למכירה', '2024-01-01', 0), marked('למכירה', '2023-01-01')], 'ILS', 6)
-    expect(result.map((b) => b.displayTitle)).toEqual(['למכירה'])
+  it('puts books with a real photograph ahead of typeset ones among the unmarked, keeping the catalogue order otherwise', () => {
+    const result = selectCatalogueStrip([book('ב'), book('א', { cover: { id: 1 } }), book('ג', { cover: 7 })], 'he', 'ILS', 6)
+    expect(titles(result)).toEqual(['א', 'ב', 'ג'])
   })
 
-  it('orders most recently published first and respects the limit', () => {
-    const result = selectNewBooks([marked('ישן', '2020-01-01'), marked('חדש', '2024-01-01'), marked('בינוני', '2022-01-01')], 'ILS', 2)
-    expect(result.map((b) => b.displayTitle)).toEqual(['חדש', 'בינוני'])
+  it("puts the visitor's own language before editor marks", () => {
+    const result = selectCatalogueStrip(
+      [book('עברי חדש', { markedNew: true }), book('צרפתי רגיל', { bookLanguage: 'fr' })],
+      'fr',
+      'ILS',
+      6,
+    )
+    expect(titles(result)).toEqual(['צרפתי רגיל', 'עברי חדש'])
+  })
+
+  it('leaves out books that cannot be bought in the currency, even when marked', () => {
+    const result = selectCatalogueStrip(
+      [book('לא למכירה', { markedNew: true, prices: [{ amount: 0, currency: 'ILS' }] }), book('למכירה')],
+      'he',
+      'ILS',
+      6,
+    )
+    expect(titles(result)).toEqual(['למכירה'])
+  })
+
+  it('stops at the limit', () => {
+    const result = selectCatalogueStrip([book('א'), book('ב'), book('ג')], 'he', 'ILS', 2)
+    expect(result).toHaveLength(2)
   })
 })
 

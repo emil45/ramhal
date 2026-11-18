@@ -62,19 +62,6 @@ export function sortCatalogue<T extends CatalogueEntry>(items: T[], currency: Cu
   })
 }
 
-/**
- * The front page's "new books" section: the purchasable-in-this-currency books
- * an editor marked new, most recently published first, capped to `limit`. The
- * mark is the only thing that says a book is new, so the ribbon on the cover,
- * the front of the shop and this section always agree.
- */
-export function selectNewBooks<T extends CatalogueEntry>(items: T[], currency: Currency, limit: number): T[] {
-  return items
-    .filter((item) => item.markedNew === true && isPurchasable(item, currency))
-    .sort(compareByPublicationThenTitle)
-    .slice(0, limit)
-}
-
 type FeaturableItem = PricedItem & {
   /** A populated Media document, or an unresolved id, or nothing at all. */
   cover?: unknown
@@ -84,12 +71,36 @@ function hasScannedCover(item: FeaturableItem): boolean {
   return typeof item.cover === 'object' && item.cover !== null
 }
 
+type StripEntry = CatalogueEntry & FeaturableItem & {
+  bookLanguage?: string | null
+  featuredOnHomepage?: boolean | null
+}
+
+/** Lower leads. Editors decide the first two tiers; a real photograph beats a typeset cover after that. */
+function stripTier(item: StripEntry): number {
+  if (item.markedNew === true) return 0
+  if (item.featuredOnHomepage === true) return 1
+  return hasScannedCover(item) ? 2 : 3
+}
+
 /**
  * The front page's "from the catalogue" strip: purchasable-in-this-currency
- * books, ones with a real scanned cover first, otherwise in the order given
- * (pass an already-sorted catalogue). Unlike selectNewBooks it makes no claim
- * about recency, so it is never empty while the shop sells anything, and a
- * front page never depends on someone having filled in publication dates.
+ * books in the visitor's own language first, and within them the books an
+ * editor marked new, then those marked for the homepage, then the rest of the
+ * catalogue in its usual order. It never depends on an editor having marked
+ * anything, so it is never empty while the shop sells something.
+ */
+export function selectCatalogueStrip<T extends StripEntry>(items: T[], locale: string, currency: Currency, limit: number): T[] {
+  return sortCatalogue(items, currency)
+    .filter((item) => isPurchasable(item, currency))
+    .sort((a, b) => Number(b.bookLanguage === locale) - Number(a.bookLanguage === locale) || stripTier(a) - stripTier(b))
+    .slice(0, limit)
+}
+
+/**
+ * A book page's related books: purchasable-in-this-currency books, ones with a
+ * real scanned cover first, otherwise in the order given (pass an
+ * already-sorted catalogue).
  */
 export function selectFeaturedBooks<T extends FeaturableItem>(items: T[], currency: Currency, limit: number): T[] {
   const purchasable = items.filter((item) => isPurchasable(item, currency))

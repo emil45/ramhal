@@ -9,7 +9,7 @@ import { ProductCard } from '@/components/storefront/ProductCard'
 import { buttonVariants } from '@/components/ui/button'
 import { getDictionary } from '@/app/(frontend)/dictionary'
 import { getAnnouncements } from '@/lib/content/announcementsData'
-import { selectFeaturedBooks, selectNewBooks, sortCatalogue } from '@/lib/books/availability'
+import { selectCatalogueStrip } from '@/lib/books/availability'
 import { getCatalogueBooks } from '@/lib/books/booksData'
 import { getEvents } from '@/lib/content/eventsData'
 import { buildNewsStream } from '@/lib/content/homeStream'
@@ -38,12 +38,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
   ])
   const studyHallImage = beitRamhalPage?.heroImage as Media | null
 
-  const newBooks = selectNewBooks(books, currency, BOOK_STRIP_COUNT)
   const newsStream = buildNewsStream(announcements, events)
-  // "New books" appears only while an editor has marked a book new; otherwise
-  // the strip is plainly a selection from the catalogue.
-  const stripBooks = newBooks.length > 0 ? newBooks : selectFeaturedBooks(sortCatalogue(books, currency), currency, BOOK_STRIP_COUNT)
-  const stripTitle = newBooks.length > 0 ? dict.home.newBooksTitle : dict.home.fromCatalogueTitle
+  const stripBooks = selectCatalogueStrip(books, locale, currency, BOOK_STRIP_COUNT)
   const shiurim = schedule.shiurim ?? []
   const prayers = schedule.prayers ?? []
 
@@ -118,7 +114,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
               </Link>
             }
           >
-            {stripTitle}
+            {dict.home.fromCatalogueTitle}
           </SectionHeading>
           <div className="grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-3 lg:grid-cols-6">
             {stripBooks.map((book) => (
