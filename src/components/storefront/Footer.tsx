@@ -22,8 +22,9 @@ export async function Footer({ dict, locale }: { dict: Dictionary; locale: Local
   ]
 
   return (
-    <footer className="mt-auto bg-card">
-      {/* The double rule that closes a printed page: thick over thin. */}
+    <footer className="mt-auto bg-teal-deep text-paper">
+      {/* The double rule that closes a printed page: thick over thin, and
+          below it the one ground of the site in the brand's own deep ink. */}
       <div aria-hidden className="flex flex-col gap-[3px]">
         <div className="h-[3px] bg-gold" />
         <div className="h-px bg-gold" />
@@ -32,15 +33,19 @@ export async function Footer({ dict, locale }: { dict: Dictionary; locale: Local
         <div className="flex items-start gap-4">
           <Image src="/logo.png" alt="" width={362} height={512} className="h-16 w-auto" />
           <div className="flex flex-col gap-1">
-            <p className="type-subheading text-teal-deep">{dict.nav.home}</p>
-            <p className="max-w-sm text-base leading-relaxed text-muted-foreground">{dict.home.tagline}</p>
+            <p className="type-subheading text-paper">{dict.nav.home}</p>
+            <p className="max-w-sm text-base leading-relaxed text-paper/75">{dict.home.tagline}</p>
           </div>
         </div>
 
-        <nav aria-label={dict.footer.exploreTitle} className="flex flex-col gap-1">
-          <p className="mb-1 text-base font-semibold text-foreground">{dict.footer.exploreTitle}</p>
+        <nav aria-label={dict.footer.exploreTitle} className="grid grid-cols-2 content-start gap-x-6 gap-y-1">
+          <p className="col-span-2 mb-1 text-base font-semibold text-paper">{dict.footer.exploreTitle}</p>
           {links.map((link) => (
-            <Link key={link.href} href={link.href} className="w-fit py-1.5 text-base text-foreground underline-offset-4 hover:text-teal hover:underline">
+            <Link
+              key={link.href}
+              href={link.href}
+              className="w-fit py-1.5 text-base text-paper/85 underline-offset-4 hover:text-paper hover:underline"
+            >
               {link.label}
             </Link>
           ))}
@@ -48,25 +53,33 @@ export async function Footer({ dict, locale }: { dict: Dictionary; locale: Local
 
         <div className="flex flex-col gap-6">
           <address className="flex flex-col gap-3 text-base not-italic">
-            <p className="text-base font-semibold text-foreground">{dict.footer.contactTitle}</p>
+            <p className="text-base font-semibold text-paper">{dict.footer.contactTitle}</p>
             {contact.address ? (
-              <p className="flex items-start gap-2 text-muted-foreground">
-                <MapPin className="mt-1 size-5 shrink-0 text-gold-ink" aria-label={dict.footer.address} />
+              <p className="flex items-start gap-2 text-paper/85">
+                <MapPin className="mt-1 size-5 shrink-0 text-gold" aria-label={dict.footer.address} />
                 <span>{contact.address}</span>
               </p>
             ) : null}
             {contact.phone ? (
               <p className="flex items-center gap-2">
-                <Phone className="size-5 shrink-0 text-gold-ink" aria-label={dict.footer.phone} />
-                <a href={`tel:${contact.phone.replace(/[^\d+]/g, '')}`} dir="ltr" className="py-1 text-foreground underline-offset-4 hover:text-teal hover:underline">
+                <Phone className="size-5 shrink-0 text-gold" aria-label={dict.footer.phone} />
+                <a
+                  href={`tel:${contact.phone.replace(/[^\d+]/g, '')}`}
+                  dir="ltr"
+                  className="py-1 text-paper/85 underline-offset-4 hover:text-paper hover:underline"
+                >
                   {contact.phone}
                 </a>
               </p>
             ) : null}
             {contact.email ? (
               <p className="flex items-center gap-2">
-                <Mail className="size-5 shrink-0 text-gold-ink" aria-label={dict.footer.email} />
-                <a href={`mailto:${contact.email}`} dir="ltr" className="py-1 text-foreground underline-offset-4 hover:text-teal hover:underline">
+                <Mail className="size-5 shrink-0 text-gold" aria-label={dict.footer.email} />
+                <a
+                  href={`mailto:${contact.email}`}
+                  dir="ltr"
+                  className="py-1 text-paper/85 underline-offset-4 hover:text-paper hover:underline"
+                >
                   {contact.email}
                 </a>
               </p>
@@ -75,7 +88,7 @@ export async function Footer({ dict, locale }: { dict: Dictionary; locale: Local
 
           {socialLinks.length > 0 ? (
             <nav aria-label={dict.footer.socialTitle} className="flex flex-col gap-2">
-              <p className="text-base font-semibold text-foreground">{dict.footer.socialTitle}</p>
+              <p className="text-base font-semibold text-paper">{dict.footer.socialTitle}</p>
               <div className="flex flex-wrap gap-x-5 gap-y-1">
                 {socialLinks.map((link) => (
                   <a
@@ -84,7 +97,7 @@ export async function Footer({ dict, locale }: { dict: Dictionary; locale: Local
                     target="_blank"
                     rel="noreferrer"
                     dir="ltr"
-                    className="inline-flex items-center gap-2 py-1.5 text-base text-foreground underline-offset-4 hover:text-teal hover:underline"
+                    className="inline-flex items-center gap-2 py-1.5 text-base text-paper/85 underline-offset-4 hover:text-paper hover:underline"
                   >
                     <SocialIcon platform={link.platform} className="size-5 shrink-0" />
                     <span>{dict.footer.socialPlatforms[link.platform]}</span>
@@ -95,8 +108,8 @@ export async function Footer({ dict, locale }: { dict: Dictionary; locale: Local
           ) : null}
         </div>
       </div>
-      <div className="border-t border-border">
-        <p className="page-container py-5 text-center text-sm text-muted-foreground">{dict.footer.rights}</p>
+      <div className="border-t border-paper/15">
+        <p className="page-container py-5 text-center text-sm text-paper/65">{dict.footer.rights}</p>
       </div>
     </footer>
   )
