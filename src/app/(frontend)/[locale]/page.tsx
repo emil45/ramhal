@@ -40,8 +40,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
 
   const newBooks = selectNewBooks(books, currency, BOOK_STRIP_COUNT)
   const newsStream = buildNewsStream(announcements, events)
-  // "New books" is a claim about dates, so it only appears once books carry
-  // one. Until then the strip is plainly a selection from the catalogue.
+  // "New books" appears only while an editor has marked a book new; otherwise
+  // the strip is plainly a selection from the catalogue.
   const stripBooks = newBooks.length > 0 ? newBooks : selectFeaturedBooks(sortCatalogue(books, currency), currency, BOOK_STRIP_COUNT)
   const stripTitle = newBooks.length > 0 ? dict.home.newBooksTitle : dict.home.fromCatalogueTitle
   const shiurim = schedule.shiurim ?? []

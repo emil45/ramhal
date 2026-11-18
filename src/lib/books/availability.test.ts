@@ -55,6 +55,19 @@ describe('sortCatalogue', () => {
     expect(result.map((b) => b.displayTitle)).toEqual(['א', 'ב'])
   })
 
+  it('puts books marked new first within their group, ahead of newer unmarked books', () => {
+    const result = sortCatalogue(
+      [
+        purchasable('חדש בשוק', '2024-01-01'),
+        { ...purchasable('מסומן ישן', '2020-01-01'), markedNew: true },
+        { ...unpurchasable('מסומן אך לא למכירה'), markedNew: true },
+        unpurchasable('לא למכירה'),
+      ],
+      'ILS',
+    )
+    expect(result.map((b) => b.displayTitle)).toEqual(['מסומן ישן', 'חדש בשוק', 'מסומן אך לא למכירה', 'לא למכירה'])
+  })
+
   it('does not mutate the input array', () => {
     const input = [purchasable('ב'), purchasable('א')]
     sortCatalogue(input, 'ILS')
@@ -63,33 +76,26 @@ describe('sortCatalogue', () => {
 })
 
 describe('selectNewBooks', () => {
-  const purchasable = (title: string, publishedAt: string | null) => ({
+  const marked = (title: string, publishedAt: string | null = null, amount = 5000) => ({
     displayTitle: title,
-    prices: [{ amount: 5000, currency: 'ILS' }],
+    prices: [{ amount, currency: 'ILS' }],
     publishedAt,
+    markedNew: true,
   })
-  const unpurchasable = (title: string, publishedAt: string | null) => ({
-    displayTitle: title,
-    prices: [{ amount: 0, currency: 'ILS' }],
-    publishedAt,
+  const unmarked = (title: string, publishedAt: string | null = null) => ({ ...marked(title, publishedAt), markedNew: false })
+
+  it('includes only books an editor marked new, whatever their publication date', () => {
+    const result = selectNewBooks([unmarked('לא מסומן', '2024-01-01'), marked('מסומן ללא תאריך')], 'ILS', 6)
+    expect(result.map((b) => b.displayTitle)).toEqual(['מסומן ללא תאריך'])
   })
 
-  it('excludes books with no known publication date', () => {
-    const result = selectNewBooks([purchasable('אין תאריך', null), purchasable('יש תאריך', '2024-01-01')], 'ILS', 6)
-    expect(result.map((b) => b.displayTitle)).toEqual(['יש תאריך'])
-  })
-
-  it('excludes books not purchasable in this currency, even with a date', () => {
-    const result = selectNewBooks([unpurchasable('לא למכירה', '2024-01-01'), purchasable('למכירה', '2023-01-01')], 'ILS', 6)
+  it('excludes marked books not purchasable in this currency', () => {
+    const result = selectNewBooks([marked('לא למכירה', '2024-01-01', 0), marked('למכירה', '2023-01-01')], 'ILS', 6)
     expect(result.map((b) => b.displayTitle)).toEqual(['למכירה'])
   })
 
   it('orders most recently published first and respects the limit', () => {
-    const result = selectNewBooks(
-      [purchasable('ישן', '2020-01-01'), purchasable('חדש', '2024-01-01'), purchasable('בינוני', '2022-01-01')],
-      'ILS',
-      2,
-    )
+    const result = selectNewBooks([marked('ישן', '2020-01-01'), marked('חדש', '2024-01-01'), marked('בינוני', '2022-01-01')], 'ILS', 2)
     expect(result.map((b) => b.displayTitle)).toEqual(['חדש', 'בינוני'])
   })
 })

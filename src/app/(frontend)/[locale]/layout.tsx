@@ -35,7 +35,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<'/[
 
   return (
     <html lang={locale} dir={direction} className={`${assistant.variable} ${davidLibre.variable} h-full`}>
-      <body className="flex min-h-full flex-col bg-background text-foreground">
+      <body className="storefront flex min-h-full flex-col bg-background text-foreground">
         {/* Base UI's popups (the mobile nav sheet) place themselves from this,
             not from the document's dir attribute. */}
         <DirectionProvider direction={direction}>

@@ -20,6 +20,24 @@ export function isPurchasable(item: PricedItem, currency: Currency): boolean {
 type CatalogueEntry = PricedItem & {
   displayTitle: string
   publishedAt?: string | null
+  markedNew?: boolean | null
+}
+
+/**
+ * Most recently published first; a book with no known publication date sorts
+ * after every dated one (an unknown date must never read as "very old" or jump
+ * the queue as "brand new"), then alphabetically by title as the final,
+ * stable tiebreak.
+ */
+function compareByPublicationThenTitle(a: CatalogueEntry, b: CatalogueEntry): number {
+  const aTime = a.publishedAt ? Date.parse(a.publishedAt) : null
+  const bTime = b.publishedAt ? Date.parse(b.publishedAt) : null
+  if (aTime !== bTime) {
+    if (aTime === null) return 1
+    if (bTime === null) return -1
+    return bTime - aTime
+  }
+  return a.displayTitle.localeCompare(b.displayTitle)
 }
 
 /**
@@ -27,10 +45,8 @@ type CatalogueEntry = PricedItem & {
  * then the rest — never hidden, just not leading (a real gap: many books have
  * no ILS price, and without an explicit sort they
  * landed at the top by insertion order, making the Hebrew shop's first five
- * screens dead cards). Within each group, most recently published first; a
- * book with no known publication date sorts after every dated book in its
- * group (an unknown date must never read as "very old" or jump the queue as
- * "brand new"), then alphabetically by title as the final, stable tiebreak.
+ * screens dead cards). Within each group the books an editor marked new lead,
+ * as a shop's "new releases" do, then the rest by publication date.
  */
 export function sortCatalogue<T extends CatalogueEntry>(items: T[], currency: Currency): T[] {
   return [...items].sort((a, b) => {
@@ -38,31 +54,24 @@ export function sortCatalogue<T extends CatalogueEntry>(items: T[], currency: Cu
     const bPurchasable = isPurchasable(b, currency)
     if (aPurchasable !== bPurchasable) return aPurchasable ? -1 : 1
 
-    const aTime = a.publishedAt ? Date.parse(a.publishedAt) : null
-    const bTime = b.publishedAt ? Date.parse(b.publishedAt) : null
-    if (aTime !== bTime) {
-      if (aTime === null) return 1
-      if (bTime === null) return -1
-      return bTime - aTime
-    }
+    const aNew = a.markedNew === true
+    const bNew = b.markedNew === true
+    if (aNew !== bNew) return aNew ? -1 : 1
 
-    return a.displayTitle.localeCompare(b.displayTitle)
+    return compareByPublicationThenTitle(a, b)
   })
 }
 
 /**
- * The front page's "new books" section: purchasable-in-this-currency books
- * that carry a real publication date, most recent first, capped to `limit`
- * — new books are not a section to curate. A book
- * with no known publication date
- * is excluded rather than sorted to the end — this section claims to show
- * what's new, and a date-less book has no basis for that claim, unlike the
- * full catalogue (sortCatalogue), which must still show it somewhere.
+ * The front page's "new books" section: the purchasable-in-this-currency books
+ * an editor marked new, most recently published first, capped to `limit`. The
+ * mark is the only thing that says a book is new, so the ribbon on the cover,
+ * the front of the shop and this section always agree.
  */
 export function selectNewBooks<T extends CatalogueEntry>(items: T[], currency: Currency, limit: number): T[] {
   return items
-    .filter((item): item is T & { publishedAt: string } => !!item.publishedAt && isPurchasable(item, currency))
-    .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
+    .filter((item) => item.markedNew === true && isPurchasable(item, currency))
+    .sort(compareByPublicationThenTitle)
     .slice(0, limit)
 }
 
