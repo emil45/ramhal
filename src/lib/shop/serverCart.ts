@@ -59,7 +59,9 @@ async function findCartBySessionId(sessionId: string, locale?: Locale): Promise<
   const result = await payload.find({
     collection: 'carts',
     where: { sessionId: { equals: sessionId } },
-    depth: 1,
+    // Two levels: the cart's books, and each book's cover and colour pictures,
+    // which the cart page shows beside every line.
+    depth: 2,
     limit: 1,
     locale,
   })
