@@ -425,6 +425,16 @@ export const Books: CollectionConfig = {
       },
     },
     {
+      name: 'featuredOnHomepage',
+      type: 'checkbox',
+      label: 'מוצג בדף הבית',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'הספר מופיע בדף הבית, אחרי הספרים החדשים, עד שמבטלים את הסימון.',
+      },
+    },
+    {
       name: 'inStock',
       type: 'checkbox',
       label: 'במלאי',

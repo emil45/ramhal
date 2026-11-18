@@ -27,12 +27,13 @@ const CARD_FIELDS_SELECT = {
   category: true,
   fromInstitute: true,
   markedNew: true,
+  featuredOnHomepage: true,
   colors: { id: true },
 } as const
 
 type CardBookFields = Pick<
   Book,
-  'id' | 'urlSlug' | 'bookLanguage' | 'prices' | 'publishedAt' | 'cover' | 'category' | 'fromInstitute' | 'markedNew'
+  'id' | 'urlSlug' | 'bookLanguage' | 'prices' | 'publishedAt' | 'cover' | 'category' | 'fromInstitute' | 'markedNew' | 'featuredOnHomepage'
 >
 
 type DisplayFields = { category: Category | null; displayTitle: string }

@@ -373,6 +373,10 @@ export interface Book {
    * מציג תווית ׳חדש׳ על הספר בחנות, עד שמבטלים את הסימון.
    */
   markedNew?: boolean | null;
+  /**
+   * הספר מופיע בדף הבית, אחרי הספרים החדשים, עד שמבטלים את הסימון.
+   */
+  featuredOnHomepage?: boolean | null;
   inStock?: boolean | null;
   slug?: string | null;
   legacyUrls?:
@@ -1159,6 +1163,7 @@ export interface BooksSelect<T extends boolean = true> {
   category?: T;
   fromInstitute?: T;
   markedNew?: T;
+  featuredOnHomepage?: T;
   inStock?: T;
   slug?: T;
   legacyUrls?:
