@@ -1,24 +1,22 @@
+'use client'
+
 import { Check, ChevronDown } from 'lucide-react'
 import Link from 'next/link'
+import { useSelectedLayoutSegments } from 'next/navigation'
 
 import { LOCALE_CONFIG, LOCALES } from '@/lib/locale/locale'
-import { localePath } from '@/lib/locale/routes'
+import { localizedPagePath } from '@/lib/locale/routes'
 
 import type { Locale } from '@/lib/locale/locale'
 
-/**
- * Always switches to the other locale's home page, not the equivalent
- * page — a book's slug differs per locale (localized field), so there is no
- * cheap, honest way to carry "the same book, other language" across a
- * locale switch without fetching that book's other-locale slug first.
- */
-export function LocaleSwitcher({ current }: { current: Locale }) {
+export function LocaleSwitcher({ current, label }: { current: Locale; label: string }) {
   const currentLocale = LOCALE_CONFIG[current]
+  const segments = useSelectedLayoutSegments()
 
   return (
     <details className="group relative text-base">
       <summary
-        aria-label="Language / שפה / Langue"
+        aria-label={label}
         className="flex h-12 cursor-pointer list-none items-center gap-1.5 px-2 text-foreground transition-colors hover:text-teal [&::-webkit-details-marker]:hidden"
       >
         <span className="font-semibold">{currentLocale.shortLabel}</span>
@@ -32,7 +30,7 @@ export function LocaleSwitcher({ current }: { current: Locale }) {
           return (
             <Link
               key={locale}
-              href={localePath(locale, '/')}
+              href={localizedPagePath(current, locale, segments)}
               hrefLang={locale}
               lang={locale}
               dir={option.direction}

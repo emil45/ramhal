@@ -1,6 +1,6 @@
 'use client'
 
-import { SearchIcon, SearchXIcon } from 'lucide-react'
+import { SearchIcon, SearchXIcon, SlidersHorizontal } from 'lucide-react'
 import { useDeferredValue, useMemo, useRef, useState } from 'react'
 
 import { ProductCard } from '@/components/storefront/ProductCard'
@@ -30,11 +30,12 @@ import type { Category } from '@/payload-types'
 import type { Locale } from '@/lib/locale/locale'
 import type { CatalogueShelf, CatalogueSort } from '@/lib/books/catalogueView'
 
-const GRID_CLASS = 'grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3 sm:gap-x-7 lg:grid-cols-4 lg:gap-x-9'
+const GRID_CLASS = 'grid grid-cols-2 gap-x-4 gap-y-7 sm:grid-cols-3 sm:gap-x-7 sm:gap-y-10 lg:grid-cols-4 lg:gap-x-9'
 const SKELETON_CARD_COUNT = 8
 const BOOKS_PER_PAGE = 20
 
 const BOOK_LANGUAGES = ['he', 'fr', 'en', 'he-fr', 'aramaic-fr', 'unknown'] as const
+type BookLanguageFilter = '' | (typeof BOOK_LANGUAGES)[number]
 
 export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; locale: Locale }) {
   // Not passed as a prop from the server component: getDictionary returns
@@ -50,8 +51,9 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
   // Each shelf opens on the site's language if it holds any, otherwise on
   // every language, so switching shelf never lands on an empty one.
   const defaultLanguage = defaultBookLanguage(locale, shelfBooks)
-  const [bookLanguage, setBookLanguage] = useState(defaultLanguage)
+  const [bookLanguage, setBookLanguage] = useState<BookLanguageFilter>(defaultLanguage)
   const [sort, setSort] = useState<CatalogueSort>('default')
+  const [filtersOpen, setFiltersOpen] = useState(false)
   const [page, setPage] = useState(1)
   const resultsStartRef = useRef<HTMLDivElement>(null)
 
@@ -131,13 +133,8 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
     setPage(1)
   }
 
-  const chooseLanguage = (nextLanguage: string) => {
-    setBookLanguage(nextLanguage)
-    setPage(1)
-  }
-
   // The empty string is "every language", as in the filter itself.
-  const languageOptions: ('' | (typeof BOOK_LANGUAGES)[number])[] = ['', ...languagesPresent]
+  const languageOptions: BookLanguageFilter[] = ['', ...languagesPresent]
 
   const languageCount = (language: string) =>
     entries.filter((entry) => !language || entry.bookLanguage === language).length
@@ -150,7 +147,7 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
   return (
     <div className="flex flex-col">
       <header className="border-b border-border bg-paper-quiet">
-        <div className="page-container grid items-end gap-5 py-6 sm:py-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-8">
+        <div className="page-container grid items-end gap-4 py-5 sm:gap-5 sm:py-8 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-8">
           <div className="flex max-w-2xl flex-col gap-2">
             <h1 className="type-title">{dict.catalogue.title}</h1>
             <p className="max-w-xl text-base text-pretty text-muted-foreground">{dict.catalogue.intro}</p>
@@ -170,16 +167,13 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
                     aria-pressed={selected}
                     onClick={() => chooseShelf(option)}
                     className={cn(
-                      'h-auto min-h-12 min-w-0 gap-2 border border-b-2 px-2 py-2.5 text-center text-sm leading-tight font-semibold whitespace-normal sm:px-5 md:px-6',
+                      'h-auto min-h-12 min-w-0 border border-b-2 px-2 py-2.5 text-center text-sm leading-tight font-semibold whitespace-normal sm:px-5 md:px-6',
                       selected
                         ? 'border-border border-b-teal bg-study-paper text-teal-deep hover:bg-study-paper hover:text-teal-deep'
                         : 'border-border bg-background text-foreground hover:bg-secondary hover:text-teal-deep',
                     )}
                   >
                     {dict.catalogue.shelf[option]}
-                    <span className="shrink-0 text-xs font-medium text-muted-foreground tabular-nums">
-                      {books.filter((book) => shelfOf(book) === option).length}
-                    </span>
                   </Button>
                 )
               })}
@@ -188,56 +182,10 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
         </div>
       </header>
 
-      <div className="page-container flex flex-col gap-10 py-8 md:py-10">
-        <div className="catalogue-toolbar flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
-          {languagesPresent.length > 1 ? (
-            <div role="radiogroup" aria-labelledby="catalogue-language-label" className="flex flex-col gap-2">
-              <span id="catalogue-language-label" className="text-sm font-medium text-foreground">
-                {dict.catalogue.languageLabel}
-              </span>
-              <div className="catalogue-language-options flex flex-wrap">
-                {languageOptions.map((language) => {
-                  const selected = language === bookLanguage
-                  return (
-                    <Button
-                      key={language || 'all'}
-                      role="radio"
-                      aria-checked={selected}
-                      variant={selected ? 'default' : 'outline'}
-                      onClick={() => chooseLanguage(language)}
-                      className={cn(
-                        'h-12 shrink-0 px-4',
-                        selected
-                          ? ''
-                          : 'border-border bg-card text-foreground hover:border-teal hover:text-teal',
-                      )}
-                    >
-                      {language ? dict.bookLanguageLabel[language] : dict.catalogue.allLanguages}
-                      <span
-                        className={cn(
-                          'text-sm tabular-nums',
-                          selected ? 'text-primary-foreground/75' : 'text-muted-foreground',
-                        )}
-                      >
-                        {languageCount(language)}
-                      </span>
-                    </Button>
-                  )
-                })}
-              </div>
-            </div>
-          ) : (
-            <div />
-          )}
-          <div
-            className={cn(
-              'grid grid-cols-2 gap-3 sm:gap-4',
-              hasCategoryFilter
-                ? 'sm:grid-cols-[minmax(10rem,1fr)_10rem_11rem]'
-                : 'sm:grid-cols-[minmax(12rem,1fr)_12rem]',
-            )}
-          >
-            <Field className="col-span-2 sm:col-span-1">
+      <div className="page-container flex flex-col gap-4 pt-5 pb-12 sm:gap-5 lg:pt-8">
+        <div className="catalogue-toolbar flex flex-col gap-3 lg:flex-row lg:items-end lg:gap-4">
+          <div className="flex min-w-0 flex-1 items-end gap-2 lg:gap-0">
+            <Field className="min-w-0">
               <FieldLabel htmlFor="catalogue-search">{dict.catalogue.searchLabel}</FieldLabel>
               <div className="relative">
                 <SearchIcon
@@ -257,8 +205,44 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
                 />
               </div>
             </Field>
+            <Button
+              variant="outline"
+              className="min-h-13 px-3 lg:hidden"
+              aria-expanded={filtersOpen}
+              aria-controls="catalogue-filters"
+              onClick={() => setFiltersOpen(!filtersOpen)}
+            >
+              <SlidersHorizontal className="size-4" aria-hidden />
+              {dict.catalogue.filtersLabel}
+            </Button>
+          </div>
+          <div
+            id="catalogue-filters"
+            className={cn('grid grid-cols-1 gap-3 sm:grid-cols-2 lg:flex lg:gap-4', !filtersOpen && 'hidden')}
+          >
+            {languagesPresent.length > 1 ? (
+              <Field className="min-w-0 lg:w-56">
+                <FieldLabel htmlFor="catalogue-language">{dict.catalogue.languageLabel}</FieldLabel>
+                <NativeSelect
+                  id="catalogue-language"
+                  value={bookLanguage}
+                  onChange={(event) => {
+                    setBookLanguage(languageOptions.find((language) => language === event.target.value) ?? '')
+                    setPage(1)
+                  }}
+                  className="w-full"
+                >
+                  {languageOptions.map((language) => (
+                    <NativeSelectOption key={language || 'all'} value={language}>
+                      {language ? dict.bookLanguageLabel[language] : dict.catalogue.allLanguages}
+                      {` (${languageCount(language)})`}
+                    </NativeSelectOption>
+                  ))}
+                </NativeSelect>
+              </Field>
+            ) : null}
             {hasCategoryFilter ? (
-              <Field>
+              <Field className="min-w-0 lg:w-52">
                 <FieldLabel htmlFor="catalogue-category">{dict.catalogue.categoryLabel}</FieldLabel>
                 <NativeSelect
                   id="catalogue-category"
@@ -278,7 +262,7 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
                 </NativeSelect>
               </Field>
             ) : null}
-            <Field className={hasCategoryFilter ? undefined : 'col-span-2 sm:col-span-1'}>
+            <Field className="min-w-0 lg:w-52">
               <FieldLabel htmlFor="catalogue-sort">{dict.catalogue.sortLabel}</FieldLabel>
               <NativeSelect
                 id="catalogue-sort"
@@ -303,12 +287,17 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
         </div>
         <div
           ref={resultsStartRef}
-          className="-mt-4 flex scroll-mt-28 items-center justify-between gap-3 text-sm"
+          className="flex min-h-10 scroll-mt-28 flex-wrap items-center justify-between gap-x-3 text-sm"
         >
           <p aria-live="polite" className="text-muted-foreground">
             {cataloguePage.totalItems > 0
               ? dict.catalogue.showingRange(cataloguePage.start, cataloguePage.end, cataloguePage.totalItems)
               : dict.catalogue.resultCount(0)}
+            {languagesPresent.length > 1 && !filtersOpen ? (
+              <span className="lg:hidden">
+                {' · '}{bookLanguage ? dict.bookLanguageLabel[bookLanguage] : dict.catalogue.allLanguages}
+              </span>
+            ) : null}
           </p>
           {hasFilters ? (
             <Button variant="link" size="sm" onClick={clearFilters}>

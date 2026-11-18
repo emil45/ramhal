@@ -26,6 +26,20 @@ export function cataloguePath(locale: Locale): string {
   return localePath(locale, `/${CATALOGUE_SEGMENT[locale]}`)
 }
 
+const SHARED_PAGE_SEGMENTS = [
+  'beit-ramhal', 'cart', 'courses', 'donate', 'press', 'privacy', 'questions-and-answers', 'rabbi-chriqui', 'ramhal',
+]
+
+/** Switch language from the locale layout. Book slugs are shared across locales. */
+export function localizedPagePath(current: Locale, target: Locale, segments: readonly string[]): string {
+  const [rawSection, slug] = segments
+  const section = rawSection ? decodeURIComponent(rawSection) : ''
+  if (section === CATALOGUE_SEGMENT[current]) return cataloguePath(target)
+  if (section === BOOK_SEGMENT[current] && slug) return bookPath(target, slug)
+  if (segments.length === 1 && SHARED_PAGE_SEGMENTS.includes(section)) return localePath(target, `/${section}`)
+  return localePath(target, '/')
+}
+
 export function coursesPath(locale: Locale): string {
   return localePath(locale, '/courses')
 }

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { bookPath, cataloguePath, coursesPath, donatePath, localePath, questionsPath } from '@/lib/locale/routes'
+import { bookPath, cataloguePath, coursesPath, donatePath, localizedPagePath, localePath, questionsPath } from '@/lib/locale/routes'
 
 describe('localePath', () => {
   it('gives Hebrew no prefix', () => {
@@ -51,5 +51,24 @@ describe('questionsPath', () => {
     expect(questionsPath('he')).toBe('/questions-and-answers')
     expect(questionsPath('en')).toBe('/en/questions-and-answers')
     expect(questionsPath('fr')).toBe('/fr/questions-and-answers')
+  })
+})
+
+describe('localizedPagePath', () => {
+  it('keeps shoppers on the catalogue when switching from Hebrew or to Hebrew', () => {
+    expect(localizedPagePath('he', 'fr', [encodeURIComponent('ספרים')])).toBe('/fr/livres')
+    expect(localizedPagePath('fr', 'en', ['livres'])).toBe('/en/books')
+    expect(localizedPagePath('en', 'he', ['books'])).toBe('/ספרים')
+  })
+
+  it('carries the same book slug across locales', () => {
+    const slug = 'מסילת-ישרים'
+    expect(localizedPagePath('fr', 'he', ['livre', slug])).toBe(`/ספר/${slug}`)
+    expect(localizedPagePath('he', 'en', ['ספר', encodeURIComponent(slug)])).toBe(`/en/book/${encodeURIComponent(slug)}`)
+  })
+
+  it('keeps shared pages and falls back to home for payment links', () => {
+    expect(localizedPagePath('en', 'fr', ['cart'])).toBe('/fr/cart')
+    expect(localizedPagePath('he', 'en', ['order', 'token'])).toBe('/en')
   })
 })

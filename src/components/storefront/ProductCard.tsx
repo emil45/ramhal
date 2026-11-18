@@ -47,12 +47,12 @@ export function ProductCard({
       </div>
 
       <div className="flex flex-1 flex-col pt-4">
-        <h3 className="type-subheading line-clamp-2 text-foreground" dir="auto">
+        <h3 className="type-subheading line-clamp-2 wrap-anywhere text-foreground">
           <Link
             href={href}
             className="decoration-gold decoration-2 underline-offset-4 transition-colors after:absolute after:inset-0 group-hover/cover:text-teal group-hover/cover:underline"
           >
-            {book.displayTitle}
+            <bdi>{book.displayTitle}</bdi>
           </Link>
         </h3>
         {/* Grid rows stretch every card to the tallest, so pushing price and

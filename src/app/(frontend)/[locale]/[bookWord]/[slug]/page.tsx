@@ -71,7 +71,7 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
   return (
     <BookColorProvider firstColorId={colors[0]?.id ?? null}>
       <div className="page-container book-detail">
-        <nav aria-label={dict.book.breadcrumbLabel} className="mb-8 text-sm text-muted-foreground">
+        <nav aria-label={dict.book.breadcrumbLabel} className="mb-4 text-sm text-muted-foreground md:mb-8">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
               <Link href={cataloguePath(locale)} className="underline-offset-4 hover:text-teal hover:underline">
@@ -85,8 +85,13 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
           </ol>
         </nav>
 
-        <div className="grid gap-10 md:grid-cols-[minmax(0,24rem)_1fr] md:gap-12 lg:grid-cols-[minmax(0,28rem)_1fr] lg:gap-16">
-          <div className="book-gallery-column relative mx-auto w-full max-w-sm self-start md:max-w-none md:sticky md:top-6">
+        <div className="grid items-start gap-5 md:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] md:gap-x-12 md:gap-y-7 lg:grid-cols-[minmax(0,28rem)_minmax(0,1fr)] lg:gap-x-16">
+          <header className="flex min-w-0 flex-col gap-2 md:col-start-2 md:row-start-1 md:gap-3 md:pt-2">
+            <p className="eyebrow">{publisher ?? dict.nav.home}</p>
+            <h1 className="type-title max-w-[18ch] wrap-anywhere"><bdi>{book.displayTitle}</bdi></h1>
+            {book.subtitle ? <p className="font-serif text-xl text-foreground"><bdi>{book.subtitle}</bdi></p> : null}
+          </header>
+          <div className="book-gallery-column relative mx-auto w-full max-w-72 self-start sm:max-w-sm md:sticky md:top-6 md:col-start-1 md:row-span-2 md:row-start-1 md:max-w-none">
             <BookImageGallery
               book={{ bookLanguage: book.bookLanguage, categorySlug: book.category?.slug }}
               direction={LOCALE_CONFIG[locale].direction}
@@ -111,13 +116,7 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
             <BookBadges dict={dict} isNew={book.markedNew === true} percentOff={sale?.percentOff ?? null} size="page" />
           </div>
 
-          <div className="book-detail-copy flex max-w-2xl flex-col gap-7">
-            <div className="flex flex-col gap-3">
-              <p className="eyebrow">{publisher ?? dict.nav.home}</p>
-              <h1 className="type-title" dir="auto">{book.displayTitle}</h1>
-              {book.subtitle ? <p className="font-serif text-xl text-foreground">{book.subtitle}</p> : null}
-            </div>
-
+          <div className="flex min-w-0 max-w-2xl flex-col gap-7 md:col-start-2 md:row-start-2">
             {purchasable ? (
               <div className="book-purchase flex flex-col gap-5">
                 <PriceTag book={book} dict={dict} locale={locale} className="text-3xl" />
@@ -187,7 +186,7 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
 
             <section className="flex flex-col gap-3">
               <h2 className="type-heading">{dict.book.detailsTitle}</h2>
-              <dl className="grid grid-cols-[minmax(7rem,auto)_1fr] text-sm [&>dd]:border-b [&>dd]:border-border [&>dd]:py-2.5 [&>dt]:border-b [&>dt]:border-border [&>dt]:py-2.5 [&>dt]:text-muted-foreground">
+              <dl className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-x-3 text-sm wrap-anywhere [&>dd]:border-b [&>dd]:border-border [&>dd]:py-2.5 [&>dt]:border-b [&>dt]:border-border [&>dt]:py-2.5 [&>dt]:text-muted-foreground">
                 {book.category ? (
                   <>
                     <dt>{dict.book.category}</dt>
@@ -235,9 +234,7 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
                 {book.isbn ? (
                   <>
                     <dt>{dict.book.isbn}</dt>
-                    <dd dir="ltr" className="text-start">
-                      {book.isbn}
-                    </dd>
+                    <dd><bdi dir="ltr">{book.isbn}</bdi></dd>
                   </>
                 ) : null}
               </dl>

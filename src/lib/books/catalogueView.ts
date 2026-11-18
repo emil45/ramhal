@@ -79,7 +79,7 @@ export function paginateCatalogue<T>(items: T[], requestedPage: number, pageSize
  * whose language has no books yet opens on every language rather than on an
  * empty shelf. An empty string means "all languages", as in the filter.
  */
-export function defaultBookLanguage(locale: Locale, entries: readonly { bookLanguage: string }[]): string {
+export function defaultBookLanguage(locale: Locale, entries: readonly { bookLanguage: string }[]): Locale | '' {
   return entries.some((entry) => entry.bookLanguage === locale) ? locale : ''
 }
 

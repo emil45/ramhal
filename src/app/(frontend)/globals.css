@@ -370,6 +370,7 @@
   }
 }
 .product-card {
+  min-width: 0;
   border-block-end: 1px solid var(--border);
   padding-block-end: 1rem;
 }
@@ -393,10 +394,12 @@
 }
 .product-card .quick-add {
   width: auto;
+  max-width: 100%;
   min-height: 2.75rem;
   height: auto;
   padding: 0.5rem;
   font-size: 0.875rem;
+  white-space: normal;
   background: transparent;
   border-color: transparent;
 }
@@ -487,29 +490,12 @@
   background: var(--paper-quiet);
   border-block-start: 1px solid var(--border);
 }
-.catalogue-toolbar {
-  background: var(--card);
-  border: 1px solid var(--border);
-  padding: 1.5rem;
-}
-.catalogue-language-options {
-  gap: 0.25rem;
-}
-.catalogue-language-options [role='radio'] {
-  border: 0;
-  background: transparent;
-  color: var(--muted-foreground);
-  border-block-end: 2px solid transparent;
-  border-radius: 0;
-  padding-inline: 0.75rem;
-}
-.catalogue-language-options [aria-checked='true'] span {
-  color: var(--teal-deep);
-}
-.catalogue-language-options [aria-checked='true'] {
-  color: var(--teal-deep);
-  border-block-end-color: var(--teal);
-  background: var(--study-paper);
+@media (min-width: 1024px) {
+  .catalogue-toolbar {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.25rem;
+  }
 }
 .book-detail {
   padding-block: 2rem 5rem;
@@ -522,12 +508,6 @@
   background: var(--card);
   border: 1px solid var(--border);
   padding: 1.5rem;
-}
-.book-detail-copy {
-  padding-block-start: 0.5rem;
-}
-.book-detail-copy h1 {
-  max-width: 18ch;
 }
 .book-course {
   display: flex;
@@ -682,10 +662,13 @@
   .place-feature-copy {
     padding: 0;
   }
-  .catalogue-toolbar {
-    padding: 1rem;
+  .book-detail {
+    padding-block-start: 1.25rem;
   }
   .book-gallery-column {
+    padding: 1rem;
+  }
+  .book-purchase {
     padding: 1rem;
   }
   .book-course {

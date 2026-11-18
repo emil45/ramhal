@@ -44,6 +44,7 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
             current={locale}
             links={[...links, { href: donatePath(locale), label: dict.nav.donate }]}
             menuLabel={dict.nav.menu}
+            languageLabel={dict.nav.siteLanguage}
           />
         </div>
         <Link href={localePath(locale, '/')} className="flex shrink-0 items-center gap-2 sm:gap-3">
@@ -71,7 +72,7 @@ export function Header({ dict, locale }: { dict: Dictionary; locale: Locale }) {
 
         <div className="flex flex-1 items-center justify-end gap-1 xl:flex-none xl:gap-2">
           <div className="hidden xl:block">
-            <LocaleSwitcher current={locale} />
+            <LocaleSwitcher current={locale} label={dict.nav.siteLanguage} />
           </div>
           <CartLink href={localePath(locale, '/cart')} locale={locale} />
           <Link

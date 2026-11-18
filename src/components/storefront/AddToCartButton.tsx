@@ -27,7 +27,7 @@ export function AddToCartButton({ bookId, locale }: { bookId: number; locale: Lo
   const colorId = useSelectedColorId()
 
   return (
-    <div className="grid grid-cols-[6rem_minmax(0,1fr)] items-end gap-4">
+    <div className="grid grid-cols-[5rem_minmax(0,1fr)] items-end gap-3 sm:grid-cols-[6rem_minmax(0,1fr)] sm:gap-4">
       <Field className="w-full">
         <FieldLabel htmlFor={`quantity-${bookId}`}>{dict.cart.quantity}</FieldLabel>
         <Input
@@ -41,7 +41,7 @@ export function AddToCartButton({ bookId, locale }: { bookId: number; locale: Lo
       </Field>
       <Button
         size="lg"
-        className="w-full min-w-0"
+        className="h-auto min-h-14 w-full min-w-0 px-3 py-2 text-center leading-tight whitespace-normal xl:px-7"
         disabled={isPending}
         onClick={() => {
           startTransition(async () => {
