@@ -14,9 +14,10 @@ if (!secret) {
   process.exit(1)
 }
 
-const url = 'http://localhost:3000/api/dev-generate-types'
+const port = process.env.PORT ?? '3000'
+const url = `http://localhost:${port}/api/dev-generate-types`
 
-const server = spawn('node_modules/.bin/next', ['dev'], {
+const server = spawn('node_modules/.bin/next', ['dev', '--port', port], {
   detached: true,
   stdio: 'inherit',
   env: {

@@ -24,9 +24,10 @@ if (!secret) {
 
 const params = new URLSearchParams({ action })
 if (migrationName) params.set('name', migrationName)
-const url = `http://localhost:3000/api/dev-migrate?${params}`
+const port = process.env.PORT ?? '3000'
+const url = `http://localhost:${port}/api/dev-migrate?${params}`
 
-const server = spawn('node_modules/.bin/next', ['dev'], {
+const server = spawn('node_modules/.bin/next', ['dev', '--port', port], {
   detached: true,
   stdio: 'inherit',
 })
