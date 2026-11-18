@@ -149,8 +149,8 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
     requestAnimationFrame(() => resultsStartRef.current?.scrollIntoView({ block: 'start' }))
   }
 
-  const artworkBooks = books
-    .filter((book) => book.bookLanguage === locale && book.cover && typeof book.cover === 'object')
+  const artworkBooks = shelfBooks
+    .filter((book) => (!defaultLanguage || book.bookLanguage === defaultLanguage) && book.cover && typeof book.cover === 'object')
     .slice(0, CATALOGUE_ARTWORK_COUNT)
 
   return (
@@ -179,25 +179,28 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
             ) : null}
           </div>
           {shelves.length > 1 ? (
-            <div role="tablist" aria-label={dict.catalogue.shelvesLabel} className="-mb-px flex gap-1">
+            <div
+              role="group"
+              aria-label={dict.catalogue.shelvesLabel}
+              className="-mb-px grid grid-cols-2 gap-2 sm:flex"
+            >
               {shelves.map((option) => {
                 const selected = option === shelf
                 return (
                   <Button
                     key={option}
-                    role="tab"
                     variant="ghost"
-                    aria-selected={selected}
+                    aria-pressed={selected}
                     onClick={() => chooseShelf(option)}
                     className={cn(
-                      'h-auto min-w-0 flex-1 rounded-none rounded-t-[0.25rem] border border-transparent px-2 py-3 font-serif text-base font-medium sm:flex-none sm:px-5 sm:text-lg md:px-7 md:text-xl',
+                      'h-auto min-h-12 min-w-0 gap-2 border border-b-2 px-2 py-2.5 text-center text-sm leading-tight font-semibold whitespace-normal sm:px-5 md:px-6',
                       selected
-                        ? 'border-border border-b-background bg-background text-teal-deep hover:bg-background'
-                        : 'text-muted-foreground hover:bg-paper hover:text-teal',
+                        ? 'border-border border-b-teal bg-study-paper text-teal-deep hover:bg-study-paper hover:text-teal-deep'
+                        : 'border-border bg-background text-foreground hover:bg-secondary hover:text-teal-deep',
                     )}
                   >
                     {dict.catalogue.shelf[option]}
-                    <span className="font-sans text-sm text-muted-foreground tabular-nums">
+                    <span className="shrink-0 text-xs font-medium text-muted-foreground tabular-nums">
                       {books.filter((book) => shelfOf(book) === option).length}
                     </span>
                   </Button>
