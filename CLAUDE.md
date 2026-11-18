@@ -95,6 +95,12 @@ this config under Node: `ERR_REQUIRE_ASYNC_MODULE`), read the generated migratio
   schedule and a dated event are different models, never one type with an optional date.
 - **Language is a field** (`books.bookLanguage`), never a category. The category filter shows only once
   two real categories exist.
+- **Publisher is a field** (`books.fromInstitute`, default on). The shop has two shelves, the institute's
+  own books and other publishers' (`shelfOf`, `src/lib/books/catalogueView.ts`); the shelf tabs show only
+  once both hold a book. The name of another publisher goes in `publisherName`.
+- **A sale is display only.** `prices[].compareAtAmount` is shown crossed out beside `amount`, which is
+  always what the cart and the order charge (`selectSale`, `src/lib/shop/salePrice.ts`). `markedNew`
+  shows a "new" label until an editor unticks it.
 - **`www.ramhal.com` is the catalogue authority**; the importer refuses any book without a
   Hebrew-domain source. Legacy articles and essays are deliberately not migrated (client confirmation
   pending).
@@ -122,8 +128,10 @@ Reference: a well-made printed sefer. Warm paper, one ink, brass rules, serif ti
 `src/app/(frontend)/globals.css`; use the existing utilities.
 
 - Colour: `teal #00707C` is what you can *do* (buttons, links); `teal-deep #004F58` headings and
-  prices; `gold #B08D42` decorates only (rules, frames), never clickable, never small text
-  (`gold-ink` for that); `paper`/`paper-deep` grounds; `destructive` red for errors only. No new hues.
+  prices, and the one dark ground on the site, the footer; `gold #B08D42` decorates only (rules,
+  frames), never clickable, never small text (`gold-ink` for that); `paper`/`paper-deep` grounds;
+  `destructive` red for errors only. No new hues: the colour on a page comes from the books'
+  own photographs, so show them large.
 - Forbidden: dark heroes, decorative gradients, glass/blur, big rounded soft-shadow cards, anything
   that reads as a SaaS landing page.
 - Type: David Libre (titles), Assistant (UI and text). Use `type-display|title|heading|subheading|
@@ -131,9 +139,13 @@ Reference: a well-made printed sefer. Warm paper, one ink, brass rules, serif ti
   on Hebrew. On shadcn `CardTitle`/`EmptyTitle`/`FieldLegend` write the utility with a trailing `!`.
 - Layout: `page-container`, `py-12` between sections, 4px scale, radius `0.25rem`. `SectionHeading`
   is the only way to head a section or page.
-- Covers (`src/lib/books/cover.ts`, `CoverFrame`, `TypographicCover`): one paper tone, 2:3 ratio, the rule
-  colour alone says which shelf (teal Hebrew, gold French, deep teal English, dark gold siddurim).
-  Real photographs sit inside the same frame, `object-contain`.
+- Covers (`src/lib/books/cover.ts`, `CoverFrame`, `TypographicCover`): every book stands on one
+  `paper-deep` shelf tile at 2:3, with no border or inner frame, so the book is as large as the tile
+  allows. Photographs fill it `object-contain` (they were shot on that same ground). A book with no
+  photograph is drawn as a book on the shelf; its rule colour says which shelf (teal Hebrew, gold
+  French, deep teal English, dark gold siddurim).
+- Labels on a book (`BookBadges`): "sale" in `gold-ink`, "new" in `teal-deep`, square printed slips,
+  never a coloured sticker.
 - **No raw `<input>`, `<select>` or `<button>`** in `src/components/storefront/` or
   `src/app/(frontend)/`; use `src/components/ui/`. `grep -rn "<input\|<select\|<button"
   src/components/storefront "src/app/(frontend)"` must print nothing. Every field has a visible label.
