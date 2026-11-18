@@ -30,7 +30,7 @@ export function BookCourseCallout({ course, dict }: { course: Course; dict: Dict
         </span>
       </a>
       <div>
-        <h2 className="type-subheading text-teal-deep">{dict.bookCourse.title}</h2>
+        <h2 className="type-subheading">{dict.bookCourse.title}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{dict.bookCourse.body(course.lessonCount)}</p>
         <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
           <a

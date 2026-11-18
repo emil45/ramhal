@@ -39,7 +39,7 @@ export default async function CheckoutPage({ params }: PageProps<'/[locale]/chec
     return (
       <div className="page-container transaction-page">
         <SectionHeading as="h1">{dict.checkout.title}</SectionHeading>
-        <Empty className="border border-border bg-paper-deep py-16">
+        <Empty className="border border-border bg-paper-quiet py-16">
           <EmptyHeader>
             <EmptyTitle className="type-subheading!">{dict.checkout.emptyCart}</EmptyTitle>
           </EmptyHeader>

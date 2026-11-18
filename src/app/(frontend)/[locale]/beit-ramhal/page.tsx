@@ -101,7 +101,7 @@ export default async function BeitRamhalPage({ params }: PageProps<'/[locale]/be
         </div>
       </section>
 
-      <section className="border-y border-border bg-paper-deep">
+      <section className="border-y border-border bg-paper-quiet">
         <div className="page-container grid items-center gap-10 py-16 lg:grid-cols-[1.12fr_0.88fr] lg:gap-16">
           {synagogueImage?.blockType === 'imageFigure' && synagogueImage.image ? (
             <figure className="editorial-image">
@@ -129,7 +129,7 @@ export default async function BeitRamhalPage({ params }: PageProps<'/[locale]/be
         {featureCards?.blockType === 'featureCards' ? <FeatureCardsView block={featureCards} /> : null}
       </section>
 
-      <section className="border-y border-border bg-paper-deep">
+      <section className="border-y border-border bg-paper-quiet">
         <div className="page-container py-16">
           {gallery?.heading ? <SectionHeading>{gallery.heading.heading}</SectionHeading> : null}
           {galleryDescription?.blockType === 'richText' ? (

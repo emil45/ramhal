@@ -68,10 +68,10 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
               {dict.home.heroEyebrow} <span aria-hidden> / </span> {dict.home.since}
             </p>
             <h1 className="type-display home-title">
-              {dict.home.heroTitle}
-              <span>{dict.home.heroSecondLine}</span>
+              {dict.home.heroTitle}{' '}
+              <span className="home-title-secondary">{dict.home.heroSecondLine}</span>
             </h1>
-            <p className="max-w-lg text-lg leading-relaxed text-muted-foreground md:text-xl">
+            <p className="max-w-lg text-lg leading-relaxed text-pretty text-muted-foreground md:text-xl">
               {dict.home.tagline}
             </p>
             <div className="mt-3 flex flex-wrap items-center gap-x-7 gap-y-4">
@@ -85,7 +85,7 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
             </div>
           </div>
           {heroBooks.length > 0 ? (
-            <div className="hero-library">
+            <figure className="hero-library">
               <div className="hero-book-stage">
                 {heroBooks.map(({ book, image }, index) => (
                   <Link
@@ -115,8 +115,8 @@ export default async function HomePage({ params }: PageProps<'/[locale]'>) {
                   </Link>
                 ))}
               </div>
-              <p className="hero-library-caption">{dict.home.shelfCaption}</p>
-            </div>
+              <figcaption className="hero-library-caption">{dict.home.shelfCaption}</figcaption>
+            </figure>
           ) : null}
         </div>
       </section>

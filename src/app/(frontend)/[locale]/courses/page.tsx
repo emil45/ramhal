@@ -48,7 +48,7 @@ export default async function CoursesPage({ params }: PageProps<'/[locale]/cours
 
   return (
     <article>
-      <section className="editorial-hero">
+      <section className="editorial-hero editorial-hero-study">
         <div className="page-container grid items-center gap-10 lg:grid-cols-[1fr_1fr] lg:gap-20">
           <div className="flex flex-col items-start gap-5">
             <p className="eyebrow">{dict.home.coursesEyebrow}</p>

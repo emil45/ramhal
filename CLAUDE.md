@@ -130,11 +130,11 @@ this config under Node: `ERR_REQUIRE_ASYNC_MODULE`), read the generated migratio
 Reference: a well-made printed sefer. Warm paper, one ink, brass rules, serif titles. Tokens are in
 `src/app/(frontend)/globals.css`; use the existing utilities.
 
-- Colour: `teal #00707C` is what you can *do* (buttons, links); `teal-deep #004F58` headings and
-  prices, and the one dark ground on the site, the footer; `gold #B08D42` decorates only (rules,
-  frames), never clickable, never small text (`gold-ink` for that); `paper`/`paper-deep` grounds;
-  `destructive` red for errors only. No new hues: the colour on a page comes from the books'
-  own photographs, so show them large.
+- Colour: dark ink for headings and body text, `teal #00707C` for actions, and
+  `teal-deep #004F58` for the masthead wordmark, prices and the footer ground. Use ivory for
+  reading, warmer paper around book photography, and a light tint of teal for teaching.
+  `gold #B08D42` is for fine rules and ornaments, with `gold-ink` when a detail needs text.
+  Keep the strongest colours in the original photography and reserve `destructive` red for errors.
 - Forbidden: dark heroes, decorative gradients, glass/blur, big rounded soft-shadow cards, anything
   that reads as a SaaS landing page.
 - Type: David Libre (titles), Assistant (UI and text). Use `type-display|title|heading|subheading|

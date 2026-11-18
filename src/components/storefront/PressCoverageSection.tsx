@@ -34,7 +34,7 @@ export function PressCoverageSection({ content, locale }: PressCoverageSectionPr
   const [latestArticle, ...archiveArticles] = PRESS_ARTICLES_NEWEST_FIRST
 
   return (
-    <section id="press" className="scroll-mt-8 border-y border-border bg-paper-deep/70">
+    <section id="press" className="scroll-mt-8 border-y border-border bg-paper-quiet/70">
       <div className="page-container py-14 lg:py-16">
         <SectionHeading>{content.title}</SectionHeading>
         <p className="mb-8 max-w-3xl text-lg leading-relaxed text-muted-foreground">{content.introduction}</p>

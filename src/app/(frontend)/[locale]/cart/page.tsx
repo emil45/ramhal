@@ -37,7 +37,7 @@ export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) 
     return (
       <div className="page-container transaction-page">
         <SectionHeading as="h1">{dict.cart.title}</SectionHeading>
-        <Empty className="border border-border bg-paper-deep py-16">
+        <Empty className="border border-border bg-paper-quiet py-16">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <ShoppingBag />
@@ -129,7 +129,7 @@ export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) 
             <p className="text-sm leading-relaxed text-muted-foreground">{dict.cart.shippingEstimateNote}</p>
 
             {remainingForFreeShipping !== null && (
-              <p className="rounded-sm bg-paper-deep px-3 py-2 font-medium text-teal-deep">
+              <p className="rounded-sm bg-study-paper px-3 py-2 font-medium text-teal-deep">
                 {remainingForFreeShipping === 0 ? dict.cart.freeShippingReached : dict.cart.freeShippingNudge(remainingForFreeShipping)}
               </p>
             )}

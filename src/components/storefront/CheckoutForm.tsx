@@ -105,7 +105,7 @@ export function CheckoutForm({ countries, currency, defaultCountry, lines, local
           </Field>
 
           {pickupAllowed && (
-            <Field orientation="horizontal" className="items-start rounded-md border border-border bg-paper-deep p-4">
+            <Field orientation="horizontal" className="items-start rounded-md border border-border bg-paper-quiet p-4">
               <Checkbox id="checkout-pickup" name="pickup" checked={isPickup} onCheckedChange={setIsPickup} className="mt-0.5 size-5 bg-card" />
               <div className="flex flex-col gap-0.5">
                 <FieldLabel htmlFor="checkout-pickup">{dict.checkout.pickup}</FieldLabel>

@@ -124,14 +124,14 @@ export default async function RabbiChriquiPage({ params }: PageProps<'/[locale]/
       </section>
 
       {videoSection?.heading ? (
-        <section className="border-y border-border bg-paper-deep">
+        <section className="border-y border-border bg-study-paper">
           <div className="page-container py-14 lg:py-16">
             <div className="mb-8 flex max-w-3xl flex-col items-start gap-3">
               <p className="flex items-center gap-2 text-sm font-semibold text-teal">
                 <Play aria-hidden className="size-4 fill-current" />
                 {videoSection.heading.kicker}
               </p>
-              <h2 className="type-heading text-teal-deep">{videoSection.heading.heading}</h2>
+              <h2 className="type-heading">{videoSection.heading.heading}</h2>
               {videoDescription?.blockType === 'richText' ? (
                 <RichText content={videoDescription.body} className="text-lg leading-relaxed text-muted-foreground" />
               ) : null}

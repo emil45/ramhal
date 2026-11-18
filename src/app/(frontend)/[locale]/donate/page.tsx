@@ -155,7 +155,7 @@ export default async function DonatePage({ params }: PageProps<'/[locale]/donate
         </div>
       </section>
 
-      <section className="border-y border-border bg-paper-deep">
+      <section className="border-y border-border bg-paper-quiet">
         <div className="page-container py-14 lg:py-16">
           <div className="mx-auto max-w-3xl border border-gold bg-card px-6 py-10 text-center sm:px-10 lg:px-14 lg:py-12">
             <div aria-hidden className="mx-auto mb-6 flex w-24 flex-col gap-[3px]">
