@@ -43,6 +43,18 @@ export function zoneServesCurrency(zone: Pick<ShippingZone, 'tiers'>, currency: 
 }
 
 /**
+ * The zone that ships to a country: the one listing it, else the zone flagged
+ * `isDefault`. Settings with neither cannot quote any order, so that throws.
+ */
+export function findShippingZone(zones: ShippingZone[], countryCode: string): ShippingZone {
+  const zone = zones.find((candidate) => candidate.countries.includes(countryCode)) ?? zones.find((candidate) => candidate.isDefault)
+  if (!zone) {
+    throw new Error('No shipping zone matched the destination, and none is flagged as the default.')
+  }
+  return zone
+}
+
+/**
  * Resolves the shipping cost for a cart, in the currency the customer pays in.
  * The matching zone is the one whose `countries` includes the destination; an
  * unrecognised country falls back to the zone flagged `isDefault`. Within a
@@ -54,13 +66,7 @@ export function calculateShipping(
   zones: ShippingZone[],
   destination: { countryCode: string; units: number; currency: Currency },
 ): ShippingQuote {
-  const zone =
-    zones.find((candidate) => candidate.countries.includes(destination.countryCode)) ??
-    zones.find((candidate) => candidate.isDefault)
-
-  if (!zone) {
-    throw new Error('No shipping zone matched the destination, and none is flagged as the default.')
-  }
+  const zone = findShippingZone(zones, destination.countryCode)
 
   const { currency } = destination
 

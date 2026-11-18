@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { calculateShipping, zoneServesCurrency, type ShippingTier, type ShippingZone } from '@/lib/shop/shipping'
+import { calculateShipping, findShippingZone, zoneServesCurrency, type ShippingTier, type ShippingZone } from '@/lib/shop/shipping'
 
 const amounts = (ils: number, eur: number, usd: number): ShippingTier['amounts'] => [
   { currency: 'ILS', amount: ils },
@@ -88,7 +88,14 @@ describe('calculateShipping', () => {
 
   it('refuses to guess an amount for a currency the zone does not quote', () => {
     const shekelOnly: ShippingZone[] = [
-      { name: 'ישראל', countries: ['IL'], tiers: [{ minUnits: 0, amounts: [{ currency: 'ILS', amount: 30 }] }], freeAboveUnits: null, allowPickup: true, isDefault: true },
+      {
+        name: 'ישראל',
+        countries: ['IL'],
+        tiers: [{ minUnits: 0, amounts: [{ currency: 'ILS', amount: 30 }] }],
+        freeAboveUnits: null,
+        allowPickup: true,
+        isDefault: true,
+      },
     ]
 
     expect(() => calculateShipping(shekelOnly, { countryCode: 'IL', units: 1, currency: 'EUR' })).toThrow(/EUR/)
@@ -97,7 +104,17 @@ describe('calculateShipping', () => {
 
 describe('zoneServesCurrency', () => {
   it('is true when every tier carries an amount in the currency', () => {
-    expect(zoneServesCurrency({ tiers: [{ minUnits: 0, amounts: amounts(1, 1, 1) }, { minUnits: 5, amounts: amounts(1, 1, 1) }] }, 'EUR')).toBe(true)
+    expect(
+      zoneServesCurrency(
+        {
+          tiers: [
+            { minUnits: 0, amounts: amounts(1, 1, 1) },
+            { minUnits: 5, amounts: amounts(1, 1, 1) },
+          ],
+        },
+        'EUR',
+      ),
+    ).toBe(true)
   })
 
   it('is false when any tier lacks the currency, since some carts would be unpriced', () => {
@@ -108,5 +125,19 @@ describe('zoneServesCurrency', () => {
 
     expect(zoneServesCurrency({ tiers }, 'ILS')).toBe(true)
     expect(zoneServesCurrency({ tiers }, 'EUR')).toBe(false)
+  })
+})
+
+describe('findShippingZone', () => {
+  it('finds the zone that lists the country', () => {
+    expect(findShippingZone(zones, 'FR').name).toBe('אירופה')
+  })
+
+  it('falls back to the default zone for a country no zone lists', () => {
+    expect(findShippingZone(zones, 'BR').name).toBe('שאר העולם')
+  })
+
+  it('refuses settings with no matching zone and no default', () => {
+    expect(() => findShippingZone([{ ...zones[0], isDefault: false }], 'BR')).toThrow()
   })
 })
