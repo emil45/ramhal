@@ -34,6 +34,7 @@ import type { CatalogueShelf, CatalogueSort } from '@/lib/books/catalogueView'
 const GRID_CLASS = 'grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3 sm:gap-x-7 lg:grid-cols-4 lg:gap-x-9'
 const SKELETON_CARD_COUNT = 8
 const BOOKS_PER_PAGE = 20
+const CATALOGUE_ARTWORK_COUNT = 3
 
 const BOOK_LANGUAGES = ['he', 'fr', 'en', 'he-fr', 'aramaic-fr', 'unknown'] as const
 
@@ -148,6 +149,10 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
     requestAnimationFrame(() => resultsStartRef.current?.scrollIntoView({ block: 'start' }))
   }
 
+  const artworkBooks = books
+    .filter((book) => book.bookLanguage === locale && book.cover && typeof book.cover === 'object')
+    .slice(0, CATALOGUE_ARTWORK_COUNT)
+
   return (
     <div className="flex flex-col">
       <section className="catalogue-heading">
@@ -158,21 +163,20 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
               <h1 className="type-display">{dict.catalogue.title}</h1>
               <p className="max-w-xl text-lg text-muted-foreground">{dict.catalogue.intro}</p>
             </div>
-            <div className="catalogue-heading-art" aria-hidden>
-              {books
-                .filter((book) => book.bookLanguage === locale && typeof book.cover === 'object')
-                .slice(0, 3)
-                .map((book) => (
+            {artworkBooks.length > 0 ? (
+              <div className="catalogue-heading-art" aria-hidden>
+                {artworkBooks.map((book) => (
                   <div key={book.id}>
                     <CoverImage
                       book={{ bookLanguage: book.bookLanguage, categorySlug: book.category?.slug }}
                       cover={typeof book.cover === 'object' ? book.cover : null}
-                      sizes="110px"
+                      sizes="112px"
                       title={book.displayTitle}
                     />
                   </div>
                 ))}
-            </div>
+              </div>
+            ) : null}
           </div>
           {shelves.length > 1 ? (
             <div role="tablist" aria-label={dict.catalogue.shelvesLabel} className="-mb-px flex gap-1">
