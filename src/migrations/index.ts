@@ -22,6 +22,7 @@ import * as migration_20261103_182815_preview_pdf from './20261103_182815_previe
 import * as migration_20261103_183652_book_colors from './20261103_183652_book_colors';
 import * as migration_20261103_190029_color_name_not_localized from './20261103_190029_color_name_not_localized';
 import * as migration_20261104_150427_shipping_amounts_per_currency from './20261104_150427_shipping_amounts_per_currency';
+import * as migration_20261118_151208_shop_publisher_sale_new from './20261118_151208_shop_publisher_sale_new';
 
 export const migrations = [
   {
@@ -142,6 +143,11 @@ export const migrations = [
   {
     up: migration_20261104_150427_shipping_amounts_per_currency.up,
     down: migration_20261104_150427_shipping_amounts_per_currency.down,
-    name: '20261104_150427_shipping_amounts_per_currency'
+    name: '20261104_150427_shipping_amounts_per_currency',
+  },
+  {
+    up: migration_20261118_151208_shop_publisher_sale_new.up,
+    down: migration_20261118_151208_shop_publisher_sale_new.down,
+    name: '20261118_151208_shop_publisher_sale_new'
   },
 ];

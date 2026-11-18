@@ -82,3 +82,24 @@ export function paginateCatalogue<T>(items: T[], requestedPage: number, pageSize
 export function defaultBookLanguage(locale: Locale, entries: readonly { bookLanguage: string }[]): string {
   return entries.some((entry) => entry.bookLanguage === locale) ? locale : ''
 }
+
+/**
+ * The shop's two shelves: the institute's own books, and the books of other
+ * publishers it also sells. A book is the institute's unless an editor has
+ * said otherwise, which is also what the field defaults to.
+ */
+export const CATALOGUE_SHELVES = ['institute', 'other'] as const
+
+export type CatalogueShelf = (typeof CATALOGUE_SHELVES)[number]
+
+type ShelvedEntry = { fromInstitute?: boolean | null }
+
+export function shelfOf(entry: ShelvedEntry): CatalogueShelf {
+  return entry.fromInstitute === false ? 'other' : 'institute'
+}
+
+/** The shelves that hold at least one book, in display order. The shelf
+ * tabs appear only when this has two entries: one tab is not a choice. */
+export function shelvesPresent(entries: readonly ShelvedEntry[]): CatalogueShelf[] {
+  return CATALOGUE_SHELVES.filter((shelf) => entries.some((entry) => shelfOf(entry) === shelf))
+}

@@ -5,6 +5,7 @@ import { revalidateStorefront } from './hooks/revalidateStorefront.ts'
 import { requiredInAtLeastOneLocale } from './validators/requiredInAtLeastOneLocale.ts'
 import { bookPreviewPath } from '../lib/admin/adminPreview.ts'
 import { CURRENCIES } from '../lib/shop/currency.ts'
+import { validateCompareAtAmount } from '../lib/admin/validateCompareAtAmount.ts'
 import { validateMoneyAmount } from '../lib/admin/validateMoneyAmount.ts'
 import { validateSwatch } from '../lib/admin/validateSwatch.ts'
 
@@ -303,6 +304,17 @@ export const Books: CollectionConfig = {
                         description: 'עד שתי ספרות עשרוניות, למשל 55 או 55.50.',
                       },
                     },
+                    {
+                      // Display only: the cart and the order always charge `amount`.
+                      name: 'compareAtAmount',
+                      type: 'number',
+                      label: 'מחיר לפני מבצע',
+                      min: 0,
+                      validate: validateCompareAtAmount,
+                      admin: {
+                        description: 'לא חובה. כשממולא, האתר מציג את המחיר הזה מחוק ולידו את הסכום בפועל, עם תווית ׳מבצע׳.',
+                      },
+                    },
                   ],
                 },
               ],
@@ -388,6 +400,28 @@ export const Books: CollectionConfig = {
       admin: {
         position: 'sidebar',
         description: 'סוג החיבור (למשל: סידורים ומחזורים) — לא השפה. שפת הספר נקבעת בשדה ׳שפת החיבור׳ למעלה.',
+      },
+    },
+    {
+      // Publisher is a field, like language, never a category: the shop's
+      // two shelves are the institute's own books and everyone else's.
+      name: 'fromInstitute',
+      type: 'checkbox',
+      label: 'בהוצאת מכון רמח״ל',
+      defaultValue: true,
+      admin: {
+        position: 'sidebar',
+        description: 'בטלו את הסימון לספר של הוצאה אחרת; הוא יופיע בחנות תחת ׳הוצאות נוספות׳. את שם ההוצאה כותבים בשדה ׳הוצאה לאור׳.',
+      },
+    },
+    {
+      name: 'markedNew',
+      type: 'checkbox',
+      label: 'חדש',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description: 'מציג תווית ׳חדש׳ על הספר בחנות, עד שמבטלים את הסימון.',
       },
     },
     {

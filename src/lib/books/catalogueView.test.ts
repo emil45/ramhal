@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 
-import { defaultBookLanguage, paginateCatalogue, sortCatalogueView } from '@/lib/books/catalogueView'
+import { defaultBookLanguage, paginateCatalogue, shelfOf, shelvesPresent, sortCatalogueView } from '@/lib/books/catalogueView'
 
 const book = (title: string, amount?: number) => ({
   prices: amount === undefined ? [] : [{ amount, currency: 'ILS' }],
@@ -75,5 +75,29 @@ describe('defaultBookLanguage', () => {
 
   it('opens on every language when the site’s own language has no books', () => {
     expect(defaultBookLanguage('en', books)).toBe('')
+  })
+})
+
+describe('shelfOf', () => {
+  it("puts a book on the institute's shelf unless it is marked as another publisher's", () => {
+    expect(shelfOf({ fromInstitute: true })).toBe('institute')
+    expect(shelfOf({ fromInstitute: null })).toBe('institute')
+    expect(shelfOf({})).toBe('institute')
+    expect(shelfOf({ fromInstitute: false })).toBe('other')
+  })
+})
+
+describe('shelvesPresent', () => {
+  it('lists both shelves, institute first, when each holds a book', () => {
+    expect(shelvesPresent([{ fromInstitute: false }, { fromInstitute: true }])).toEqual(['institute', 'other'])
+  })
+
+  it('lists a single shelf when every book is on it', () => {
+    expect(shelvesPresent([{ fromInstitute: true }, {}])).toEqual(['institute'])
+    expect(shelvesPresent([{ fromInstitute: false }])).toEqual(['other'])
+  })
+
+  it('lists no shelf for an empty catalogue', () => {
+    expect(shelvesPresent([])).toEqual([])
   })
 })

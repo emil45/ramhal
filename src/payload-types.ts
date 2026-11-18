@@ -328,6 +328,10 @@ export interface Book {
      * עד שתי ספרות עשרוניות, למשל 55 או 55.50.
      */
     amount: number;
+    /**
+     * לא חובה. כשממולא, האתר מציג את המחיר הזה מחוק ולידו את הסכום בפועל, עם תווית ׳מבצע׳.
+     */
+    compareAtAmount?: number | null;
     id?: string | null;
   }[];
   /**
@@ -361,6 +365,14 @@ export interface Book {
    * סוג החיבור (למשל: סידורים ומחזורים) — לא השפה. שפת הספר נקבעת בשדה ׳שפת החיבור׳ למעלה.
    */
   category?: (number | null) | Category;
+  /**
+   * בטלו את הסימון לספר של הוצאה אחרת; הוא יופיע בחנות תחת ׳הוצאות נוספות׳. את שם ההוצאה כותבים בשדה ׳הוצאה לאור׳.
+   */
+  fromInstitute?: boolean | null;
+  /**
+   * מציג תווית ׳חדש׳ על הספר בחנות, עד שמבטלים את הסימון.
+   */
+  markedNew?: boolean | null;
   inStock?: boolean | null;
   slug?: string | null;
   legacyUrls?:
@@ -1135,6 +1147,7 @@ export interface BooksSelect<T extends boolean = true> {
     | {
         currency?: T;
         amount?: T;
+        compareAtAmount?: T;
         id?: T;
       };
   shippingUnits?: T;
@@ -1144,6 +1157,8 @@ export interface BooksSelect<T extends boolean = true> {
   reviewNote?: T;
   bookLanguage?: T;
   category?: T;
+  fromInstitute?: T;
+  markedNew?: T;
   inStock?: T;
   slug?: T;
   legacyUrls?:
