@@ -72,7 +72,7 @@ export function CheckoutForm({ countries, currency, defaultCountry, lines, local
 
   return (
     <form action={formAction} className="grid gap-10 lg:grid-cols-[1fr_24rem] lg:items-start lg:gap-14">
-      <div className="flex flex-col gap-10">
+      <div className="checkout-fields flex flex-col gap-10">
         <FieldSet className="gap-5">
           <FieldLegend className="type-heading! mb-2">{dict.checkout.contactHeading}</FieldLegend>
           <TextField label={dict.checkout.name} error={fieldError('name')} name="name" defaultValue={submitted.name} type="text" autoComplete="name" required />
@@ -127,7 +127,7 @@ export function CheckoutForm({ countries, currency, defaultCountry, lines, local
         </FieldSet>
       </div>
 
-      <Card className="lg:sticky lg:top-6">
+      <Card className="order-summary lg:sticky lg:top-6">
         <CardHeader>
           <CardTitle className="type-subheading!">{dict.checkout.summaryHeading}</CardTitle>
         </CardHeader>

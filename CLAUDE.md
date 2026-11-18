@@ -101,8 +101,9 @@ this config under Node: `ERR_REQUIRE_ASYNC_MODULE`), read the generated migratio
 - **A sale is display only.** `prices[].compareAtAmount` is shown crossed out beside `amount`, which is
   always what the cart and the order charge (`selectSale`, `src/lib/shop/salePrice.ts`). `markedNew`
   shows a "new" label until an editor unticks it, puts the book first in the shop's default order and
-  leads the homepage's "from the catalogue" strip, followed by the books ticked `featuredOnHomepage`
-  (`sortCatalogue`, `selectCatalogueStrip`).
+  leads the homepage’s ׳מן הקטלוג׳ shelf (`sortCatalogue`, `selectHomeBooks`).
+  `featuredOnHomepage` (׳מוצג בדף הבית׳) places an editor’s selections after new books and before
+  the remaining language-appropriate catalogue. Neither mark overrides currency availability.
 - **`www.ramhal.com` is the catalogue authority**; the importer refuses any book without a
   Hebrew-domain source. Legacy articles and essays are deliberately not migrated (client confirmation
   pending).

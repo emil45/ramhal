@@ -1,17 +1,26 @@
 import type { ReactNode } from 'react'
 
-/**
- * The heading of a section on a page: the title, an optional action opposite
- * it (e.g. "all books"), and a hairline with a short gold segment at its
- * start — the printer's rule under a chapter title. `as` picks the tag: a page's title is
- * an h1, everything else an h2.
- */
-export function SectionHeading({ action, as: Tag = 'h2', children }: { action?: ReactNode; as?: 'h1' | 'h2'; children: ReactNode }) {
+export function SectionHeading({
+  action,
+  as: Tag = 'h2',
+  children,
+  eyebrow,
+  description,
+}: {
+  action?: ReactNode
+  as?: 'h1' | 'h2'
+  children: ReactNode
+  eyebrow?: string
+  description?: string
+}) {
   return (
-    <div className="relative mb-8 flex items-end justify-between gap-4 border-b border-border pb-3">
-      <Tag className={Tag === 'h1' ? 'type-title' : 'type-heading'}>{children}</Tag>
+    <div className="section-heading">
+      <div className="min-w-0">
+        {eyebrow ? <p className="eyebrow mb-3">{eyebrow}</p> : null}
+        <Tag className={Tag === 'h1' ? 'type-display' : 'type-title'}>{children}</Tag>
+        {description ? <p className="mt-3 max-w-2xl text-base text-muted-foreground">{description}</p> : null}
+      </div>
       {action}
-      <span aria-hidden className="absolute start-0 -bottom-px h-[3px] w-16 bg-gold" />
     </div>
   )
 }

@@ -70,7 +70,7 @@ function ImageGalleryView({ book, direction, images, labels, sizes, thumbnailLab
     if (event.key === backwardKey) step(-1)
   }
 
-  const frame = <CoverImage book={book} cover={selected} sizes={sizes} title={title} />
+  const frame = <CoverImage book={book} cover={selected} sizes={sizes} title={title} priority />
 
   return (
     <div className="flex flex-col gap-4">

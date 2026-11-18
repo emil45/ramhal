@@ -19,9 +19,8 @@ export function LocaleSwitcher({ current }: { current: Locale }) {
     <details className="group relative text-base">
       <summary
         aria-label="Language / שפה / Langue"
-        className="flex h-12 cursor-pointer list-none items-center gap-2 rounded-md border border-border bg-background px-4 text-foreground transition-colors hover:border-teal/40 hover:bg-secondary [&::-webkit-details-marker]:hidden"
+        className="flex h-12 cursor-pointer list-none items-center gap-1.5 px-2 text-foreground transition-colors hover:text-teal [&::-webkit-details-marker]:hidden"
       >
-        <span className="text-base leading-none" aria-hidden>{currentLocale.flag}</span>
         <span className="font-semibold">{currentLocale.shortLabel}</span>
         <ChevronDown className="size-4 text-muted-foreground transition-transform group-open:rotate-180" aria-hidden />
       </summary>

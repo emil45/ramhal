@@ -3,6 +3,7 @@
 import { SearchIcon, SearchXIcon } from 'lucide-react'
 import { useDeferredValue, useMemo, useRef, useState } from 'react'
 
+import { CoverImage } from '@/components/storefront/CoverImage'
 import { ProductCard } from '@/components/storefront/ProductCard'
 import { getDictionary } from '@/app/(frontend)/dictionary'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
@@ -30,7 +31,7 @@ import type { Category } from '@/payload-types'
 import type { Locale } from '@/lib/locale/locale'
 import type { CatalogueShelf, CatalogueSort } from '@/lib/books/catalogueView'
 
-const GRID_CLASS = 'grid grid-cols-2 gap-x-4 gap-y-12 sm:grid-cols-3 sm:gap-x-6 lg:grid-cols-4 lg:gap-x-8'
+const GRID_CLASS = 'grid grid-cols-2 gap-x-5 gap-y-10 sm:grid-cols-3 sm:gap-x-7 lg:grid-cols-4 lg:gap-x-9'
 const SKELETON_CARD_COUNT = 8
 const BOOKS_PER_PAGE = 20
 
@@ -60,7 +61,12 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
   // lib/booksData.ts), otherwise searching a book with no title in this
   // locale crashes normalizeForSearch on undefined.
   const entries = useMemo(
-    () => shelfBooks.map((book) => ({ ...book, categorySlug: book.category?.slug ?? null, title: book.displayTitle })),
+    () =>
+      shelfBooks.map((book) => ({
+        ...book,
+        categorySlug: book.category?.slug ?? null,
+        title: book.displayTitle,
+      })),
     [shelfBooks],
   )
 
@@ -70,13 +76,24 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
   const isFiltering = query !== deferredQuery
 
   const filtered = useMemo(
-    () => filterCatalogue(entries, { categorySlug: categorySlug || null, bookLanguage: bookLanguage || null, query: deferredQuery }),
+    () =>
+      filterCatalogue(entries, {
+        categorySlug: categorySlug || null,
+        bookLanguage: bookLanguage || null,
+        query: deferredQuery,
+      }),
     [entries, categorySlug, bookLanguage, deferredQuery],
   )
-  const sorted = useMemo(() => sortCatalogueView(filtered, sort, LOCALE_CONFIG[locale].currency, locale), [filtered, locale, sort])
+  const sorted = useMemo(
+    () => sortCatalogueView(filtered, sort, LOCALE_CONFIG[locale].currency, locale),
+    [filtered, locale, sort],
+  )
   const cataloguePage = useMemo(() => paginateCatalogue(sorted, page, BOOKS_PER_PAGE), [page, sorted])
 
-  const languagesPresent = useMemo(() => BOOK_LANGUAGES.filter((lang) => entries.some((entry) => entry.bookLanguage === lang)), [entries])
+  const languagesPresent = useMemo(
+    () => BOOK_LANGUAGES.filter((lang) => entries.some((entry) => entry.bookLanguage === lang)),
+    [entries],
+  )
 
   // The category filter only appears once the catalogue actually has a
   // choice to offer — today every category but siddurim-machzorim has been
@@ -92,7 +109,8 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
   }, [shelfBooks, locale])
   const hasCategoryFilter = categoriesPresent.length >= 2
 
-  const hasFilters = query !== '' || categorySlug !== '' || bookLanguage !== defaultLanguage || sort !== 'default'
+  const hasFilters =
+    query !== '' || categorySlug !== '' || bookLanguage !== defaultLanguage || sort !== 'default'
 
   const clearFilters = () => {
     setQuery('')
@@ -122,7 +140,8 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
   // The empty string is "every language", as in the filter itself.
   const languageOptions: ('' | (typeof BOOK_LANGUAGES)[number])[] = ['', ...languagesPresent]
 
-  const languageCount = (language: string) => entries.filter((entry) => !language || entry.bookLanguage === language).length
+  const languageCount = (language: string) =>
+    entries.filter((entry) => !language || entry.bookLanguage === language).length
 
   const goToPage = (nextPage: number) => {
     setPage(nextPage)
@@ -131,14 +150,32 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
 
   return (
     <div className="flex flex-col">
-      <section className="border-b border-border bg-paper-deep">
-        <div className="page-container pt-10 md:pt-14">
-          <div className="flex max-w-2xl flex-col gap-3">
-            <h1 className="type-display">{dict.catalogue.title}</h1>
-            <p className="text-lg text-muted-foreground">{dict.catalogue.intro}</p>
+      <section className="catalogue-heading">
+        <div className="page-container">
+          <div className="catalogue-heading-inner">
+            <div className="flex max-w-2xl flex-col gap-4">
+              <p className="eyebrow">{dict.home.catalogueEyebrow}</p>
+              <h1 className="type-display">{dict.catalogue.title}</h1>
+              <p className="max-w-xl text-lg text-muted-foreground">{dict.catalogue.intro}</p>
+            </div>
+            <div className="catalogue-heading-art" aria-hidden>
+              {books
+                .filter((book) => book.bookLanguage === locale && typeof book.cover === 'object')
+                .slice(0, 3)
+                .map((book) => (
+                  <div key={book.id}>
+                    <CoverImage
+                      book={{ bookLanguage: book.bookLanguage, categorySlug: book.category?.slug }}
+                      cover={typeof book.cover === 'object' ? book.cover : null}
+                      sizes="110px"
+                      title={book.displayTitle}
+                    />
+                  </div>
+                ))}
+            </div>
           </div>
           {shelves.length > 1 ? (
-            <div role="tablist" aria-label={dict.catalogue.shelvesLabel} className="-mb-px mt-8 flex gap-1 md:mt-10">
+            <div role="tablist" aria-label={dict.catalogue.shelvesLabel} className="-mb-px flex gap-1">
               {shelves.map((option) => {
                 const selected = option === shelf
                 return (
@@ -164,19 +201,19 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
               })}
             </div>
           ) : (
-            <div className="h-10" />
+            <div className="h-2" />
           )}
         </div>
       </section>
 
       <div className="page-container flex flex-col gap-10 py-8 md:py-10">
-        <div className="flex flex-col gap-5 border-b border-border pb-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="catalogue-toolbar flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
           {languagesPresent.length > 1 ? (
             <div role="radiogroup" aria-labelledby="catalogue-language-label" className="flex flex-col gap-2">
               <span id="catalogue-language-label" className="text-sm font-medium text-foreground">
                 {dict.catalogue.languageLabel}
               </span>
-              <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0 sm:pb-0">
+              <div className="catalogue-language-options flex flex-wrap">
                 {languageOptions.map((language) => {
                   const selected = language === bookLanguage
                   return (
@@ -188,11 +225,18 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
                       onClick={() => chooseLanguage(language)}
                       className={cn(
                         'h-12 shrink-0 px-4',
-                        selected ? '' : 'border-border bg-card text-foreground hover:border-teal hover:text-teal',
+                        selected
+                          ? ''
+                          : 'border-border bg-card text-foreground hover:border-teal hover:text-teal',
                       )}
                     >
                       {language ? dict.bookLanguageLabel[language] : dict.catalogue.allLanguages}
-                      <span className={cn('text-sm tabular-nums', selected ? 'text-primary-foreground/75' : 'text-muted-foreground')}>
+                      <span
+                        className={cn(
+                          'text-sm tabular-nums',
+                          selected ? 'text-primary-foreground/75' : 'text-muted-foreground',
+                        )}
+                      >
                         {languageCount(language)}
                       </span>
                     </Button>
@@ -206,10 +250,12 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
           <div
             className={cn(
               'grid grid-cols-2 gap-3 sm:gap-4',
-              hasCategoryFilter ? 'lg:grid-cols-[16rem_12rem_12rem]' : 'lg:grid-cols-[18rem_13rem]',
+              hasCategoryFilter
+                ? 'sm:grid-cols-[minmax(10rem,1fr)_10rem_11rem]'
+                : 'sm:grid-cols-[minmax(12rem,1fr)_12rem]',
             )}
           >
-            <Field>
+            <Field className="col-span-2 sm:col-span-1">
               <FieldLabel htmlFor="catalogue-search">{dict.catalogue.searchLabel}</FieldLabel>
               <div className="relative">
                 <SearchIcon
@@ -250,7 +296,7 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
                 </NativeSelect>
               </Field>
             ) : null}
-            <Field>
+            <Field className={hasCategoryFilter ? undefined : 'col-span-2 sm:col-span-1'}>
               <FieldLabel htmlFor="catalogue-sort">{dict.catalogue.sortLabel}</FieldLabel>
               <NativeSelect
                 id="catalogue-sort"
@@ -263,13 +309,20 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
               >
                 <NativeSelectOption value="default">{dict.catalogue.sortRecommended}</NativeSelectOption>
                 <NativeSelectOption value="title">{dict.catalogue.sortTitle}</NativeSelectOption>
-                <NativeSelectOption value="price-ascending">{dict.catalogue.sortPriceAscending}</NativeSelectOption>
-                <NativeSelectOption value="price-descending">{dict.catalogue.sortPriceDescending}</NativeSelectOption>
+                <NativeSelectOption value="price-ascending">
+                  {dict.catalogue.sortPriceAscending}
+                </NativeSelectOption>
+                <NativeSelectOption value="price-descending">
+                  {dict.catalogue.sortPriceDescending}
+                </NativeSelectOption>
               </NativeSelect>
             </Field>
           </div>
         </div>
-        <div ref={resultsStartRef} className="-mt-4 flex scroll-mt-28 items-center justify-between gap-3 text-sm">
+        <div
+          ref={resultsStartRef}
+          className="-mt-4 flex scroll-mt-28 items-center justify-between gap-3 text-sm"
+        >
           <p aria-live="polite" className="text-muted-foreground">
             {cataloguePage.totalItems > 0
               ? dict.catalogue.showingRange(cataloguePage.start, cataloguePage.end, cataloguePage.totalItems)
@@ -321,25 +374,31 @@ export function CatalogueClient({ books, locale }: { books: CatalogueBook[]; loc
                 aria-label={dict.catalogue.paginationLabel}
                 className="flex flex-wrap items-center justify-center gap-2 border-t border-border pt-6"
               >
-                <Button variant="outline" onClick={() => goToPage(cataloguePage.page - 1)} disabled={cataloguePage.page === 1}>
+                <Button
+                  variant="outline"
+                  onClick={() => goToPage(cataloguePage.page - 1)}
+                  disabled={cataloguePage.page === 1}
+                >
                   {dict.catalogue.previousPage}
                 </Button>
                 <div
                   className="flex items-center gap-1"
                   aria-label={dict.catalogue.pageLabel(cataloguePage.page, cataloguePage.totalPages)}
                 >
-                  {Array.from({ length: cataloguePage.totalPages }, (_, index) => index + 1).map((pageNumber) => (
-                    <Button
-                      key={pageNumber}
-                      variant={pageNumber === cataloguePage.page ? 'default' : 'ghost'}
-                      size="icon"
-                      aria-current={pageNumber === cataloguePage.page ? 'page' : undefined}
-                      aria-label={dict.catalogue.pageLabel(pageNumber, cataloguePage.totalPages)}
-                      onClick={() => goToPage(pageNumber)}
-                    >
-                      {pageNumber}
-                    </Button>
-                  ))}
+                  {Array.from({ length: cataloguePage.totalPages }, (_, index) => index + 1).map(
+                    (pageNumber) => (
+                      <Button
+                        key={pageNumber}
+                        variant={pageNumber === cataloguePage.page ? 'default' : 'ghost'}
+                        size="icon"
+                        aria-current={pageNumber === cataloguePage.page ? 'page' : undefined}
+                        aria-label={dict.catalogue.pageLabel(pageNumber, cataloguePage.totalPages)}
+                        onClick={() => goToPage(pageNumber)}
+                      >
+                        {pageNumber}
+                      </Button>
+                    ),
+                  )}
                 </div>
                 <Button
                   variant="outline"

@@ -57,7 +57,7 @@ export default async function BeitRamhalPage({ params }: PageProps<'/[locale]/be
 
   return (
     <article>
-      <section className="border-b border-border bg-paper-deep">
+      <section className="editorial-hero">
         <div className="page-container grid items-center gap-10 py-10 lg:grid-cols-[0.78fr_1.22fr] lg:gap-14 lg:py-16">
           <div className="flex flex-col items-start gap-5">
             <Badge variant="outline" className="rounded-[2px] border-gold/70 bg-background/60 px-3 text-gold-ink">
@@ -74,11 +74,11 @@ export default async function BeitRamhalPage({ params }: PageProps<'/[locale]/be
           </div>
 
           {heroImage ? (
-            <div className="relative border border-gold bg-background p-2 shadow-[0_14px_40px_rgb(0_79_88/0.10)]">
+            <div className="editorial-image relative">
               <AspectRatio ratio={16 / 9} className="overflow-hidden bg-muted">
                 <PageImage media={heroImage} alt={page.title ?? ''} fill priority sizes="(min-width: 1024px) 58vw, 100vw" className="object-cover" />
               </AspectRatio>
-              <span aria-hidden className="absolute end-4 -bottom-1 h-[3px] w-24 bg-gold" />
+
             </div>
           ) : null}
         </div>
@@ -104,7 +104,7 @@ export default async function BeitRamhalPage({ params }: PageProps<'/[locale]/be
       <section className="border-y border-border bg-paper-deep">
         <div className="page-container grid items-center gap-10 py-16 lg:grid-cols-[1.12fr_0.88fr] lg:gap-16">
           {synagogueImage?.blockType === 'imageFigure' && synagogueImage.image ? (
-            <figure className="border border-gold bg-background p-2">
+            <figure className="editorial-image">
               <AspectRatio ratio={1280 / 856} className="overflow-hidden bg-muted">
                 <PageImage
                   media={synagogueImage.image as Media}

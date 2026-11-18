@@ -70,7 +70,7 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
 
   return (
     <BookColorProvider firstColorId={colors[0]?.id ?? null}>
-      <div className="page-container py-8 md:py-12">
+      <div className="page-container book-detail">
         <nav aria-label={dict.book.breadcrumbLabel} className="mb-8 text-sm text-muted-foreground">
           <ol className="flex flex-wrap items-center gap-1.5">
             <li>
@@ -86,7 +86,7 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
         </nav>
 
         <div className="grid gap-10 md:grid-cols-[minmax(0,24rem)_1fr] md:gap-12 lg:grid-cols-[minmax(0,28rem)_1fr] lg:gap-16">
-          <div className="relative mx-auto w-full max-w-80 md:max-w-none">
+          <div className="book-gallery-column relative mx-auto w-full max-w-sm self-start md:max-w-none md:sticky md:top-6">
             <BookImageGallery
               book={{ bookLanguage: book.bookLanguage, categorySlug: book.category?.slug }}
               direction={LOCALE_CONFIG[locale].direction}
@@ -111,14 +111,15 @@ export default async function BookPage({ params }: PageProps<'/[locale]/[bookWor
             <BookBadges dict={dict} isNew={book.markedNew === true} percentOff={sale?.percentOff ?? null} size="page" />
           </div>
 
-          <div className="flex max-w-2xl flex-col gap-8">
+          <div className="book-detail-copy flex max-w-2xl flex-col gap-7">
             <div className="flex flex-col gap-3">
-              <h1 className="type-title">{book.displayTitle}</h1>
+              <p className="eyebrow">{publisher ?? dict.nav.home}</p>
+              <h1 className="type-title" dir="auto">{book.displayTitle}</h1>
               {book.subtitle ? <p className="font-serif text-xl text-foreground">{book.subtitle}</p> : null}
             </div>
 
             {purchasable ? (
-              <div className="flex flex-col gap-6 border-y border-border py-6">
+              <div className="book-purchase flex flex-col gap-5">
                 <PriceTag book={book} dict={dict} locale={locale} className="text-3xl" />
                 {colors.length > 0 ? <BookColorPicker colors={colors} label={dict.book.colorLabel} /> : null}
                 <AddToCartButton bookId={book.id} locale={locale} />

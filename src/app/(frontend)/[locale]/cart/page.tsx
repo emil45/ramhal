@@ -35,9 +35,9 @@ export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) 
 
   if (lines.length === 0) {
     return (
-      <div className="page-container py-12">
+      <div className="page-container transaction-page">
         <SectionHeading as="h1">{dict.cart.title}</SectionHeading>
-        <Empty className="border py-16">
+        <Empty className="border border-border bg-paper-deep py-16">
           <EmptyHeader>
             <EmptyMedia variant="icon">
               <ShoppingBag />
@@ -60,7 +60,7 @@ export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) 
   const money = (amount: number) => formatPrice(amount, currency, locale)
 
   return (
-    <div className="page-container py-10">
+    <div className="page-container transaction-page">
       <SectionHeading as="h1">{dict.cart.title}</SectionHeading>
 
       <div className="grid gap-10 lg:grid-cols-[1fr_22rem] lg:items-start lg:gap-14">
@@ -113,7 +113,7 @@ export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) 
           })}
         </ul>
 
-        <Card className="lg:sticky lg:top-6">
+        <Card className="order-summary lg:sticky lg:top-6">
           <CardHeader>
             <CardTitle className="type-subheading!">{dict.checkout.summaryHeading}</CardTitle>
           </CardHeader>
@@ -137,7 +137,7 @@ export default async function CartPage({ params }: PageProps<'/[locale]/cart'>) 
             <Separator />
             <div className="flex items-baseline justify-between text-base font-semibold">
               <span>{dict.cart.total}</span>
-              <span className="text-xl tabular-nums text-teal-deep">{money(subtotal)}</span>
+              <span className="text-xl tabular-nums text-teal-deep">{money(subtotal + shipping.amount)}</span>
             </div>
           </CardContent>
           <CardFooter>

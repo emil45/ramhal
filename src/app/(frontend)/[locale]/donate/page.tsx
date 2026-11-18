@@ -101,7 +101,7 @@ export default async function DonatePage({ params }: PageProps<'/[locale]/donate
 
   return (
     <article>
-      <section className="border-b border-border bg-paper-deep">
+      <section className="editorial-hero">
         <div className="page-container grid items-center gap-10 py-10 lg:grid-cols-[0.86fr_1.14fr] lg:gap-14 lg:py-16">
           <div className="flex max-w-2xl flex-col items-start gap-5">
             <Badge variant="outline" className="rounded-[2px] border-gold/70 bg-background/60 px-3 text-gold-ink">
@@ -110,11 +110,11 @@ export default async function DonatePage({ params }: PageProps<'/[locale]/donate
             </Badge>
             <h1 className="type-display">{content.title}</h1>
             <p className="text-xl leading-relaxed sm:text-2xl">{content.lead}</p>
-            <span aria-hidden className="h-[3px] w-24 bg-gold" />
+
           </div>
 
           {donatePhoto ? (
-            <figure className="relative border border-gold bg-background p-2 shadow-[0_14px_40px_rgb(0_79_88/0.10)]">
+            <figure className="editorial-image relative">
               <AspectRatio ratio={1600 / 1068} className="overflow-hidden bg-muted">
                 <PageImage
                   media={donatePhoto}
@@ -126,7 +126,7 @@ export default async function DonatePage({ params }: PageProps<'/[locale]/donate
                 />
               </AspectRatio>
               <figcaption className="px-2 pb-1 pt-3 text-sm text-muted-foreground">{content.imageCaption}</figcaption>
-              <span aria-hidden className="absolute end-4 -bottom-1 h-[3px] w-24 bg-gold" />
+
             </figure>
           ) : null}
         </div>

@@ -1,61 +1,51 @@
-import { ListVideo, Play } from 'lucide-react'
+import { Play } from 'lucide-react'
+import Image from 'next/image'
 
-import { Card, CardContent } from '@/components/ui/card'
-import { buttonVariants } from '@/components/ui/button'
-import { playlistUrl, playlistVideoUrl } from '@/lib/courses/youtubeLinks'
-import { cn } from '@/lib/utils'
+import { playlistUrl, playlistVideoUrl, videoThumbnailUrl } from '@/lib/courses/youtubeLinks'
 
 import type { Dictionary } from '@/app/(frontend)/dictionary'
 import type { Course } from '@/lib/courses/courses'
 
-export function BookCourseCallout({
-  course,
-  dict,
-}: {
-  course: Course
-  dict: Dictionary
-}) {
+export function BookCourseCallout({ course, dict }: { course: Course; dict: Dictionary }) {
   return (
-    <Card className="rounded-[2px] border-s-[3px] border-s-gold bg-paper-deep py-5 ring-0">
-      <CardContent className="flex flex-col gap-4">
-        <div className="flex items-start gap-3">
-          <span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full bg-teal text-primary-foreground">
+    <aside className="book-course">
+      <a
+        href={playlistVideoUrl(course.firstLessonVideoId, course.playlistId)}
+        target="_blank"
+        rel="noreferrer"
+        className="book-course-image"
+        aria-label={`${dict.bookCourse.start}: ${course.title}`}
+      >
+        <Image
+          src={videoThumbnailUrl(course.firstLessonVideoId)}
+          alt={`${dict.nav.chriqui}: ${course.title}`}
+          fill
+          sizes="(min-width: 768px) 160px, 100vw"
+          className="object-cover"
+        />
+        <span className="absolute inset-0 grid place-items-center">
+          <span className="grid size-9 place-items-center rounded-full bg-white text-teal">
             <Play className="size-4" fill="currentColor" aria-hidden />
           </span>
-          <div>
-            <p className="type-subheading text-teal-deep">
-              {dict.bookCourse.title}
-            </p>
-            <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-              {dict.bookCourse.body(course.lessonCount)}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
+        </span>
+      </a>
+      <div>
+        <h2 className="type-subheading text-teal-deep">{dict.bookCourse.title}</h2>
+        <p className="mt-1 text-sm text-muted-foreground">{dict.bookCourse.body(course.lessonCount)}</p>
+        <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1">
           <a
             href={playlistVideoUrl(course.firstLessonVideoId, course.playlistId)}
             target="_blank"
             rel="noreferrer"
-            className={buttonVariants()}
+            className="text-link"
           >
-            <Play data-icon="inline-start" fill="currentColor" aria-hidden />
             {dict.bookCourse.start}
           </a>
-          <a
-            href={playlistUrl(course.playlistId)}
-            target="_blank"
-            rel="noreferrer"
-            className={cn(
-              buttonVariants({ variant: 'outline' }),
-              'bg-background',
-            )}
-          >
-            <ListVideo data-icon="inline-start" aria-hidden />
+          <a href={playlistUrl(course.playlistId)} target="_blank" rel="noreferrer" className="text-link">
             {dict.bookCourse.playlist}
           </a>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </aside>
   )
 }

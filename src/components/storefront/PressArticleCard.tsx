@@ -1,5 +1,3 @@
-import { ArrowUpLeft } from 'lucide-react'
-
 import { Badge } from '@/components/ui/badge'
 import { buttonVariants } from '@/components/ui/button'
 import { Card, CardAction, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -49,7 +47,6 @@ export function PressArticleCard({ article, dateLabel, locale, openLabel, opensI
           className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'border-teal/40 bg-background text-teal-deep')}
         >
           {openLabel}
-          <ArrowUpLeft aria-hidden className="size-3.5 ltr:-scale-x-100" />
         </a>
       </CardFooter>
     </Card>

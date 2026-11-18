@@ -70,7 +70,7 @@ export default async function RabbiChriquiPage({ params }: PageProps<'/[locale]/
 
   return (
     <article>
-      <section className="border-b border-border bg-paper-deep">
+      <section className="editorial-hero">
         <div className="page-container grid items-center gap-10 py-10 md:grid-cols-[1fr_0.72fr] md:gap-14 lg:py-16">
           <div className="flex max-w-2xl flex-col items-start gap-5">
             <Badge variant="outline" className="rounded-[2px] border-gold/70 bg-background/60 px-3 text-gold-ink">
@@ -78,11 +78,11 @@ export default async function RabbiChriquiPage({ params }: PageProps<'/[locale]/
             </Badge>
             <h1 className="type-display">{page.title}</h1>
             <p className="text-xl leading-relaxed sm:text-2xl">{page.lead}</p>
-            <span aria-hidden className="h-[3px] w-24 bg-gold" />
+
           </div>
 
           {heroImage ? (
-            <div className="relative mx-auto w-full max-w-sm border border-gold bg-background p-2 shadow-[0_14px_40px_rgb(0_79_88/0.10)] md:max-w-none">
+            <div className="editorial-image relative mx-auto w-full max-w-sm md:max-w-none">
               <AspectRatio ratio={3 / 4} className="overflow-hidden bg-muted">
                 <PageImage
                   media={heroImage}
@@ -93,7 +93,7 @@ export default async function RabbiChriquiPage({ params }: PageProps<'/[locale]/
                   className="object-cover"
                 />
               </AspectRatio>
-              <span aria-hidden className="absolute end-4 -bottom-1 h-[3px] w-24 bg-gold" />
+
             </div>
           ) : null}
         </div>
@@ -107,7 +107,7 @@ export default async function RabbiChriquiPage({ params }: PageProps<'/[locale]/
           </div>
 
           {secondImage?.blockType === 'imageFigure' && secondImage.image ? (
-            <figure className="mx-auto w-full max-w-sm border border-border bg-paper-deep p-2 lg:mt-16 lg:max-w-none">
+            <figure className="editorial-image mx-auto w-full max-w-sm lg:mt-16 lg:max-w-none">
               <AspectRatio ratio={3 / 4} className="overflow-hidden bg-muted">
                 <PageImage
                   media={secondImage.image as Media}

@@ -37,9 +37,9 @@ export default async function CheckoutPage({ params }: PageProps<'/[locale]/chec
 
   if (lines.length === 0) {
     return (
-      <div className="page-container py-12">
+      <div className="page-container transaction-page">
         <SectionHeading as="h1">{dict.checkout.title}</SectionHeading>
-        <Empty className="border py-16">
+        <Empty className="border border-border bg-paper-deep py-16">
           <EmptyHeader>
             <EmptyTitle className="type-subheading!">{dict.checkout.emptyCart}</EmptyTitle>
           </EmptyHeader>
@@ -60,7 +60,7 @@ export default async function CheckoutPage({ params }: PageProps<'/[locale]/chec
   return (
     <>
       {isMockPaymentProviderConfigured() && <MockPaymentNotice dict={dict} />}
-      <div className="page-container py-10">
+      <div className="page-container transaction-page">
         <SectionHeading as="h1">{dict.checkout.title}</SectionHeading>
         <CheckoutForm
           countries={countries}

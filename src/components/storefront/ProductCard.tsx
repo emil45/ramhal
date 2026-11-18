@@ -21,14 +21,22 @@ import type { Locale } from '@/lib/locale/locale'
  * buys without leaving the catalogue — except for a book that comes in
  * colours, whose colour is chosen on its own page.
  */
-export function ProductCard({ book, dict, locale }: { book: CatalogueBook; dict: Dictionary; locale: Locale }) {
+export function ProductCard({
+  book,
+  dict,
+  locale,
+}: {
+  book: CatalogueBook
+  dict: Dictionary
+  locale: Locale
+}) {
   const currency = LOCALE_CONFIG[locale].currency
   const href = bookPath(locale, book.urlSlug)
   const sale = selectSale(book, currency)
 
   return (
-    <article className="group/cover relative flex h-full flex-col">
-      <div className="relative">
+    <article className="product-card group/cover relative flex h-full flex-col">
+      <div className="product-cover relative">
         <CoverImage
           book={{ bookLanguage: book.bookLanguage, categorySlug: book.category?.slug }}
           cover={typeof book.cover === 'object' ? book.cover : null}
@@ -39,7 +47,7 @@ export function ProductCard({ book, dict, locale }: { book: CatalogueBook; dict:
       </div>
 
       <div className="flex flex-1 flex-col pt-4">
-        <h3 className="type-subheading line-clamp-2 text-foreground">
+        <h3 className="type-subheading line-clamp-2 text-foreground" dir="auto">
           <Link
             href={href}
             className="decoration-gold decoration-2 underline-offset-4 transition-colors after:absolute after:inset-0 group-hover/cover:text-teal group-hover/cover:underline"
@@ -49,12 +57,15 @@ export function ProductCard({ book, dict, locale }: { book: CatalogueBook; dict:
         </h3>
         {/* Grid rows stretch every card to the tallest, so pushing price and
             button to the bottom lines them up across the row. */}
-        <div className="mt-auto flex flex-col gap-3 pt-3">
+        <div className="product-meta mt-auto">
           <PriceTag book={book} dict={dict} locale={locale} className="text-lg" />
           {!isPurchasable(book, currency) ? null : book.hasColors ? (
             <Link
               href={href}
-              className={cn(buttonVariants({ variant: 'outline' }), 'relative z-10 w-full border-teal/40 text-teal-deep hover:border-teal')}
+              className={cn(
+                buttonVariants({ variant: 'outline' }),
+                'quick-add relative z-10 text-teal-deep hover:border-teal',
+              )}
             >
               {dict.book.chooseColor}
             </Link>

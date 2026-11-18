@@ -120,7 +120,7 @@ export default async function QuestionsAndAnswersPage({ params }: PageProps<'/[l
 
   return (
     <article>
-      <section className="border-b border-border bg-paper-deep">
+      <section className="editorial-hero">
         <div className="page-container grid gap-10 py-12 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16 lg:py-16">
           <div className="flex max-w-3xl flex-col items-start">
             <p className="mb-4 text-sm font-semibold text-gold-ink">{content.eyebrow}</p>

@@ -22,19 +22,14 @@ export async function Footer({ dict, locale }: { dict: Dictionary; locale: Local
   ]
 
   return (
-    <footer className="mt-auto bg-teal-deep text-paper">
-      {/* The double rule that closes a printed page: thick over thin, and
-          below it the one ground of the site in the brand's own deep ink. */}
-      <div aria-hidden className="flex flex-col gap-[3px]">
-        <div className="h-[3px] bg-gold" />
-        <div className="h-px bg-gold" />
-      </div>
-      <div className="page-container grid gap-10 py-12 md:grid-cols-[1.4fr_1fr_1.4fr]">
-        <div className="flex items-start gap-4">
-          <Image src="/logo.png" alt="" width={362} height={512} className="h-16 w-auto" />
+    <footer className="site-footer">
+      <div className="page-container grid gap-12 py-16 md:grid-cols-[1.3fr_1fr_1fr]">
+        <div className="site-footer-brand">
+          <Image src="/logo.png" alt="" width={362} height={512} className="h-20 w-auto" />
           <div className="flex flex-col gap-1">
-            <p className="type-subheading text-paper">{dict.nav.home}</p>
+            <p className="font-serif font-medium text-paper">{dict.nav.home}</p>
             <p className="max-w-sm text-base leading-relaxed text-paper/75">{dict.home.tagline}</p>
+            <p className="mt-4 text-sm text-paper/60">{dict.home.since}</p>
           </div>
         </div>
 
@@ -109,7 +104,15 @@ export async function Footer({ dict, locale }: { dict: Dictionary; locale: Local
         </div>
       </div>
       <div className="border-t border-paper/15">
-        <p className="page-container py-5 text-center text-sm text-paper/65">{dict.footer.rights}</p>
+        <div className="page-container flex flex-wrap items-center justify-between gap-3 py-5 text-sm text-paper/65">
+          <p>{dict.footer.rights}</p>
+          <Link
+            href={localePath(locale, '/privacy')}
+            className="py-2 underline-offset-4 hover:text-paper hover:underline"
+          >
+            {dict.footer.privacyLabel}
+          </Link>
+        </div>
       </div>
     </footer>
   )

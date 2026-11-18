@@ -25,7 +25,7 @@ export function QuickAddButton({ bookId, locale }: { bookId: number; locale: Loc
   return (
     <Button
       variant="outline"
-      className="relative z-10 w-full border-teal/40 text-teal-deep hover:border-teal hover:bg-teal hover:text-primary-foreground"
+      className="quick-add relative z-10 text-teal-deep hover:border-teal hover:bg-teal hover:text-primary-foreground"
       disabled={isPending}
       onClick={() => {
         startTransition(async () => {

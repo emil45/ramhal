@@ -1,5 +1,3 @@
-import { ArrowUpLeft } from 'lucide-react'
-
 import { PressArticleCard } from '@/components/storefront/PressArticleCard'
 import { SectionHeading } from '@/components/storefront/SectionHeading'
 import { Badge } from '@/components/ui/badge'
@@ -66,8 +64,7 @@ export function PressCoverageSection({ content, locale }: PressCoverageSectionPr
               className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'mt-auto border-teal/40 bg-background text-teal-deep')}
             >
               {content.openLabel}
-              <ArrowUpLeft aria-hidden className="size-3.5 ltr:-scale-x-100" />
-            </a>
+                </a>
           </div>
         </Card>
 
