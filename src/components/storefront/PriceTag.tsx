@@ -28,7 +28,7 @@ export function PriceTag({ book, dict, locale, className }: { book: PricedItem; 
       <span className={cn('inline-flex flex-wrap items-baseline gap-x-2', className)}>
         <span className="font-semibold tabular-nums text-teal-deep">{formatPrice(amount, currency, locale)}</span>
         {sale ? (
-          <span className="text-[0.8em] text-muted-foreground">
+          <span className="text-[0.85em] text-muted-foreground">
             <span className="sr-only">{dict.book.priceBefore} </span>
             <s className="tabular-nums decoration-1">{formatPrice(sale.compareAtAmount, currency, locale)}</s>
           </span>

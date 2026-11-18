@@ -144,8 +144,8 @@ Reference: a well-made printed sefer. Warm paper, one ink, brass rules, serif ti
   allows. Photographs fill it `object-contain` (they were shot on that same ground). A book with no
   photograph is drawn as a book on the shelf; its rule colour says which shelf (teal Hebrew, gold
   French, deep teal English, dark gold siddurim).
-- Labels on a book (`BookBadges`): "sale" in `gold-ink`, "new" in `teal-deep`, square printed slips,
-  never a coloured sticker.
+- Marks on a book (`BookBadges`) come from the books themselves, never a coloured sticker: "new" is a
+  `teal-deep` ribbon bookmark hanging from the top edge, "sale" a round `gold` seal lettered in ink.
 - **No raw `<input>`, `<select>` or `<button>`** in `src/components/storefront/` or
   `src/app/(frontend)/`; use `src/components/ui/`. `grep -rn "<input\|<select\|<button"
   src/components/storefront "src/app/(frontend)"` must print nothing. Every field has a visible label.
